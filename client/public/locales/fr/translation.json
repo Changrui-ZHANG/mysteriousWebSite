@@ -1,0 +1,38 @@
+{
+    "navbar": {
+        "title": "Magnifique",
+        "theme": {
+            "light": "Mode Clair",
+            "dark": "Mode Sombre"
+        },
+        "lang": {
+            "en": "English",
+            "fr": "Français",
+            "zh": "中文"
+        }
+    },
+    "hero": {
+        "title": "Magnifique",
+        "subtitle": "Le futur des interactions."
+    },
+    "story": {
+        "title": "La gravité n'est qu'une suggestion.",
+        "description": "Découvrez un monde où les particules défient les lois de la physique, créant un environnement fluide et changeant qui réagit à votre présence."
+    },
+    "features": {
+        "velocity": {
+            "title": "Vélocité",
+            "description": "Propulsé par des modèles mathématiques avancés simulant des phénomènes naturels."
+        },
+        "depth": {
+            "title": "Profondeur",
+            "description": "Des environnements 3D immersifs qui s'étendent au-delà des limites de l'écran."
+        },
+        "light": {
+            "title": "Lumière",
+            "description": "Un éclairage dynamique qui s'adapte instantanément à votre thème."
+        }
+    },
+    "signature": "Changrui ZHANG",
+    "footer": "© 2025 Changrui ZHANG. Tous droits réservés."
+}

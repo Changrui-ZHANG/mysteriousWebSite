@@ -1,0 +1,38 @@
+{
+    "navbar": {
+        "title": "Magnificent",
+        "theme": {
+            "light": "Light Mode",
+            "dark": "Dark Mode"
+        },
+        "lang": {
+            "en": "English",
+            "fr": "Français",
+            "zh": "中文"
+        }
+    },
+    "hero": {
+        "title": "Magnificent",
+        "subtitle": "The future of interactions."
+    },
+    "story": {
+        "title": "Gravity is just a suggestion.",
+        "description": "Experience a world where particles defy the laws of physics, creating a fluid, ever-changing environment that responds to your presence."
+    },
+    "features": {
+        "velocity": {
+            "title": "Velocity",
+            "description": "Powered by advanced mathematical models simulating natural phenomena."
+        },
+        "depth": {
+            "title": "Depth",
+            "description": "Immersive 3D environments that extend beyond the screen boundaries."
+        },
+        "light": {
+            "title": "Light",
+            "description": "Dynamic lighting that adapts to your theme preference instantly."
+        }
+    },
+    "signature": "Changrui ZHANG",
+    "footer": "© 2025 Changrui ZHANG. All rights reserved."
+}

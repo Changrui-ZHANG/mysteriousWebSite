@@ -1,0 +1,38 @@
+{
+    "navbar": {
+        "title": "宏伟",
+        "theme": {
+            "light": "亮色模式",
+            "dark": "暗色模式"
+        },
+        "lang": {
+            "en": "English",
+            "fr": "Français",
+            "zh": "中文"
+        }
+    },
+    "hero": {
+        "title": "宏伟",
+        "subtitle": "交互的未来。"
+    },
+    "story": {
+        "title": "重力只是一个建议。",
+        "description": "体验一个粒子蔑视物理定律的世界，创造一个流畅、瞬息万变的环境，响应您的存在。"
+    },
+    "features": {
+        "velocity": {
+            "title": "速度",
+            "description": "由模拟自然现象的先进数学模型提供动力。"
+        },
+        "depth": {
+            "title": "深度",
+            "description": "超越屏幕边界的身临其境的 3D 环境。"
+        },
+        "light": {
+            "title": "光影",
+            "description": "动态照明，即时适应您的主题偏好。"
+        }
+    },
+    "signature": "Changrui ZHANG",
+    "footer": "© 2025 Changrui ZHANG. 版权所有."
+}
