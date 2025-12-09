@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react'
 import Matter from 'matter-js'
+import { useTranslation } from 'react-i18next'
 
 interface GravityPlaygroundProps {
     isDarkMode: boolean;
 }
 
 export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
+    const { t } = useTranslation();
     const sceneRef = useRef<HTMLDivElement>(null)
     const engineRef = useRef<Matter.Engine | null>(null)
 
@@ -149,9 +151,9 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
     }, [isDarkMode]);
 
     return (
-        <div className="w-full h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner" ref={sceneRef}>
+        <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner" ref={sceneRef}>
             <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                INTERACTIVE GRAVITY ZONE -- DRAG & THROW
+                {t('gravity.instruction')}
             </div>
             {/* Canvas injected here */}
         </div>

@@ -34,5 +34,40 @@
         }
     },
     "signature": "Changrui ZHANG",
-    "footer": "© 2025 Changrui ZHANG. Tous droits réservés."
+    "gravity": {
+        "title": "Gravité Interactive",
+        "instruction": "ZONE DE GRAVITÉ INTERACTIVE -- GLISSEZ & LANCEZ"
+    },
+    "gallery": {
+        "nebula": {
+            "title": "NÉBULEUSE UN",
+            "description": "Vide Numérique"
+        },
+        "cyber": {
+            "title": "RÊVES CYBER",
+            "description": "Mémoire Synthétisée"
+        },
+        "deep": {
+            "title": "PLONGÉE PROFONDE",
+            "description": "Données Océaniques"
+        },
+        "aurora": {
+            "title": "AURORE",
+            "description": "Vent Solaire"
+        },
+        "horizon": {
+            "title": "HORIZON",
+            "description": "Boucle Infinie"
+        }
+    },
+    "footer_section": {
+        "tagline": "Redéfinir les interactions numériques par le code et le mouvement.",
+        "socials": "Réseaux",
+        "legal": "Légal",
+        "privacy": "Politique de Confidentialité",
+        "terms": "Conditions d'Utilisation",
+        "newsletter": "Newsletter",
+        "join": "Rejoindre",
+        "copyright": "© 2025 Changrui ZHANG. Tous droits réservés."
+    }
 }

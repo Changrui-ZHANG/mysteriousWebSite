@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next'
 import './App.css'
 
 import { GravityPlayground } from './components/GravityPlayground'
+import { LiquidDecoration } from './components/LiquidDecoration'
+import { Gallery } from './components/Gallery'
 
 // New Components
 import MagneticButton from './components/MagneticButton'
@@ -50,6 +52,10 @@ function App() {
                 {/* Aurora Blobs */}
                 <div className={`aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] ${isDarkMode ? 'bg-[#4a148c]' : 'bg-[#b2ebf2]'}`} style={{ animationDelay: '0s' }}></div>
                 <div className={`aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] ${isDarkMode ? 'bg-[#1a237e]' : 'bg-[#e1bee7]'}`} style={{ animationDelay: '2s' }}></div>
+
+                {/* Liquid Glass Decorations */}
+                <LiquidDecoration isDarkMode={isDarkMode} className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
+                <LiquidDecoration isDarkMode={isDarkMode} className="bottom-[15%] left-[5%]" size="w-96 h-96" delay={5} />
             </div>
 
             {/* Content Layer */}
@@ -116,27 +122,21 @@ function App() {
 
 
 
-                // ... existing code ...
 
                 {/* GRAVITY PLAYGROUND MINI-GAME */}
                 <ScrollSection>
-                    <div className="max-w-6xl mx-auto px-4">
-                        <h2 className="text-5xl text-center mb-8 font-heading font-bold">Interactive Gravity</h2>
+                    <div className="w-full h-screen flex flex-col justify-center px-4">
+                        <h2 className="text-6xl md:text-8xl text-center mb-12 font-heading font-bold bg-gradient-to-b from-current to-transparent bg-clip-text text-transparent opacity-80">
+                            {t('gravity.title')}
+                        </h2>
                         <GravityPlayground isDarkMode={isDarkMode} />
                     </div>
                 </ScrollSection>
 
                 {/* HORIZONTAL GALLERY PREVIEW */}
                 <ScrollSection>
-                    <div className="overflow-hidden w-full py-16">
-                        <div className="flex gap-8 animate-[marquee_20s_linear_infinite]">
-                            {/* Just visual blocks to imply a gallery */}
-                            {[1, 2, 3, 4, 5].map(i => (
-                                <div key={i} className={`min-w-[400px] h-[300px] rounded-2xl flex items-center justify-center text-4xl ${isDarkMode ? 'bg-[#222] text-[#444]' : 'bg-[#ddd] text-[#bbb]'}`}>
-                                    ARTWORK {i}
-                                </div>
-                            ))}
-                        </div>
+                    <div className="w-full py-16">
+                        <Gallery isDarkMode={isDarkMode} />
                     </div>
                 </ScrollSection>
 
@@ -152,10 +152,10 @@ function App() {
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 max-w-7xl mx-auto">
                         <div>
                             <h4 className="text-2xl mb-6">Changrui.</h4>
-                            <p className="opacity-60">Redefining digital interactions through code and motion.</p>
+                            <p className="opacity-60">{t('footer_section.tagline')}</p>
                         </div>
                         <div>
-                            <h4 className="font-bold mb-6">Socials</h4>
+                            <h4 className="font-bold mb-6">{t('footer_section.socials')}</h4>
                             <ul className="list-none p-0 opacity-70 leading-loose">
                                 <li>Twitter / X</li>
                                 <li>GitHub</li>
@@ -164,22 +164,22 @@ function App() {
                             </ul>
                         </div>
                         <div>
-                            <h4 className="font-bold mb-6">Legal</h4>
+                            <h4 className="font-bold mb-6">{t('footer_section.legal')}</h4>
                             <ul className="list-none p-0 opacity-70 leading-loose">
-                                <li>Privacy Policy</li>
-                                <li>Terms of Service</li>
+                                <li>{t('footer_section.privacy')}</li>
+                                <li>{t('footer_section.terms')}</li>
                             </ul>
                         </div>
                         <div>
-                            <h4 className="font-bold mb-6">Newsletter</h4>
+                            <h4 className="font-bold mb-6">{t('footer_section.newsletter')}</h4>
                             <div className="flex">
                                 <input type="email" placeholder="Email" className="p-2 rounded-l-md border-none" />
-                                <button className="p-2 px-4 bg-white text-black border-none rounded-r-md cursor-pointer font-bold">Join</button>
+                                <button className="p-2 px-4 bg-white text-black border-none rounded-r-md cursor-pointer font-bold">{t('footer_section.join')}</button>
                             </div>
                         </div>
                     </div>
                     <div className="text-center opacity-40 mt-16 text-sm">
-                        <p>{t('footer')}</p>
+                        <p>{t('footer_section.copyright')}</p>
                     </div>
                 </footer>
             </div>

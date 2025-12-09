@@ -34,5 +34,40 @@
         }
     },
     "signature": "Changrui ZHANG",
-    "footer": "© 2025 Changrui ZHANG. 版权所有."
+    "gravity": {
+        "title": "互动重力",
+        "instruction": "互动重力区 -- 拖动 & 投掷"
+    },
+    "gallery": {
+        "nebula": {
+            "title": "星云一号",
+            "description": "数字虚空"
+        },
+        "cyber": {
+            "title": "赛博梦境",
+            "description": "合成记忆"
+        },
+        "deep": {
+            "title": "深潜",
+            "description": "海洋数据"
+        },
+        "aurora": {
+            "title": "极光",
+            "description": "太阳风"
+        },
+        "horizon": {
+            "title": "地平线",
+            "description": "无限循环"
+        }
+    },
+    "footer_section": {
+        "tagline": "通过代码和动态重新定义数字交互。",
+        "socials": "社交媒体",
+        "legal": "法律信息",
+        "privacy": "隐私政策",
+        "terms": "服务条款",
+        "newsletter": "订阅通讯",
+        "join": "加入",
+        "copyright": "© 2025 张昌瑞。保留所有权利。"
+    }
 }
