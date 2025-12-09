@@ -6,6 +6,8 @@ import Lenis from '@studio-freight/lenis'
 import { useTranslation } from 'react-i18next'
 import './App.css'
 
+import { GravityPlayground } from './components/GravityPlayground'
+
 // New Components
 import MagneticButton from './components/MagneticButton'
 import { TextReveal } from './components/TextReveal'
@@ -109,6 +111,18 @@ function App() {
                                 <p className="text-lg leading-relaxed opacity-80">{t('features.light.description')}</p>
                             </TiltCard>
                         </div>
+                    </div>
+                </ScrollSection>
+
+
+
+                // ... existing code ...
+
+                {/* GRAVITY PLAYGROUND MINI-GAME */}
+                <ScrollSection>
+                    <div className="max-w-6xl mx-auto px-4">
+                        <h2 className="text-5xl text-center mb-8 font-heading font-bold">Interactive Gravity</h2>
+                        <GravityPlayground isDarkMode={isDarkMode} />
                     </div>
                 </ScrollSection>
 
