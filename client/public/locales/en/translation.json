@@ -12,62 +12,159 @@
         }
     },
     "hero": {
-        "title": "Magnificent",
-        "subtitle": "The future of interactions."
+        "title": "Changrui ZHANG",
+        "subtitle": "Shaping my future, line by line."
     },
     "story": {
-        "title": "Gravity is just a suggestion.",
-        "description": "Experience a world where particles defy the laws of physics, creating a fluid, ever-changing environment that responds to your presence."
+        "title": "My Philosophy",
+        "description": "I transform lines of code into visual and interactive experiences, merging rigorous logic with limitless creativity to bring ideas to life."
     },
     "features": {
         "velocity": {
-            "title": "Velocity",
-            "description": "Powered by advanced mathematical models simulating natural phenomena."
+            "title": "Rigor",
+            "description": "Meticulous attention to detail, ensuring clean, performant, and reliable code."
         },
         "depth": {
-            "title": "Depth",
-            "description": "Immersive 3D environments that extend beyond the screen boundaries."
+            "title": "Creativity",
+            "description": "Pushing UI boundaries to create memorable and intuitive user experiences."
         },
         "light": {
-            "title": "Light",
-            "description": "Dynamic lighting that adapts to your theme preference instantly."
+            "title": "Ambition",
+            "description": "A constant drive to learn and master the technologies of tomorrow."
         }
     },
     "signature": "Changrui ZHANG",
     "gravity": {
-        "title": "Interactive Gravity",
-        "instruction": "INTERACTIVE GRAVITY ZONE -- DRAG & THROW"
+        "title": "My Lab",
+        "instruction": "EXPERIMENTAL ZONE -- MY SKILLS IN ACTION",
+        "keywords": [
+            "Java",
+            "Spring Boot",
+            "React",
+            "Docker",
+            "Linux",
+            "SQL",
+            "TypeScript",
+            "CI/CD",
+            "Creativity",
+            "Git",
+            "Redis",
+            "Jenkins",
+            "Agile",
+            "API",
+            "Cloud"
+        ]
     },
     "gallery": {
         "nebula": {
-            "title": "NEBULA ONE",
-            "description": "Digital Void"
+            "title": "JAVA / SPRING",
+            "description": "Robust Architecture"
         },
         "cyber": {
-            "title": "CYBER DREAMS",
-            "description": "Synthesized Memory"
+            "title": "REACT / VITE",
+            "description": "Dynamic Interfaces"
         },
         "deep": {
-            "title": "DEEP DIVE",
-            "description": "Oceanic Data"
+            "title": "DOCKER / CI/CD",
+            "description": "Continuous Deployment"
         },
         "aurora": {
-            "title": "AURORA",
-            "description": "Solar Wind"
+            "title": "SQL / NOSQL",
+            "description": "Data Management"
         },
         "horizon": {
-            "title": "HORIZON",
-            "description": "Infinite Loop"
+            "title": "LINUX / OS",
+            "description": "System Mastery"
         }
     },
     "footer_section": {
-        "tagline": "Redefining digital interactions through code and motion.",
+        "tagline": "Architect of digital solutions.",
         "socials": "Socials",
         "legal": "Legal",
         "privacy": "Privacy Policy",
         "terms": "Terms of Service",
         "newsletter": "Newsletter",
-        "join": "Join",
+        "join": "Contact Me",
         "copyright": "© 2025 Changrui ZHANG. All rights reserved."
+    },
+    "cv": {
+        "role": "Fullstack Developer",
+        "sections": {
+            "profile": "Profile",
+            "experience": "Exposure",
+            "skills": "Arsenal",
+            "education": "Education",
+            "soft_skills": "Soft Skills",
+            "languages": "Languages",
+            "interests": "Interests"
+        },
+        "profile_text": "Back-end developer with a Master's in Computer Science (Sorbonne University), experienced in Spring Boot and ReactJS. Rigorous, autonomous, and passionate about technical challenges, I am looking for a Back-end/Fullstack position. I hold a residency permit allowing me to work freely in France.",
+        "exp": {
+            "espace": {
+                "title": "Espace Web (Personal Project)",
+                "role": "Full Stack Developer",
+                "desc": [
+                    "Developed a full-stack personal space web application autonomously.",
+                    "Integrated authentication (JWT), Dark/Light mode, and multi-language support.",
+                    "Enhanced UI with ReactBit for dynamic components.",
+                    "Containerized the project with Docker."
+                ]
+            },
+            "rakuten": {
+                "title": "Rakuten France",
+                "role": "Fullstack Developer (Intern)",
+                "desc": [
+                    "Migrated and optimized filtering component (250M exports/day): config time reduced from 2min to <30s.",
+                    "Independently developed two new import supports (XML + JSON) for product sheets, facilitating the integration of 250+ partners.",
+                    "Integrated AI into data processing.",
+                    "Migrated frontend from React 15+ to 20+ and JavaScript to TypeScript.",
+                    "Independently developed an automated migration tool (3 weeks), ensuring integrity of thousands of customer records and reducing manual errors.",
+                    "Independently developed a discount coupon synchronization program, ensuring reliability of promotions visible to millions of users.",
+                    "Performed unit and automated tests to ensure code reliability.",
+                    "Followed specifications and product roadmap to ensure deliverable compliance and deadline adherence.",
+                    "Organized reporting meetings and daily stand-ups in Agile methodology."
+                ]
+            },
+            "sorbonne": {
+                "title": "Sorbonne Université (E-commerce)",
+                "role": "Fullstack Developer",
+                "desc": [
+                    "Piloted a collaborative e-shop app with feature flags.",
+                    "Developed full stack (Backend, Frontend, DB).",
+                    "Automated Product Line variant generation."
+                ]
+            },
+            "quichefs": {
+                "title": "Projet Ouichefs (Linux Kernel)",
+                "role": "Systems Developer",
+                "desc": [
+                    "Developed an improved physical link system for Linux Kernel.",
+                    "Implemented UUIDs, inter-partition links, and block migration."
+                ]
+            }
+        },
+        "edu": {
+            "master": "Master Informatique: Systèmes et Applications Répartis",
+            "licence": "Licence Informatique: Informatique Générale"
+        },
+        "soft_skills_list": [
+            "Autonomy",
+            "Rigor",
+            "Good interpersonal skills",
+            "Synthesis spirit",
+            "Adaptability",
+            "Motivation",
+            "Curiosity",
+            "Team spirit"
+        ],
+        "languages_list": {
+            "zh": "Chinese (Native)",
+            "en": "English (Professional)",
+            "fr": "French (Bilingual)"
+        },
+        "interests_list": [
+            "Video games",
+            "Sport"
+        ]
     }
 }

@@ -12,62 +12,159 @@
         }
     },
     "hero": {
-        "title": "宏伟",
-        "subtitle": "交互的未来。"
+        "title": "Changrui ZHANG",
+        "subtitle": "逐行构建我的未来。"
     },
     "story": {
-        "title": "重力只是一个建议。",
-        "description": "体验一个粒子蔑视物理定律的世界，创造一个流畅、瞬息万变的环境，响应您的存在。"
+        "title": "我的哲学",
+        "description": "我将代码行转化为视觉和交互体验，融合严谨的逻辑与无限的创造力，赋予创意以生命。"
     },
     "features": {
         "velocity": {
-            "title": "速度",
-            "description": "由模拟自然现象的先进数学模型提供动力。"
+            "title": "严谨",
+            "description": "对细节的一丝不苟，确保代码整洁、高效且可靠。"
         },
         "depth": {
-            "title": "深度",
-            "description": "超越屏幕边界的身临其境的 3D 环境。"
+            "title": "创造力",
+            "description": "突破用户界面的界限，创造令人难忘且直观的用户体验。"
         },
         "light": {
-            "title": "光影",
-            "description": "动态照明，即时适应您的主题偏好。"
+            "title": "雄心",
+            "description": "不断学习和掌握未来技术的动力。"
         }
     },
     "signature": "Changrui ZHANG",
     "gravity": {
-        "title": "互动重力",
-        "instruction": "互动重力区 -- 拖动 & 投掷"
+        "title": "我的实验室",
+        "instruction": "实验区 -- 我的技能展示",
+        "keywords": [
+            "Java",
+            "Spring Boot",
+            "React",
+            "Docker",
+            "Linux",
+            "SQL",
+            "TypeScript",
+            "CI/CD",
+            "创造力",
+            "Git",
+            "Redis",
+            "Jenkins",
+            "敏捷",
+            "API",
+            "云技术"
+        ]
     },
     "gallery": {
         "nebula": {
-            "title": "星云一号",
-            "description": "数字虚空"
+            "title": "JAVA / SPRING",
+            "description": "稳健架构"
         },
         "cyber": {
-            "title": "赛博梦境",
-            "description": "合成记忆"
+            "title": "REACT / VITE",
+            "description": "动态界面"
         },
         "deep": {
-            "title": "深潜",
-            "description": "海洋数据"
+            "title": "DOCKER / CI/CD",
+            "description": "持续部署"
         },
         "aurora": {
-            "title": "极光",
-            "description": "太阳风"
+            "title": "SQL / NOSQL",
+            "description": "数据管理"
         },
         "horizon": {
-            "title": "地平线",
-            "description": "无限循环"
+            "title": "LINUX / OS",
+            "description": "系统精通"
         }
     },
     "footer_section": {
-        "tagline": "通过代码和动态重新定义数字交互。",
+        "tagline": "数字解决方案架构师。",
         "socials": "社交媒体",
         "legal": "法律信息",
         "privacy": "隐私政策",
         "terms": "服务条款",
-        "newsletter": "订阅通讯",
-        "join": "加入",
+        "newsletter": "通讯",
+        "join": "联系我",
         "copyright": "© 2025 张昌瑞。保留所有权利。"
+    },
+    "cv": {
+        "role": "全栈开发人员",
+        "sections": {
+            "profile": "个人简介",
+            "experience": "工作经历",
+            "skills": "技能清单",
+            "education": "教育背景",
+            "soft_skills": "软技能",
+            "languages": "语言",
+            "interests": "兴趣爱好"
+        },
+        "profile_text": "后端开发人员，毕业于索邦大学（计算机科学硕士），拥有 Spring Boot 和 ReactJS 经验。严谨、自主，热衷于技术挑战，正在寻找后端/全栈开发职位。我持有居留许可，可以在法国自由工作。",
+        "exp": {
+            "espace": {
+                "title": "个人空间网站 (个人项目)",
+                "role": "全栈开发人员",
+                "desc": [
+                    "自主开发全栈个人空间 Web 应用程序。",
+                    "集成身份验证 (JWT)、深色/浅色模式和多语言支持。",
+                    "使用 ReactBit 增强 UI 以实现动态组件。",
+                    "使用 Docker 容器化项目。"
+                ]
+            },
+            "rakuten": {
+                "title": "Rakuten France",
+                "role": "全栈开发人员 (实习)",
+                "desc": [
+                    "迁移并优化过滤组件（每天 2.5 亿次导出）：配置时间从 2 分钟减少到 <30 秒。",
+                    "独立开发了两种新的产品表单导入支持（XML + JSON），促进了 250 多家合作伙伴的整合。",
+                    "在数据处理中集成 AI。",
+                    "前端从 React 15+ 迁移到 20+，JS 迁移到 TypeScript。",
+                    "独立开发自动化迁移工具（3周），确保数千条客户数据的完整性并减少人工错误。",
+                    "独立开发优惠券同步程序，确保数百万用户可见的促销活动的可靠性。",
+                    "执行单元测试和自动化测试以确保代码可靠性。",
+                    "遵循规格说明书和产品路线图，以确保交付物的合规性和按时交付。",
+                    "组织敏捷方法论中的汇报会议和每日站会。"
+                ]
+            },
+            "sorbonne": {
+                "title": "索邦大学 (电商项目)",
+                "role": "全栈开发人员",
+                "desc": [
+                    "试运行带有功能标志 (Feature Flags) 的协作网店应用程序。",
+                    "全栈开发（后端、前端、数据库）。",
+                    "自动化产品线 (Product Line) 变体生成。"
+                ]
+            },
+            "quichefs": {
+                "title": "Ouichefs 项目 (Linux 内核)",
+                "role": "系统开发人员",
+                "desc": [
+                    "为 Linux 内核开发改进的物理链接系统。",
+                    "实施 UUID、分区问链接和块迁移。"
+                ]
+            }
+        },
+        "edu": {
+            "master": "计算机硕士：分布式系统与应用",
+            "licence": "计算机学士：通用计算机科学"
+        },
+        "soft_skills_list": [
+            "自主性",
+            "严谨",
+            "良好的人际关系",
+            "综合能力",
+            "适应能力",
+            "动力",
+            "好奇心",
+            "团队精神"
+        ],
+        "languages_list": {
+            "zh": "中文 (母语)",
+            "en": "英语 (专业)",
+            "fr": "法语 (双语)"
+        },
+        "interests_list": [
+            "电子游戏",
+            "运动"
+        ]
     }
 }

@@ -12,27 +12,159 @@
         }
     },
     "hero": {
-        "title": "Magnifique",
-        "subtitle": "Le futur des interactions."
+        "title": "Changrui ZHANG",
+        "subtitle": "Façonner mon avenir, ligne par ligne."
     },
     "story": {
-        "title": "La gravité n'est qu'une suggestion.",
-        "description": "Découvrez un monde où les particules défient les lois de la physique, créant un environnement fluide et changeant qui réagit à votre présence."
+        "title": "Ma Philosophie",
+        "description": "Je transforme des lignes de code en expériences visuelles et interactives, fusionnant logique rigoureuse et créativité sans limite pour donner vie aux idées."
     },
     "features": {
         "velocity": {
-            "title": "Vélocité",
-            "description": "Propulsé par des modèles mathématiques avancés simulant des phénomènes naturels."
+            "title": "Rigueur",
+            "description": "Une attention méticuleuse aux détails, garantissant un code propre, performant et fiable."
         },
         "depth": {
-            "title": "Profondeur",
-            "description": "Des environnements 3D immersifs qui s'étendent au-delà des limites de l'écran."
+            "title": "Créativité",
+            "description": "Repousser les limites de l'interface utilisateur pour créer des expériences mémorables et intuitives."
         },
         "light": {
-            "title": "Lumière",
-            "description": "Un éclairage dynamique qui s'adapte instantanément à votre thème."
+            "title": "Ambition",
+            "description": "Une volonté constante d'apprendre et de maîtriser les technologies de demain."
         }
     },
     "signature": "Changrui ZHANG",
-    "footer": "© 2025 Changrui ZHANG. Tous droits réservés."
+    "gravity": {
+        "title": "Mon Labo",
+        "instruction": "ZONE D'EXPÉRIMENTATION -- MES COMPÉTENCES EN ACTION",
+        "keywords": [
+            "Java",
+            "Spring Boot",
+            "React",
+            "Docker",
+            "Linux",
+            "SQL",
+            "TypeScript",
+            "CI/CD",
+            "Créativité",
+            "Git",
+            "Redis",
+            "Jenkins",
+            "Agile",
+            "API",
+            "Cloud"
+        ]
+    },
+    "gallery": {
+        "nebula": {
+            "title": "JAVA / SPRING",
+            "description": "Architecture Robuste"
+        },
+        "cyber": {
+            "title": "REACT / VITE",
+            "description": "Interfaces Dynamiques"
+        },
+        "deep": {
+            "title": "DOCKER / CI/CD",
+            "description": "Déploiement Continu"
+        },
+        "aurora": {
+            "title": "SQL / NOSQL",
+            "description": "Gestion de Données"
+        },
+        "horizon": {
+            "title": "LINUX / OS",
+            "description": "Maîtrise Système"
+        }
+    },
+    "footer_section": {
+        "tagline": "Architecte de solutions numériques.",
+        "socials": "Réseaux",
+        "legal": "Légal",
+        "privacy": "Politique de Confidentialité",
+        "terms": "Conditions d'Utilisation",
+        "newsletter": "Newsletter",
+        "join": "Me Contacter",
+        "copyright": "© 2025 Changrui ZHANG. Tous droits réservés."
+    },
+    "cv": {
+        "role": "Développeur Fullstack",
+        "sections": {
+            "profile": "Profil",
+            "experience": "Expériences",
+            "skills": "Compétences",
+            "education": "Formation",
+            "soft_skills": "Savoir-être",
+            "languages": "Langues",
+            "interests": "Centres d'intérêt"
+        },
+        "profile_text": "Développeur back-end diplômé en Master Informatique (Sorbonne Université), expérimenté sur Spring Boot et ReactJS. Rigoureux, autonome et passionné par les défis techniques, je recherche un poste dans le développement back-end/fullstack. Je possède une carte de résident me permettant de travailler librement en France.",
+        "exp": {
+            "espace": {
+                "title": "Espace Web (Projet Personnel)",
+                "role": "Développeur Full Stack",
+                "desc": [
+                    "Développement autonome d'une application web personnelle full-stack.",
+                    "Intégration de l'authentification (JWT), des modes Sombre/Clair et du support multilingue.",
+                    "Amélioration de l'interface utilisateur avec ReactBit pour des composants dynamiques.",
+                    "Conteneurisation du projet avec Docker."
+                ]
+            },
+            "rakuten": {
+                "title": "Rakuten France",
+                "role": "Développeur Fullstack (Stage)",
+                "desc": [
+                    "Migrer et optimiser le composant de filtrage (250M exports/jour) : temps de configuration réduit de 2 min à <30 s.",
+                    "Développer en autonomie deux nouveaux supports d’import (XML + JSON) des fiches produits sur la plateforme, facilitant l’intégration de 250+ partenaires.",
+                    "Intégrer l’IA dans le traitement des données.",
+                    "Migrer de ReactJS 15+ vers 20+ et de JavaScript vers TypeScript.",
+                    "Développer en autonomie un outil de migration automatisée (3 semaines), garantissant l’intégrité de milliers de données clients et réduisant les erreurs manuelles.",
+                    "Développer en autonomie un programme de synchronisation des coupons de réduction, garantissant la fiabilité des promotions visibles par des millions d’utilisateurs.",
+                    "Réaliser des tests unitaires et automatisés pour garantir la fiabilité du code.",
+                    "Suivre les cahiers des charges et la roadmap produit afin de garantir la conformité des livrables et le respect des délais.",
+                    "Organiser des réunions de reporting et des meetings quotidiens en méthodologie Agile."
+                ]
+            },
+            "sorbonne": {
+                "title": "Sorbonne Université (E-commerce)",
+                "role": "Développeur Fullstack",
+                "desc": [
+                    "Pilotage d'une application e-shop collaborative avec feature flags.",
+                    "Développement full stack (Backend, Frontend, BD).",
+                    "Automatisation de la génération des variantes de gammes de produits."
+                ]
+            },
+            "quichefs": {
+                "title": "Projet Ouichefs (Noyau Linux)",
+                "role": "Développeur Système",
+                "desc": [
+                    "Développement d'un système de liens physiques amélioré pour le noyau Linux.",
+                    "Implémentation des UUIDs, des liens inter-partitions et de la migration de blocs."
+                ]
+            }
+        },
+        "edu": {
+            "master": "Master Informatique: Systèmes et Applications Répartis",
+            "licence": "Licence Informatique: Informatique Générale"
+        },
+        "soft_skills_list": [
+            "Autonomie",
+            "Rigueur",
+            "Bon relationnel",
+            "Esprit de synthèse",
+            "Capacité d’adaptation",
+            "Motivation",
+            "Curiosité",
+            "Esprit d’équipe"
+        ],
+        "languages_list": {
+            "zh": "Chinois (Maternel)",
+            "en": "Anglais (Professionnel)",
+            "fr": "Français (Bilingue)"
+        },
+        "interests_list": [
+            "Jeux vidéos",
+            "Sport"
+        ]
+    }
 }

@@ -7,7 +7,7 @@ interface GravityPlaygroundProps {
 }
 
 export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const sceneRef = useRef<HTMLDivElement>(null)
     const engineRef = useRef<Matter.Engine | null>(null)
 
@@ -56,14 +56,16 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
         const rightWall = Bodies.rectangle(width + 30, height / 2, 60, height, wallOptions);
 
         // Keywords to fall
-        const keywords = ["GRAVITY", "DESIGN", "CODE", "MOTION", "PHYSICS", "INTERACTION", "FUTURE", "ART"];
+        // Fetch keywords from translation, defaulting to English tech stack if fails
+        const keywordsData = t('gravity.keywords', { returnObjects: true });
+        const keywords: string[] = Array.isArray(keywordsData) ? (keywordsData as string[]) : ["GRAVITY", "CODE", "PHYSICS"];
 
         const bodies = keywords.map((word) => {
             const x = Math.random() * (width - 100) + 50;
             const y = -Math.random() * 500 - 50;
 
             // Approximate size based on word length
-            const w = word.length * 20 + 40;
+            const w = word.length * 15 + 60;
             const h = 60;
 
             return Bodies.rectangle(x, y, w, h, {
@@ -74,7 +76,7 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
                     text: {
                         content: word,
                         color: isDarkMode ? '#000' : '#fff',
-                        size: 20,
+                        size: 18,
                         family: 'Outfit, sans-serif'
                     }
                 }
@@ -101,13 +103,14 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
         // Custom render loop for text
         Matter.Events.on(render, "afterRender", function () {
             const context = render.context;
-            context.font = "bold 20px 'Outfit', sans-serif";
+            context.font = "bold 18px 'Outfit', sans-serif";
             context.textAlign = "center";
             context.textBaseline = "middle";
 
             bodies.forEach(body => {
                 const { x, y } = body.position;
                 const angle = body.angle;
+                // Extended Matter.Body definition hack or safe access
                 const content = body.render.text?.content;
                 const textColor = body.render.text?.color;
 
@@ -148,14 +151,13 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             Engine.clear(engine);
             render.canvas.remove();
         }
-    }, [isDarkMode]);
+    }, [isDarkMode, i18n.language]); // Re-run when language changes
 
     return (
         <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner" ref={sceneRef}>
             <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono ${isDarkMode ? 'text-white' : 'text-black'}`}>
                 {t('gravity.instruction')}
             </div>
-            {/* Canvas injected here */}
         </div>
     )
 }
