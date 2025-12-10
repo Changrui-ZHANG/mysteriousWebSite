@@ -11,6 +11,39 @@
             "zh": "中文"
         }
     },
+    "nav": {
+        "home": "HOME",
+        "cv": "CV",
+        "game": "ARCADE"
+    },
+    "game": {
+        "arcade_zone": "NEON ARCADE",
+        "choose_your_challenge": "Select a game to start playing",
+        "brick_breaker": "Brick Breaker",
+        "match3": "Match 3",
+        "score": "SCORE",
+        "start_game": "START GAME",
+        "game_over": "GAME OVER",
+        "you_win": "YOU WIN!",
+        "final_score": "Final Score",
+        "try_again": "TRY AGAIN",
+        "play_again": "PLAY AGAIN",
+        "reset": "RESET",
+        "loading": "Loading...",
+        "brick_breaker_desc": "Use your mouse to move the paddle.",
+        "match3_desc": "Swap adjacent tiles to match 3!",
+        "pokemon_quiz": "Pokemon Quiz"
+    },
+    "pokemon": {
+        "guess_prompt": "Who's that Pokemon?",
+        "guess": "GUESS",
+        "next": "NEXT POKEMON",
+        "correct": "✓ CORRECT!",
+        "wrong": "✗ Try again!",
+        "hint": "Hint",
+        "letters": "letters",
+        "answer": "Answer"
+    },
     "hero": {
         "title": "Changrui ZHANG",
         "subtitle": "Shaping my future, line by line."

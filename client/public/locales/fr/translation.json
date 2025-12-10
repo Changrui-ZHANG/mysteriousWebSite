@@ -11,6 +11,39 @@
             "zh": "中文"
         }
     },
+    "nav": {
+        "home": "ACCUEIL",
+        "cv": "CV",
+        "game": "ARCADE"
+    },
+    "game": {
+        "arcade_zone": "SALLE D'ARCADE",
+        "choose_your_challenge": "Choisissez un jeu pour commencer",
+        "brick_breaker": "Casse-Brique",
+        "match3": "Match 3",
+        "score": "SCORE",
+        "start_game": "COMMENCER",
+        "game_over": "GAME OVER",
+        "you_win": "GAGNÉ !",
+        "final_score": "Score Final",
+        "try_again": "RÉESSAYER",
+        "play_again": "REJOUER",
+        "reset": "RÉINITIALISER",
+        "loading": "Chargement...",
+        "brick_breaker_desc": "Utilisez la souris pour bouger la raquette.",
+        "match3_desc": "Échangez les tuiles pour en aligner 3 !",
+        "pokemon_quiz": "Quiz Pokémon"
+    },
+    "pokemon": {
+        "guess_prompt": "Qui est ce Pokémon ?",
+        "guess": "DEVINER",
+        "next": "POKÉMON SUIVANT",
+        "correct": "✓ CORRECT !",
+        "wrong": "✗ Réessayez !",
+        "hint": "Indice",
+        "letters": "lettres",
+        "answer": "Réponse"
+    },
     "hero": {
         "title": "Changrui ZHANG",
         "subtitle": "Façonner mon avenir, ligne par ligne."

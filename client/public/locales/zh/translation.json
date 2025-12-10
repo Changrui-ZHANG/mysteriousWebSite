@@ -11,6 +11,39 @@
             "zh": "中文"
         }
     },
+    "nav": {
+        "home": "主页",
+        "cv": "简历",
+        "game": "街机厅"
+    },
+    "game": {
+        "arcade_zone": "霓虹街机",
+        "choose_your_challenge": "选择一个游戏开始挑战",
+        "brick_breaker": "打砖块",
+        "match3": "三消游戏",
+        "score": "分数",
+        "start_game": "开始游戏",
+        "game_over": "游戏结束",
+        "you_win": "你赢了！",
+        "final_score": "最终得分",
+        "try_again": "再试一次",
+        "play_again": "再玩一次",
+        "reset": "重置",
+        "loading": "加载中...",
+        "brick_breaker_desc": "使用鼠标移动挡板。",
+        "match3_desc": "交换相邻方块以消除三个！",
+        "pokemon_quiz": "宝可梦问答"
+    },
+    "pokemon": {
+        "guess_prompt": "这是哪只宝可梦？",
+        "guess": "猜测",
+        "next": "下一只宝可梦",
+        "correct": "✓ 正确！",
+        "wrong": "✗ 再试一次！",
+        "hint": "提示",
+        "letters": "个字母",
+        "answer": "答案"
+    },
     "hero": {
         "title": "Changrui ZHANG",
         "subtitle": "逐行构建我的未来。"

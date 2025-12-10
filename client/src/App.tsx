@@ -7,6 +7,7 @@ import { LiquidDecoration } from './components/LiquidDecoration'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Home } from './components/Home'
 import { CV } from './components/CV'
+import { Game } from './components/Game'
 import './App.css'
 
 function AppContent() {
@@ -33,6 +34,7 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
+                    <Route path="/game" element={<Game isDarkMode={isDarkMode} />} />
                 </Routes>
             </div>
         </div>

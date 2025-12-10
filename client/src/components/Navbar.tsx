@@ -22,8 +22,9 @@ export function Navbar({ isDarkMode, toggleTheme }: NavbarProps) {
 
             <div className="flex items-center gap-6 font-mono text-sm">
                 <div className="flex gap-4 mr-4">
-                    <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
-                    <Link to="/cv" className="hover:text-cyan-400 transition-colors">CV</Link>
+                    <Link to="/" className="hover:text-cyan-400 transition-colors">{t('nav.home')}</Link>
+                    <Link to="/game" className="hover:text-cyan-400 transition-colors">{t('nav.game')}</Link>
+                    <Link to="/cv" className="hover:text-cyan-400 transition-colors">{t('nav.cv')}</Link>
                 </div>
 
                 <div className="flex gap-2 opacity-70">

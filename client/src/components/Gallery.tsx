@@ -1,10 +1,13 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FaJava, FaReact, FaDocker, FaDatabase, FaLinux } from 'react-icons/fa';
 
 interface GalleryProps {
     isDarkMode: boolean;
 }
 
 export function Gallery({ isDarkMode }: GalleryProps) {
+    const { t } = useTranslation();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: 'left' | 'right') => {
@@ -21,33 +24,38 @@ export function Gallery({ isDarkMode }: GalleryProps) {
     const artworks = [
         {
             id: 1,
-            title: "NEBULA ONE",
+            title: t('gallery.nebula.title'),
             gradient: "linear-gradient(135deg, #FF0080, #7928CA)",
-            description: "Digital Void"
+            description: t('gallery.nebula.description'),
+            icon: <FaJava className="text-9xl text-white/80 drop-shadow-lg group-hover:scale-110 transition-transform duration-500" />
         },
         {
             id: 2,
-            title: "CYBER DREAMS",
+            title: t('gallery.cyber.title'),
             gradient: "linear-gradient(45deg, #4158D0, #C850C0, #FFCC70)",
-            description: "Synthesized Memory"
+            description: t('gallery.cyber.description'),
+            icon: <FaReact className="text-9xl text-white/80 drop-shadow-lg group-hover:rotate-180 transition-transform duration-700" />
         },
         {
             id: 3,
-            title: "DEEP DIVE",
+            title: t('gallery.deep.title'),
             gradient: "linear-gradient(180deg, #0093E9, #80D0C7)",
-            description: "Oceanic Data"
+            description: t('gallery.deep.description'),
+            icon: <FaDocker className="text-9xl text-white/80 drop-shadow-lg group-hover:translate-x-4 transition-transform duration-500" />
         },
         {
             id: 4,
-            title: "AURORA",
+            title: t('gallery.aurora.title'),
             gradient: "linear-gradient(to right, #D4145A, #FBB03B)",
-            description: "Solar Wind"
+            description: t('gallery.aurora.description'),
+            icon: <FaDatabase className="text-9xl text-white/80 drop-shadow-lg group-hover:scale-90 transition-transform duration-500" />
         },
         {
             id: 5,
-            title: "HORIZON",
+            title: t('gallery.horizon.title'),
             gradient: "linear-gradient(to top, #00c6fb 0%, #005bea 100%)",
-            description: "Infinite Loop"
+            description: t('gallery.horizon.description'),
+            icon: <FaLinux className="text-9xl text-white/80 drop-shadow-lg group-hover:-translate-y-4 transition-transform duration-500" />
         }
     ];
 
@@ -101,6 +109,11 @@ export function Gallery({ isDarkMode }: GalleryProps) {
                         >
                             {/* Noise Overlay */}
                             <div className="absolute inset-0 opacity-20 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAACAgIBAQEAAAAAAAD///8AAAB3Rl2sAAAACHRSTlMA/////////wDuncYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAwSURBVDjLY2AYBaNgKL2BAQcwa6CBAAcw66CBAQcw66CBAQcw66CBAQcw66CBAQcAdxj01PO6c/cAAAAASUVORK5CYII=')]"></div>
+
+                            {/* Icon Center */}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                                {art.icon}
+                            </div>
 
                             {/* Shine Effect */}
                             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

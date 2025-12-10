@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ScrollSection } from './ScrollSection'
 import Lenis from '@studio-freight/lenis'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 
 import { GravityPlayground } from './GravityPlayground'
 import { Gallery } from './Gallery'
@@ -18,6 +19,7 @@ interface HomeProps {
 
 export function Home({ isDarkMode }: HomeProps) {
     const { t } = useTranslation();
+    const [isHovered, setIsHovered] = useState(false);
 
     // Smooth Scrolling Setup inside Home
     useEffect(() => {
@@ -114,9 +116,37 @@ export function Home({ isDarkMode }: HomeProps) {
 
             {/* SIGNATURE SECTION */}
             <ScrollSection>
-                <h2 className="text-9xl font-black font-heading bg-gradient-to-tr from-[#FF6B6B] to-[#4ECDC4] bg-clip-text text-transparent">
-                    {t('signature')}
-                </h2>
+                <div className="relative">
+                    <svg className="absolute w-0 h-0">
+                        <filter id="liquid-flow">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="warp">
+                                <animate attributeName="baseFrequency" dur="10s" values="0.01;0.005;0.01" repeatCount="indefinite" />
+                            </feTurbulence>
+                            <feDisplacementMap
+                                xChannelSelector="R"
+                                yChannelSelector="G"
+                                scale={isHovered ? 35 : 0}
+                                in="SourceGraphic"
+                                in2="warp"
+                            />
+                        </filter>
+                    </svg>
+
+                    <motion.h2
+                        className="text-6xl md:text-9xl font-black font-heading bg-gradient-to-r from-white/30 via-white/80 to-white/30 bg-clip-text text-transparent text-center p-4 bg-[length:200%_auto] transition-all duration-700"
+                        style={{
+                            filter: 'url(#liquid-flow) blur(0.5px)',
+                            WebkitTextStroke: '1px rgba(255,255,255,0.5)',
+                            textShadow: '0 0 15px rgba(255,255,255,0.3)'
+                        }}
+                        animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {t('signature')}
+                    </motion.h2>
+                </div>
             </ScrollSection>
 
             {/* MEGA FOOTER */}
