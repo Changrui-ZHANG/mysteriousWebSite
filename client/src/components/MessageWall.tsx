@@ -15,7 +15,7 @@ interface MessageWallProps {
     isDarkMode: boolean;
 }
 
-const API_URL = 'http://localhost:8080/api/messages';
+const API_URL = '/api/messages';
 
 export function MessageWall({ isDarkMode }: MessageWallProps) {
     const { t } = useTranslation();
@@ -161,7 +161,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     return (
         <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
             {/* Messages Area - Full Screen */}
-            <div className="flex-1 overflow-y-auto px-4 py-20">
+            <div className="flex-1 overflow-y-auto px-2 md:px-4 py-20">
                 <div className="max-w-4xl mx-auto flex flex-col gap-3">
                     <AnimatePresence>
                         {messages.length === 0 ? (
@@ -195,7 +195,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                         </div>
 
                                         {/* Message Bubble - Aligned on same line */}
-                                        <div className={`flex flex-col max-w-[70%]`}>
+                                        <div className={`flex flex-col max-w-[85%] md:max-w-[70%]`}>
                                             {/* Name & Time */}
                                             <div className={`flex items-center gap-2 text-xs opacity-50 mb-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
                                                 <span>{isOwn ? t('messages.you') : msg.name}</span>
@@ -210,7 +210,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                                     ? 'bg-white/10 rounded-tl-sm'
                                                     : 'bg-white rounded-tl-sm shadow-sm'
                                                 }`}>
-                                                <p className="text-sm whitespace-pre-wrap break-words">
+                                                <p className="text-base md:text-sm whitespace-pre-wrap break-words">
                                                     {msg.message}
                                                 </p>
 
@@ -265,7 +265,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                 onChange={(e) => setTempName(e.target.value)}
                                 placeholder={t('messages.name_placeholder')}
                                 maxLength={20}
-                                className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-sm w-28 ${isDarkMode
+                                className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-base md:text-sm w-28 ${isDarkMode
                                     ? 'bg-white/10 text-white placeholder-gray-400'
                                     : 'bg-gray-100 text-black placeholder-gray-500'
                                     }`}
