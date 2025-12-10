@@ -70,6 +70,12 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
             localStorage.setItem('messageWall_userId', userId);
         }
         setCurrentUserId(userId);
+
+        // Load admin status
+        const storedAdminStatus = localStorage.getItem('messageWall_isAdmin');
+        if (storedAdminStatus === 'true') {
+            setIsAdmin(true);
+        }
     }, []);
 
     // Load messages
@@ -215,8 +221,18 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     };
 
     const verifyAdminCode = () => {
-        if (adminCode === ADMIN_CODE) { setIsAdmin(true); setAdminCode(''); }
-        else { alert('Invalid admin code'); }
+        if (adminCode === ADMIN_CODE) {
+            setIsAdmin(true);
+            localStorage.setItem('messageWall_isAdmin', 'true');
+            setAdminCode('');
+        } else {
+            alert('Code admin incorrect / Invalid admin code / 管理员代码错误');
+        }
+    };
+
+    const logoutAdmin = () => {
+        setIsAdmin(false);
+        localStorage.removeItem('messageWall_isAdmin');
     };
 
     const clearAllMessages = async () => {
@@ -228,7 +244,11 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
 
     const isOwnMessage = (message: Message) => {
         const myId = user ? user.userId : currentUserId;
-        return message.userId === myId || isAdmin;
+        return message.userId === myId;
+    };
+
+    const canDeleteMessage = (message: Message) => {
+        return isOwnMessage(message) || isAdmin;
     };
 
     const formatTimestamp = (timestamp: number) => {
@@ -278,18 +298,24 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                             <div className={`flex items-center gap-2 text-xs opacity-50 mb-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
                                                 <span className="flex items-center gap-1">
                                                     {isOwn ? t('messages.you') : msg.name}
-                                                    {msg.isVerified && <FaCheckCircle className="text-blue-400" />}
+                                                    {msg.isVerified && <FaCheckCircle className={isDarkMode ? "text-cyan-400" : "text-blue-500"} />}
                                                 </span>
                                                 <span>·</span>
                                                 <span>{formatTimestamp(msg.timestamp)}</span>
                                             </div>
 
                                             <div className={`px-3 py-2 rounded-lg relative group ${isOwn
-                                                ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm'
-                                                : isDarkMode ? 'bg-white/10 rounded-tl-sm' : 'bg-white rounded-tl-sm shadow-sm'
+                                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm'
+                                                    : msg.isVerified
+                                                        ? isDarkMode
+                                                            ? 'bg-gradient-to-br from-cyan-900/30 to-blue-900/20 rounded-tl-sm border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
+                                                            : 'bg-gradient-to-br from-blue-50 to-white rounded-tl-sm border-2 border-blue-400/60 shadow-lg shadow-blue-500/30'
+                                                        : isDarkMode
+                                                            ? 'bg-white/10 rounded-tl-sm'
+                                                            : 'bg-white rounded-tl-sm shadow-sm'
                                                 }`}>
                                                 <p className="text-base md:text-sm whitespace-pre-wrap break-words">{msg.message}</p>
-                                                {isOwn && (
+                                                {canDeleteMessage(msg) && (
                                                     <button onClick={() => handleDelete(msg.id)} className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">×</button>
                                                 )}
                                             </div>
@@ -380,7 +406,14 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="mt-2 pt-2 border-t border-green-500/10">
                             {!isAdmin ? (
                                 <div className="flex gap-2">
-                                    <input type="password" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} placeholder={t('auth.admin_code')} className={`flex-1 px-3 py-1.5 rounded-lg border-0 text-xs ${isDarkMode ? 'bg-white/10 text-white' : 'bg-gray-100'}`} />
+                                    <input
+                                        type="password"
+                                        value={adminCode}
+                                        onChange={(e) => setAdminCode(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && verifyAdminCode()}
+                                        placeholder="Code admin"
+                                        className={`flex-1 px-3 py-1.5 rounded-lg border-0 text-xs ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
+                                    />
                                     <button onClick={verifyAdminCode} className="px-3 py-1.5 bg-green-500 hover:bg-green-400 rounded-lg text-white text-xs font-bold">✓</button>
                                 </div>
                             ) : (
@@ -389,7 +422,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                     <button onClick={toggleMute} className={`px-3 py-1.5 rounded-lg text-white text-xs ${isGlobalMute ? 'bg-orange-500' : 'bg-yellow-500'}`}>
                                         {isGlobalMute ? t('auth.unmute') : t('auth.mute')}
                                     </button>
-                                    <button onClick={() => setIsAdmin(false)} className="px-3 py-1.5 bg-gray-500 rounded-lg text-white text-xs">{t('auth.quit_admin')}</button>
+                                    <button onClick={logoutAdmin} className="px-3 py-1.5 bg-gray-500 rounded-lg text-white text-xs">{t('auth.quit_admin')}</button>
                                     <button onClick={clearAllMessages} className="ml-auto px-3 py-1.5 bg-red-500 rounded-lg text-white text-xs">{t('auth.clear_all')}</button>
                                 </div>
                             )}

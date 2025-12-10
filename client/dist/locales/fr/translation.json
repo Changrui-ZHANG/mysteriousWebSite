@@ -60,6 +60,26 @@
         "post_anonymously": "Publier anonymement",
         "you": "Vous"
     },
+    "auth": {
+        "login": "Se connecter",
+        "register": "S'inscrire",
+        "logout": "Déconnexion",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "create_account": "Créer un compte",
+        "no_account": "Pas de compte ?",
+        "has_account": "Vous avez déjà un compte ?",
+        "success_register": "Inscription réussie ! Veuillez vous connecter.",
+        "failed": "Échec de l'authentification",
+        "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
+        "admin_code": "Code Admin",
+        "admin_panel": "Panneau Admin",
+        "quit_admin": "Quitter Admin",
+        "clear_all": "Tout effacer",
+        "mute": "Couper le chat",
+        "unmute": "Réactiver le chat",
+        "muted": "Le chat est suspendu par l'admin"
+    },
     "hero": {
         "title": "Changrui ZHANG",
         "subtitle": "Façonner mon avenir, ligne par ligne."
