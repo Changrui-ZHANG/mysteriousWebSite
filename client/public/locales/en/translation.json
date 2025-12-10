@@ -60,6 +60,26 @@
         "post_anonymously": "Post anonymously",
         "you": "You"
     },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "username": "Username",
+        "password": "Password",
+        "create_account": "Create Account",
+        "no_account": "No account?",
+        "has_account": "Already have an account?",
+        "success_register": "Registration successful! Please login.",
+        "failed": "Authentication failed",
+        "confirm_logout": "Are you sure you want to logout?",
+        "admin_code": "Admin Code",
+        "admin_panel": "Admin Panel",
+        "quit_admin": "Quit Admin",
+        "clear_all": "Clear All",
+        "mute": "Mute Chat",
+        "unmute": "Unmute Chat",
+        "muted": "Chat is muted by admin"
+    },
     "hero": {
         "title": "Changrui ZHANG",
         "subtitle": "Shaping my future, line by line."

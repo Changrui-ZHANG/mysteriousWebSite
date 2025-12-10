@@ -46,8 +46,8 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     const [showNameInput, setShowNameInput] = useState(false);
     const [tempName, setTempName] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isGlobalMute, setIsGlobalMute] = useState(false);
 
-    // Admin code
     const ADMIN_CODE = 'Changrui';
 
     // Initialize User
@@ -82,6 +82,13 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     const fetchMessages = async () => {
         try {
             const response = await fetch(API_URL);
+
+            // Check mute header
+            const muteHeader = response.headers.get('X-System-Muted');
+            if (muteHeader !== null) {
+                setIsGlobalMute(muteHeader === 'true');
+            }
+
             if (response.ok) {
                 const data = await response.json();
                 if (Array.isArray(data)) {
@@ -92,6 +99,21 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
             }
         } catch (error) {
             console.error('Failed to fetch messages:', error);
+        }
+    };
+
+    const toggleMute = async () => {
+        try {
+            const response = await fetch(`${API_URL}/toggle-mute?adminCode=${ADMIN_CODE}`, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                fetchMessages();
+            } else {
+                alert('Mute toggle failed');
+            }
+        } catch (e) {
+            console.error(e);
         }
     };
 
@@ -121,11 +143,11 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                 } else {
                     // Switch to login after register
                     setAuthMode('login');
-                    setAuthSuccess('Registration successful! Please login.');
+                    setAuthSuccess(t('auth.success_register'));
                 }
             } else {
                 console.error('Auth error:', data);
-                setAuthError(data.message || JSON.stringify(data) || 'Authentication failed');
+                setAuthError(data.message || JSON.stringify(data) || t('auth.failed'));
             }
         } catch (error) {
             setAuthError('Network error');
@@ -133,7 +155,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     };
 
     const handleLogout = () => {
-        if (confirm('Logout?')) {
+        if (confirm(t('auth.confirm_logout'))) {
             setUser(null);
             localStorage.removeItem('messageWall_user');
         }
@@ -192,7 +214,6 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
         }
     };
 
-    // ... Admin logic (same as before) ...
     const verifyAdminCode = () => {
         if (adminCode === ADMIN_CODE) { setIsAdmin(true); setAdminCode(''); }
         else { alert('Invalid admin code'); }
@@ -283,21 +304,27 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
 
             {/* Input Area */}
             <div className={`border-t ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
-                <div className="max-w-4xl mx-auto p-3">
+                {isGlobalMute && !isAdmin && (
+                    <div className="bg-red-500/10 text-red-500 text-xs text-center py-1">
+                        {t('auth.muted')}
+                    </div>
+                )}
+                <div className={`max-w-4xl mx-auto p-3 ${isGlobalMute && !isAdmin ? 'opacity-50' : ''}`}>
                     <form onSubmit={handleSubmit} className="flex items-center gap-2">
                         {/* Auth / Identity Button */}
                         {user ? (
-                            <button type="button" onClick={handleLogout} className="p-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center gap-2" title="Logout">
-                                <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
+                            <button type="button" onClick={handleLogout} className={`p-2 rounded-lg flex items-center gap-2 ring-1 transition-all ${isDarkMode ? 'bg-red-500/10 ring-red-500/30 text-red-500 hover:bg-red-500/20' : 'bg-red-50 ring-red-200 text-red-600 hover:bg-red-100'}`} title={t('auth.logout')}>
+                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                                     {user.username.charAt(0).toUpperCase()}
                                 </div>
+                                <FaSignOutAlt className="w-4 h-4 opacity-70" />
                             </button>
                         ) : (
                             <button
                                 type="button"
                                 onClick={() => setShowAuthModal(true)}
                                 className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                title="Login / Register"
+                                title={t('auth.login')}
                             >
                                 <FaUser className="w-5 h-5" />
                             </button>
@@ -309,6 +336,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                 <button
                                     type="button"
                                     onClick={() => setShowNameInput(!showNameInput)}
+                                    disabled={isGlobalMute && !isAdmin}
                                     className={`p-2 rounded-lg transition-colors ${showNameInput ? 'bg-green-500 text-white' : isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'}`}
                                 >
                                     Aa
@@ -323,6 +351,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                         onChange={(e) => setTempName(e.target.value)}
                                         placeholder={t('messages.name_placeholder')}
                                         maxLength={20}
+                                        disabled={isGlobalMute && !isAdmin}
                                         className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-base md:text-sm w-28 ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
                                     />
                                 )}
@@ -333,12 +362,13 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder={t('messages.message_placeholder')}
+                            placeholder={isGlobalMute && !isAdmin ? t('auth.muted') : t('messages.message_placeholder')}
                             maxLength={200}
-                            className={`flex-1 px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
+                            disabled={isGlobalMute && !isAdmin}
+                            className={`flex-1 px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isGlobalMute && !isAdmin ? 'cursor-not-allowed' : ''}`}
                         />
 
-                        <button type="submit" disabled={!newMessage.trim() || loading} className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 disabled:opacity-30 rounded-lg text-white">
+                        <button type="submit" disabled={!newMessage.trim() || loading || (isGlobalMute && !isAdmin)} className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 disabled:opacity-30 rounded-lg text-white">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                         </button>
 
@@ -350,14 +380,17 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="mt-2 pt-2 border-t border-green-500/10">
                             {!isAdmin ? (
                                 <div className="flex gap-2">
-                                    <input type="password" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} placeholder="Code admin" className={`flex-1 px-3 py-1.5 rounded-lg border-0 text-xs ${isDarkMode ? 'bg-white/10 text-white' : 'bg-gray-100'}`} />
+                                    <input type="password" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} placeholder={t('auth.admin_code')} className={`flex-1 px-3 py-1.5 rounded-lg border-0 text-xs ${isDarkMode ? 'bg-white/10 text-white' : 'bg-gray-100'}`} />
                                     <button onClick={verifyAdminCode} className="px-3 py-1.5 bg-green-500 hover:bg-green-400 rounded-lg text-white text-xs font-bold">✓</button>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
                                     <span className="text-green-400 text-xs">✓ Admin</span>
-                                    <button onClick={() => setIsAdmin(false)} className="px-3 py-1.5 bg-gray-500 rounded-lg text-white text-xs">Quit</button>
-                                    <button onClick={clearAllMessages} className="ml-auto px-3 py-1.5 bg-red-500 rounded-lg text-white text-xs">Clear All</button>
+                                    <button onClick={toggleMute} className={`px-3 py-1.5 rounded-lg text-white text-xs ${isGlobalMute ? 'bg-orange-500' : 'bg-yellow-500'}`}>
+                                        {isGlobalMute ? t('auth.unmute') : t('auth.mute')}
+                                    </button>
+                                    <button onClick={() => setIsAdmin(false)} className="px-3 py-1.5 bg-gray-500 rounded-lg text-white text-xs">{t('auth.quit_admin')}</button>
+                                    <button onClick={clearAllMessages} className="ml-auto px-3 py-1.5 bg-red-500 rounded-lg text-white text-xs">{t('auth.clear_all')}</button>
                                 </div>
                             )}
                         </motion.div>
@@ -383,7 +416,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                             onClick={e => e.stopPropagation()}
                         >
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-bold">{authMode === 'login' ? 'Login' : 'Register'}</h2>
+                                <h2 className="text-xl font-bold">{authMode === 'login' ? t('auth.login') : t('auth.register')}</h2>
                                 <button onClick={() => setShowAuthModal(false)} className="opacity-50 hover:opacity-100"><FaTimes /></button>
                             </div>
 
@@ -393,7 +426,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
 
                                 <input
                                     type="text"
-                                    placeholder="Username"
+                                    placeholder={t('auth.username')}
                                     value={authUsername}
                                     onChange={e => setAuthUsername(e.target.value)}
                                     className={`px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-gray-100'}`}
@@ -401,7 +434,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                 />
                                 <input
                                     type="password"
-                                    placeholder="Password"
+                                    placeholder={t('auth.password')}
                                     value={authPassword}
                                     onChange={e => setAuthPassword(e.target.value)}
                                     className={`px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-gray-100'}`}
@@ -409,15 +442,15 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                 />
 
                                 <button type="submit" className="bg-green-500 text-white py-2 rounded-lg font-bold hover:bg-green-400 transition-colors">
-                                    {authMode === 'login' ? 'Login' : 'create Account'}
+                                    {authMode === 'login' ? t('auth.login') : t('auth.create_account')}
                                 </button>
                             </form>
 
                             <div className="mt-4 text-center text-sm opacity-70">
                                 {authMode === 'login' ? (
-                                    <p>No account? <button onClick={() => setAuthMode('register')} className="text-green-500 font-bold hover:underline">Register</button></p>
+                                    <p>{t('auth.no_account')} <button onClick={() => setAuthMode('register')} className="text-green-500 font-bold hover:underline">{t('auth.register')}</button></p>
                                 ) : (
-                                    <p>Has account? <button onClick={() => setAuthMode('login')} className="text-green-500 font-bold hover:underline">Login</button></p>
+                                    <p>{t('auth.has_account')} <button onClick={() => setAuthMode('login')} className="text-green-500 font-bold hover:underline">{t('auth.login')}</button></p>
                                 )}
                             </div>
                         </motion.div>

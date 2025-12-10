@@ -19,19 +19,36 @@ public class MessageController {
     private AppUserRepository appUserRepository;
 
     @GetMapping
-    public List<Message> getAllMessages() {
-        return messageService.getAllMessages();
+    public ResponseEntity<List<Message>> getAllMessages() {
+        return ResponseEntity.ok()
+                .header("X-System-Muted", String.valueOf(messageService.isMuted()))
+                .body(messageService.getAllMessages());
     }
 
     @PostMapping
-    public Message addMessage(@RequestBody Message message) {
+    public ResponseEntity<?> addMessage(@RequestBody Message message) {
+        if (messageService.isMuted() && !message.getName().equals("Admin")) { // Simple check, ideally check admin
+                                                                              // status securely
+            return ResponseEntity.status(403).body("Chat is muted by admin");
+        }
+
         // Verify if the user exists in the database
         if (appUserRepository.existsById(message.getUserId())) {
             message.setVerified(true);
         } else {
             message.setVerified(false);
         }
-        return messageService.addMessage(message);
+        return ResponseEntity.ok(messageService.addMessage(message));
+    }
+
+    @PostMapping("/toggle-mute")
+    public ResponseEntity<?> toggleMute(@RequestParam String adminCode) {
+        if ("Changrui".equals(adminCode)) {
+            boolean newState = !messageService.isMuted();
+            messageService.setMuted(newState);
+            return ResponseEntity.ok(Map.of("message", "Mute verified: " + newState, "isMuted", newState));
+        }
+        return ResponseEntity.status(401).body(Map.of("message", "Invalid admin code"));
     }
 
     @DeleteMapping("/{id}")

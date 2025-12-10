@@ -35,6 +35,16 @@ public class MessageService {
         messageRepository.deleteById(id);
     }
 
+    private boolean isMuted = false;
+
+    public boolean isMuted() {
+        return isMuted;
+    }
+
+    public void setMuted(boolean muted) {
+        isMuted = muted;
+    }
+
     public void clearAllMessages() {
         messageRepository.deleteAll();
     }
