@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "messages")
@@ -21,20 +22,27 @@ public class Message {
     @Column(nullable = false)
     private long timestamp;
 
-    @Column(name = "is_anonymous", nullable = false)
+    @JsonProperty("isAnonymous")
+    @Column(name = "is_anonymous", nullable = false, columnDefinition = "boolean default false")
     private boolean isAnonymous;
+
+    @JsonProperty("isVerified")
+    @Column(name = "is_verified", nullable = false, columnDefinition = "boolean default false")
+    private boolean isVerified;
 
     // Constructors
     public Message() {
     }
 
-    public Message(String id, String userId, String name, String message, long timestamp, boolean isAnonymous) {
+    public Message(String id, String userId, String name, String message, long timestamp, boolean isAnonymous,
+            boolean isVerified) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.message = message;
         this.timestamp = timestamp;
         this.isAnonymous = isAnonymous;
+        this.isVerified = isVerified;
     }
 
     // Getters and Setters
@@ -84,5 +92,13 @@ public class Message {
 
     public void setAnonymous(boolean anonymous) {
         isAnonymous = anonymous;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }

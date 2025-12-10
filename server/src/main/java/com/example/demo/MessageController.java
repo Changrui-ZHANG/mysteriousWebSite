@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost"})
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost" })
 @RequestMapping("/api/messages")
 public class MessageController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @GetMapping
     public List<Message> getAllMessages() {
@@ -22,6 +25,12 @@ public class MessageController {
 
     @PostMapping
     public Message addMessage(@RequestBody Message message) {
+        // Verify if the user exists in the database
+        if (appUserRepository.existsById(message.getUserId())) {
+            message.setVerified(true);
+        } else {
+            message.setVerified(false);
+        }
         return messageService.addMessage(message);
     }
 
