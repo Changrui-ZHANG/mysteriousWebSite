@@ -1,6 +1,8 @@
 {
     "navbar": {
-        "title": "Magnificent",
+        "title": "Welcome",
+        "arcade_title": "Arcade Games",
+        "messages_title": "Message Wall",
         "theme": {
             "light": "Light Mode",
             "dark": "Dark Mode"
@@ -14,7 +16,8 @@
     "nav": {
         "home": "HOME",
         "cv": "CV",
-        "game": "ARCADE"
+        "game": "ARCADE",
+        "messages": "MESSAGES"
     },
     "game": {
         "arcade_zone": "NEON ARCADE",
@@ -43,6 +46,19 @@
         "hint": "Hint",
         "letters": "letters",
         "answer": "Answer"
+    },
+    "messages": {
+        "title": "Message Wall",
+        "subtitle": "Leave your mark",
+        "name_placeholder": "Your name",
+        "message_placeholder": "Your message...",
+        "submit": "POST MESSAGE",
+        "empty": "No messages yet. Be the first!",
+        "delete": "Delete",
+        "just_now": "Just now",
+        "anonymous": "Anonymous",
+        "post_anonymously": "Post anonymously",
+        "you": "You"
     },
     "hero": {
         "title": "Changrui ZHANG",

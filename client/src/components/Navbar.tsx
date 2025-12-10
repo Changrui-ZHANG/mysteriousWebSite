@@ -17,14 +17,21 @@ export function Navbar({ isDarkMode, toggleTheme }: NavbarProps) {
     return (
         <nav className={`fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 mix-blend-difference text-white`}>
             <Link to="/" className="text-2xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity">
-                {location.pathname === '/cv' ? 'Curriculum vitæ' : t('navbar.title')}
+                {location.pathname === '/cv'
+                    ? 'Curriculum vitæ'
+                    : location.pathname === '/game'
+                        ? t('navbar.arcade_title')
+                        : location.pathname === '/messages'
+                            ? t('navbar.messages_title')
+                            : t('navbar.title')}
             </Link>
 
             <div className="flex items-center gap-6 font-mono text-sm">
                 <div className="flex gap-4 mr-4">
                     <Link to="/" className="hover:text-cyan-400 transition-colors">{t('nav.home')}</Link>
-                    <Link to="/game" className="hover:text-cyan-400 transition-colors">{t('nav.game')}</Link>
                     <Link to="/cv" className="hover:text-cyan-400 transition-colors">{t('nav.cv')}</Link>
+                    <Link to="/game" className="hover:text-cyan-400 transition-colors">{t('nav.game')}</Link>
+                    <Link to="/messages" className="hover:text-cyan-400 transition-colors">{t('nav.messages')}</Link>
                 </div>
 
                 <div className="flex gap-2 opacity-70">

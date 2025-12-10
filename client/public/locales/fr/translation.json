@@ -1,6 +1,8 @@
 {
     "navbar": {
-        "title": "Magnifique",
+        "title": "Bienvenu",
+        "arcade_title": "Jeux d'Arcade",
+        "messages_title": "Mur de Messages",
         "theme": {
             "light": "Mode Clair",
             "dark": "Mode Sombre"
@@ -14,7 +16,8 @@
     "nav": {
         "home": "ACCUEIL",
         "cv": "CV",
-        "game": "ARCADE"
+        "game": "ARCADE",
+        "messages": "MESSAGES"
     },
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
@@ -43,6 +46,19 @@
         "hint": "Indice",
         "letters": "lettres",
         "answer": "Réponse"
+    },
+    "messages": {
+        "title": "Mur de Messages",
+        "subtitle": "Laissez votre empreinte",
+        "name_placeholder": "Votre nom",
+        "message_placeholder": "Votre message...",
+        "submit": "PUBLIER",
+        "empty": "Aucun message pour le moment. Soyez le premier !",
+        "delete": "Supprimer",
+        "just_now": "À l'instant",
+        "anonymous": "Anonyme",
+        "post_anonymously": "Publier anonymement",
+        "you": "Vous"
     },
     "hero": {
         "title": "Changrui ZHANG",

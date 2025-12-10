@@ -8,6 +8,7 @@ import { ScrollProgress } from './components/ScrollProgress'
 import { Home } from './components/Home'
 import { CV } from './components/CV'
 import { Game } from './components/Game'
+import { MessageWall } from './components/MessageWall'
 import './App.css'
 
 function AppContent() {
@@ -35,6 +36,7 @@ function AppContent() {
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
                     <Route path="/game" element={<Game isDarkMode={isDarkMode} />} />
+                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} />} />
                 </Routes>
             </div>
         </div>

@@ -1,6 +1,8 @@
 {
     "navbar": {
-        "title": "宏伟",
+        "title": "欢迎",
+        "arcade_title": "街机游戏",
+        "messages_title": "留言墙",
         "theme": {
             "light": "亮色模式",
             "dark": "暗色模式"
@@ -14,7 +16,8 @@
     "nav": {
         "home": "主页",
         "cv": "简历",
-        "game": "街机厅"
+        "game": "街机厅",
+        "messages": "留言"
     },
     "game": {
         "arcade_zone": "霓虹街机",
@@ -43,6 +46,19 @@
         "hint": "提示",
         "letters": "个字母",
         "answer": "答案"
+    },
+    "messages": {
+        "title": "留言墙",
+        "subtitle": "留下你的足迹",
+        "name_placeholder": "你的名字",
+        "message_placeholder": "你的留言...",
+        "submit": "发布留言",
+        "empty": "还没有留言。成为第一个！",
+        "delete": "删除",
+        "just_now": "刚刚",
+        "anonymous": "匿名",
+        "post_anonymously": "匿名发布",
+        "you": "你"
     },
     "hero": {
         "title": "Changrui ZHANG",
