@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class OnlineUserService {
@@ -13,7 +14,7 @@ public class OnlineUserService {
     @Autowired
     private OnlineUserRepository onlineUserRepository;
 
-    private boolean showOnlineCountToAll = false;
+    private AtomicBoolean showOnlineCountToAll = new AtomicBoolean(false);
 
     @Transactional
     public void updateHeartbeat(String userId) {
@@ -40,10 +41,10 @@ public class OnlineUserService {
     }
 
     public boolean isShowOnlineCountToAll() {
-        return showOnlineCountToAll;
+        return showOnlineCountToAll.get();
     }
 
     public void toggleShowOnlineCountToAll() {
-        this.showOnlineCountToAll = !this.showOnlineCountToAll;
+        showOnlineCountToAll.set(!showOnlineCountToAll.get());
     }
 }

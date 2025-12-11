@@ -47,6 +47,8 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     const [tempName, setTempName] = useState('');
     const [loading, setLoading] = useState(false);
     const [isGlobalMute, setIsGlobalMute] = useState(false);
+    const [onlineCount, setOnlineCount] = useState(0);
+    const [showOnlineCountToAll, setShowOnlineCountToAll] = useState(false);
 
     const ADMIN_CODE = 'Changrui';
 
@@ -82,6 +84,52 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     useEffect(() => {
         fetchMessages();
         const interval = setInterval(fetchMessages, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Send heartbeat to track online presence
+    useEffect(() => {
+        const sendHeartbeat = async () => {
+            const userId = user ? user.userId : currentUserId;
+            if (userId) {
+                try {
+                    await fetch('/api/presence/heartbeat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId })
+                    });
+                } catch (error) {
+                    console.error('Failed to send heartbeat:', error);
+                }
+            }
+        };
+
+        sendHeartbeat(); // Send immediately
+        const interval = setInterval(sendHeartbeat, 10000); // Every 10 seconds
+        return () => clearInterval(interval);
+    }, [currentUserId, user]);
+
+    // Fetch online count
+    const fetchOnlineCount = async () => {
+        try {
+            const response = await fetch('/api/presence/count', {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            const data = await response.json();
+            setOnlineCount(data.count);
+            setShowOnlineCountToAll(data.showToAll);
+        } catch (error) {
+            console.error('Failed to fetch online count:', error);
+        }
+    };
+
+    // Fetch online count
+    useEffect(() => {
+        fetchOnlineCount();
+        const interval = setInterval(fetchOnlineCount, 5000); // Every 5 seconds
         return () => clearInterval(interval);
     }, []);
 
@@ -242,6 +290,18 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
         }
     };
 
+    const toggleOnlineCountVisibility = async () => {
+        try {
+            const response = await fetch(`/api/presence/toggle-visibility?adminCode=${ADMIN_CODE}`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            setShowOnlineCountToAll(data.showToAll);
+        } catch (error) {
+            console.error('Failed to toggle visibility:', error);
+        }
+    };
+
     const isOwnMessage = (message: Message) => {
         const myId = user ? user.userId : currentUserId;
         return message.userId === myId;
@@ -266,9 +326,20 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     };
 
     return (
-        <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+        <div className={`h-screen overflow-hidden flex flex-col relative pt-24 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+            {/* Online Count Indicator */}
+            {(showOnlineCountToAll || isAdmin) && (
+                <div className="fixed top-24 right-4 z-40 transition-opacity duration-300 pointer-events-none">
+                    <span className={`text-xs px-3 py-1.5 rounded-full font-medium shadow-sm flex items-center gap-2 pointer-events-auto ${isDarkMode ? 'bg-white/10 text-cyan-300 backdrop-blur-md border border-white/5' : 'bg-white text-blue-600 shadow-md'
+                        }`}>
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        {onlineCount} online
+                    </span>
+                </div>
+            )}
+
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto px-2 md:px-4 py-20">
+            <div className="flex-1 overflow-y-auto px-2 md:px-4 pb-20">
                 <div className="max-w-4xl mx-auto flex flex-col gap-3">
                     <AnimatePresence>
                         {(!Array.isArray(messages) || messages.length === 0) ? (
@@ -305,14 +376,16 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                             </div>
 
                                             <div className={`px-3 py-2 rounded-lg relative group ${isOwn
-                                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm'
-                                                    : msg.isVerified
-                                                        ? isDarkMode
-                                                            ? 'bg-gradient-to-br from-cyan-900/30 to-blue-900/20 rounded-tl-sm border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
-                                                            : 'bg-gradient-to-br from-blue-50 to-white rounded-tl-sm border-2 border-blue-400/60 shadow-lg shadow-blue-500/30'
-                                                        : isDarkMode
-                                                            ? 'bg-white/10 rounded-tl-sm'
-                                                            : 'bg-white rounded-tl-sm shadow-sm'
+                                                ? msg.isVerified
+                                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm border-2 border-emerald-300/50 shadow-lg shadow-green-500/20'
+                                                    : 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm'
+                                                : msg.isVerified
+                                                    ? isDarkMode
+                                                        ? 'bg-gradient-to-br from-cyan-900/30 to-blue-900/20 rounded-tl-sm border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
+                                                        : 'bg-gradient-to-br from-blue-50 to-white rounded-tl-sm border-2 border-blue-400/60 shadow-lg shadow-blue-500/30'
+                                                    : isDarkMode
+                                                        ? 'bg-white/10 rounded-tl-sm'
+                                                        : 'bg-white rounded-tl-sm shadow-sm'
                                                 }`}>
                                                 <p className="text-base md:text-sm whitespace-pre-wrap break-words">{msg.message}</p>
                                                 {canDeleteMessage(msg) && (
@@ -418,10 +491,38 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    <span className="text-green-400 text-xs">✓ Admin</span>
+                                    <span className="text-green-400 text-xs font-bold">✓ Admin</span>
+
+                                    <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
+
+                                    <div className="flex items-center gap-1">
+                                        <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                                            👥 {onlineCount}
+                                        </span>
+                                        <button
+                                            onClick={fetchOnlineCount}
+                                            className={`px-2 py-1.5 rounded-lg text-white text-xs ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-500 hover:bg-gray-600'}`}
+                                            title="Refresh count"
+                                        >
+                                            🔄
+                                        </button>
+                                        <button
+                                            onClick={toggleOnlineCountVisibility}
+                                            className={`px-3 py-1.5 rounded-lg text-white text-xs ${showOnlineCountToAll ? 'bg-blue-500' : 'bg-gray-600'}`}
+                                            title={showOnlineCountToAll ? "Hide count from users" : "Show count to users"}
+                                        >
+                                            {showOnlineCountToAll ? '👁️' : '👁️‍🗨️'}
+                                        </button>
+                                    </div>
+
+                                    <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
+
                                     <button onClick={toggleMute} className={`px-3 py-1.5 rounded-lg text-white text-xs ${isGlobalMute ? 'bg-orange-500' : 'bg-yellow-500'}`}>
                                         {isGlobalMute ? t('auth.unmute') : t('auth.mute')}
                                     </button>
+
+                                    <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
+
                                     <button onClick={logoutAdmin} className="px-3 py-1.5 bg-gray-500 rounded-lg text-white text-xs">{t('auth.quit_admin')}</button>
                                     <button onClick={clearAllMessages} className="ml-auto px-3 py-1.5 bg-red-500 rounded-lg text-white text-xs">{t('auth.clear_all')}</button>
                                 </div>
