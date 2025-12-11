@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001" })
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
+        "http://changrui.freeboxos.fr:3001" })
 @RequestMapping("/api/messages")
 public class MessageController {
 

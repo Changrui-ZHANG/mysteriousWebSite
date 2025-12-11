@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 @RestController
-@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001" })
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
+        "http://changrui.freeboxos.fr:3001" })
 public class VisualController {
 
     @GetMapping("/api/status")
