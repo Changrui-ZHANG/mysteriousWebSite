@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
-        "http://changrui.freeboxos.fr:3001" })
+        "http://changrui.freeboxos.fr:3001", "http://changrui.freeboxos.fr", "http://changrui.freeboxos.fr:5173" })
 @RequestMapping("/api/messages")
 public class MessageController {
 
