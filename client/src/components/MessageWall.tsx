@@ -468,7 +468,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                         placeholder={t('messages.name_placeholder')}
                                         maxLength={20}
                                         disabled={isGlobalMute && !isAdmin}
-                                        className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-base md:text-sm w-28 ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
+                                        className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-base md:text-sm w-20 md:w-28 ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
                                     />
                                 )}
                             </>
