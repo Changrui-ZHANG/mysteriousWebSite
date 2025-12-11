@@ -41,7 +41,7 @@ export function Home({ isDarkMode }: HomeProps) {
             {/* HERRO SECTION */}
             <section className="h-screen flex flex-col items-center justify-center">
                 <div className="text-center mb-8">
-                    <h1 className={`text-8xl m-0 font-heading font-extrabold tracking-tighter ${isDarkMode ? 'drop-shadow-[0_0_40px_rgba(0,0,0,0.5)]' : ''}`}>
+                    <h1 className={`text-5xl md:text-8xl m-0 font-heading font-extrabold tracking-tighter ${isDarkMode ? 'drop-shadow-[0_0_40px_rgba(0,0,0,0.5)]' : ''}`}>
                         {t('hero.title')}
                     </h1>
                     <p className="text-2xl opacity-80 font-serif italic mt-4">
@@ -56,12 +56,12 @@ export function Home({ isDarkMode }: HomeProps) {
 
             {/* MANIFESTO SECTION - STAGGERED REVEAL */}
             <ScrollSection>
-                <h2 className="text-6xl max-w-4xl text-center font-bold font-heading mx-auto">
+                <h2 className="text-4xl md:text-6xl max-w-4xl text-center font-bold font-heading mx-auto">
                     {t('story.title')}
                 </h2>
                 <div className="max-w-2xl mx-auto mt-8 text-center">
                     <TextReveal
-                        className="flex flex-wrap justify-center text-3xl leading-relaxed opacity-90 font-serif"
+                        className="flex flex-wrap justify-center text-xl md:text-3xl leading-relaxed opacity-90 font-serif"
                     >
                         {t('story.description')}
                     </TextReveal>
@@ -70,8 +70,8 @@ export function Home({ isDarkMode }: HomeProps) {
 
             {/* FEATURES SECTION - 3D TILT CARDS */}
             <ScrollSection>
-                <div className="flex gap-12 items-center flex-wrap justify-center">
-                    <div className="w-[320px] h-[420px]">
+                <div className="flex gap-12 items-center flex-wrap justify-center px-4">
+                    <div className="w-full max-w-[320px] h-[420px]">
                         <TiltCard isDarkMode={isDarkMode} style={{ height: '100%' }}>
                             <h3 className="text-4xl mb-4 font-heading">{t('features.velocity.title')}</h3>
                             <div className="w-[50px] h-[5px] bg-cyan-400 mb-6"></div>
@@ -79,7 +79,7 @@ export function Home({ isDarkMode }: HomeProps) {
                         </TiltCard>
                     </div>
 
-                    <div className="w-[320px] h-[420px] mt-16">
+                    <div className="w-full max-w-[320px] h-[420px] mt-8 md:mt-16">
                         <TiltCard isDarkMode={isDarkMode} style={{ height: '100%' }}>
                             <h3 className="text-4xl mb-4 font-heading">{t('features.depth.title')}</h3>
                             <div className="w-[50px] h-[5px] bg-fuchsia-500 mb-6"></div>
@@ -87,7 +87,7 @@ export function Home({ isDarkMode }: HomeProps) {
                         </TiltCard>
                     </div>
 
-                    <div className="w-[320px] h-[420px]">
+                    <div className="w-full max-w-[320px] h-[420px]">
                         <TiltCard isDarkMode={isDarkMode} style={{ height: '100%' }}>
                             <h3 className="text-4xl mb-4 font-heading">{t('features.light.title')}</h3>
                             <div className="w-[50px] h-[5px] bg-yellow-400 mb-6"></div>
@@ -100,7 +100,7 @@ export function Home({ isDarkMode }: HomeProps) {
             {/* GRAVITY PLAYGROUND MINI-GAME */}
             <ScrollSection>
                 <div className="w-full h-screen flex flex-col justify-center px-4">
-                    <h2 className="text-6xl md:text-8xl text-center mb-12 font-heading font-bold bg-gradient-to-b from-current to-transparent bg-clip-text text-transparent opacity-80">
+                    <h2 className="text-4xl md:text-8xl text-center mb-12 font-heading font-bold bg-gradient-to-b from-current to-transparent bg-clip-text text-transparent opacity-80">
                         {t('gravity.title')}
                     </h2>
                     <GravityPlayground isDarkMode={isDarkMode} />
@@ -133,7 +133,7 @@ export function Home({ isDarkMode }: HomeProps) {
                     </svg>
 
                     <motion.h2
-                        className="text-6xl md:text-9xl font-black font-heading bg-gradient-to-r from-white/30 via-white/80 to-white/30 bg-clip-text text-transparent text-center p-4 bg-[length:200%_auto] transition-all duration-700"
+                        className="text-5xl md:text-9xl font-black font-heading bg-gradient-to-r from-white/30 via-white/80 to-white/30 bg-clip-text text-transparent text-center p-4 bg-[length:200%_auto] transition-all duration-700"
                         style={{
                             filter: 'url(#liquid-flow) blur(0.5px)',
                             WebkitTextStroke: '1px rgba(255,255,255,0.5)',

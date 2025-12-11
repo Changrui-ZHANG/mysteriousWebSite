@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheckCircle, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
 import UserManagement from './UserManagement';
+import { ScrollProgress } from './ScrollProgress';
 
 interface Message {
     id: string;
@@ -342,8 +343,11 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
         return name.charAt(0).toUpperCase();
     };
 
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
     return (
-        <div className={`h-screen overflow-hidden flex flex-col relative pt-24 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+        <div className={`fixed inset-0 overflow-hidden flex flex-col pt-24 overscroll-none ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+            <ScrollProgress isDarkMode={isDarkMode} target={scrollContainerRef} />
             {/* Online Count Indicator */}
             {(showOnlineCountToAll || isAdmin) && (
                 <div className="fixed top-24 right-4 z-40 transition-opacity duration-300 pointer-events-none">
@@ -356,7 +360,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
             )}
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto px-2 md:px-4 pb-20">
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-2 md:px-4 pb-20">
                 <div className="max-w-4xl mx-auto flex flex-col gap-3">
                     <AnimatePresence>
                         {(!Array.isArray(messages) || messages.length === 0) ? (
@@ -419,14 +423,14 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
             </div>
 
             {/* Input Area */}
-            <div className={`border-t ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
+            <div className={`border-t pb-[env(safe-area-inset-bottom)] ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
                 {isGlobalMute && !isAdmin && (
                     <div className="bg-red-500/10 text-red-500 text-xs text-center py-1">
                         {t('auth.muted')}
                     </div>
                 )}
                 <div className={`max-w-4xl mx-auto p-3 ${isGlobalMute && !isAdmin ? 'opacity-50' : ''}`}>
-                    <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                    <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
                         {/* Auth / Identity Button */}
                         {user ? (
                             <button type="button" onClick={handleLogout} className={`p-2 rounded-lg flex items-center gap-2 ring-1 transition-all ${isDarkMode ? 'bg-red-500/10 ring-red-500/30 text-red-500 hover:bg-red-500/20' : 'bg-red-50 ring-red-200 text-red-600 hover:bg-red-100'}`} title={t('auth.logout')}>
@@ -481,7 +485,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                             placeholder={isGlobalMute && !isAdmin ? t('auth.muted') : t('messages.message_placeholder')}
                             maxLength={200}
                             disabled={isGlobalMute && !isAdmin}
-                            className={`flex-1 px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isGlobalMute && !isAdmin ? 'cursor-not-allowed' : ''}`}
+                            className={`flex-1 min-w-[120px] px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isGlobalMute && !isAdmin ? 'cursor-not-allowed' : ''}`}
                         />
 
                         <button type="submit" disabled={!newMessage.trim() || loading || (isGlobalMute && !isAdmin)} className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 disabled:opacity-30 rounded-lg text-white">

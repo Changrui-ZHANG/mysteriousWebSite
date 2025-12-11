@@ -160,7 +160,22 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
         };
 
         const handleMouseMove = (e: MouseEvent) => {
-            const relativeX = e.clientX - canvas.getBoundingClientRect().left;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const relativeX = (e.clientX - rect.left) * scaleX;
+
+            if (relativeX > 0 && relativeX < canvas.width) {
+                paddleX = relativeX - paddleWidth / 2;
+            }
+        };
+
+        const handleTouchMove = (e: TouchEvent) => {
+            e.preventDefault(); // Prevent scrolling while playing
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const relativeX = (touch.clientX - rect.left) * scaleX;
+
             if (relativeX > 0 && relativeX < canvas.width) {
                 paddleX = relativeX - paddleWidth / 2;
             }
@@ -169,6 +184,7 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
         if (gameState === 'playing') {
             draw();
             document.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
         } else {
             // Initial draw for start screen
             drawBall();
@@ -179,6 +195,7 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
         return () => {
             cancelAnimationFrame(animationFrameId);
             document.removeEventListener('mousemove', handleMouseMove);
+            canvas.removeEventListener('touchmove', handleTouchMove);
         };
     }, [gameState, isDarkMode]);
 
@@ -192,17 +209,17 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
                 ref={canvasRef}
                 width={800}
                 height={500}
-                className="w-full h-full object-contain cursor-none"
+                className="w-full h-full object-contain cursor-none touch-action-none"
             />
 
             {gameState !== 'playing' && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-10 p-8 text-center">
                     {gameState === 'start' && (
                         <>
-                            <h2 className="text-5xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-6">
+                            <h2 className="text-3xl md:text-5xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4 md:mb-6">
                                 {t('game.brick_breaker')}
                             </h2>
-                            <p className="text-white/80 mb-8 font-serif text-xl">{t('game.brick_breaker_desc')}</p>
+                            <p className="text-white/80 mb-6 md:mb-8 font-serif text-base md:text-xl">{t('game.brick_breaker_desc')}</p>
                             <button
                                 onClick={() => { setScore(0); setGameState('playing'); }}
                                 className="px-8 py-3 bg-cyan-500 text-black font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(6,182,212,0.6)]"
@@ -213,8 +230,8 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
                     )}
                     {gameState === 'gameover' && (
                         <>
-                            <h2 className="text-6xl font-black font-heading text-red-500 mb-4">{t('game.game_over')}</h2>
-                            <p className="text-white/80 mb-8 font-mono text-2xl">{t('game.final_score')}: {score}</p>
+                            <h2 className="text-4xl md:text-6xl font-black font-heading text-red-500 mb-4">{t('game.game_over')}</h2>
+                            <p className="text-white/80 mb-6 md:mb-8 font-mono text-lg md:text-2xl">{t('game.final_score')}: {score}</p>
                             <button
                                 onClick={() => { setScore(0); setGameState('playing'); }}
                                 className="px-8 py-3 bg-red-500 text-white font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(239,68,68,0.6)]"
@@ -225,8 +242,8 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
                     )}
                     {gameState === 'won' && (
                         <>
-                            <h2 className="text-6xl font-black font-heading text-green-400 mb-4">{t('game.you_win')}</h2>
-                            <p className="text-white/80 mb-8 font-mono text-2xl">{t('game.final_score')}: {score}</p>
+                            <h2 className="text-4xl md:text-6xl font-black font-heading text-green-400 mb-4">{t('game.you_win')}</h2>
+                            <p className="text-white/80 mb-6 md:mb-8 font-mono text-lg md:text-2xl">{t('game.final_score')}: {score}</p>
                             <button
                                 onClick={() => { setScore(0); setGameState('playing'); }}
                                 className="px-8 py-3 bg-green-500 text-black font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(34,197,94,0.6)]"

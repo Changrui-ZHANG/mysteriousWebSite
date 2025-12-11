@@ -13,14 +13,13 @@ export function ScrollSection({ children, className }: ScrollSectionProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, margin: "-20%" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className={className}
+            className={`${className} p-4 md:p-16`}
             style={{
                 minHeight: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: '4rem',
                 boxSizing: 'border-box'
             }}
         >

@@ -8,7 +8,7 @@ interface VisualEffectProps {
 }
 
 function FlowParticles({ isDarkMode }: { isDarkMode: boolean }) {
-    const count = 2000; // Reduced from 5000 for a cleaner look
+    const count = 1000; // Reduced for performance optimization
     const mesh = useRef<THREE.Points>(null!);
 
     // Generate random initial positions and "speed" attributes
@@ -45,15 +45,15 @@ function FlowParticles({ isDarkMode }: { isDarkMode: boolean }) {
                 let cy = currentPositions[i3 + 1];
                 let cz = currentPositions[i3 + 2];
 
-                // Simplified Flow Field Math: 
-                // Slower time factor (0.2 instead of 0.5)
-                // Lower amplitude (0.005 instead of 0.01)
-                const flowX = Math.sin(time * 0.2 + cy * 0.3) * 0.005;
-                const flowY = Math.cos(time * 0.1 + cx * 0.3) * 0.005;
-                const flowZ = Math.sin(time * 0.1 + cz * 0.3) * 0.002;
+                // Constant flow based on position only, not time
+                // This creates a fixed "wind" tunnel effect rather than a changing weather system
+                const flowX = Math.sin(cy * 0.5) * 0.002;
+                const flowY = Math.cos(cx * 0.5) * 0.002;
+                const flowZ = Math.sin(cx * 0.5) * 0.001;
 
-                // Apply movement - Much slower base speed
-                cx += (0.002 + speeds[i] * 0.005) + flowX;
+                // Apply constant movement
+                // Base speed is now dominant and constant per particle
+                cx += (0.003 + speeds[i] * 0.002) + flowX;
                 cy += flowY;
                 cz += flowZ;
 

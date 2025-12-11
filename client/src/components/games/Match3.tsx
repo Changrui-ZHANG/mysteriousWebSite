@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const WIDTH = 8;
@@ -38,59 +38,85 @@ export default function Match3({ isDarkMode }: Match3Props) {
 
     // Check for matches
     const checkForMatches = () => {
+        const newBoard = [...board];
+        let matchFound = false;
+
         // Rows
         for (let i = 0; i < 64; i++) {
             const rowOfThree = [i, i + 1, i + 2];
-            const decidedColor = board[i];
-            const isBlank = board[i] === '';
+            const decidedColor = newBoard[i];
+            const isBlank = newBoard[i] === '';
 
-            if (rowOfThree.every(square => board[square] === decidedColor && !isBlank)) {
+            if (rowOfThree.every(square => newBoard[square] === decidedColor && !isBlank)) {
                 if ((i + 2) % WIDTH < (i % WIDTH)) continue; // Wrap around check
 
-                rowOfThree.forEach(square => board[square] = '');
-                setScore(prev => prev + 3);
-                return true;
+                rowOfThree.forEach(square => newBoard[square] = '');
+                matchFound = true;
             }
         }
+
         // Columns
         for (let i = 0; i < 47; i++) {
             const columnOfThree = [i, i + WIDTH, i + WIDTH * 2];
-            const decidedColor = board[i];
-            const isBlank = board[i] === '';
+            const decidedColor = newBoard[i];
+            const isBlank = newBoard[i] === '';
 
-            if (columnOfThree.every(square => board[square] === decidedColor && !isBlank)) {
-                columnOfThree.forEach(square => board[square] = '');
-                setScore(prev => prev + 3);
-                return true;
+            if (columnOfThree.every(square => newBoard[square] === decidedColor && !isBlank)) {
+                columnOfThree.forEach(square => newBoard[square] = '');
+                matchFound = true;
             }
+        }
+
+        if (matchFound) {
+            setScore(prev => prev + 3);
+            setBoard(newBoard);
+            return true;
         }
         return false;
     };
 
     // Move candies down
     const moveIntoSquareBelow = () => {
+        const newBoard = [...board];
+        let moved = false;
+
         for (let i = 0; i < 64 - WIDTH; i++) {
             const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
             const isFirstRow = firstRow.includes(i);
 
-            if (isFirstRow && board[i] === '') {
+            if (isFirstRow && newBoard[i] === '') {
                 const randomNumber = Math.floor(Math.random() * CANDY_COLORS.length);
-                board[i] = CANDY_COLORS[randomNumber];
+                newBoard[i] = CANDY_COLORS[randomNumber];
+                moved = true;
             }
 
-            if (board[i + WIDTH] === '') {
-                board[i + WIDTH] = board[i];
-                board[i] = '';
+            if (newBoard[i + WIDTH] === '') {
+                newBoard[i + WIDTH] = newBoard[i];
+                newBoard[i] = '';
+                moved = true;
             }
+        }
+
+        // Ensure top row is filled if empty
+        for (let i = 0; i < WIDTH; i++) {
+            if (newBoard[i] === '') {
+                const randomNumber = Math.floor(Math.random() * CANDY_COLORS.length);
+                newBoard[i] = CANDY_COLORS[randomNumber];
+                moved = true;
+            }
+        }
+
+        if (moved) {
+            setBoard(newBoard);
         }
     };
 
     // Game loop
     useEffect(() => {
         const timer = setInterval(() => {
-            checkForMatches();
+            // Prioritize falling over matching to avoid flickering
             moveIntoSquareBelow();
-            setBoard([...board]);
+            checkForMatches();
         }, 100);
         return () => clearInterval(timer);
     }, [board]);
@@ -113,8 +139,11 @@ export default function Match3({ isDarkMode }: Match3Props) {
 
             if (isAdjacent) {
                 const newBoard = [...board];
-                newBoard[firstIndex] = board[secondIndex];
-                newBoard[secondIndex] = board[firstIndex];
+                // Simple swap for strings
+                const temp = newBoard[firstIndex];
+                newBoard[firstIndex] = newBoard[secondIndex];
+                newBoard[secondIndex] = temp;
+
                 setBoard(newBoard);
                 setSelectedCandies([]);
             } else {
@@ -130,28 +159,30 @@ export default function Match3({ isDarkMode }: Match3Props) {
     }
 
     return (
-        <div className={`w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black/80' : 'bg-white/80'}`}>
-            <div className="absolute top-4 flex justify-between w-full px-8">
+        <div className={`w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} p-4`}>
+            <div className="w-full flex justify-between items-center px-4 mb-4 md:px-8">
                 <div className="text-xl font-bold font-mono text-fuchsia-400">{t('game.score')}: {score}</div>
-                <button onClick={resetGame} className="text-sm font-bold text-white/50 hover:text-white">{t('game.reset')}</button>
+                <button onClick={resetGame} className="text-sm font-bold text-white/50 hover:text-white bg-white/10 px-3 py-1 rounded-full">{t('game.reset')}</button>
             </div>
 
-            <div className="grid grid-cols-8 gap-1 p-4 bg-black/40 rounded-lg">
-                {board.map((candyColor, index) => (
-                    <motion.div
-                        key={index}
-                        layout
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        className={`w-10 h-10 rounded-lg cursor-pointer shadow-lg ${candyColor} ${selectedCandies.includes(index) ? 'ring-4 ring-white' : ''}`}
-                        onClick={() => handleClick(index)}
-                        style={{
-                            boxShadow: `0 0 10px ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`
-                        }}
-                    >
-                    </motion.div>
-                ))}
+            <div className="w-full max-w-[400px] grid grid-cols-8 gap-0.5 md:gap-1 p-2 md:p-4 bg-black/40 rounded-lg mx-auto">
+                <AnimatePresence initial={false}>
+                    {board.map((candyColor, index) => (
+                        <motion.div
+                            key={index}
+                            layout
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            className={`w-full aspect-square rounded-md md:rounded-lg cursor-pointer shadow-lg ${candyColor} ${selectedCandies.includes(index) ? 'ring-2 md:ring-4 ring-white' : ''}`}
+                            onClick={() => handleClick(index)}
+                            style={{
+                                boxShadow: `0 0 10px ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`
+                            }}
+                        >
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </div>
 
             <p className="mt-4 text-white/60 text-sm">{t('game.match3_desc')}</p>

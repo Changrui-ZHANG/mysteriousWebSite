@@ -22,7 +22,7 @@ export function Game({ isDarkMode }: GameProps) {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <h1 className="text-5xl md:text-7xl font-black font-heading mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                    <h1 className="text-4xl md:text-7xl font-black font-heading mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
                         {t('game.arcade_zone')}
                     </h1>
                     <p className="text-xl opacity-70 font-serif italic">
@@ -31,10 +31,10 @@ export function Game({ isDarkMode }: GameProps) {
                 </motion.div>
 
                 {/* Game Selector Tabs */}
-                <div className="flex justify-center gap-8 mb-12">
+                <div className="flex justify-center gap-4 md:gap-8 mb-12 flex-wrap">
                     <button
                         onClick={() => setActiveGame('brick')}
-                        className={`px-8 py-3 rounded-full text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'brick'
+                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'brick'
                             ? 'bg-cyan-500 text-black shadow-[0_0_20px_rgba(6,182,212,0.5)]'
                             : 'bg-white/10 hover:bg-white/20'
                             }`}
@@ -43,7 +43,7 @@ export function Game({ isDarkMode }: GameProps) {
                     </button>
                     <button
                         onClick={() => setActiveGame('match3')}
-                        className={`px-8 py-3 rounded-full text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'match3'
+                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'match3'
                             ? 'bg-fuchsia-500 text-black shadow-[0_0_20px_rgba(217,70,239,0.5)]'
                             : 'bg-white/10 hover:bg-white/20'
                             }`}
@@ -52,7 +52,7 @@ export function Game({ isDarkMode }: GameProps) {
                     </button>
                     <button
                         onClick={() => setActiveGame('pokemon')}
-                        className={`px-8 py-3 rounded-full text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'pokemon'
+                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'pokemon'
                             ? 'bg-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.5)]'
                             : 'bg-white/10 hover:bg-white/20'
                             }`}
@@ -62,7 +62,7 @@ export function Game({ isDarkMode }: GameProps) {
                 </div>
 
                 {/* Game Container */}
-                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : 'aspect-video'}`}>
+                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeGame}

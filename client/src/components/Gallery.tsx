@@ -27,35 +27,35 @@ export function Gallery({ isDarkMode }: GalleryProps) {
             title: t('gallery.nebula.title'),
             gradient: "linear-gradient(135deg, #FF0080, #7928CA)",
             description: t('gallery.nebula.description'),
-            icon: <FaJava className="text-9xl text-white/80 drop-shadow-lg group-hover:scale-110 transition-transform duration-500" />
+            icon: <FaJava className="text-6xl md:text-9xl text-white/80 drop-shadow-lg group-hover:scale-110 transition-transform duration-500" />
         },
         {
             id: 2,
             title: t('gallery.cyber.title'),
             gradient: "linear-gradient(45deg, #4158D0, #C850C0, #FFCC70)",
             description: t('gallery.cyber.description'),
-            icon: <FaReact className="text-9xl text-white/80 drop-shadow-lg group-hover:rotate-180 transition-transform duration-700" />
+            icon: <FaReact className="text-6xl md:text-9xl text-white/80 drop-shadow-lg group-hover:rotate-180 transition-transform duration-700" />
         },
         {
             id: 3,
             title: t('gallery.deep.title'),
             gradient: "linear-gradient(180deg, #0093E9, #80D0C7)",
             description: t('gallery.deep.description'),
-            icon: <FaDocker className="text-9xl text-white/80 drop-shadow-lg group-hover:translate-x-4 transition-transform duration-500" />
+            icon: <FaDocker className="text-6xl md:text-9xl text-white/80 drop-shadow-lg group-hover:translate-x-4 transition-transform duration-500" />
         },
         {
             id: 4,
             title: t('gallery.aurora.title'),
             gradient: "linear-gradient(to right, #D4145A, #FBB03B)",
             description: t('gallery.aurora.description'),
-            icon: <FaDatabase className="text-9xl text-white/80 drop-shadow-lg group-hover:scale-90 transition-transform duration-500" />
+            icon: <FaDatabase className="text-6xl md:text-9xl text-white/80 drop-shadow-lg group-hover:scale-90 transition-transform duration-500" />
         },
         {
             id: 5,
             title: t('gallery.horizon.title'),
             gradient: "linear-gradient(to top, #00c6fb 0%, #005bea 100%)",
             description: t('gallery.horizon.description'),
-            icon: <FaLinux className="text-9xl text-white/80 drop-shadow-lg group-hover:-translate-y-4 transition-transform duration-500" />
+            icon: <FaLinux className="text-6xl md:text-9xl text-white/80 drop-shadow-lg group-hover:-translate-y-4 transition-transform duration-500" />
         }
     ];
 
@@ -89,7 +89,7 @@ export function Gallery({ isDarkMode }: GalleryProps) {
             {/* Gallery Container */}
             <div
                 ref={scrollRef}
-                className="w-full overflow-x-auto pb-12 pt-4 px-16 flex gap-8 snap-x snap-mandatory scrollbar-hide"
+                className="w-full overflow-x-auto pb-12 pt-4 px-4 md:px-16 flex gap-4 md:gap-8 snap-x snap-mandatory scrollbar-hide"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hide scrollbar specifically
             >
                 <style>{`
@@ -99,10 +99,10 @@ export function Gallery({ isDarkMode }: GalleryProps) {
                 `}</style>
 
                 {artworks.map((art) => (
-                    <div key={art.id} className="relative group shrink-0 snap-center">
+                    <div key={art.id} className="relative group shrink-0 snap-center first:pl-2 last:pr-2">
                         {/* Art Container */}
                         <div
-                            className={`w-[450px] h-[600px] rounded-2xl overflow-hidden transition-transform duration-500 group-hover:scale-[1.02] ${isDarkMode ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)]' : 'shadow-2xl'}`}
+                            className={`w-[85vw] h-[50vh] md:w-[450px] md:h-[600px] rounded-2xl overflow-hidden transition-transform duration-500 group-hover:scale-[1.02] ${isDarkMode ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)]' : 'shadow-2xl'}`}
                             style={{
                                 background: art.gradient,
                             }}

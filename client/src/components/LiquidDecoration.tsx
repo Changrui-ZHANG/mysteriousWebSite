@@ -21,6 +21,8 @@ export function LiquidDecoration({ className = "", size = "w-96 h-96", delay = 0
                     ? 'inset 0 0 40px rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.5)'
                     : 'inset 0 0 40px rgba(255,255,255,0.8), 0 20px 40px rgba(0,0,0,0.1)',
                 border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.4)',
+                willChange: 'transform, border-radius',
+                transform: 'translateZ(0)', // Force GPU acceleration
             }}
             animate={{
                 borderRadius: [

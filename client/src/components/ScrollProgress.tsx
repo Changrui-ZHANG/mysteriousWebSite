@@ -1,8 +1,8 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
-export function ScrollProgress({ isDarkMode }: { isDarkMode: boolean }) {
-    const { scrollYProgress } = useScroll()
+export function ScrollProgress({ isDarkMode, target }: { isDarkMode: boolean; target?: React.RefObject<HTMLElement> }) {
+    const { scrollYProgress } = useScroll({ container: target })
     const scaleY = useSpring(scrollYProgress, {
         stiffness: 100,
         damping: 30,

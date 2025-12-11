@@ -38,8 +38,8 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
                 width,
                 height,
                 background: 'transparent',
-                wireframes: false,
-                pixelRatio: window.devicePixelRatio
+                wireframes: false
+                // pixelRatio removed to fix coordinate mismatch on resize
             }
         });
 
@@ -64,9 +64,13 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             const x = Math.random() * (width - 100) + 50;
             const y = -Math.random() * 500 - 50;
 
-            // Approximate size based on word length
-            const w = word.length * 15 + 60;
-            const h = 60;
+            // Dynamic sizing based on screen width
+            const isMobile = width < 768;
+            const scaleFactor = isMobile ? 0.6 : 1;
+
+            // Approximate size based on word length, scaled for mobile
+            const w = (word.length * 15 + 60) * scaleFactor;
+            const h = 60 * scaleFactor;
 
             return Bodies.rectangle(x, y, w, h, {
                 restitution: 0.8,
@@ -76,7 +80,7 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
                     text: {
                         content: word,
                         color: isDarkMode ? '#000' : '#fff',
-                        size: 18,
+                        size: 18 * scaleFactor,
                         family: 'Outfit, sans-serif'
                     }
                 }
@@ -103,7 +107,9 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
         // Custom render loop for text
         Matter.Events.on(render, "afterRender", function () {
             const context = render.context;
-            context.font = "bold 18px 'Outfit', sans-serif";
+            const isMobile = render.canvas.width < 768;
+            const fontSize = isMobile ? 12 : 18;
+            context.font = `bold ${fontSize}px 'Outfit', sans-serif`;
             context.textAlign = "center";
             context.textBaseline = "middle";
 
@@ -154,7 +160,7 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
     }, [isDarkMode, i18n.language]); // Re-run when language changes
 
     return (
-        <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner" ref={sceneRef}>
+        <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner touch-action-none" ref={sceneRef}>
             <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono ${isDarkMode ? 'text-white' : 'text-black'}`}>
                 {t('gravity.instruction')}
             </div>
