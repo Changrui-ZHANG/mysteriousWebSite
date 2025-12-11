@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
 import { Preloader } from './components/Preloader'
@@ -11,17 +11,48 @@ import { Game } from './components/Game'
 import { MessageWall } from './components/MessageWall'
 import './App.css'
 
+interface User {
+    userId: string;
+    username: string;
+}
+
 function AppContent() {
     const [isDarkMode, setIsDarkMode] = useState(true)
     const toggleTheme = () => setIsDarkMode(!isDarkMode)
     const location = useLocation()
+
+    // Global Auth State
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('messageWall_user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    const handleLogin = (newUser: User) => {
+        setUser(newUser);
+        localStorage.setItem('messageWall_user', JSON.stringify(newUser));
+    };
+
+    const handleLogout = () => {
+        setUser(null);
+        localStorage.removeItem('messageWall_user');
+    };
 
     return (
         <div className={`relative min-h-screen transition-colors duration-500 font-body ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
             <Preloader />
             {location.pathname !== '/messages' && <ScrollProgress isDarkMode={isDarkMode} />}
 
-            <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+            <Navbar
+                isDarkMode={isDarkMode}
+                toggleTheme={toggleTheme}
+                user={user}
+                onLogin={handleLogin}
+                onLogout={handleLogout}
+            />
 
             {/* Shared Background - Only on Home and CV */}
             {(location.pathname === '/' || location.pathname === '/cv') && (
@@ -38,8 +69,8 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
-                    <Route path="/game" element={<Game isDarkMode={isDarkMode} />} />
-                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} />} />
+                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} />} />
+                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} />} />
                 </Routes>
             </div>
         </div>

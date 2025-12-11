@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaSignOutAlt } from 'react-icons/fa';
+// removed unused icons and auth modal
 import BrickBreaker from './games/BrickBreaker';
 import Match3 from './games/Match3';
 import PokemonGame from './games/PokemonGame';
-import AuthModal from './AuthModal';
 import Leaderboard from './Leaderboard';
 
 interface GameProps {
     isDarkMode: boolean;
+    user?: User | null;
 }
 
 interface User {
@@ -17,23 +17,15 @@ interface User {
     username: string;
 }
 
-export function Game({ isDarkMode }: GameProps) {
+export function Game({ isDarkMode, user }: GameProps) {
     const { t } = useTranslation();
     const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon'>('brick');
 
-    // Auth State
-    const [user, setUser] = useState<User | null>(null);
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    // Stats State
     const [personalBest, setPersonalBest] = useState<{ score: number, attempts?: number } | null>(null);
     const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
 
-    useEffect(() => {
-        // Load stored user
-        const storedUser = localStorage.getItem('messageWall_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
+    // Removed local user state loading effect, rely on prop
 
     useEffect(() => {
         const fetchPersonalBest = async () => {
@@ -58,18 +50,6 @@ export function Game({ isDarkMode }: GameProps) {
         };
         fetchPersonalBest();
     }, [user, activeGame, refreshLeaderboard]);
-
-    const handleLoginSuccess = (user: User) => {
-        setUser(user);
-        localStorage.setItem('messageWall_user', JSON.stringify(user));
-    };
-
-    const handleLogout = () => {
-        if (confirm(t('auth.confirm_logout'))) {
-            setUser(null);
-            localStorage.removeItem('messageWall_user');
-        }
-    };
 
     const submitScore = async (score: number, attempts?: number) => {
         if (!user) {
@@ -102,15 +82,9 @@ export function Game({ isDarkMode }: GameProps) {
 
     return (
         <div className={`min-h-screen pt-24 pb-12 px-4 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-                onLoginSuccess={handleLoginSuccess}
-                isDarkMode={isDarkMode}
-            />
 
             <div className="max-w-7xl mx-auto">
-                {/* Header & Auth */}
+                {/* Header */}
                 <div className="flex justify-between items-start mb-8 relative">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -126,28 +100,7 @@ export function Game({ isDarkMode }: GameProps) {
                     </motion.div>
 
                     {/* Auth Button (Absolute Top Right) */}
-                    <div className="absolute right-0 top-0">
-                        {user ? (
-                            <button
-                                onClick={handleLogout}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-black/5 hover:bg-black/10'}`}
-                            >
-                                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs">
-                                    {user.username.charAt(0).toUpperCase()}
-                                </span>
-                                <span className="hidden md:inline">{user.username}</span>
-                                <FaSignOutAlt className="opacity-50" />
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => setShowAuthModal(true)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${isDarkMode ? 'bg-green-600 hover:bg-green-500 text-white' : 'bg-green-500 hover:bg-green-600 text-white'}`}
-                            >
-                                <FaUser />
-                                <span>{t('auth.login')}</span>
-                            </button>
-                        )}
-                    </div>
+
                 </div>
 
                 <div className="mb-12">

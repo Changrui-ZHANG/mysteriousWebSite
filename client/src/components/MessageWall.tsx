@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
+import { FaCheckCircle } from 'react-icons/fa';
 import UserManagement from './UserManagement';
 import { ScrollProgress } from './ScrollProgress';
 
@@ -22,25 +22,19 @@ interface User {
 
 interface MessageWallProps {
     isDarkMode: boolean;
+    user?: User | null;
 }
 
 const API_URL = '/api/messages';
-const AUTH_URL = '/api/auth';
+// Removed AUTH_URL since we don't auth here anymore
 
-export function MessageWall({ isDarkMode }: MessageWallProps) {
+export function MessageWall({ isDarkMode, user }: MessageWallProps) {
     const { t } = useTranslation();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [currentUserId, setCurrentUserId] = useState('');
 
-    // Auth State
-    const [user, setUser] = useState<User | null>(null);
-    const [showAuthModal, setShowAuthModal] = useState(false);
-    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-    const [authUsername, setAuthUsername] = useState('');
-    const [authPassword, setAuthPassword] = useState('');
-    const [authError, setAuthError] = useState('');
-    const [authSuccess, setAuthSuccess] = useState('');
+    // Removed local Auth State (authMode, authUsername, authPassword, etc.)
 
     const [adminCode, setAdminCode] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
@@ -59,16 +53,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
 
     // Initialize User
     useEffect(() => {
-        try {
-            // Load stored user
-            const storedUser = localStorage.getItem('messageWall_user');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            }
-        } catch (e) {
-            console.error("Failed to parse user from local storage", e);
-            localStorage.removeItem('messageWall_user');
-        }
+        // Removed local storage user loading - relies on prop
 
         // Load or create device ID (for anonymous users)
         let userId = localStorage.getItem('messageWall_userId');
@@ -181,49 +166,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
         }
     };
 
-    const handleAuth = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setAuthError('');
-        setAuthSuccess('');
-
-        try {
-            const endpoint = authMode === 'login' ? '/login' : '/register';
-            const response = await fetch(`${AUTH_URL}${endpoint}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: authUsername, password: authPassword })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                if (authMode === 'login') {
-                    const loggedInUser = { userId: data.userId, username: data.username };
-                    setUser(loggedInUser);
-                    localStorage.setItem('messageWall_user', JSON.stringify(loggedInUser));
-                    setShowAuthModal(false);
-                    setAuthUsername('');
-                    setAuthPassword('');
-                } else {
-                    // Switch to login after register
-                    setAuthMode('login');
-                    setAuthSuccess(t('auth.success_register'));
-                }
-            } else {
-                console.error('Auth error:', data);
-                setAuthError(data.message || JSON.stringify(data) || t('auth.failed'));
-            }
-        } catch (error) {
-            setAuthError('Network error');
-        }
-    };
-
-    const handleLogout = () => {
-        if (confirm(t('auth.confirm_logout'))) {
-            setUser(null);
-            localStorage.removeItem('messageWall_user');
-        }
-    };
+    // Removed handleAuth and handleLogout
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -278,6 +221,8 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
         }
     };
 
+    // Admin & Helper Functions
+
     const verifyAdminCode = () => {
         if (adminCode === SUPER_ADMIN_CODE) {
             setIsSuperAdmin(true);
@@ -290,7 +235,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
             localStorage.setItem('messageWall_isAdmin', 'true');
             setAdminCode('');
         } else {
-            alert('Code admin incorrect / Invalid admin code / 管理员代码错误');
+            alert(t('admin.invalid_code') || 'Invalid admin code');
         }
     };
 
@@ -302,7 +247,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     };
 
     const clearAllMessages = async () => {
-        if (confirm('Delete all messages?')) {
+        if (confirm(t('admin.confirm_clear') || 'Delete all messages?')) {
             await fetch(`${API_URL}/clear?adminCode=${ADMIN_CODE}`, { method: 'POST' });
             fetchMessages();
         }
@@ -431,24 +376,14 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                 )}
                 <div className={`max-w-4xl mx-auto p-3 ${isGlobalMute && !isAdmin ? 'opacity-50' : ''}`}>
                     <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
-                        {/* Auth / Identity Button */}
+                        {/* Auth / Identity Display */}
                         {user ? (
-                            <button type="button" onClick={handleLogout} className={`p-2 rounded-lg flex items-center gap-2 ring-1 transition-all ${isDarkMode ? 'bg-red-500/10 ring-red-500/30 text-red-500 hover:bg-red-500/20' : 'bg-red-50 ring-red-200 text-red-600 hover:bg-red-100'}`} title={t('auth.logout')}>
+                            <div className={`p-2 rounded-lg flex items-center gap-2 ring-1 transition-all ${isDarkMode ? 'bg-green-500/10 ring-green-500/30 text-green-500' : 'bg-green-50 ring-green-200 text-green-600'}`}>
                                 <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                                     {user.username.charAt(0).toUpperCase()}
                                 </div>
-                                <FaSignOutAlt className="w-4 h-4 opacity-70" />
-                            </button>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={() => setShowAuthModal(true)}
-                                className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                title={t('auth.login')}
-                            >
-                                <FaUser className="w-5 h-5" />
-                            </button>
-                        )}
+                            </div>
+                        ) : null}
 
                         {/* Manual Name Input (Only if not logged in) */}
                         {!user && (
@@ -572,66 +507,7 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                 superAdminCode={SUPER_ADMIN_CODE}
                 isDarkMode={isDarkMode}
             />
-
-            {/* Auth Modal */}
-            <AnimatePresence>
-                {showAuthModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-                        onClick={() => setShowAuthModal(false)}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            className={`w-full max-w-sm p-6 rounded-2xl shadow-xl ${isDarkMode ? 'bg-gray-900 border border-white/10' : 'bg-white'}`}
-                            onClick={e => e.stopPropagation()}
-                        >
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-bold">{authMode === 'login' ? t('auth.login') : t('auth.register')}</h2>
-                                <button onClick={() => setShowAuthModal(false)} className="opacity-50 hover:opacity-100"><FaTimes /></button>
-                            </div>
-
-                            <form onSubmit={handleAuth} className="flex flex-col gap-4">
-                                {authError && <div className="text-red-500 text-sm bg-red-500/10 p-2 rounded">{authError}</div>}
-                                {authSuccess && <div className="text-green-500 text-sm bg-green-500/10 p-2 rounded">{authSuccess}</div>}
-
-                                <input
-                                    type="text"
-                                    placeholder={t('auth.username')}
-                                    value={authUsername}
-                                    onChange={e => setAuthUsername(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-gray-100'}`}
-                                    required
-                                />
-                                <input
-                                    type="password"
-                                    placeholder={t('auth.password')}
-                                    value={authPassword}
-                                    onChange={e => setAuthPassword(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-gray-100'}`}
-                                    required
-                                />
-
-                                <button type="submit" className="bg-green-500 text-white py-2 rounded-lg font-bold hover:bg-green-400 transition-colors">
-                                    {authMode === 'login' ? t('auth.login') : t('auth.create_account')}
-                                </button>
-                            </form>
-
-                            <div className="mt-4 text-center text-sm opacity-70">
-                                {authMode === 'login' ? (
-                                    <p>{t('auth.no_account')} <button onClick={() => setAuthMode('register')} className="text-green-500 font-bold hover:underline">{t('auth.register')}</button></p>
-                                ) : (
-                                    <p>{t('auth.has_account')} <button onClick={() => setAuthMode('login')} className="text-green-500 font-bold hover:underline">{t('auth.login')}</button></p>
-                                )}
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 }
+
