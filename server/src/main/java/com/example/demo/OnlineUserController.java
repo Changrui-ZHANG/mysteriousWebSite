@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001" })
 @RequestMapping("/api/presence")
 public class OnlineUserController {
 
