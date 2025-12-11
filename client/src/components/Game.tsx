@@ -1,34 +1,127 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FaUser, FaSignOutAlt } from 'react-icons/fa';
 import BrickBreaker from './games/BrickBreaker';
 import Match3 from './games/Match3';
 import PokemonGame from './games/PokemonGame';
+import AuthModal from './AuthModal';
+import Leaderboard from './Leaderboard';
 
 interface GameProps {
     isDarkMode: boolean;
+}
+
+interface User {
+    userId: string;
+    username: string;
 }
 
 export function Game({ isDarkMode }: GameProps) {
     const { t } = useTranslation();
     const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon'>('brick');
 
+    // Auth State
+    const [user, setUser] = useState<User | null>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
+
+    useEffect(() => {
+        // Load stored user
+        const storedUser = localStorage.getItem('messageWall_user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    const handleLoginSuccess = (user: User) => {
+        setUser(user);
+        localStorage.setItem('messageWall_user', JSON.stringify(user));
+    };
+
+    const handleLogout = () => {
+        if (confirm(t('auth.confirm_logout'))) {
+            setUser(null);
+            localStorage.removeItem('messageWall_user');
+        }
+    };
+
+    const submitScore = async (score: number) => {
+        if (!user) {
+            // Optional: Prompt login? Or just ignore/save locally?
+            // For now, let's just alert or ignore. 
+            // Better UX: Show a toast/alert "Log in to save score!"
+            // alert(t('auth.login_to_save')); 
+            return;
+        }
+
+        try {
+            await fetch('/api/scores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    gameType: activeGame,
+                    score: score,
+                    userId: user.userId,
+                    username: user.username
+                })
+            });
+            // Trigger leaderboard refresh
+            setRefreshLeaderboard(prev => prev + 1);
+        } catch (error) {
+            console.error("Failed to submit score", error);
+        }
+    };
+
     return (
         <div className={`min-h-screen pt-24 pb-12 px-4 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onLoginSuccess={handleLoginSuccess}
+                isDarkMode={isDarkMode}
+            />
+
             <div className="max-w-7xl mx-auto">
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-12"
-                >
-                    <h1 className="text-4xl md:text-7xl font-black font-heading mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
-                        {t('game.arcade_zone')}
-                    </h1>
-                    <p className="text-xl opacity-70 font-serif italic">
-                        {t('game.choose_your_challenge')}
-                    </p>
-                </motion.div>
+                {/* Header & Auth */}
+                <div className="flex justify-between items-start mb-8 relative">
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center w-full"
+                    >
+                        <h1 className="text-4xl md:text-7xl font-black font-heading mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                            {t('game.arcade_zone')}
+                        </h1>
+                        <p className="text-xl opacity-70 font-serif italic">
+                            {t('game.choose_your_challenge')}
+                        </p>
+                    </motion.div>
+
+                    {/* Auth Button (Absolute Top Right) */}
+                    <div className="absolute right-0 top-0">
+                        {user ? (
+                            <button
+                                onClick={handleLogout}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-black/5 hover:bg-black/10'}`}
+                            >
+                                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs">
+                                    {user.username.charAt(0).toUpperCase()}
+                                </span>
+                                <span className="hidden md:inline">{user.username}</span>
+                                <FaSignOutAlt className="opacity-50" />
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => setShowAuthModal(true)}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${isDarkMode ? 'bg-green-600 hover:bg-green-500 text-white' : 'bg-green-500 hover:bg-green-600 text-white'}`}
+                            >
+                                <FaUser />
+                                <span>{t('auth.login')}</span>
+                            </button>
+                        )}
+                    </div>
+                </div>
 
                 {/* Game Selector Tabs */}
                 <div className="flex justify-center gap-4 md:gap-8 mb-12 flex-wrap">
@@ -73,15 +166,22 @@ export function Game({ isDarkMode }: GameProps) {
                             className="w-full h-full"
                         >
                             {activeGame === 'brick' ? (
-                                <BrickBreaker isDarkMode={isDarkMode} />
+                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} />
                             ) : activeGame === 'match3' ? (
-                                <Match3 isDarkMode={isDarkMode} />
+                                <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} />
                             ) : (
-                                <PokemonGame isDarkMode={isDarkMode} />
+                                <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} />
                             )}
                         </motion.div>
                     </AnimatePresence>
                 </div>
+
+                {/* Leaderboard */}
+                <Leaderboard
+                    gameType={activeGame}
+                    refreshTrigger={refreshLeaderboard}
+                    isDarkMode={isDarkMode}
+                />
             </div>
         </div>
     );

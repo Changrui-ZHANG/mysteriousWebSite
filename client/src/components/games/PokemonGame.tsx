@@ -27,13 +27,15 @@ export default function PokemonGame({ isDarkMode }: PokemonGameProps) {
         setSelectedAnswer(null);
         try {
             const newPokemon = await getRandomPokemon();
-            setPokemon(newPokemon);
 
             // Generate 3 random wrong answers
             const wrongAnswers = await generateWrongAnswers(newPokemon.id);
             // Add correct answer and shuffle
             const allOptions = [...wrongAnswers, newPokemon.name];
             const shuffled = allOptions.sort(() => Math.random() - 0.5);
+
+            // Update state atomically (visually)
+            setPokemon(newPokemon);
             setOptions(shuffled);
         } catch (error) {
             console.error('Failed to load Pokemon:', error);
@@ -177,8 +179,8 @@ export default function PokemonGame({ isDarkMode }: PokemonGameProps) {
                             >
                                 <div className="flex items-center justify-center gap-4 flex-wrap">
                                     <h2 className={`text-2xl md:text-3xl font-black uppercase ${selectedAnswer?.toLowerCase() === pokemon.name.toLowerCase()
-                                            ? 'text-green-400'
-                                            : 'text-red-400'
+                                        ? 'text-green-400'
+                                        : 'text-red-400'
                                         }`}>
                                         {selectedAnswer?.toLowerCase() === pokemon.name.toLowerCase()
                                             ? t('pokemon.correct')

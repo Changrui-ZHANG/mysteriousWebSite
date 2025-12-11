@@ -1,0 +1,82 @@
+package com.example.demo;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "scores")
+public class Score {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
+    private String gameType; // 'brick', 'match3', 'pokemon'
+
+    @Column(nullable = false)
+    private int score;
+
+    @Column(nullable = false)
+    private long timestamp;
+
+    public Score() {
+    }
+
+    public Score(String username, String userId, String gameType, int score, long timestamp) {
+        this.username = username;
+        this.userId = userId;
+        this.gameType = gameType;
+        this.score = score;
+        this.timestamp = timestamp;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+}

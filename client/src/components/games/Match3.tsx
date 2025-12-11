@@ -39,36 +39,55 @@ export default function Match3({ isDarkMode }: Match3Props) {
     // Check for matches
     const checkForMatches = () => {
         const newBoard = [...board];
-        let matchFound = false;
+        const matchedIndices = new Set<number>();
 
         // Rows
-        for (let i = 0; i < 64; i++) {
-            const rowOfThree = [i, i + 1, i + 2];
-            const decidedColor = newBoard[i];
-            const isBlank = newBoard[i] === '';
+        for (let row = 0; row < WIDTH; row++) {
+            for (let col = 0; col < WIDTH - 2; col++) {
+                const i = row * WIDTH + col;
+                const candy1 = newBoard[i];
+                if (!candy1) continue;
 
-            if (rowOfThree.every(square => newBoard[square] === decidedColor && !isBlank)) {
-                if ((i + 2) % WIDTH < (i % WIDTH)) continue; // Wrap around check
+                let matchLen = 1;
+                while (col + matchLen < WIDTH && newBoard[i + matchLen] === candy1) {
+                    matchLen++;
+                }
 
-                rowOfThree.forEach(square => newBoard[square] = '');
-                matchFound = true;
+                if (matchLen >= 3) {
+                    for (let k = 0; k < matchLen; k++) {
+                        matchedIndices.add(i + k);
+                    }
+                    col += matchLen - 1;
+                }
             }
         }
 
         // Columns
-        for (let i = 0; i < 47; i++) {
-            const columnOfThree = [i, i + WIDTH, i + WIDTH * 2];
-            const decidedColor = newBoard[i];
-            const isBlank = newBoard[i] === '';
+        for (let col = 0; col < WIDTH; col++) {
+            for (let row = 0; row < WIDTH - 2; row++) {
+                const i = row * WIDTH + col;
+                const candy1 = newBoard[i];
+                if (!candy1) continue;
 
-            if (columnOfThree.every(square => newBoard[square] === decidedColor && !isBlank)) {
-                columnOfThree.forEach(square => newBoard[square] = '');
-                matchFound = true;
+                let matchLen = 1;
+                while (row + matchLen < WIDTH && newBoard[(row + matchLen) * WIDTH + col] === candy1) {
+                    matchLen++;
+                }
+
+                if (matchLen >= 3) {
+                    for (let k = 0; k < matchLen; k++) {
+                        matchedIndices.add((row + k) * WIDTH + col);
+                    }
+                    row += matchLen - 1;
+                }
             }
         }
 
-        if (matchFound) {
-            setScore(prev => prev + 3);
+        if (matchedIndices.size > 0) {
+            setScore(prev => prev + matchedIndices.size);
+            matchedIndices.forEach(index => {
+                newBoard[index] = '';
+            });
             setBoard(newBoard);
             return true;
         }
@@ -166,18 +185,19 @@ export default function Match3({ isDarkMode }: Match3Props) {
             </div>
 
             <div className="w-full max-w-[400px] grid grid-cols-8 gap-0.5 md:gap-1 p-2 md:p-4 bg-black/40 rounded-lg mx-auto">
-                <AnimatePresence initial={false}>
+                <AnimatePresence mode='popLayout'>
                     {board.map((candyColor, index) => (
                         <motion.div
-                            key={index}
-                            layout
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0 }}
-                            className={`w-full aspect-square rounded-md md:rounded-lg cursor-pointer shadow-lg ${candyColor} ${selectedCandies.includes(index) ? 'ring-2 md:ring-4 ring-white' : ''}`}
+                            key={`${index}-${candyColor}`} // Key changes when content changes, triggering animation
+                            layout={false} // Disable layout animation to avoid "reshuffling" artifacts
+                            initial={{ y: -20, opacity: 0, scale: 0.8 }}
+                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className={`w-full aspect-square rounded-md md:rounded-lg cursor-pointer ${candyColor ? 'shadow-lg z-10' : 'invisible z-0'} ${candyColor} ${selectedCandies.includes(index) ? 'ring-2 md:ring-4 ring-white' : ''}`}
                             onClick={() => handleClick(index)}
                             style={{
-                                boxShadow: `0 0 10px ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`
+                                boxShadow: candyColor ? `0 0 10px ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}` : 'none'
                             }}
                         >
                         </motion.div>
