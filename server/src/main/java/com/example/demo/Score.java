@@ -25,15 +25,23 @@ public class Score {
     @Column(nullable = false)
     private long timestamp;
 
+    @Column(nullable = true)
+    private Integer attempts; // Optional, for games like Pokemon Quiz
+
     public Score() {
     }
 
     public Score(String username, String userId, String gameType, int score, long timestamp) {
+        this(username, userId, gameType, score, timestamp, null);
+    }
+
+    public Score(String username, String userId, String gameType, int score, long timestamp, Integer attempts) {
         this.username = username;
         this.userId = userId;
         this.gameType = gameType;
         this.score = score;
         this.timestamp = timestamp;
+        this.attempts = attempts;
     }
 
     public String getId() {
@@ -78,5 +86,13 @@ public class Score {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Integer getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(Integer attempts) {
+        this.attempts = attempts;
     }
 }

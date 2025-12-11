@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
+export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest }: { isDarkMode: boolean; onSubmitScore: (score: number) => void; personalBest?: { score: number } | null }) {
     const { t } = useTranslation();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [gameState, setGameState] = useState<'start' | 'playing' | 'gameover' | 'won'>('start');
     const [score, setScore] = useState(0);
+
+    useEffect(() => {
+        if ((gameState === 'gameover' || gameState === 'won') && score > 0) {
+            onSubmitScore(score);
+        }
+    }, [gameState, score, onSubmitScore]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -201,8 +207,15 @@ export default function BrickBreaker({ isDarkMode }: { isDarkMode: boolean }) {
 
     return (
         <div className={`relative w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-black/80' : 'bg-white/80'}`}>
-            <div className="absolute top-4 left-6 text-xl font-bold font-mono text-cyan-400">
-                {t('game.score')}: {score}
+            <div className="absolute top-4 left-6 text-xl font-bold font-mono z-10 flex gap-4">
+                <span className="text-cyan-400">
+                    {t('game.score')}: {score}
+                    {personalBest && personalBest.score !== undefined && (
+                        <span className="ml-3 text-lg text-purple-400 opacity-80">
+                            ({t('game.best')}: {Math.max(score, personalBest.score)})
+                        </span>
+                    )}
+                </span>
             </div>
 
             <canvas

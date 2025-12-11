@@ -24,6 +24,7 @@ export function Game({ isDarkMode }: GameProps) {
     // Auth State
     const [user, setUser] = useState<User | null>(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [personalBest, setPersonalBest] = useState<{ score: number, attempts?: number } | null>(null);
     const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
 
     useEffect(() => {
@@ -33,6 +34,30 @@ export function Game({ isDarkMode }: GameProps) {
             setUser(JSON.parse(storedUser));
         }
     }, []);
+
+    useEffect(() => {
+        const fetchPersonalBest = async () => {
+            if (!user) {
+                setPersonalBest(null);
+                return;
+            }
+            try {
+                const response = await fetch(`/api/scores/user/${user.userId}/${activeGame}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setPersonalBest({ score: data.score, attempts: data.attempts });
+                } else {
+                    // No score found -> 0
+                    setPersonalBest({ score: 0 });
+                }
+            } catch (error) {
+                console.error("Failed to fetch personal best", error);
+                // Error fetching -> 0 (safe fallback if logged in)
+                setPersonalBest({ score: 0 });
+            }
+        };
+        fetchPersonalBest();
+    }, [user, activeGame, refreshLeaderboard]);
 
     const handleLoginSuccess = (user: User) => {
         setUser(user);
@@ -46,12 +71,13 @@ export function Game({ isDarkMode }: GameProps) {
         }
     };
 
-    const submitScore = async (score: number) => {
+    const submitScore = async (score: number, attempts?: number) => {
         if (!user) {
-            // Optional: Prompt login? Or just ignore/save locally?
-            // For now, let's just alert or ignore. 
-            // Better UX: Show a toast/alert "Log in to save score!"
-            // alert(t('auth.login_to_save')); 
+            return;
+        }
+
+        // Only submit if it's a new high score
+        if (personalBest && personalBest.score !== undefined && score <= personalBest.score) {
             return;
         }
 
@@ -63,7 +89,8 @@ export function Game({ isDarkMode }: GameProps) {
                     gameType: activeGame,
                     score: score,
                     userId: user.userId,
-                    username: user.username
+                    username: user.username,
+                    attempts: attempts
                 })
             });
             // Trigger leaderboard refresh
@@ -123,6 +150,15 @@ export function Game({ isDarkMode }: GameProps) {
                     </div>
                 </div>
 
+                <div className="mb-12">
+                    <Leaderboard
+                        gameType={activeGame}
+                        refreshTrigger={refreshLeaderboard}
+                        isDarkMode={isDarkMode}
+                        userId={user?.userId}
+                    />
+                </div>
+
                 {/* Game Selector Tabs */}
                 <div className="flex justify-center gap-4 md:gap-8 mb-12 flex-wrap">
                     <button
@@ -166,22 +202,17 @@ export function Game({ isDarkMode }: GameProps) {
                             className="w-full h-full"
                         >
                             {activeGame === 'brick' ? (
-                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} />
+                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
                             ) : activeGame === 'match3' ? (
-                                <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} />
+                                <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
                             ) : (
-                                <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} />
+                                <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
                             )}
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
-                {/* Leaderboard */}
-                <Leaderboard
-                    gameType={activeGame}
-                    refreshTrigger={refreshLeaderboard}
-                    isDarkMode={isDarkMode}
-                />
+
             </div>
         </div>
     );

@@ -35,7 +35,11 @@
         "loading": "Chargement...",
         "brick_breaker_desc": "Utilisez la souris pour bouger la raquette.",
         "match3_desc": "Échangez les tuiles pour en aligner 3 !",
-        "pokemon_quiz": "Quiz Pokémon"
+        "pokemon_quiz": "Quiz Pokémon",
+        "leaderboard": "Classement",
+        "personal_best": "Mon Record Perso",
+        "best": "Meilleur",
+        "no_scores_yet": "Aucun score pour le moment. Soyez le premier !"
     },
     "pokemon": {
         "guess_prompt": "Qui est ce Pokémon ?",

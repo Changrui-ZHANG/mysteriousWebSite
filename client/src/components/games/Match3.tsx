@@ -14,9 +14,11 @@ const CANDY_COLORS = [
 
 interface Match3Props {
     isDarkMode: boolean;
+    onSubmitScore: (score: number) => void;
+    personalBest?: { score: number } | null;
 }
 
-export default function Match3({ isDarkMode }: Match3Props) {
+export default function Match3({ isDarkMode, onSubmitScore, personalBest }: Match3Props) {
     const { t } = useTranslation();
     const [board, setBoard] = useState<string[]>([]);
     const [score, setScore] = useState(0);
@@ -172,7 +174,19 @@ export default function Match3({ isDarkMode }: Match3Props) {
     };
 
     // Reset Game
+    // Autosave score on change with debounce
+    useEffect(() => {
+        if (score > 0) {
+            const timer = setTimeout(() => {
+                onSubmitScore(score);
+            }, 1000); // Wait 1s after last score change before saving
+            return () => clearTimeout(timer);
+        }
+    }, [score, onSubmitScore]);
+
+    // Reset Game
     const resetGame = () => {
+        // Score is already saved by effect
         setScore(0);
         createBoard();
     }
@@ -180,7 +194,16 @@ export default function Match3({ isDarkMode }: Match3Props) {
     return (
         <div className={`w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} p-4`}>
             <div className="w-full flex justify-between items-center px-4 mb-4 md:px-8">
-                <div className="text-xl font-bold font-mono text-fuchsia-400">{t('game.score')}: {score}</div>
+                <div className="flex gap-4 items-center">
+                    <div className="text-xl font-bold font-mono text-fuchsia-400">
+                        {t('game.score')}: {score}
+                        {personalBest && personalBest.score !== undefined && (
+                            <span className="ml-3 text-lg text-purple-400 opacity-80">
+                                ({t('game.best')}: {Math.max(score, personalBest.score)})
+                            </span>
+                        )}
+                    </div>
+                </div>
                 <button onClick={resetGame} className="text-sm font-bold text-white/50 hover:text-white bg-white/10 px-3 py-1 rounded-full">{t('game.reset')}</button>
             </div>
 

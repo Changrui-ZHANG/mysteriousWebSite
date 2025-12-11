@@ -35,7 +35,11 @@
         "loading": "加载中...",
         "brick_breaker_desc": "使用鼠标移动挡板。",
         "match3_desc": "交换相邻方块以消除三个！",
-        "pokemon_quiz": "宝可梦问答"
+        "pokemon_quiz": "宝可梦问答",
+        "leaderboard": "排行榜",
+        "personal_best": "我的最高纪录",
+        "best": "最佳",
+        "no_scores_yet": "暂无记录，快来抢占第一名！"
     },
     "pokemon": {
         "guess_prompt": "这是哪只宝可梦？",

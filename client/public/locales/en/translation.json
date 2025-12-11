@@ -35,7 +35,11 @@
         "loading": "Loading...",
         "brick_breaker_desc": "Use your mouse to move the paddle.",
         "match3_desc": "Swap adjacent tiles to match 3!",
-        "pokemon_quiz": "Pokemon Quiz"
+        "pokemon_quiz": "Pokemon Quiz",
+        "leaderboard": "Leaderboard",
+        "personal_best": "My Personal Best",
+        "best": "Best",
+        "no_scores_yet": "No scores recorded yet. Be the first!"
     },
     "pokemon": {
         "guess_prompt": "Who's that Pokemon?",

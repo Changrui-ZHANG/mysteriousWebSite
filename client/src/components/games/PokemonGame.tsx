@@ -5,9 +5,11 @@ import { getRandomPokemon, Pokemon } from '../../utils/pokeapi';
 
 interface PokemonGameProps {
     isDarkMode: boolean;
+    onSubmitScore: (score: number, attempts?: number) => void;
+    personalBest?: { score: number, attempts?: number } | null;
 }
 
-export default function PokemonGame({ isDarkMode }: PokemonGameProps) {
+export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest }: PokemonGameProps) {
     const { t } = useTranslation();
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
     const [options, setOptions] = useState<string[]>([]);
@@ -20,6 +22,13 @@ export default function PokemonGame({ isDarkMode }: PokemonGameProps) {
     useEffect(() => {
         loadNewPokemon();
     }, []);
+
+    useEffect(() => {
+        // Autosave score logic
+        if (score > 0) {
+            onSubmitScore(score, attempts);
+        }
+    }, [score, attempts, onSubmitScore]);
 
     const loadNewPokemon = async () => {
         setLoading(true);
@@ -107,8 +116,15 @@ export default function PokemonGame({ isDarkMode }: PokemonGameProps) {
         <div className="h-full w-full overflow-hidden p-4 md:p-6 font-mono flex flex-col">
             {/* Score Header */}
             <div className="flex justify-between items-center mb-4">
-                <div className="text-xl md:text-2xl font-bold text-purple-400">
-                    {t('game.score')}: {score} / {attempts}
+                <div className="flex gap-4 items-center flex-wrap">
+                    <div className="text-xl md:text-2xl font-bold text-purple-400">
+                        {t('game.score')}: {score}/{attempts}
+                        {personalBest && personalBest.score > 0 && (
+                            <span className="ml-3 text-lg text-indigo-400 opacity-90">
+                                ({t('game.best')}: {personalBest.score}{personalBest.attempts ? `/${personalBest.attempts}` : ''})
+                            </span>
+                        )}
+                    </div>
                 </div>
                 <button
                     onClick={loadNewPokemon}

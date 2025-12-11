@@ -23,41 +23,76 @@ public class ScoreController {
         return ResponseEntity.ok(scoreRepository.findTop3ByGameTypeOrderByScoreDesc(gameType));
     }
 
+    @GetMapping("/user/{userId}/{gameType}")
+    public ResponseEntity<Score> getUserHighScore(@PathVariable String userId, @PathVariable String gameType) {
+        Score score = scoreRepository.findTopByUserIdAndGameTypeOrderByScoreDesc(userId, gameType);
+        if (score == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(score);
+    }
+
     @PostMapping
     public ResponseEntity<?> submitScore(@RequestBody Map<String, Object> body) {
         try {
             String gameType = (String) body.get("gameType");
-            int scoreValue = (int) body.get("score");
+            Integer scoreValue = (Integer) body.get("score"); // Safe cast if JSON number is int
             String userId = (String) body.get("userId");
+            Integer attempts = body.containsKey("attempts") ? (Integer) body.get("attempts") : null;
 
-            if (gameType == null || userId == null) {
+            if (gameType == null || userId == null || scoreValue == null) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Missing required fields"));
             }
 
-            // Check if user exists to get the correct username, or look it up from the
-            // previous Auth implementation details if needed.
-            // For now, we trust the client to send a userId and we might want to verify it
-            // or look up the username.
-            // ideally we should look up the AppUser if authenticated.
-            // If the user sends a 'username' we can use that, or look it up by ID.
-
             String username = (String) body.get("username");
 
-            // Simple validation: If no username provided, try to find by ID if it's an
-            // authenticated ID
-            if (username == null || username.isEmpty()) {
-                var appUser = userRepository.findById(userId);
-                if (appUser.isPresent()) {
-                    username = appUser.get().getUsername();
-                } else {
-                    username = "Anonymous";
+            // Look up existing scores for this user and game
+            List<Score> existingScores = scoreRepository.findByUserIdAndGameType(userId, gameType);
+
+            if (!existingScores.isEmpty()) {
+                // Sort so that the highest score is at index 0
+                existingScores.sort((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
+
+                // Determine the best score entry to keep
+                Score bestEntry = existingScores.get(0);
+
+                // Optional: Cleanup duplicates if any
+                if (existingScores.size() > 1) {
+                    for (int i = 1; i < existingScores.size(); i++) {
+                        scoreRepository.delete(existingScores.get(i));
+                    }
                 }
+
+                // If new score is higher, update it
+                if (scoreValue > bestEntry.getScore()) {
+                    bestEntry.setScore(scoreValue);
+                    bestEntry.setTimestamp(System.currentTimeMillis());
+                    bestEntry.setAttempts(attempts); // Update attempts
+                    if (username != null && !username.isEmpty()) {
+                        bestEntry.setUsername(username);
+                    }
+                    scoreRepository.save(bestEntry);
+                    return ResponseEntity.ok(Map.of("message", "High score updated!"));
+                } else {
+                    return ResponseEntity.ok(Map.of("message", "Score not higher than existing best."));
+                }
+            } else {
+                // No existing score, create new
+                if (username == null || username.isEmpty()) {
+                    var appUser = userRepository.findById(userId);
+                    if (appUser.isPresent()) {
+                        username = appUser.get().getUsername();
+                    } else {
+                        username = "Anonymous";
+                    }
+                }
+
+                Score newScore = new Score(username, userId, gameType, scoreValue, System.currentTimeMillis(),
+                        attempts);
+                scoreRepository.save(newScore);
+                return ResponseEntity.ok(Map.of("message", "Score submitted successfully"));
             }
 
-            Score newScore = new Score(username, userId, gameType, scoreValue, System.currentTimeMillis());
-            scoreRepository.save(newScore);
-
-            return ResponseEntity.ok(Map.of("message", "Score submitted successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("message", "Error submitting score: " + e.getMessage()));
         }
