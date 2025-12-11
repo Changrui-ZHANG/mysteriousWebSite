@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# Node.js / Frontend
+node_modules/
+dist/
+build/
+coverage/
+npm-debug.log
+yarn-error.log
+.env
+.env.local
+
+# Java / Backend
+target/
+*.class
+.mvn/
+mvnw
+mvnw.cmd
+*.log
