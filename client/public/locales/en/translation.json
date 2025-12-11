@@ -60,6 +60,23 @@
         "post_anonymously": "Post anonymously",
         "you": "You"
     },
+    "admin": {
+        "manage_users": "Manage Users",
+        "user_list": "User List",
+        "username": "Username",
+        "password": "Password",
+        "edit_user": "Edit",
+        "delete_user": "Delete",
+        "save_changes": "Save",
+        "cancel": "Cancel",
+        "confirm_delete_user": "Delete this user?",
+        "show_password": "Show",
+        "hide_password": "Hide",
+        "action": "Action",
+        "add_user": "Add User",
+        "add_new_user": "Add New User",
+        "create": "Create"
+    },
     "auth": {
         "login": "Login",
         "register": "Register",
@@ -78,7 +95,9 @@
         "clear_all": "Clear All",
         "mute": "Mute Chat",
         "unmute": "Unmute Chat",
-        "muted": "Chat is muted by admin"
+        "muted": "Chat is muted by admin",
+        "super_admin_code": "Super Admin Code",
+        "super_admin_panel": "Super Admin Panel"
     },
     "hero": {
         "title": "Changrui ZHANG",

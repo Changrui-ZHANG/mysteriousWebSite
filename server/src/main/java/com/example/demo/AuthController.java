@@ -29,7 +29,7 @@ public class AuthController {
         }
 
         try {
-            AppUser newUser = new AppUser(username, password);
+            AppUser newUser = new AppUser(username, password, password);
             userRepository.save(newUser);
             return ResponseEntity.ok(Map.of("message", "User registered successfully"));
         } catch (Exception e) {

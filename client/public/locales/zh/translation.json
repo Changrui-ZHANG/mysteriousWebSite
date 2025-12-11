@@ -60,6 +60,23 @@
         "post_anonymously": "匿名发布",
         "you": "你"
     },
+    "admin": {
+        "manage_users": "管理用户",
+        "user_list": "用户列表",
+        "username": "用户名",
+        "password": "密码",
+        "edit_user": "编辑",
+        "delete_user": "删除",
+        "save_changes": "保存",
+        "cancel": "取消",
+        "confirm_delete_user": "删除此用户？",
+        "show_password": "显示",
+        "hide_password": "隐藏",
+        "action": "操作",
+        "add_user": "添加用户",
+        "add_new_user": "添加新用户",
+        "create": "创建"
+    },
     "auth": {
         "login": "登录",
         "register": "注册",
@@ -78,10 +95,12 @@
         "clear_all": "全部清除",
         "mute": "禁言",
         "unmute": "解除禁言",
-        "muted": "管理员已开启全员禁言"
+        "muted": "管理员已开启全员禁言",
+        "super_admin_code": "超级管理员代码",
+        "super_admin_panel": "超级管理员面板"
     },
     "hero": {
-        "title": "Changrui ZHANG",
+        "title": "张常瑞",
         "subtitle": "逐行构建我的未来。"
     },
     "story": {
@@ -102,7 +121,7 @@
             "description": "不断学习和掌握未来技术的动力。"
         }
     },
-    "signature": "Changrui ZHANG",
+    "signature": "张常瑞",
     "gravity": {
         "title": "我的实验室",
         "instruction": "实验区 -- 我的技能展示",
@@ -154,7 +173,7 @@
         "terms": "服务条款",
         "newsletter": "通讯",
         "join": "联系我",
-        "copyright": "© 2025 张昌瑞。保留所有权利。"
+        "copyright": "© 2025 张常瑞。保留所有权利。"
     },
     "cv": {
         "role": "全栈开发人员",

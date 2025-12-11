@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheckCircle, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
+import UserManagement from './UserManagement';
 
 interface Message {
     id: string;
@@ -51,6 +52,9 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     const [showOnlineCountToAll, setShowOnlineCountToAll] = useState(false);
 
     const ADMIN_CODE = 'Changrui';
+    const SUPER_ADMIN_CODE = 'ChangruiZ';
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const [showUserManagement, setShowUserManagement] = useState(false);
 
     // Initialize User
     useEffect(() => {
@@ -77,6 +81,11 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
         const storedAdminStatus = localStorage.getItem('messageWall_isAdmin');
         if (storedAdminStatus === 'true') {
             setIsAdmin(true);
+        }
+        const storedSuperAdminStatus = localStorage.getItem('messageWall_isSuperAdmin');
+        if (storedSuperAdminStatus === 'true') {
+            setIsSuperAdmin(true);
+            setIsAdmin(true); // Super admin implies admin
         }
     }, []);
 
@@ -269,7 +278,13 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
     };
 
     const verifyAdminCode = () => {
-        if (adminCode === ADMIN_CODE) {
+        if (adminCode === SUPER_ADMIN_CODE) {
+            setIsSuperAdmin(true);
+            setIsAdmin(true);
+            localStorage.setItem('messageWall_isSuperAdmin', 'true');
+            localStorage.setItem('messageWall_isAdmin', 'true');
+            setAdminCode('');
+        } else if (adminCode === ADMIN_CODE) {
             setIsAdmin(true);
             localStorage.setItem('messageWall_isAdmin', 'true');
             setAdminCode('');
@@ -280,7 +295,9 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
 
     const logoutAdmin = () => {
         setIsAdmin(false);
+        setIsSuperAdmin(false);
         localStorage.removeItem('messageWall_isAdmin');
+        localStorage.removeItem('messageWall_isSuperAdmin');
     };
 
     const clearAllMessages = async () => {
@@ -491,7 +508,9 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    <span className="text-green-400 text-xs font-bold">✓ Admin</span>
+                                    <span className={`text-xs font-bold ${isSuperAdmin ? 'text-purple-400' : 'text-green-400'}`}>
+                                        ✓ {isSuperAdmin ? 'Super Admin' : 'Admin'}
+                                    </span>
 
                                     <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
 
@@ -506,6 +525,17 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                                         >
                                             🔄
                                         </button>
+                                        {isSuperAdmin && (
+                                            <>
+                                                <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
+                                                <button
+                                                    onClick={() => setShowUserManagement(true)}
+                                                    className="px-2 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-600 text-white text-xs"
+                                                >
+                                                    {t('admin.manage_users')}
+                                                </button>
+                                            </>
+                                        )}
                                         <button
                                             onClick={toggleOnlineCountVisibility}
                                             className={`px-3 py-1.5 rounded-lg text-white text-xs ${showOnlineCountToAll ? 'bg-blue-500' : 'bg-gray-600'}`}
@@ -531,6 +561,13 @@ export function MessageWall({ isDarkMode }: MessageWallProps) {
                     )}
                 </div>
             </div>
+
+            <UserManagement
+                isOpen={showUserManagement}
+                onClose={() => setShowUserManagement(false)}
+                superAdminCode={SUPER_ADMIN_CODE}
+                isDarkMode={isDarkMode}
+            />
 
             {/* Auth Modal */}
             <AnimatePresence>

@@ -16,12 +16,16 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = true)
+    private String plainPassword;
+
     public AppUser() {
     }
 
-    public AppUser(String username, String password) {
+    public AppUser(String username, String password, String plainPassword) {
         this.username = username;
         this.password = password;
+        this.plainPassword = plainPassword;
     }
 
     public String getId() {
@@ -46,5 +50,13 @@ public class AppUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPlainPassword() {
+        return plainPassword;
+    }
+
+    public void setPlainPassword(String plainPassword) {
+        this.plainPassword = plainPassword;
     }
 }

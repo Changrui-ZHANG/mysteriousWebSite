@@ -60,6 +60,23 @@
         "post_anonymously": "Publier anonymement",
         "you": "Vous"
     },
+    "admin": {
+        "manage_users": "Gérer les utilisateurs",
+        "user_list": "Liste des utilisateurs",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "edit_user": "Modifier",
+        "delete_user": "Supprimer",
+        "save_changes": "Enregistrer",
+        "cancel": "Annuler",
+        "confirm_delete_user": "Supprimer cet utilisateur ?",
+        "show_password": "Afficher",
+        "hide_password": "Masquer",
+        "action": "Action",
+        "add_user": "Ajouter un utilisateur",
+        "add_new_user": "Ajouter un nouvel utilisateur",
+        "create": "Créer"
+    },
     "auth": {
         "login": "Se connecter",
         "register": "S'inscrire",
@@ -78,7 +95,9 @@
         "clear_all": "Tout effacer",
         "mute": "Couper le chat",
         "unmute": "Réactiver le chat",
-        "muted": "Le chat est suspendu par l'admin"
+        "muted": "Le chat est suspendu par l'admin",
+        "super_admin_code": "Code Super Admin",
+        "super_admin_panel": "Panneau Super Admin"
     },
     "hero": {
         "title": "Changrui ZHANG",
