@@ -62,6 +62,14 @@ export function CV({ isDarkMode }: CVProps) {
             location: "Paris, France",
             description: getArray('cv.exp.quichefs.desc'),
             tech: ["C", "Linux Kernel", "File Systems", "ioctl"]
+        },
+        {
+            title: t('cv.exp.database.title'),
+            role: t('cv.exp.database.role'),
+            period: "09/2021 - 03/2022",
+            location: "Paris, France",
+            description: getArray('cv.exp.database.desc'),
+            tech: ["PostgreSQL", "BOUML", "StarUML"]
         }
     ];
 

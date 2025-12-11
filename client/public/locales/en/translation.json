@@ -203,6 +203,15 @@
                     "Automated Product Line variant generation."
                 ]
             },
+            "database": {
+                "title": "Université Paris Cité (Database Modeling)",
+                "role": "Database Developer",
+                "desc": [
+                    "Designed a database to simulate ancient ship navigation.",
+                    "Used PostgreSQL for design and data management, integrating collaborative modeling tools.",
+                    "Technologies: PostgreSQL / BOUML / StarUML"
+                ]
+            },
             "quichefs": {
                 "title": "Projet Ouichefs (Linux Kernel)",
                 "role": "Systems Developer",

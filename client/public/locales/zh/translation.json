@@ -203,6 +203,15 @@
                     "自动化产品线 (Product Line) 变体生成。"
                 ]
             },
+            "database": {
+                "title": "巴黎西岱大学 (数据库建模)",
+                "role": "数据库开发人员",
+                "desc": [
+                    "设计数据库以模拟古代船舶航行。",
+                    "使用 PostgreSQL 进行设计和数据管理，集成协作建模工具。",
+                    "技术: PostgreSQL / BOUML / StarUML"
+                ]
+            },
             "quichefs": {
                 "title": "Ouichefs 项目 (Linux 内核)",
                 "role": "系统开发人员",

@@ -203,6 +203,15 @@
                     "Automatisation de la génération des variantes de gammes de produits."
                 ]
             },
+            "database": {
+                "title": "Université Paris Cité (Modélisation de base de données)",
+                "role": "Développeur Base de Données",
+                "desc": [
+                    "Concevoir une base de données pour simuler les navigations de bateaux antiques.",
+                    "Utiliser PostgreSQL pour la conception et la gestion des données, en intégrant des outils de modélisation collaboratifs.",
+                    "Technologies: PostgreSQL / BOUML / StarUML"
+                ]
+            },
             "quichefs": {
                 "title": "Projet Ouichefs (Noyau Linux)",
                 "role": "Développeur Système",
