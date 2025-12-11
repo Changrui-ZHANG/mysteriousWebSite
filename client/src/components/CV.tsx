@@ -243,13 +243,13 @@ export function CV({ isDarkMode }: CVProps) {
                         <h3 className="text-2xl font-heading font-bold mb-6 text-center">{t('cv.sections.languages')}</h3>
                         <ul className="space-y-4">
                             <li className="flex justify-between items-center border-b pb-2 border-inherit opacity-80">
-                                <span>🇨🇳 {t('cv.languages_list.zh')}</span>
+                                <span>{t('cv.languages_list.zh')}</span>
                             </li>
                             <li className="flex justify-between items-center border-b pb-2 border-inherit opacity-80">
-                                <span>🇺🇸 {t('cv.languages_list.en')}</span>
+                                <span>{t('cv.languages_list.en')}</span>
                             </li>
                             <li className="flex justify-between items-center border-b pb-2 border-inherit opacity-80">
-                                <span>🇫🇷 {t('cv.languages_list.fr')}</span>
+                                <span>{t('cv.languages_list.fr')}</span>
                             </li>
                         </ul>
                     </div>
