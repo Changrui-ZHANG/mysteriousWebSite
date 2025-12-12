@@ -23,12 +23,13 @@ interface User {
 interface MessageWallProps {
     isDarkMode: boolean;
     user?: User | null;
+    onOpenLogin?: () => void;
 }
 
 const API_URL = '/api/messages';
 // Removed AUTH_URL since we don't auth here anymore
 
-export function MessageWall({ isDarkMode, user }: MessageWallProps) {
+export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps) {
     const { t } = useTranslation();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -413,15 +414,37 @@ export function MessageWall({ isDarkMode, user }: MessageWallProps) {
                             </>
                         )}
 
-                        <input
-                            type="text"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder={isGlobalMute && !isAdmin ? t('auth.muted') : t('messages.message_placeholder')}
-                            maxLength={200}
-                            disabled={isGlobalMute && !isAdmin}
-                            className={`flex-1 min-w-[120px] px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isGlobalMute && !isAdmin ? 'cursor-not-allowed' : ''}`}
-                        />
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                placeholder={
+                                    isGlobalMute && !isAdmin
+                                        ? t('auth.muted')
+                                        : !user
+                                            ? ''
+                                            : t('messages.message_placeholder')
+                                }
+                                maxLength={200}
+                                disabled={isGlobalMute && !isAdmin}
+                                className={`w-full px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isGlobalMute && !isAdmin ? 'cursor-not-allowed' : ''}`}
+                            />
+
+                            {/* Interactive Placeholder Overlay */}
+                            {!user && !newMessage && !(isGlobalMute && !isAdmin) && (
+                                <div className={`absolute inset-0 px-4 py-2 pointer-events-none flex items-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    <span>{t('messages.guest_placeholder_text')}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => onOpenLogin && onOpenLogin()}
+                                        className="pointer-events-auto hover:underline font-bold text-green-500 ml-1 focus:outline-none"
+                                    >
+                                        {t('messages.guest_placeholder_link')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
 
                         <button type="submit" disabled={!newMessage.trim() || loading || (isGlobalMute && !isAdmin)} className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 disabled:opacity-30 rounded-lg text-white">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>

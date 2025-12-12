@@ -88,7 +88,7 @@ function AppContent() {
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
                     <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} />} />
-                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} />} />
+                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} />} />
                 </Routes>
             </div>
         </div>

@@ -57,6 +57,8 @@
         "subtitle": "Laissez votre empreinte",
         "name_placeholder": "Votre nom",
         "message_placeholder": "Votre message...",
+        "guest_placeholder_text": "Message... ou ",
+        "guest_placeholder_link": "se connecter",
         "submit": "PUBLIER",
         "empty": "Aucun message pour le moment. Soyez le premier !",
         "delete": "Supprimer",

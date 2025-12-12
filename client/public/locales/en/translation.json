@@ -57,6 +57,8 @@
         "subtitle": "Leave your mark",
         "name_placeholder": "Your name",
         "message_placeholder": "Your message...",
+        "guest_placeholder_text": "Message... or ",
+        "guest_placeholder_link": "connect",
         "submit": "POST MESSAGE",
         "empty": "No messages yet. Be the first!",
         "delete": "Delete",
