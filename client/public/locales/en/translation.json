@@ -40,7 +40,13 @@
         "personal_best": "My Personal Best",
         "best": "Best",
         "no_scores_yet": "No scores recorded yet. Be the first!",
-        "login_warning": "<0>Log in</0> to save your score, otherwise it will be lost!"
+        "login_warning": "<0>Log in</0> to save your score, otherwise it will be lost!",
+        "moves": "Moves",
+        "new_maze": "New Maze",
+        "maze": "Maze",
+        "use_arrows": "Use arrow keys to move",
+        "use_mouse": "Drag mouse or use WASD/Arrows to move",
+        "time": "Time"
     },
     "pokemon": {
         "guess_prompt": "Who's that Pokemon?",

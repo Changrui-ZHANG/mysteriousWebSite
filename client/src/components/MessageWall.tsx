@@ -24,12 +24,14 @@ interface MessageWallProps {
     isDarkMode: boolean;
     user?: User | null;
     onOpenLogin?: () => void;
+    isAdmin?: boolean;
+    isSuperAdmin?: boolean;
 }
 
 const API_URL = '/api/messages';
 // Removed AUTH_URL since we don't auth here anymore
 
-export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps) {
+export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, isSuperAdmin = false }: MessageWallProps) {
     const { t } = useTranslation();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -37,8 +39,8 @@ export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps)
 
     // Removed local Auth State (authMode, authUsername, authPassword, etc.)
 
-    const [adminCode, setAdminCode] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
+    // const [adminCode, setAdminCode] = useState(''); // Moved to App/Navbar
+    // const [isAdmin, setIsAdmin] = useState(false); // Via props
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [showNameInput, setShowNameInput] = useState(false);
     const [tempName, setTempName] = useState('');
@@ -47,9 +49,9 @@ export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps)
     const [onlineCount, setOnlineCount] = useState(0);
     const [showOnlineCountToAll, setShowOnlineCountToAll] = useState(false);
 
-    const ADMIN_CODE = 'Changrui';
-    const SUPER_ADMIN_CODE = 'ChangruiZ';
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const ADMIN_CODE = 'Changrui'; // Kept for API calls
+    const SUPER_ADMIN_CODE = 'ChangruiZ'; // Kept for API calls
+
     const [showUserManagement, setShowUserManagement] = useState(false);
 
     // Initialize User
@@ -63,17 +65,6 @@ export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps)
             localStorage.setItem('messageWall_userId', userId);
         }
         setCurrentUserId(userId);
-
-        // Load admin status
-        const storedAdminStatus = localStorage.getItem('messageWall_isAdmin');
-        if (storedAdminStatus === 'true') {
-            setIsAdmin(true);
-        }
-        const storedSuperAdminStatus = localStorage.getItem('messageWall_isSuperAdmin');
-        if (storedSuperAdminStatus === 'true') {
-            setIsSuperAdmin(true);
-            setIsAdmin(true); // Super admin implies admin
-        }
     }, []);
 
     // Load messages
@@ -224,28 +215,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps)
 
     // Admin & Helper Functions
 
-    const verifyAdminCode = () => {
-        if (adminCode === SUPER_ADMIN_CODE) {
-            setIsSuperAdmin(true);
-            setIsAdmin(true);
-            localStorage.setItem('messageWall_isSuperAdmin', 'true');
-            localStorage.setItem('messageWall_isAdmin', 'true');
-            setAdminCode('');
-        } else if (adminCode === ADMIN_CODE) {
-            setIsAdmin(true);
-            localStorage.setItem('messageWall_isAdmin', 'true');
-            setAdminCode('');
-        } else {
-            alert(t('admin.invalid_code') || 'Invalid admin code');
-        }
-    };
-
-    const logoutAdmin = () => {
-        setIsAdmin(false);
-        setIsSuperAdmin(false);
-        localStorage.removeItem('messageWall_isAdmin');
-        localStorage.removeItem('messageWall_isSuperAdmin');
-    };
+    // Removed verifyAdminCode and logoutAdmin (handled globally now)
 
     const clearAllMessages = async () => {
         if (confirm(t('admin.confirm_clear') || 'Delete all messages?')) {
@@ -450,23 +420,17 @@ export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps)
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                         </button>
 
-                        <button type="button" onClick={() => setShowAdminPanel(!showAdminPanel)} className={`p-2 rounded-lg text-xs ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}>🔐</button>
+                        {isAdmin && (
+                            <button type="button" onClick={() => setShowAdminPanel(!showAdminPanel)} className={`p-2 rounded-lg text-xs ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}>🔐</button>
+                        )}
                     </form>
 
                     {/* Admin Panel */}
-                    {showAdminPanel && (
+                    {(showAdminPanel) && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="mt-2 pt-2 border-t border-green-500/10">
                             {!isAdmin ? (
-                                <div className="flex gap-2">
-                                    <input
-                                        type="password"
-                                        value={adminCode}
-                                        onChange={(e) => setAdminCode(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && verifyAdminCode()}
-                                        placeholder="Code admin"
-                                        className={`flex-1 px-3 py-1.5 rounded-lg border-0 text-xs ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
-                                    />
-                                    <button onClick={verifyAdminCode} className="px-3 py-1.5 bg-green-500 hover:bg-green-400 rounded-lg text-white text-xs font-bold">✓</button>
+                                <div className="text-xs text-gray-500 text-center py-2">
+                                    {t('admin.login_hint') || 'Use the padlock in the top navbar to log in as admin.'}
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
@@ -515,7 +479,6 @@ export function MessageWall({ isDarkMode, user, onOpenLogin }: MessageWallProps)
 
                                     <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
 
-                                    <button onClick={logoutAdmin} className="px-3 py-1.5 bg-gray-500 rounded-lg text-white text-xs">{t('auth.quit_admin')}</button>
                                     <button onClick={clearAllMessages} className="ml-auto px-3 py-1.5 bg-red-500 rounded-lg text-white text-xs">{t('auth.clear_all')}</button>
                                 </div>
                             )}

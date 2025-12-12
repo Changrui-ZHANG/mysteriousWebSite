@@ -13,27 +13,48 @@ interface LeaderboardProps {
     gameType: string;
     refreshTrigger: number;
     isDarkMode: boolean;
+    isSuperAdmin?: boolean;
 }
 
-export default function Leaderboard({ gameType, refreshTrigger, isDarkMode }: LeaderboardProps) {
+export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSuperAdmin = false }: LeaderboardProps) {
     const { t } = useTranslation();
     const [scores, setScores] = useState<Score[]>([]);
+    const [refresh, setRefresh] = useState(0);
+
+    const fetchTopScores = async () => {
+        try {
+            const response = await fetch(`/api/scores/top/${gameType}?_t=${Date.now()}`);
+            if (response.ok) {
+                const data = await response.json();
+                setScores(data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch top scores", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchTopScores = async () => {
-            try {
-                const response = await fetch(`/api/scores/top/${gameType}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setScores(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch top scores", error);
-            }
-        };
-
         fetchTopScores();
-    }, [gameType, refreshTrigger]);
+    }, [gameType, refreshTrigger, refresh]);
+
+    const handleReset = async (id: string, username: string) => {
+        if (!confirm(`Are you sure you want to reset the score for ${username} to 0?`)) return;
+
+        try {
+            const SUPER_ADMIN_CODE = 'ChangruiZ'; // Should align with App.tsx
+            const response = await fetch(`/api/scores/${id}?adminCode=${SUPER_ADMIN_CODE}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                setRefresh(prev => prev + 1);
+            } else {
+                alert('Failed to reset score');
+            }
+        } catch (error) {
+            console.error('Failed to reset score', error);
+        }
+    };
 
     // if (scores.length === 0) return null; // Don't hide completely
 
@@ -61,9 +82,20 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode }: Le
                                     }`}>#{index + 1}</span>
                                 <span className={`font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>{score.username}</span>
                             </div>
-                            <span className="font-mono font-bold text-fuchsia-400">
-                                {score.score}{score.attempts ? `/${score.attempts}` : ''}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono font-bold text-fuchsia-400">
+                                    {score.score}{score.attempts ? `/${score.attempts}` : ''}
+                                </span>
+                                {isSuperAdmin && (
+                                    <button
+                                        onClick={() => handleReset(score.id, score.username)}
+                                        className="w-5 h-5 flex items-center justify-center bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded transition-colors"
+                                        title="Reset Score"
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>

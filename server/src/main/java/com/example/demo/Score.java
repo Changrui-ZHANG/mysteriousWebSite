@@ -3,7 +3,10 @@ package com.example.demo;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "scores")
+@Table(name = "scores", indexes = {
+        @Index(name = "idx_user_game", columnList = "user_id, game_type"),
+        @Index(name = "idx_game_score", columnList = "game_type, score")
+})
 public class Score {
 
     @Id

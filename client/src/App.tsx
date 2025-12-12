@@ -51,6 +51,45 @@ function AppContent() {
         localStorage.removeItem('messageWall_user');
     };
 
+    // Global Admin State
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const ADMIN_CODE = 'Changrui';
+    const SUPER_ADMIN_CODE = 'ChangruiZ';
+
+    useEffect(() => {
+        const storedAdmin = localStorage.getItem('messageWall_isAdmin');
+        if (storedAdmin === 'true') setIsAdmin(true);
+
+        const storedSuperAdmin = localStorage.getItem('messageWall_isSuperAdmin');
+        if (storedSuperAdmin === 'true') {
+            setIsSuperAdmin(true);
+            setIsAdmin(true);
+        }
+    }, []);
+
+    const handleAdminLogin = (code: string) => {
+        if (code === SUPER_ADMIN_CODE) {
+            setIsSuperAdmin(true);
+            setIsAdmin(true);
+            localStorage.setItem('messageWall_isSuperAdmin', 'true');
+            localStorage.setItem('messageWall_isAdmin', 'true');
+            return true;
+        } else if (code === ADMIN_CODE) {
+            setIsAdmin(true);
+            localStorage.setItem('messageWall_isAdmin', 'true');
+            return true;
+        }
+        return false;
+    };
+
+    const handleAdminLogout = () => {
+        setIsAdmin(false);
+        setIsSuperAdmin(false);
+        localStorage.removeItem('messageWall_isAdmin');
+        localStorage.removeItem('messageWall_isSuperAdmin');
+    };
+
     return (
         <div className={`relative min-h-screen transition-colors duration-500 font-body ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
             <Preloader />
@@ -70,6 +109,10 @@ function AppContent() {
                 user={user}
                 onOpenLogin={() => setShowAuthModal(true)}
                 onLogout={handleLogout}
+                isAdmin={isAdmin}
+                isSuperAdmin={isSuperAdmin}
+                onAdminLogin={handleAdminLogin}
+                onAdminLogout={handleAdminLogout}
             />
 
             {/* Shared Background - Only on Home */}
@@ -87,8 +130,8 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
-                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} />} />
-                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} />} />
+                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} />} />
+                    <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />} />
                 </Routes>
             </div>
         </div>

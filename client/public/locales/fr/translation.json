@@ -40,7 +40,13 @@
         "personal_best": "Mon Record Perso",
         "best": "Meilleur",
         "no_scores_yet": "No scores recorded yet. Be the first!",
-        "login_warning": "<0>Connectez-vous</0> pour que votre score soit enregistré, sinon il sera perdu !"
+        "login_warning": "<0>Connectez-vous</0> pour que votre score soit enregistré, sinon il sera perdu !",
+        "moves": "Mouvements",
+        "new_maze": "Nouveau Labyrinthe",
+        "maze": "Labyrinthe",
+        "use_arrows": "Utilisez les flèches pour vous déplacer",
+        "use_mouse": "Glissez à la souris ou utilisez ZQSD/Flèches",
+        "time": "Temps"
     },
     "pokemon": {
         "guess_prompt": "Qui est ce Pokémon ?",

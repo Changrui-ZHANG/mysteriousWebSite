@@ -15,6 +15,10 @@ interface NavbarProps {
     user?: User | null;
     onOpenLogin: () => void;
     onLogout?: () => void;
+    isAdmin?: boolean;
+    isSuperAdmin?: boolean;
+    onAdminLogin?: (code: string) => boolean;
+    onAdminLogout?: () => void;
 }
 
 // Helper component for Language Buttons
@@ -34,10 +38,24 @@ const LanguageButton = ({ lang, label, flagCode, currentLang, onClick }: { lang:
     </button>
 );
 
-export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout }: NavbarProps) {
+export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, isAdmin = false, isSuperAdmin = false, onAdminLogin, onAdminLogout }: NavbarProps) {
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+
+    // Admin Login State
+    const [showAdminInput, setShowAdminInput] = useState(false);
+    const [adminCode, setAdminCode] = useState('');
+
+    const submitAdminCode = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (onAdminLogin && onAdminLogin(adminCode)) {
+            setAdminCode('');
+            setShowAdminInput(false);
+        } else {
+            alert(t('admin.invalid_code') || 'Invalid admin code');
+        }
+    };
 
     // Lock body scroll when mobile menu is open
     useEffect(() => {
@@ -123,6 +141,44 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout }:
 
                     <div className="w-[1px] h-[20px] bg-current opacity-20"></div>
 
+                    {/* Admin Section in Navbar */}
+                    <div className="relative">
+                        {isAdmin ? (
+                            <button
+                                onClick={onAdminLogout}
+                                className={`text-xs px-2 py-1 rounded border ${isSuperAdmin ? 'border-purple-500 text-purple-400' : 'border-green-500 text-green-500'} hover:opacity-80 transition-opacity`}
+                                title="Admin Logout"
+                            >
+                                {isSuperAdmin ? 'SUPER ADMIN' : 'ADMIN'}
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={() => setShowAdminInput(!showAdminInput)}
+                                    className="hover:scale-110 transition-transform"
+                                    title="Admin Access"
+                                >
+                                    🔐
+                                </button>
+                                {showAdminInput && (
+                                    <form onSubmit={submitAdminCode} className={`absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 ${isDarkMode ? 'bg-black/90 border border-white/10' : 'bg-white border border-gray-200'}`}>
+                                        <input
+                                            type="password"
+                                            value={adminCode}
+                                            onChange={(e) => setAdminCode(e.target.value)}
+                                            placeholder="Code"
+                                            className={`w-24 px-2 py-1 text-xs rounded border ${isDarkMode ? 'bg-white/10 border-white/20' : 'bg-gray-50 border-gray-300'}`}
+                                            autoFocus
+                                        />
+                                        <button type="submit" className="px-2 py-1 bg-green-500 text-white text-xs rounded font-bold">→</button>
+                                    </form>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    <div className="w-[1px] h-[20px] bg-current opacity-20"></div>
+
                     <div className="flex gap-3">
                         {/* Language Buttons */}
                         <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
@@ -179,6 +235,40 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout }:
                                 <FaUser /> {t('auth.login')}
                             </button>
                         )}
+
+                        <div className="w-12 h-[1px] bg-white/20"></div>
+
+                        {/* Mobile Admin (Simplified) */}
+                        <div className="flex flex-col items-center gap-2">
+                            {isAdmin ? (
+                                <button
+                                    onClick={() => { onAdminLogout && onAdminLogout(); setIsOpen(false); }}
+                                    className="text-purple-400 text-sm border border-purple-500 px-3 py-1 rounded"
+                                >
+                                    Log out {isSuperAdmin ? 'Super Admin' : 'Admin'}
+                                </button>
+                            ) : (
+                                <div className="flex gap-2 items-center">
+                                    <span className="text-white/50 text-sm">Admin:</span>
+                                    <input
+                                        type="password"
+                                        value={adminCode}
+                                        onChange={(e) => setAdminCode(e.target.value)}
+                                        className="w-24 px-2 py-1 bg-white/10 rounded text-sm"
+                                        placeholder="Code"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            if (onAdminLogin && onAdminLogin(adminCode)) {
+                                                setAdminCode('');
+                                                setIsOpen(false);
+                                            }
+                                        }}
+                                        className="text-green-500"
+                                    >✓</button>
+                                </div>
+                            )}
+                        </div>
 
                         <div className="w-12 h-[1px] bg-white/20"></div>
 

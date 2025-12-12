@@ -1,34 +1,31 @@
 import { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-// removed unused icons and auth modal
 import BrickBreaker from './games/BrickBreaker';
 import Match3 from './games/Match3';
 import PokemonGame from './games/PokemonGame';
+import MazeGame from './games/MazeGame';
 import Leaderboard from './Leaderboard';
 
 interface GameProps {
     isDarkMode: boolean;
     user?: User | null;
     onOpenLogin: () => void;
+    isSuperAdmin?: boolean;
 }
-
-
 
 interface User {
     userId: string;
     username: string;
 }
 
-export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
+export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false }: GameProps) {
     const { t } = useTranslation();
-    const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon'>('brick');
+    const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon' | 'maze'>('brick');
 
     // Stats State
     const [personalBest, setPersonalBest] = useState<{ score: number, attempts?: number } | null>(null);
     const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
-
-    // Removed local user state loading effect, rely on prop
 
     useEffect(() => {
         const fetchPersonalBest = async () => {
@@ -37,17 +34,16 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                 return;
             }
             try {
-                const response = await fetch(`/api/scores/user/${user.userId}/${activeGame}`);
+                // Ensure no spaces in URL and bypass cache
+                const response = await fetch(`/api/scores/user/${user.userId}/${activeGame}?_t=${Date.now()}`);
                 if (response.ok) {
                     const data = await response.json();
                     setPersonalBest({ score: data.score, attempts: data.attempts });
                 } else {
-                    // No score found -> 0
                     setPersonalBest({ score: 0 });
                 }
             } catch (error) {
                 console.error("Failed to fetch personal best", error);
-                // Error fetching -> 0 (safe fallback if logged in)
                 setPersonalBest({ score: 0 });
             }
         };
@@ -59,13 +55,29 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
             return;
         }
 
-        // Only submit if it's a new high score
-        if (personalBest && personalBest.score !== undefined && score <= personalBest.score) {
-            return;
+        // Only submit if it's a new high score (or low score for maze)
+        // Determine if logic should trigger local optimistic update (isNewBest)
+        // But ALWAYS submit to backend to ensure data consistency
+        let isNewBest = false;
+        if (personalBest && personalBest.score !== undefined) {
+            if (activeGame === 'maze') {
+                // For maze, lower is better.
+                // Improvement if score < current best
+                if (score < personalBest.score || personalBest.score === 0) {
+                    isNewBest = true;
+                }
+            } else {
+                // For others, higher is better.
+                if (score > personalBest.score) {
+                    isNewBest = true;
+                }
+            }
+        } else {
+            isNewBest = true;
         }
 
         try {
-            await fetch('/api/scores', {
+            const response = await fetch('/api/scores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -76,10 +88,18 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                     attempts: attempts
                 })
             });
-            // Trigger leaderboard refresh
+            const result = await response.json();
+            console.log("Score submission result:", result);
+
+            // Update local state without fetching
+            if (isNewBest) {
+                setPersonalBest({ score, attempts });
+            }
+            // Trigger leaderboard refresh (Top 3 only)
             setRefreshLeaderboard(prev => prev + 1);
         } catch (error) {
             console.error("Failed to submit score", error);
+            alert("Error saving score: " + error);
         }
     };
 
@@ -101,9 +121,6 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                             {t('game.choose_your_challenge')}
                         </p>
                     </motion.div>
-
-                    {/* Auth Button (Absolute Top Right) */}
-
                 </div>
 
                 <div className="mb-12">
@@ -111,6 +128,7 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                         gameType={activeGame}
                         refreshTrigger={refreshLeaderboard}
                         isDarkMode={isDarkMode}
+                        isSuperAdmin={isSuperAdmin}
                     />
                 </div>
 
@@ -143,9 +161,17 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                     >
                         {t('game.pokemon_quiz')}
                     </button>
+                    <button
+                        onClick={() => setActiveGame('maze')}
+                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'maze'
+                            ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]'
+                            : 'bg-white/10 hover:bg-white/20'
+                            }`}
+                    >
+                        {t('game.maze')}
+                    </button>
                 </div>
 
-                {/* Login Warning for Unauthenticated Users */}
                 {/* Login Warning for Unauthenticated Users */}
                 {!user && (
                     <motion.div
@@ -158,7 +184,7 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                 )}
 
                 {/* Game Container */}
-                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>
+                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : activeGame === 'maze' ? 'min-h-[600px] md:aspect-auto' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeGame}
@@ -172,14 +198,14 @@ export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
                                 <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
                             ) : activeGame === 'match3' ? (
                                 <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
-                            ) : (
+                            ) : activeGame === 'pokemon' ? (
                                 <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
+                            ) : (
+                                <MazeGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
                             )}
                         </motion.div>
                     </AnimatePresence>
                 </div>
-
-
             </div>
         </div>
     );
