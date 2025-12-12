@@ -39,7 +39,8 @@
         "leaderboard": "Leaderboard",
         "personal_best": "My Personal Best",
         "best": "Best",
-        "no_scores_yet": "No scores recorded yet. Be the first!"
+        "no_scores_yet": "No scores recorded yet. Be the first!",
+        "login_warning": "<0>Log in</0> to save your score, otherwise it will be lost!"
     },
     "pokemon": {
         "guess_prompt": "Who's that Pokemon?",

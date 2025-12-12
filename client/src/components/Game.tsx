@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 // removed unused icons and auth modal
 import BrickBreaker from './games/BrickBreaker';
@@ -10,14 +10,17 @@ import Leaderboard from './Leaderboard';
 interface GameProps {
     isDarkMode: boolean;
     user?: User | null;
+    onOpenLogin: () => void;
 }
+
+
 
 interface User {
     userId: string;
     username: string;
 }
 
-export function Game({ isDarkMode, user }: GameProps) {
+export function Game({ isDarkMode, user, onOpenLogin }: GameProps) {
     const { t } = useTranslation();
     const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon'>('brick');
 
@@ -141,6 +144,18 @@ export function Game({ isDarkMode, user }: GameProps) {
                         {t('game.pokemon_quiz')}
                     </button>
                 </div>
+
+                {/* Login Warning for Unauthenticated Users */}
+                {/* Login Warning for Unauthenticated Users */}
+                {!user && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`text-center py-2 mb-4 text-sm font-bold mx-auto max-w-3xl ${isDarkMode ? 'text-yellow-400 bg-yellow-400/10' : 'text-orange-600 bg-orange-100'} rounded-lg border border-yellow-500/30`}
+                    >
+                        ⚠️ <Trans i18nKey="game.login_warning" components={[<button key="0" onClick={onOpenLogin} className="underline hover:text-pink-500 transition-colors mx-1 cursor-pointer" />]} />
+                    </motion.div>
+                )}
 
                 {/* Game Container */}
                 <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>

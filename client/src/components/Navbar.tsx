@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaSignOutAlt } from 'react-icons/fa';
-import AuthModal from './AuthModal';
 
 interface User {
     userId: string;
@@ -14,33 +13,21 @@ interface NavbarProps {
     isDarkMode: boolean;
     toggleTheme: () => void;
     user?: User | null;
-    onLogin?: (user: User) => void;
+    onOpenLogin: () => void;
     onLogout?: () => void;
 }
 
-export function Navbar({ isDarkMode, toggleTheme, user, onLogin, onLogout }: NavbarProps) {
+export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout }: NavbarProps) {
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng);
     };
 
-    const handleLoginSuccess = (user: User) => {
-        if (onLogin) onLogin(user);
-    };
-
     return (
         <>
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-                onLoginSuccess={handleLoginSuccess}
-                isDarkMode={isDarkMode}
-            />
-
             <nav className={`fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 mix-blend-difference text-white`}>
                 <Link to="/" className="text-xl md:text-2xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity z-50 relative">
                     {location.pathname === '/cv'
@@ -96,7 +83,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onLogin, onLogout }: Nav
                         </div>
                     ) : (
                         <button
-                            onClick={() => setShowAuthModal(true)}
+                            onClick={onOpenLogin}
                             className="flex items-center gap-2 hover:text-green-400 transition-colors"
                         >
                             <FaUser />
@@ -153,7 +140,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onLogin, onLogout }: Nav
                                 </div>
                             ) : (
                                 <button
-                                    onClick={() => { setShowAuthModal(true); setIsOpen(false); }}
+                                    onClick={() => { onOpenLogin(); setIsOpen(false); }}
                                     className="text-green-400 hover:text-green-300 flex items-center gap-2 text-lg"
                                 >
                                     <FaUser /> {t('auth.login')}

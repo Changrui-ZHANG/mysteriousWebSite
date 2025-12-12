@@ -1,6 +1,6 @@
 {
     "navbar": {
-        "title": "Bienvenu",
+        "title": "Bienvenue",
         "arcade_title": "Jeux d'Arcade",
         "messages_title": "Mur de Messages",
         "theme": {
@@ -39,7 +39,8 @@
         "leaderboard": "Classement",
         "personal_best": "Mon Record Perso",
         "best": "Meilleur",
-        "no_scores_yet": "Aucun score pour le moment. Soyez le premier !"
+        "no_scores_yet": "No scores recorded yet. Be the first!",
+        "login_warning": "<0>Connectez-vous</0> pour que votre score soit enregistré, sinon il sera perdu !"
     },
     "pokemon": {
         "guess_prompt": "Qui est ce Pokémon ?",

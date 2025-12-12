@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
+import AuthModal from './components/AuthModal'
 import { Preloader } from './components/Preloader'
 import { VisualEffect } from './components/VisualEffect'
 import { LiquidDecoration } from './components/LiquidDecoration'
@@ -23,6 +24,7 @@ function AppContent() {
 
     // Global Auth State
     const [user, setUser] = useState<User | null>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('messageWall_user');
@@ -34,6 +36,7 @@ function AppContent() {
     const handleLogin = (newUser: User) => {
         setUser(newUser);
         localStorage.setItem('messageWall_user', JSON.stringify(newUser));
+        setShowAuthModal(false); // Close modal on success
     };
 
     const handleLogout = () => {
@@ -46,11 +49,19 @@ function AppContent() {
             <Preloader />
             {location.pathname !== '/messages' && <ScrollProgress isDarkMode={isDarkMode} />}
 
+            {/* Global Auth Modal */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onLoginSuccess={handleLogin}
+                isDarkMode={isDarkMode}
+            />
+
             <Navbar
                 isDarkMode={isDarkMode}
                 toggleTheme={toggleTheme}
                 user={user}
-                onLogin={handleLogin}
+                onOpenLogin={() => setShowAuthModal(true)}
                 onLogout={handleLogout}
             />
 
@@ -69,7 +80,7 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
-                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} />} />
+                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} />} />
                     <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} />} />
                 </Routes>
             </div>
