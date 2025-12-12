@@ -62,49 +62,66 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
                     onClick={onClose}
                 >
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
+                        initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        className={`w-full max-w-sm p-6 rounded-2xl shadow-xl ${isDarkMode ? 'bg-gray-900 border border-white/10 text-white' : 'bg-white text-black'}`}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className={`relative w-full max-w-md p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border backdrop-blur-md ${isDarkMode ? 'bg-white/10 border-white/20 text-white' : 'bg-white/10 border-white/30 text-gray-900'}`}
+                        style={{
+                            boxShadow: isDarkMode ? '0 8px 32px 0 rgba(0, 0, 0, 0.37)' : '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                        }}
                         onClick={e => e.stopPropagation()}
                     >
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold">{authMode === 'login' ? t('auth.login') : t('auth.register')}</h2>
-                            <button onClick={onClose} className="opacity-50 hover:opacity-100"><FaTimes /></button>
-                        </div>
+                        {/* Shimmer/Reflection Effect */}
+                        <div className={`absolute inset-0 rounded-2xl pointer-events-none ${isDarkMode ? 'bg-gradient-to-br from-white/10 to-transparent opacity-50' : 'bg-gradient-to-br from-white/40 to-transparent opacity-70'}`}></div>
 
-                        <form onSubmit={handleAuth} className="flex flex-col gap-4">
-                            {error && <div className="text-red-500 text-sm bg-red-500/10 p-2 rounded">{error}</div>}
-                            {success && <div className="text-green-500 text-sm bg-green-500/10 p-2 rounded">{success}</div>}
+                        <div className="relative z-10">
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-2xl font-bold tracking-tight">
+                                    {authMode === 'login' ? t('auth.login') : t('auth.register')}
+                                </h2>
+                                <button onClick={onClose} className="opacity-50 hover:opacity-100 transition-opacity p-1">
+                                    <FaTimes className="text-lg" />
+                                </button>
+                            </div>
 
-                            <input
-                                type="text"
-                                placeholder={t('auth.username')}
-                                value={username}
-                                onChange={e => setUsername(e.target.value)}
-                                className={`px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-gray-100'}`}
-                                required
-                            />
-                            <input
-                                type="password"
-                                placeholder={t('auth.password')}
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                className={`px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-gray-100'}`}
-                                required
-                            />
+                            <form onSubmit={handleAuth} className="flex flex-col gap-5">
+                                {error && <div className="text-red-400 text-sm bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">{error}</div>}
+                                {success && <div className="text-green-400 text-sm bg-green-500/10 p-3 rounded-lg border border-green-500/20 text-center">{success}</div>}
 
-                            <button type="submit" className="bg-green-500 text-white py-2 rounded-lg font-bold hover:bg-green-400 transition-colors">
-                                {authMode === 'login' ? t('auth.login') : t('auth.create_account')}
-                            </button>
-                        </form>
+                                <div className="space-y-4">
+                                    <input
+                                        type="text"
+                                        placeholder={t('auth.username')}
+                                        value={username}
+                                        onChange={e => setUsername(e.target.value)}
+                                        className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-1 focus:ring-current transition-all backdrop-blur-sm ${isDarkMode ? 'bg-black/20 border-white/10 focus:border-white/30 placeholder-white/30' : 'bg-white/40 border-white/40 focus:border-white/60 placeholder-gray-500'}`}
+                                        required
+                                    />
+                                    <input
+                                        type="password"
+                                        placeholder={t('auth.password')}
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-1 focus:ring-current transition-all backdrop-blur-sm ${isDarkMode ? 'bg-black/20 border-white/10 focus:border-white/30 placeholder-white/30' : 'bg-white/40 border-white/40 focus:border-white/60 placeholder-gray-500'}`}
+                                        required
+                                    />
+                                </div>
 
-                        <div className="mt-4 text-center text-sm opacity-70">
-                            {authMode === 'login' ? (
-                                <p>{t('auth.no_account')} <button onClick={() => setAuthMode('register')} className="text-green-500 font-bold hover:underline">{t('auth.register')}</button></p>
-                            ) : (
-                                <p>{t('auth.has_account')} <button onClick={() => setAuthMode('login')} className="text-green-500 font-bold hover:underline">{t('auth.login')}</button></p>
-                            )}
+                                <button
+                                    type="submit"
+                                    className={`w-full py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-all transform active:scale-[0.98] shadow-lg ${isDarkMode ? 'bg-white/90 text-black hover:bg-white' : 'bg-black/80 text-white hover:bg-black'}`}
+                                >
+                                    {authMode === 'login' ? t('auth.login') : t('auth.create_account')}
+                                </button>
+                            </form>
+
+                            <div className="mt-8 text-center text-sm opacity-60">
+                                {authMode === 'login' ? (
+                                    <p>{t('auth.no_account')} <button onClick={() => setAuthMode('register')} className="font-bold hover:underline ml-1 opacity-100 hover:opacity-80 transition-opacity">{t('auth.register')}</button></p>
+                                ) : (
+                                    <p>{t('auth.has_account')} <button onClick={() => setAuthMode('login')} className="font-bold hover:underline ml-1 opacity-100 hover:opacity-80 transition-opacity">{t('auth.login')}</button></p>
+                                )}
+                            </div>
                         </div>
                     </motion.div>
                 </motion.div>

@@ -33,6 +33,13 @@ function AppContent() {
         }
     }, []);
 
+    // Sync body background with theme to prevent white flashes on mobile overscroll
+    useEffect(() => {
+        const color = isDarkMode ? '#050505' : '#f5f5f7';
+        document.body.style.backgroundColor = color;
+        document.documentElement.style.backgroundColor = color;
+    }, [isDarkMode]);
+
     const handleLogin = (newUser: User) => {
         setUser(newUser);
         localStorage.setItem('messageWall_user', JSON.stringify(newUser));
@@ -65,8 +72,8 @@ function AppContent() {
                 onLogout={handleLogout}
             />
 
-            {/* Shared Background - Only on Home and CV */}
-            {(location.pathname === '/' || location.pathname === '/cv') && (
+            {/* Shared Background - Only on Home */}
+            {location.pathname === '/' && (
                 <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none">
                     <VisualEffect isDarkMode={isDarkMode} />
                     {/* Aurora Blobs */}

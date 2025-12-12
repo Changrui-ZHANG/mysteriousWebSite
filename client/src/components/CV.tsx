@@ -87,7 +87,7 @@ export function CV({ isDarkMode }: CVProps) {
     ];
 
     return (
-        <div className={`min-h-screen pt-32 pb-24 px-4 sm:px-8 transition-colors duration-500 ${isDarkMode ? 'bg-dark text-white' : 'bg-gray-50 text-gray-900'}`}>
+        <div className={`min-h-screen pt-32 pb-24 px-4 sm:px-8 transition-colors duration-500 overflow-x-hidden ${isDarkMode ? 'bg-dark text-white' : 'bg-gray-50 text-gray-900'}`}>
 
             {/* Header */}
             <header className="max-w-4xl mx-auto text-center mb-24">
