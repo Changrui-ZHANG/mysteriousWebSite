@@ -108,7 +108,6 @@ export function Game({ isDarkMode, user }: GameProps) {
                         gameType={activeGame}
                         refreshTrigger={refreshLeaderboard}
                         isDarkMode={isDarkMode}
-                        userId={user?.userId}
                     />
                 </div>
 

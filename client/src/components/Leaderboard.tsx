@@ -6,16 +6,16 @@ interface Score {
     username: string;
     score: number;
     timestamp: number;
+    attempts?: number;
 }
 
 interface LeaderboardProps {
     gameType: string;
     refreshTrigger: number;
     isDarkMode: boolean;
-    userId?: string;
 }
 
-export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, userId }: LeaderboardProps) {
+export default function Leaderboard({ gameType, refreshTrigger, isDarkMode }: LeaderboardProps) {
     const { t } = useTranslation();
     const [scores, setScores] = useState<Score[]>([]);
 

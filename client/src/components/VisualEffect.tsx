@@ -27,8 +27,7 @@ function FlowParticles({ isDarkMode }: { isDarkMode: boolean }) {
         return { positions: p, speeds: s };
     }, []);
 
-    useFrame((state) => {
-        const time = state.clock.getElapsedTime();
+    useFrame(() => {
 
         // We update the buffer attributes directly for performance
         if (mesh.current) {
