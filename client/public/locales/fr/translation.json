@@ -17,7 +17,8 @@
         "home": "ACCUEIL",
         "cv": "CV",
         "game": "ARCADE",
-        "messages": "MESSAGES"
+        "messages": "MESSAGES",
+        "suggestions": "SUGGESTIONS"
     },
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
@@ -47,10 +48,32 @@
         "maze": "Labyrinthe",
         "use_arrows": "Utilisez les flèches pour vous déplacer",
         "use_mouse": "Glissez à la souris ou utilisez ZQSD/Flèches",
-        "time": "Temps"
+        "time": "Temps",
+        "rules": "Règles",
+        "controls": "Contrôles",
+        "bonus": "Bonus",
+        "combos": "Combos",
+        "speed": "Vitesse",
+        "quiz": "Quiz",
+        "brick_breaker_rules": "Détruisez toutes les briques sans laisser tomber la balle !",
+        "brick_breaker_controls": "Utilisez la souris pour déplacer la raquette.",
+        "brick_breaker_bonus": "Casser des briques augmente le score !",
+        "match3_rules_text": "3 blocs = 3 pts. 4 blocs = 8 pts. 5 blocs = 15 pts.",
+        "match3_combos": "Un combo est une réaction en chaîne automatique. Quand les blocs tombent et créent de nouveaux alignements, les points sont multipliés (x2, x3...).",
+        "match3_speed": "Soyez rapide, le temps n'est pas votre allié !",
+        "pokemon_rules": "Devinez le nom du Pokémon caché par l'ombre !",
+        "pokemon_quiz_desc": "4 choix, une seule bonne réponse.",
+        "pokemon_score_desc": "Maximisez vos bonnes réponses !",
+        "maze_rules": "Trouvez la sortie du labyrinthe avant la fin du temps imparti !",
+        "maze_collect": "Ramassez les bonus pour gagner du temps.",
+        "game_disabled": "Jeu Désactivé",
+        "game_disabled_desc": "Ce jeu est actuellement désactivé par l'administrateur.",
+        "next_shift": "Changement"
     },
     "pokemon": {
         "guess_prompt": "Qui est ce Pokémon ?",
+        "score": "Score",
+        "loading": "Chargement des données génétiques...",
         "guess": "DEVINER",
         "next": "POKÉMON SUIVANT",
         "correct": "✓ CORRECT !",
@@ -58,6 +81,21 @@
         "hint": "Indice",
         "letters": "lettres",
         "answer": "Réponse"
+    },
+    "spacetraders": {
+        "join_fleet": "Rejoignez la Flotte Spatiale",
+        "register_desc": "Entrez un indicatif pour enregistrer un nouvel agent.",
+        "callsign_placeholder": "ENTREZ L'INDICATIF",
+        "register_agent": "Enregistrer l'Agent",
+        "agent": "AGENT",
+        "credits": "CRÉDITS",
+        "headquarters": "QUARTIER GÉNÉRAL",
+        "logout": "Déconnexion",
+        "command_fleet": "Flotte de Commandement",
+        "symbol": "Symbole",
+        "location": "Localisation",
+        "no_ships": "Aucun vaisseau trouvé. Achetez des vaisseaux pour commencer le commerce.",
+        "uplinking": "Liaison au Réseau Neural..."
     },
     "messages": {
         "title": "Mur de Messages",
@@ -73,6 +111,26 @@
         "anonymous": "Anonyme",
         "post_anonymously": "Publier anonymement",
         "you": "Vous"
+    },
+    "suggestions": {
+        "title": "Suggestions & Idées",
+        "subtitle": "Partagez vos idées pour améliorer ce site !",
+        "submit_new": "Soumettre une Nouvelle Idée",
+        "placeholder": "Je voudrais voir plus de jeux d'arcade...",
+        "submit": "Soumettre l'Idée",
+        "login_to_view": "Veuillez vous connecter pour voir et soumettre des suggestions",
+        "submitting": "Envoi en cours...",
+        "login_required": "Veuillez vous connecter pour soumettre des suggestions",
+        "all_suggestions": "Toutes les Suggestions",
+        "your_suggestions": "Vos Suggestions",
+        "no_suggestions": "Aucune suggestion pour le moment. Soyez le premier à partager une idée !",
+        "pending": "En attente",
+        "reviewed": "Revue",
+        "implemented": "Implémenté",
+        "confirm_delete": "Supprimer cette suggestion ?",
+        "archive": "Archive",
+        "show_archive": "Afficher l'Archive",
+        "hide_archive": "Masquer l'Archive"
     },
     "admin": {
         "manage_users": "Gérer les utilisateurs",

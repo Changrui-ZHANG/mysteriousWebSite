@@ -312,8 +312,8 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                 )}
 
                 {/* Game Container */}
-                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : activeGame === 'maze' ? 'min-h-[600px] md:aspect-auto' : 'min-h-[500px] md:min-h-0 md:aspect-video'} grid grid-cols-1`}>
-                    <AnimatePresence mode="popLayout">
+                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[700px] md:min-h-[800px]' : activeGame === 'maze' ? 'min-h-[600px] md:aspect-auto' : 'min-h-[500px] md:min-h-0 md:aspect-video'} grid grid-cols-1`}>
+                    <AnimatePresence mode="wait">
                         <motion.div
                             key={activeGame}
                             initial={{ opacity: 0, x: 20 }}
@@ -322,15 +322,30 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                             transition={{ duration: 0.3 }}
                             className="w-full h-full col-start-1 row-start-1"
                         >
-                            {activeGame === 'brick' ? (
-                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} />
-                            ) : activeGame === 'match3' ? (
-                                <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
-                            ) : activeGame === 'pokemon' ? (
-                                <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
-                            ) : (
-                                <MazeGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
-                            )}
+                            {(() => {
+                                const isEnabled = gameStatuses[activeGame] !== false;
+                                const isLocked = !isEnabled && !isSuperAdmin && !isAdmin;
+
+                                if (isLocked) {
+                                    return (
+                                        <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm rounded-xl border border-white/10 p-8 text-center">
+                                            <div className="text-6xl mb-4">🔒</div>
+                                            <h2 className="text-2xl font-bold text-white mb-2">{t('game.game_disabled')}</h2>
+                                            <p className="text-white/60">{t('game.game_disabled_desc')}</p>
+                                        </div>
+                                    );
+                                }
+
+                                return activeGame === 'brick' ? (
+                                    <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} />
+                                ) : activeGame === 'match3' ? (
+                                    <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
+                                ) : activeGame === 'pokemon' ? (
+                                    <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
+                                ) : (
+                                    <MazeGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
+                                );
+                            })()}
                         </motion.div>
                     </AnimatePresence>
                 </div>

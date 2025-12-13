@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { useSound } from '../../../hooks/useSound';
+import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import { registerAgent, getAgent, getMyShips, Agent, Ship } from '../../../utils/spacetraders';
 
 interface SpaceTradersProps {
@@ -15,6 +17,8 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
     const [callSign, setCallSign] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { playSound } = useSound(!isMuted);
 
     // Initial Load - only fetch if we have a valid token
     useEffect(() => {
@@ -138,7 +142,21 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
             )}
 
             {/* Header / Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="flex justify-end mb-4 md:absolute md:top-6 md:right-6 z-10">
+                <button
+                    onClick={() => {
+                        const newMute = !isMuted;
+                        setIsMuted(newMute);
+                        localStorage.setItem('arcade_muted', String(newMute));
+                    }}
+                    className="flex items-center gap-2 px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-cyan-400 text-sm transition-colors border border-cyan-500/20"
+                >
+                    {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+                    <span className="hidden sm:inline">{isMuted ? 'Muted' : 'Sound On'}</span>
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-8 md:mt-0">
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={cardClass}>
                     <h3 className="text-cyan-400 text-sm mb-2 uppercase tracking-widest">{t('spacetraders.agent')}</h3>
                     <div className="text-2xl font-bold truncate">{agent?.symbol}</div>
@@ -155,7 +173,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className={cardClass}>
                     <h3 className="text-purple-400 text-sm mb-2 uppercase tracking-widest">{t('spacetraders.headquarters')}</h3>
                     <div className="text-xl font-bold">{agent?.headquarters}</div>
-                    <button onClick={logout} className="mt-2 text-xs text-red-400 hover:text-red-300 underline">{t('spacetraders.logout')}</button>
+                    <button onClick={() => { playSound('click'); logout(); }} className="mt-2 text-xs text-red-400 hover:text-red-300 underline">{t('spacetraders.logout')}</button>
                 </motion.div>
             </div>
 
@@ -168,7 +186,8 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: idx * 0.1 + 0.3 }}
-                        className={`${cardClass} group hover:border-cyan-400/60 transition-colors`}
+                        className={`${cardClass} group hover:border-cyan-400/60 transition-colors cursor-default`}
+                        onMouseEnter={() => playSound('pop')}
                     >
                         <div className="flex justify-between items-start mb-4">
                             <div>

@@ -94,7 +94,7 @@ export function CV({ isDarkMode }: CVProps) {
                 <motion.h1
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-6xl sm:text-8xl font-heading font-bold mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
+                    className="text-6xl sm:text-8xl font-heading font-bold mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent leading-tight pb-2"
                 >
                     Changrui ZHANG
                 </motion.h1>

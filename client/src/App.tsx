@@ -10,6 +10,7 @@ import { Home } from './pages/HomePage'
 import { CV } from './pages/CVPage'
 import { Game } from './pages/GamePage'
 import { MessageWall } from './features/messages/MessageWall'
+import { SuggestionsPage } from './pages/SuggestionsPage'
 import './App.css'
 
 interface User {
@@ -132,6 +133,7 @@ function AppContent() {
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
                     <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} />} />
                     <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />} />
+                    <Route path="/suggestions" element={<SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} />} />
                 </Routes>
             </div>
         </div>

@@ -17,7 +17,8 @@
         "home": "HOME",
         "cv": "CV",
         "game": "ARCADE",
-        "messages": "MESSAGES"
+        "messages": "MESSAGES",
+        "suggestions": "SUGGESTIONS"
     },
     "game": {
         "arcade_zone": "NEON ARCADE",
@@ -47,10 +48,32 @@
         "maze": "Maze",
         "use_arrows": "Use arrow keys to move",
         "use_mouse": "Drag mouse or use WASD/Arrows to move",
-        "time": "Time"
+        "time": "Time",
+        "rules": "Rules",
+        "controls": "Controls",
+        "bonus": "Bonus",
+        "combos": "Combos",
+        "speed": "Speed",
+        "quiz": "Quiz",
+        "brick_breaker_rules": "Destroy all bricks without dropping the ball!",
+        "brick_breaker_controls": "Use the mouse to move the paddle.",
+        "brick_breaker_bonus": "Breaking bricks increases the score!",
+        "match3_rules_text": "3 blocks = 3 pts. 4 blocks = 8 pts. 5 blocks = 15 pts.",
+        "match3_combos": "A combo is an automatic chain reaction. When blocks fall and create new matches, points are multiplied (x2, x3...).",
+        "match3_speed": "Be fast, time is not on your side!",
+        "pokemon_rules": "Guess the name of the Pokemon hidden by the shadow!",
+        "pokemon_quiz_desc": "4 choices, only one correct answer.",
+        "pokemon_score_desc": "Maximize your correct answers!",
+        "maze_rules": "Find the exit of the maze before time runs out!",
+        "maze_collect": "Collect bonuses to gain extra time.",
+        "game_disabled": "Game Disabled",
+        "game_disabled_desc": "This game is currently disabled by the administrator.",
+        "next_shift": "Next Shift"
     },
     "pokemon": {
         "guess_prompt": "Who's that Pokemon?",
+        "score": "Score",
+        "loading": "Loading generic data...",
         "guess": "GUESS",
         "next": "NEXT POKEMON",
         "correct": "✓ CORRECT!",
@@ -58,6 +81,21 @@
         "hint": "Hint",
         "letters": "letters",
         "answer": "Answer"
+    },
+    "spacetraders": {
+        "join_fleet": "Join the Space Fleet",
+        "register_desc": "Enter a callsign to register a new agent.",
+        "callsign_placeholder": "ENTER CALL SIGN",
+        "register_agent": "Register Agent",
+        "agent": "AGENT",
+        "credits": "CREDITS",
+        "headquarters": "HEADQUARTERS",
+        "logout": "Logout",
+        "command_fleet": "Command Fleet",
+        "symbol": "Symbol",
+        "location": "Location",
+        "no_ships": "No ships found. Purchase ships to begin trading.",
+        "uplinking": "Uplinking to Neural Net..."
     },
     "messages": {
         "title": "Message Wall",
@@ -73,6 +111,26 @@
         "anonymous": "Anonymous",
         "post_anonymously": "Post anonymously",
         "you": "You"
+    },
+    "suggestions": {
+        "title": "Suggestions & Ideas",
+        "subtitle": "Share your ideas to make this website better!",
+        "submit_new": "Submit a New Idea",
+        "placeholder": "I would like to see more arcade games...",
+        "submit": "Submit Idea",
+        "login_to_view": "Please log in to view and submit suggestions",
+        "submitting": "Submitting...",
+        "login_required": "Please log in to submit suggestions",
+        "all_suggestions": "All Suggestions",
+        "your_suggestions": "Your Suggestions",
+        "no_suggestions": "No suggestions yet. Be the first to share an idea!",
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "implemented": "Implemented",
+        "confirm_delete": "Delete this suggestion?",
+        "archive": "Archive",
+        "show_archive": "Show Archive",
+        "hide_archive": "Hide Archive"
     },
     "admin": {
         "manage_users": "Manage Users",

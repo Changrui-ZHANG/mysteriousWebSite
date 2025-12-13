@@ -126,6 +126,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                         <Link to="/cv" className="hover:text-cyan-400 transition-colors">{t('nav.cv')}</Link>
                         <Link to="/game" className="hover:text-cyan-400 transition-colors">{t('nav.game')}</Link>
                         <Link to="/messages" className="hover:text-cyan-400 transition-colors">{t('nav.messages')}</Link>
+                        <Link to="/suggestions" className="hover:text-cyan-400 transition-colors">{t('nav.suggestions')}</Link>
                     </div>
 
                     <div className="w-[1px] h-[20px] bg-current opacity-20"></div>
@@ -227,7 +228,8 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                 { to: "/", label: t('nav.home') },
                                 { to: "/cv", label: t('nav.cv') },
                                 { to: "/game", label: t('nav.game') },
-                                { to: "/messages", label: t('nav.messages') }
+                                { to: "/messages", label: t('nav.messages') },
+                                { to: "/suggestions", label: t('nav.suggestions') }
                             ].map((link) => (
                                 <Link
                                     key={link.to}

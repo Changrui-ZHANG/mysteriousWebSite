@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { getRandomPokemon, Pokemon } from '../../../utils/pokeapi';
+import { useSound } from '../../../hooks/useSound';
+import { FaVolumeUp, FaVolumeMute, FaQuestion, FaArrowLeft } from 'react-icons/fa';
 
 interface PokemonGameProps {
     isDarkMode: boolean;
@@ -20,6 +22,17 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
     const [score, setScore] = useState(0);
     const [attempts, setAttempts] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { playSound } = useSound(!isMuted);
+
+    const toggleMute = () => {
+        const newMute = !isMuted;
+        setIsMuted(newMute);
+        localStorage.setItem('arcade_muted', String(newMute));
+    };
+
+    // Flip state
+    const [isFlipped, setIsFlipped] = useState(false);
 
     useEffect(() => {
         loadNewPokemon();
@@ -52,6 +65,9 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
         // Just calling onGameStart() on init handles the "ActiveGame Change" case.
         // If score resets?
         if (score === 0 && onGameStart) onGameStart(); // Reset alert if starting from 0
+
+        playSound('click'); // Play click sound on next/load
+
 
         setLoading(true);
         setRevealed(false);
@@ -107,6 +123,9 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
 
         if (answer.toLowerCase() === pokemon?.name.toLowerCase()) {
             setScore(prev => prev + 1);
+            playSound('win');
+        } else {
+            playSound('gameover');
         }
     };
 
@@ -135,110 +154,179 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
     const cardClass = `p-6 rounded-xl backdrop-blur-md border ${isDarkMode ? 'bg-black/60 border-purple-500/30' : 'bg-white/80 border-purple-500/20'}`;
 
     return (
-        <div className="h-full w-full overflow-hidden p-4 md:p-6 font-mono flex flex-col">
-            {/* Score Header */}
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex gap-4 items-center flex-wrap">
-                    <div className="text-xl md:text-2xl font-bold text-purple-400">
-                        {t('game.score')}: {score}/{attempts}
-                        {personalBest && personalBest.score > 0 && (
-                            <span className="ml-3 text-lg text-indigo-400 opacity-90">
-                                ({t('game.best')}: {personalBest.score}{personalBest.attempts ? `/${personalBest.attempts}` : ''})
-                            </span>
-                        )}
-                    </div>
-                </div>
-                <button
-                    onClick={loadNewPokemon}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors text-sm md:text-base"
+        <div className="w-full h-full" style={{ perspective: '1000px' }}>
+            <motion.div
+                className="w-full h-full relative"
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.6 }}
+                style={{ transformStyle: 'preserve-3d' }}
+            >
+                {/* Front Face (Game) */}
+                <div
+                    className="absolute inset-0 w-full h-full overflow-y-auto p-4 md:p-6 font-mono flex flex-col scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-transparent"
+                    style={{ backfaceVisibility: 'hidden' }}
                 >
-                    {t('pokemon.next')}
-                </button>
-            </div>
-
-            {/* Game Area */}
-            <div className={`${cardClass} flex-1 flex items-center justify-center`}>
-                {loading ? (
-                    <div className="text-center py-20">
-                        <div className="text-purple-400 font-bold animate-pulse text-xl">
-                            {t('game.loading')}
+                    {/* Score Header */}
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex gap-4 items-center flex-wrap">
+                            <div className="text-xl md:text-2xl font-bold text-purple-400">
+                                {t('game.score')}: {score}/{attempts}
+                                {personalBest && personalBest.score > 0 && (
+                                    <span className="ml-3 text-lg text-indigo-400 opacity-90">
+                                        ({t('game.best')}: {personalBest.score}{personalBest.attempts ? `/${personalBest.attempts}` : ''})
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setIsFlipped(true)}
+                                className="text-purple-400 hover:text-purple-300 transition-colors"
+                                title="Rules"
+                            >
+                                <FaQuestion size={20} />
+                            </button>
+                            <button
+                                onClick={toggleMute}
+                                className="text-purple-400 hover:text-purple-300 transition-colors"
+                                title={isMuted ? "Unmute" : "Mute"}
+                            >
+                                {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
+                            </button>
+                            <button
+                                onClick={loadNewPokemon}
+                                className="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors text-sm md:text-base ml-2"
+                            >
+                                {t('pokemon.next')}
+                            </button>
                         </div>
                     </div>
-                ) : pokemon ? (
-                    <div className="space-y-4 w-full max-w-2xl">
-                        {/* Pokemon Image */}
-                        <div className="relative aspect-square max-w-xs mx-auto">
-                            <motion.img
-                                key={pokemon.id}
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                src={pokemon.sprites.other['official-artwork'].front_default}
-                                alt={revealed ? pokemon.name : '???'}
-                                className={`w-full h-full object-contain transition-all duration-500 ${revealed ? 'blur-none brightness-100' : 'blur-sm brightness-50 contrast-200'
-                                    }`}
-                            />
-                        </div>
 
-                        {/* Hints */}
-                        {!revealed && (
-                            <div className="text-center space-y-1">
-                                <p className="text-base opacity-80">
-                                    {t('pokemon.guess_prompt')}
-                                </p>
-                                <div className="text-sm opacity-70">
-                                    #{pokemon.id.toString().padStart(3, '0')}
+                    {/* Game Area */}
+                    <div className={`${cardClass} flex-1 flex items-center justify-center`}>
+                        {loading ? (
+                            <div className="text-center py-20">
+                                <div className="text-purple-400 font-bold animate-pulse text-xl">
+                                    {t('game.loading')}
                                 </div>
                             </div>
-                        )}
-
-                        {/* Multiple Choice Options */}
-                        <div className="grid grid-cols-2 gap-3">
-                            {options.map((option, index) => (
-                                <motion.button
-                                    key={index}
-                                    initial={{ scale: 0.9, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    onClick={() => handleAnswer(option)}
-                                    disabled={revealed}
-                                    className={getButtonClass(option)}
-                                >
-                                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                                </motion.button>
-                            ))}
-                        </div>
-
-                        {/* Revealed Answer */}
-                        {revealed && (
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                className="text-center space-y-3 pt-4"
-                            >
-                                <div className="flex items-center justify-center gap-4 flex-wrap">
-                                    <h2 className={`text-2xl md:text-3xl font-black uppercase ${selectedAnswer?.toLowerCase() === pokemon.name.toLowerCase()
-                                        ? 'text-green-400'
-                                        : 'text-red-400'
-                                        }`}>
-                                        {selectedAnswer?.toLowerCase() === pokemon.name.toLowerCase()
-                                            ? t('pokemon.correct')
-                                            : t('pokemon.wrong')}
-                                    </h2>
-                                    <button
-                                        onClick={loadNewPokemon}
-                                        className="px-6 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors text-sm"
-                                    >
-                                        {t('pokemon.next')}
-                                    </button>
+                        ) : pokemon ? (
+                            <div className="space-y-4 w-full max-w-2xl">
+                                {/* Pokemon Image */}
+                                <div className="relative aspect-square max-w-xs mx-auto">
+                                    <motion.img
+                                        key={pokemon.id}
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        src={pokemon.sprites.other['official-artwork'].front_default}
+                                        alt={revealed ? pokemon.name : '???'}
+                                        className={`w-full h-full object-contain transition-all duration-500 ${revealed ? 'blur-none brightness-100' : 'blur-sm brightness-50 contrast-200'
+                                            }`}
+                                    />
                                 </div>
-                                <p className="text-lg md:text-xl text-purple-300">
-                                    {t('pokemon.answer')}: <span className="font-bold">{pokemon.name.toUpperCase()}</span>
-                                </p>
-                            </motion.div>
-                        )}
+
+                                {/* Hints */}
+                                {!revealed && (
+                                    <div className="text-center space-y-1">
+                                        <p className="text-base opacity-80">
+                                            {t('pokemon.guess_prompt')}
+                                        </p>
+                                        <div className="text-sm opacity-70">
+                                            #{pokemon.id.toString().padStart(3, '0')}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Multiple Choice Options */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    {options.map((option, index) => (
+                                        <motion.button
+                                            key={index}
+                                            initial={{ scale: 0.9, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            transition={{ delay: index * 0.1 }}
+                                            onClick={() => handleAnswer(option)}
+                                            disabled={revealed}
+                                            className={getButtonClass(option)}
+                                        >
+                                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                                        </motion.button>
+                                    ))}
+                                </div>
+
+                                {/* Revealed Answer */}
+                                {revealed && (
+                                    <motion.div
+                                        initial={{ scale: 0.9, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        className="text-center space-y-3 pt-4"
+                                    >
+                                        <div className="flex items-center justify-center gap-4 flex-wrap">
+                                            <h2 className={`text-2xl md:text-3xl font-black uppercase ${selectedAnswer?.toLowerCase() === pokemon.name.toLowerCase()
+                                                ? 'text-green-400'
+                                                : 'text-red-400'
+                                                }`}>
+                                                {selectedAnswer?.toLowerCase() === pokemon.name.toLowerCase()
+                                                    ? t('pokemon.correct')
+                                                    : t('pokemon.wrong')}
+                                            </h2>
+                                            <button
+                                                onClick={loadNewPokemon}
+                                                className="px-6 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors text-sm"
+                                            >
+                                                {t('pokemon.next')}
+                                            </button>
+                                        </div>
+                                        <p className="text-lg md:text-xl text-purple-300">
+                                            {t('pokemon.answer')}: <span className="font-bold">{pokemon.name.toUpperCase()}</span>
+                                        </p>
+                                    </motion.div>
+                                )}
+                            </div>
+                        ) : null}
                     </div>
-                ) : null}
-            </div>
+                </div>
+
+                {/* Back Face (Rules) */}
+                <div
+                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-slate-900/90' : 'bg-white/90'}`}
+                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                >
+                    <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+                            {t('game.pokemon_quiz')} - {t('game.arcade_zone')}
+                        </h2>
+                        <button
+                            onClick={() => setIsFlipped(false)}
+                            className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                        >
+                            <FaArrowLeft className="text-white text-xl" />
+                        </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto space-y-6 text-left">
+                        <section>
+                            <h3 className="text-xl font-bold text-purple-400 mb-2">🐾 {t('game.pokemon_quiz')}</h3>
+                            <p className="text-white/80 leading-relaxed">
+                                {t('game.pokemon_rules')}
+                            </p>
+                        </section>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-4 rounded-lg">
+                                <span className="block text-2xl mb-2">❓</span>
+                                <h4 className="font-bold text-white mb-1">{t('game.quiz')}</h4>
+                                <p className="text-sm text-white/60">{t('game.pokemon_quiz_desc')}</p>
+                            </div>
+                            <div className="bg-white/5 p-4 rounded-lg">
+                                <span className="block text-2xl mb-2">🏆</span>
+                                <h4 className="font-bold text-white mb-1">{t('game.score')}</h4>
+                                <p className="text-sm text-white/60">{t('game.pokemon_score_desc')}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
         </div>
     );
 }

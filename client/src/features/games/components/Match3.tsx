@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useSound } from '../../../hooks/useSound';
+import { FaVolumeUp, FaVolumeMute, FaQuestion, FaArrowLeft } from 'react-icons/fa';
 
 const WIDTH = 8;
 const CANDY_COLORS = [
@@ -25,6 +27,20 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
     const [board, setBoard] = useState<string[]>([]);
     const [score, setScore] = useState(0);
     const [selectedCandies, setSelectedCandies] = useState<number[]>([]);
+    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { playSound } = useSound(!isMuted);
+
+    const toggleMute = () => {
+        const newMute = !isMuted;
+        setIsMuted(newMute);
+        localStorage.setItem('arcade_muted', String(newMute));
+    };
+
+    // Flip state
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    // Combo state
+    const [comboMultiplier, setComboMultiplier] = useState(0);
 
     // Initialize board
     const createBoard = () => {
@@ -44,6 +60,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
     const checkForMatches = () => {
         const newBoard = [...board];
         const matchedIndices = new Set<number>();
+        let turnBaseScore = 0;
 
         // Rows
         for (let row = 0; row < WIDTH; row++) {
@@ -61,6 +78,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                     for (let k = 0; k < matchLen; k++) {
                         matchedIndices.add(i + k);
                     }
+                    turnBaseScore += (matchLen - 2) * matchLen;
                     col += matchLen - 1;
                 }
             }
@@ -82,17 +100,21 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                     for (let k = 0; k < matchLen; k++) {
                         matchedIndices.add((row + k) * WIDTH + col);
                     }
+                    turnBaseScore += (matchLen - 2) * matchLen;
                     row += matchLen - 1;
                 }
             }
         }
 
         if (matchedIndices.size > 0) {
-            setScore(prev => prev + matchedIndices.size);
+            const nextMultiplier = comboMultiplier + 1;
+            setScore(prev => prev + (turnBaseScore * nextMultiplier));
+            setComboMultiplier(prev => prev + 1);
             matchedIndices.forEach(index => {
                 newBoard[index] = '';
             });
             setBoard(newBoard);
+            playSound('break', matchedIndices.size); // Dynamic sound based on match count
             return true;
         }
         return false;
@@ -142,17 +164,19 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
             checkForMatches();
         }, 100);
         return () => clearInterval(timer);
-    }, [board]);
+    }, [board, comboMultiplier]);
 
     // Handle clicks
     const handleClick = (index: number) => {
         if (selectedCandies.includes(index)) {
             setSelectedCandies([]);
+            playSound('click');
             return;
         }
 
         if (selectedCandies.length === 0) {
             setSelectedCandies([index]);
+            playSound('click');
         } else {
             const firstIndex = selectedCandies[0];
             const secondIndex = index;
@@ -169,6 +193,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
 
                 setBoard(newBoard);
                 setSelectedCandies([]);
+                setComboMultiplier(0); // Reset combo on user move
             } else {
                 setSelectedCandies([index]);
             }
@@ -202,52 +227,128 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
     // Reset Game
     const resetGame = () => {
         if (onGameStart) onGameStart();
+        playSound('click');
         // Force save current score before resetting if valid
         if (score > 0) {
             onSubmitScoreRef.current(score);
         }
         setScore(0);
+        setComboMultiplier(0);
         createBoard();
     }
 
     return (
-        <div className={`w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} p-4`}>
-            <div className="w-full flex justify-between items-center px-4 mb-4 md:px-8">
-                <div className="flex gap-4 items-center">
-                    <div className="text-xl font-bold font-mono text-fuchsia-400">
-                        {t('game.score')}: {score}
-                        {personalBest && personalBest.score !== undefined && (
-                            <span className="ml-3 text-lg text-purple-400 opacity-80">
-                                ({t('game.best')}: {Math.max(score, personalBest.score)})
-                            </span>
-                        )}
+        <div className="w-full h-full" style={{ perspective: '1000px' }}>
+            <motion.div
+                className="w-full h-full relative"
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.6 }}
+                style={{ transformStyle: 'preserve-3d' }}
+            >
+                {/* Front Face (Game) */}
+                <div
+                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} p-4`}
+                    style={{ backfaceVisibility: 'hidden' }}
+                >
+                    <div className="w-full flex justify-between items-center px-4 mb-4 md:px-8">
+                        <div className="flex gap-4 items-center">
+                            <div className="text-xl font-bold font-mono text-fuchsia-400 flex items-center">
+                                {t('game.score')}: {score}
+                                {comboMultiplier > 1 && (
+                                    <span className="ml-2 text-yellow-400 font-black animate-pulse text-xl md:text-2xl">
+                                        {t('game.combos')} x{comboMultiplier}
+                                    </span>
+                                )}
+                                {personalBest && personalBest.score !== undefined && (
+                                    <span className="ml-3 text-lg text-purple-400 opacity-80">
+                                        ({t('game.best')}: {Math.max(score, personalBest.score)})
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setIsFlipped(true)}
+                                className={`transition-colors ${isDarkMode ? 'text-white/70 hover:text-cyan-400' : 'text-slate-700 hover:text-purple-600'}`}
+                                title="Rules"
+                            >
+                                <FaQuestion size={20} />
+                            </button>
+                            <button
+                                onClick={toggleMute}
+                                className={`transition-colors ${isDarkMode ? 'text-white/70 hover:text-white' : 'text-slate-700 hover:text-black'}`}
+                                title={isMuted ? "Unmute" : "Mute"}
+                            >
+                                {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
+                            </button>
+                            <button onClick={resetGame} className={`text-sm font-bold px-3 py-1 rounded-full transition-colors ${isDarkMode ? 'text-white/50 hover:text-white bg-white/10' : 'text-slate-600 hover:text-white bg-black/5 hover:bg-slate-600'}`}>{t('game.reset')}</button>
+                        </div>
+                    </div>
+
+                    <div className="w-full max-w-[400px] grid grid-cols-8 gap-0.5 md:gap-1 p-2 md:p-4 bg-black/40 rounded-lg mx-auto">
+                        <AnimatePresence mode='popLayout'>
+                            {board.map((candyColor, index) => (
+                                <motion.div
+                                    key={`${index}-${candyColor}`} // Key changes when content changes, triggering animation
+                                    layout={false} // Disable layout animation to avoid "reshuffling" artifacts
+                                    initial={{ y: -20, opacity: 0, scale: 0.8 }}
+                                    animate={{ y: 0, opacity: 1, scale: 1 }}
+                                    exit={{ scale: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className={`w-full aspect-square rounded-md md:rounded-lg cursor-pointer ${candyColor ? 'shadow-lg z-10' : 'invisible z-0'} ${candyColor} ${selectedCandies.includes(index) ? 'ring-2 md:ring-4 ring-white' : ''}`}
+                                    onClick={() => handleClick(index)}
+                                    style={{
+                                        boxShadow: candyColor ? `0 0 10px ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}` : 'none'
+                                    }}
+                                >
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+
+                    <p className="mt-4 text-white/60 text-sm">{t('game.match3_desc')}</p>
+                </div>
+
+                {/* Back Face (Rules) */}
+                <div
+                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-slate-900/90' : 'bg-white/90'}`}
+                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                >
+                    <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 to-purple-500">
+                            {t('game.match3')} - {t('game.arcade_zone')}
+                        </h2>
+                        <button
+                            onClick={() => setIsFlipped(false)}
+                            className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                        >
+                            <FaArrowLeft className="text-white text-xl" />
+                        </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto space-y-6 text-left">
+                        <section>
+                            <h3 className="text-xl font-bold text-cyan-400 mb-2">🎯 {t('game.match3_desc')}</h3>
+                            <p className="text-white/80 leading-relaxed">
+                                {t('game.match3_rules_text')}
+                            </p>
+                        </section>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-4 rounded-lg">
+                                <span className="block text-2xl mb-2">🎈</span>
+                                <h4 className="font-bold text-white mb-1">{t('game.combos')}</h4>
+                                <p className="text-sm text-white/60">{t('game.match3_combos')}</p>
+                            </div>
+                            <div className="bg-white/5 p-4 rounded-lg">
+                                <span className="block text-2xl mb-2">⚡</span>
+                                <h4 className="font-bold text-white mb-1">{t('game.speed')}</h4>
+                                <p className="text-sm text-white/60">{t('game.match3_speed')}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button onClick={resetGame} className="text-sm font-bold text-white/50 hover:text-white bg-white/10 px-3 py-1 rounded-full">{t('game.reset')}</button>
-            </div>
-
-            <div className="w-full max-w-[400px] grid grid-cols-8 gap-0.5 md:gap-1 p-2 md:p-4 bg-black/40 rounded-lg mx-auto">
-                <AnimatePresence mode='popLayout'>
-                    {board.map((candyColor, index) => (
-                        <motion.div
-                            key={`${index}-${candyColor}`} // Key changes when content changes, triggering animation
-                            layout={false} // Disable layout animation to avoid "reshuffling" artifacts
-                            initial={{ y: -20, opacity: 0, scale: 0.8 }}
-                            animate={{ y: 0, opacity: 1, scale: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className={`w-full aspect-square rounded-md md:rounded-lg cursor-pointer ${candyColor ? 'shadow-lg z-10' : 'invisible z-0'} ${candyColor} ${selectedCandies.includes(index) ? 'ring-2 md:ring-4 ring-white' : ''}`}
-                            onClick={() => handleClick(index)}
-                            style={{
-                                boxShadow: candyColor ? `0 0 10px ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}` : 'none'
-                            }}
-                        >
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
-            </div>
-
-            <p className="mt-4 text-white/60 text-sm">{t('game.match3_desc')}</p>
+            </motion.div>
         </div>
     );
 }
