@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaLanguage, FaSpinner } from 'react-icons/fa';
 import UserManagement from '../admin/UserManagement';
 import { ScrollProgress } from '../../components/ScrollProgress';
 
@@ -32,10 +32,59 @@ const API_URL = '/api/messages';
 // Removed AUTH_URL since we don't auth here anymore
 
 export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, isSuperAdmin = false }: MessageWallProps) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [currentUserId, setCurrentUserId] = useState('');
+
+    // Translation State
+    const [translations, setTranslations] = useState<Record<string, string>>({});
+    const [translating, setTranslating] = useState<Set<string>>(new Set());
+    const [showTranslated, setShowTranslated] = useState<Set<string>>(new Set());
+
+    const handleTranslate = async (msgId: string, text: string) => {
+        // Toggle visibility if already translated
+        if (translations[msgId]) {
+            setShowTranslated(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(msgId)) newSet.delete(msgId);
+                else newSet.add(msgId);
+                return newSet;
+            });
+            return;
+        }
+
+        // Fetch translation
+        setTranslating(prev => new Set(prev).add(msgId));
+        try {
+            // Map 'zh' to 'zh-CN' for MyMemory if necessary, otherwise use i18n.language
+            const targetLang = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
+            const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=Autodetect|${targetLang}`);
+            const data = await response.json();
+
+            if (data.responseStatus === 200 && data.responseData?.translatedText) {
+                const text = data.responseData.translatedText;
+                if (text.startsWith("MYMEMORY WARNING")) {
+                    setTranslations(prev => ({ ...prev, [msgId]: "⚠️ " + (t('messages.translation_limit') || "Daily limit reached") }));
+                } else {
+                    setTranslations(prev => ({ ...prev, [msgId]: text }));
+                }
+                setShowTranslated(prev => new Set(prev).add(msgId));
+            } else {
+                console.error("Translation API error:", data);
+                setTranslations(prev => ({ ...prev, [msgId]: "⚠️ " + (t('messages.translation_error') || "Translation failed") }));
+                setShowTranslated(prev => new Set(prev).add(msgId));
+            }
+        } catch (error) {
+            console.error("Failed to translate:", error);
+        } finally {
+            setTranslating(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(msgId);
+                return newSet;
+            });
+        }
+    };
 
     // Removed local Auth State (authMode, authUsername, authPassword, etc.)
 
@@ -324,10 +373,32 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                                                         ? 'bg-white/10 rounded-tl-sm'
                                                         : 'bg-white rounded-tl-sm shadow-sm'
                                                 }`}>
-                                                <p className="text-base md:text-sm whitespace-pre-wrap break-words">{msg.message}</p>
-                                                {canDeleteMessage(msg) && (
-                                                    <button onClick={() => handleDelete(msg.id)} className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">×</button>
-                                                )}
+
+                                                <p className="text-base md:text-sm whitespace-pre-wrap break-words">
+                                                    {showTranslated.has(msg.id) && translations[msg.id] ? (
+                                                        <>
+                                                            <span className="text-xs opacity-70 block mb-1 font-mono">{t('messages.translated') || 'Translated'}:</span>
+                                                            {translations[msg.id]}
+                                                        </>
+                                                    ) : (
+                                                        msg.message
+                                                    )}
+                                                </p>
+
+                                                {/* Translation Button */}
+                                                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                                                    <button
+                                                        onClick={() => handleTranslate(msg.id, msg.message)}
+                                                        className="w-5 h-5 bg-black/20 hover:bg-black/40 rounded-full text-white text-xs flex items-center justify-center p-1"
+                                                        title="Translate"
+                                                        disabled={translating.has(msg.id)}
+                                                    >
+                                                        {translating.has(msg.id) ? <FaSpinner className="animate-spin" /> : <FaLanguage />}
+                                                    </button>
+                                                    {canDeleteMessage(msg) && (
+                                                        <button onClick={() => handleDelete(msg.id)} className="w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs flex items-center justify-center">×</button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
