@@ -187,7 +187,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: idx * 0.1 + 0.3 }}
                         className={`${cardClass} group hover:border-cyan-400/60 transition-colors cursor-default`}
-                        onMouseEnter={() => playSound('pop')}
+                        onMouseEnter={() => playSound('click')}
                     >
                         <div className="flex justify-between items-start mb-4">
                             <div>
