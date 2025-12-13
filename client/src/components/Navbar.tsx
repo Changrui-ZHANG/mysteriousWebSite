@@ -202,89 +202,115 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 h-[100dvh] bg-black/95 text-white flex flex-col items-center justify-center gap-8 md:hidden font-mono text-xl z-40 touch-none"
+                        initial={{ opacity: 0, x: '100%' }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: '100%' }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className={`fixed inset-0 h-[100dvh] ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} flex flex-col items-center justify-start pt-28 pb-10 gap-8 md:hidden font-mono text-xl z-40 overflow-y-auto`}
                     >
-                        <div className="flex flex-col items-center gap-6">
-                            <Link onClick={() => setIsOpen(false)} to="/" className="hover:text-cyan-400">{t('nav.home')}</Link>
-                            <Link onClick={() => setIsOpen(false)} to="/cv" className="hover:text-cyan-400">{t('nav.cv')}</Link>
-                            <Link onClick={() => setIsOpen(false)} to="/game" className="hover:text-cyan-400">{t('nav.game')}</Link>
-                            <Link onClick={() => setIsOpen(false)} to="/messages" className="hover:text-cyan-400">{t('nav.messages')}</Link>
+                        {/* Navigation Links */}
+                        <div className="flex flex-col items-center gap-6 w-full px-8">
+                            {[
+                                { to: "/", label: t('nav.home') },
+                                { to: "/cv", label: t('nav.cv') },
+                                { to: "/game", label: t('nav.game') },
+                                { to: "/messages", label: t('nav.messages') }
+                            ].map((link) => (
+                                <Link
+                                    key={link.to}
+                                    onClick={() => setIsOpen(false)}
+                                    to={link.to}
+                                    className="w-full text-center py-2 hover:bg-current/10 rounded-lg transition-colors font-bold text-2xl"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                         </div>
 
-                        <div className="w-12 h-[1px] bg-white/20"></div>
+                        <div className="w-24 h-[1px] bg-current opacity-20 shrink-0"></div>
 
                         {/* Mobile Auth */}
-                        {user ? (
-                            <div className="flex flex-col items-center gap-4">
-                                <span className="font-bold text-cyan-400 text-lg">Hello, {user.username}</span>
+                        <div className="w-full px-8 flex flex-col items-center gap-4">
+                            {user ? (
+                                <div className="flex flex-col items-center gap-4 w-full">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-sm opacity-60">Signed in as</span>
+                                        <span className="font-bold text-cyan-500 text-xl">{user.username}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => { onLogout && onLogout(); }}
+                                        className="w-full py-3 border border-red-500 text-red-500 rounded-lg flex items-center justify-center gap-3 hover:bg-red-500 hover:text-white transition-all"
+                                    >
+                                        <FaSignOutAlt /> {t('auth.logout')}
+                                    </button>
+                                </div>
+                            ) : (
                                 <button
-                                    onClick={() => { onLogout && onLogout(); setIsOpen(false); }}
-                                    className="text-red-400 hover:text-red-300 flex items-center gap-2"
+                                    onClick={() => { onOpenLogin(); setIsOpen(false); }}
+                                    className="w-full py-3 bg-green-500 text-white rounded-lg flex items-center justify-center gap-3 hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all font-bold"
                                 >
-                                    <FaSignOutAlt /> {t('auth.logout')}
+                                    <FaUser /> {t('auth.login')}
                                 </button>
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => { onOpenLogin(); setIsOpen(false); }}
-                                className="text-green-400 hover:text-green-300 flex items-center gap-2 text-lg"
-                            >
-                                <FaUser /> {t('auth.login')}
-                            </button>
-                        )}
+                            )}
+                        </div>
 
-                        <div className="w-12 h-[1px] bg-white/20"></div>
-
-                        {/* Mobile Admin (Simplified) */}
-                        <div className="flex flex-col items-center gap-2">
+                        {/* Mobile Admin */}
+                        <div className="w-full px-8 flex flex-col items-center gap-4">
                             {isAdmin ? (
                                 <button
-                                    onClick={() => { onAdminLogout && onAdminLogout(); setIsOpen(false); }}
-                                    className="text-purple-400 text-sm border border-purple-500 px-3 py-1 rounded"
+                                    onClick={() => { onAdminLogout && onAdminLogout(); }}
+                                    className="text-purple-500 text-sm border border-purple-500 px-4 py-2 rounded-full hover:bg-purple-500 hover:text-white transition-colors"
                                 >
                                     Log out {isSuperAdmin ? 'Super Admin' : 'Admin'}
                                 </button>
                             ) : (
-                                <div className="flex gap-2 items-center">
-                                    <span className="text-white/50 text-sm">Admin:</span>
-                                    <input
-                                        type="password"
-                                        value={adminCode}
-                                        onChange={(e) => setAdminCode(e.target.value)}
-                                        className="w-24 px-2 py-1 bg-white/10 rounded text-sm"
-                                        placeholder="Code"
-                                    />
-                                    <button
-                                        onClick={() => {
+                                <div className="flex flex-col items-center gap-2 w-full max-w-xs p-4 rounded-xl bg-current/5 border border-current/10">
+                                    <span className="text-xs opacity-50 uppercase tracking-widest font-bold">Admin Access</span>
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
                                             if (onAdminLogin && onAdminLogin(adminCode)) {
                                                 setAdminCode('');
-                                                setIsOpen(false);
                                             }
                                         }}
-                                        className="text-green-500"
-                                    >✓</button>
+                                        className="flex w-full gap-2"
+                                    >
+                                        <input
+                                            type="password"
+                                            value={adminCode}
+                                            onChange={(e) => setAdminCode(e.target.value)}
+                                            className="flex-1 px-3 py-2 bg-white/10 rounded border border-current/20 text-center"
+                                            placeholder="Code"
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-current/10 hover:bg-current/20 rounded font-bold transition-colors"
+                                        >
+                                            →
+                                        </button>
+                                    </form>
                                 </div>
                             )}
                         </div>
 
-                        <div className="w-12 h-[1px] bg-white/20"></div>
+                        <div className="w-24 h-[1px] bg-current opacity-20 shrink-0"></div>
 
-                        <div className="flex gap-6">
-                            <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
-                            <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
-                            <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
+                        {/* Settings */}
+                        <div className="flex flex-col items-center gap-6 w-full pb-8">
+                            <div className="flex gap-4 p-2 bg-current/5 rounded-full">
+                                <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
+                                <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
+                                <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
+                            </div>
+
+                            <button
+                                onClick={toggleTheme}
+                                className="flex items-center gap-3 px-6 py-3 rounded-full border border-current/20 hover:bg-current/5 transition-colors uppercase tracking-widest text-sm font-bold"
+                            >
+                                {isDarkMode ? <FaSun className="text-yellow-400 w-5 h-5" /> : <FaMoon className="text-blue-500 w-5 h-5" />}
+                                <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
+                            </button>
                         </div>
-
-                        <button
-                            onClick={toggleTheme}
-                            className="mt-4 flex items-center gap-3 px-4 py-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors uppercase tracking-widest text-sm"
-                        >
-                            {isDarkMode ? <FaSun className="text-yellow-400 w-5 h-5" /> : <FaMoon className="text-blue-300 w-5 h-5" />}
-                            <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
-                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>

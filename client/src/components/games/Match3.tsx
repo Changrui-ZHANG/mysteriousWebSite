@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -16,9 +16,11 @@ interface Match3Props {
     isDarkMode: boolean;
     onSubmitScore: (score: number) => void;
     personalBest?: { score: number } | null;
+    isAuthenticated: boolean;
+    onGameStart?: () => void;
 }
 
-export default function Match3({ isDarkMode, onSubmitScore, personalBest }: Match3Props) {
+export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: Match3Props) {
     const { t } = useTranslation();
     const [board, setBoard] = useState<string[]>([]);
     const [score, setScore] = useState(0);
@@ -174,19 +176,36 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest }: Matc
     };
 
     // Reset Game
+    // Use a ref to access the latest onSubmitScore without triggering effect on prop change
+    const onSubmitScoreRef = useRef(onSubmitScore);
+    useEffect(() => {
+        onSubmitScoreRef.current = onSubmitScore;
+    }, [onSubmitScore]);
+
+    // Resubmit score when user logs in
+    useEffect(() => {
+        if (isAuthenticated && score > 0) {
+            onSubmitScoreRef.current(score);
+        }
+    }, [isAuthenticated, score]);
+
     // Autosave score on change with debounce
     useEffect(() => {
         if (score > 0) {
             const timer = setTimeout(() => {
-                onSubmitScore(score);
+                onSubmitScoreRef.current(score);
             }, 1000); // Wait 1s after last score change before saving
             return () => clearTimeout(timer);
         }
-    }, [score, onSubmitScore]);
+    }, [score]);
 
     // Reset Game
     const resetGame = () => {
-        // Score is already saved by effect
+        if (onGameStart) onGameStart();
+        // Force save current score before resetting if valid
+        if (score > 0) {
+            onSubmitScoreRef.current(score);
+        }
         setScore(0);
         createBoard();
     }

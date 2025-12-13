@@ -41,6 +41,7 @@
         "best": "Meilleur",
         "no_scores_yet": "No scores recorded yet. Be the first!",
         "login_warning": "<0>Connectez-vous</0> pour que votre score soit enregistré, sinon il sera perdu !",
+        "highscore_guest_alert": "Vous avez réalisé un score digne du classement ! Connectez-vous pour le sauvegarder.",
         "moves": "Mouvements",
         "new_maze": "Nouveau Labyrinthe",
         "maze": "Labyrinthe",

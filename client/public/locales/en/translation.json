@@ -41,6 +41,7 @@
         "best": "Best",
         "no_scores_yet": "No scores recorded yet. Be the first!",
         "login_warning": "<0>Log in</0> to save your score, otherwise it will be lost!",
+        "highscore_guest_alert": "You achieved a Leaderboard Score! Log in to save it?",
         "moves": "Moves",
         "new_maze": "New Maze",
         "maze": "Maze",

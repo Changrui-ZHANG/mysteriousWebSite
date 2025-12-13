@@ -130,7 +130,7 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/cv" element={<CV isDarkMode={isDarkMode} />} />
-                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} />} />
+                    <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} />} />
                     <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />} />
                 </Routes>
             </div>

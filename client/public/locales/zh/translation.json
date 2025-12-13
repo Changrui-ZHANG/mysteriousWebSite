@@ -40,7 +40,14 @@
         "personal_best": "我的最高纪录",
         "best": "最佳",
         "no_scores_yet": "暂无记录，快来抢占第一名！",
-        "login_warning": "<0>请登录</0>以保存您的分数，否则分数将丢失！"
+        "login_warning": "<0>请登录</0>以保存您的分数，否则分数将丢失！",
+        "highscore_guest_alert": "您取得了排行榜高分！请登录以保存成绩。",
+        "moves": "步数",
+        "new_maze": "新迷宫",
+        "maze": "迷宫",
+        "use_arrows": "使用箭头键移动",
+        "use_mouse": "拖动鼠标或使用 WASD/箭头键移动",
+        "time": "时间"
     },
     "pokemon": {
         "guess_prompt": "这是哪只宝可梦？",

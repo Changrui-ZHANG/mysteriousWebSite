@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest }: { isDarkMode: boolean; onSubmitScore: (score: number) => void; personalBest?: { score: number } | null }) {
+export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: { isDarkMode: boolean; onSubmitScore: (score: number) => void; personalBest?: { score: number } | null, isAuthenticated: boolean, onGameStart?: () => void }) {
     const { t } = useTranslation();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [gameState, setGameState] = useState<'start' | 'playing' | 'gameover' | 'won'>('start');
@@ -11,7 +11,16 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest }
         if ((gameState === 'gameover' || gameState === 'won') && score > 0) {
             onSubmitScore(score);
         }
-    }, [gameState, score, onSubmitScore]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gameState, score]);
+
+    // Resubmit score when user logs in
+    useEffect(() => {
+        if (isAuthenticated && score > 0 && (gameState === 'gameover' || gameState === 'won')) {
+            onSubmitScore(score);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const canvas = canvasRef.current;

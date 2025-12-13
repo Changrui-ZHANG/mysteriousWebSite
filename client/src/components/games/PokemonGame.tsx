@@ -7,9 +7,11 @@ interface PokemonGameProps {
     isDarkMode: boolean;
     onSubmitScore: (score: number, attempts?: number) => void;
     personalBest?: { score: number, attempts?: number } | null;
+    isAuthenticated: boolean;
+    onGameStart?: () => void;
 }
 
-export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest }: PokemonGameProps) {
+export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: PokemonGameProps) {
     const { t } = useTranslation();
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
     const [options, setOptions] = useState<string[]>([]);
@@ -32,7 +34,25 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest }:
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [score, attempts]);
 
+    // Resubmit score when user logs in
+    useEffect(() => {
+        if (isAuthenticated && score > 0) {
+            onSubmitScore(score, attempts);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
+
     const loadNewPokemon = async () => {
+        // Assume new game session logic is vague here, but if score resets or manual next
+        // Actually Pokemon game is continuous. Score accumulates.
+        // We probably only reset alert if Score is 0?
+        // But player resets manually? There is no Reset button here usually, just 'Next'.
+        // Wait, if reloading page, score resets.
+        // If we want to allow "New Game" within session, we might need a Reset button?
+        // Just calling onGameStart() on init handles the "ActiveGame Change" case.
+        // If score resets?
+        if (score === 0 && onGameStart) onGameStart(); // Reset alert if starting from 0
+
         setLoading(true);
         setRevealed(false);
         setSelectedAnswer(null);

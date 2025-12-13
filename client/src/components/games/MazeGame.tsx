@@ -7,6 +7,8 @@ interface MazeGameProps {
     isDarkMode: boolean;
     onSubmitScore: (score: number) => void;
     personalBest: { score: number; attempts?: number } | null;
+    isAuthenticated: boolean;
+    onGameStart?: () => void;
 }
 
 interface MazeData {
@@ -17,7 +19,7 @@ interface MazeData {
     height: number;
 }
 
-export default function MazeGame({ isDarkMode, onSubmitScore, personalBest }: MazeGameProps) {
+export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: MazeGameProps) {
     const { t } = useTranslation();
     const [maze, setMaze] = useState<MazeData | null>(null);
     const [playerPos, setPlayerPos] = useState<{ x: number; y: number } | null>(null);
@@ -29,6 +31,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest }: Ma
 
     const fetchMaze = async () => {
         setGameState('loading');
+        if (onGameStart) onGameStart(); // Notify parent of new game
         try {
             const res = await fetch('/api/maze/generate');
             if (res.ok) {
@@ -49,6 +52,18 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest }: Ma
     useEffect(() => {
         fetchMaze();
     }, []);
+
+    // Resubmit score when user logs in (if game won)
+    useEffect(() => {
+        // Calculate current elapsed as string if needed, but onSubmitScore expects number (steps? or time?)
+        // The current onSubmitScore in tryMoveTo sends `moves + 1`.
+        // So for resubmitting, we should send `moves` (assuming it's final state).
+        // Wait, logic in tryMoveTo uses `moves + 1`.
+        if (isAuthenticated && gameState === 'won' && moves > 0) {
+            onSubmitScore(moves);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
 
     const tryMoveTo = useCallback((targetX: number, targetY: number) => {
         if (gameState !== 'playing' || !maze || !playerPos) return;

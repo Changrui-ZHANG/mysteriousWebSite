@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import BrickBreaker from './games/BrickBreaker';
@@ -12,6 +12,7 @@ interface GameProps {
     user?: User | null;
     onOpenLogin: () => void;
     isSuperAdmin?: boolean;
+    isAdmin?: boolean;
 }
 
 interface User {
@@ -19,13 +20,88 @@ interface User {
     username: string;
 }
 
-export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false }: GameProps) {
+export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
     const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon' | 'maze'>('brick');
 
     // Stats State
     const [personalBest, setPersonalBest] = useState<{ score: number, attempts?: number } | null>(null);
     const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
+    const [gameStatuses, setGameStatuses] = useState<Record<string, boolean>>({});
+
+    // Guest Alert Logic
+    const [showGuestAlert, setShowGuestAlert] = useState(false);
+    const hasGuestAlertShownRef = useRef(false);
+
+    // Fetch Game Statuses
+    useEffect(() => {
+        const fetchStatuses = async () => {
+            try {
+                const response = await fetch('/api/games');
+                if (response.ok) {
+                    const data = await response.json();
+                    const statusMap: Record<string, boolean> = {};
+                    data.forEach((s: any) => {
+                        statusMap[s.gameType] = s.enabled;
+                    });
+                    setGameStatuses(statusMap);
+                }
+            } catch (error) {
+                console.error("Failed to fetch game statuses", error);
+            }
+        };
+        fetchStatuses();
+    }, []);
+
+    const toggleGameStatus = async (gameKey: string) => {
+        let adminCode = "";
+
+        if (isSuperAdmin) {
+            adminCode = "ChangruiZ";
+        } else if (isAdmin) {
+            adminCode = "Changrui";
+        } else {
+            const input = prompt("Admin Code:");
+            if (!input) return;
+            adminCode = input;
+        }
+
+        try {
+            const response = await fetch(`/api/games/${gameKey}/toggle?adminCode=${adminCode}`, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                const updatedStatus = await response.json();
+                setGameStatuses(prev => ({
+                    ...prev,
+                    [updatedStatus.gameType]: updatedStatus.enabled
+                }));
+            } else {
+                alert("Failed to toggle status");
+            }
+        } catch (error) {
+            console.error("Error toggling game status", error);
+        }
+    };
+
+    const getGameColor = (gameKey: string) => {
+        switch (gameKey) {
+            case 'brick': return 'bg-cyan-500 text-black shadow-[0_0_20px_rgba(6,182,212,0.5)]';
+            case 'match3': return 'bg-fuchsia-500 text-black shadow-[0_0_20px_rgba(217,70,239,0.5)]';
+            case 'pokemon': return 'bg-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.5)]';
+            case 'maze': return 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]';
+            default: return 'bg-white/10';
+        }
+    };
+
+    // Reset Alert when switching games or starting new one
+    const resetGuestAlert = () => {
+        hasGuestAlertShownRef.current = false;
+    };
+
+    useEffect(() => {
+        resetGuestAlert();
+    }, [activeGame]);
 
     useEffect(() => {
         const fetchPersonalBest = async () => {
@@ -52,6 +128,46 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false }: Ga
 
     const submitScore = async (score: number, attempts?: number) => {
         if (!user) {
+            // For guests: Check if valid score for leaderboard
+            if (score <= 0) return;
+
+            // Stop if already shown once
+            if (hasGuestAlertShownRef.current) return;
+
+            try {
+                // Fetch current top 3
+                const res = await fetch(`/api/scores/top/${activeGame}`);
+                if (res.ok) {
+                    const topScores: any[] = await res.json();
+
+                    // Logic: Eligible if board has space (<3) OR score beats the worst one on board
+                    let isEligible = false;
+
+                    if (topScores.length < 3) {
+                        isEligible = true;
+                    } else {
+                        const thresholdScoreVal = topScores[topScores.length - 1].score;
+                        if (activeGame === 'maze') {
+                            // Lower is better (and assume threshold > 0, though we fixed 0 bug)
+                            if (score < thresholdScoreVal || thresholdScoreVal === 0) {
+                                isEligible = true;
+                            }
+                        } else {
+                            // Higher is better
+                            if (score > thresholdScoreVal) {
+                                isEligible = true;
+                            }
+                        }
+                    }
+
+                    if (isEligible) {
+                        setShowGuestAlert(true);
+                        hasGuestAlertShownRef.current = true;
+                    }
+                }
+            } catch (err) {
+                console.error("Guest score check failed", err);
+            }
             return;
         }
 
@@ -133,43 +249,55 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false }: Ga
                 </div>
 
                 {/* Game Selector Tabs */}
+                {/* Game Selector Tabs */}
                 <div className="flex justify-center gap-4 md:gap-8 mb-12 flex-wrap">
-                    <button
-                        onClick={() => setActiveGame('brick')}
-                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'brick'
-                            ? 'bg-cyan-500 text-black shadow-[0_0_20px_rgba(6,182,212,0.5)]'
-                            : 'bg-white/10 hover:bg-white/20'
-                            }`}
-                    >
-                        {t('game.brick_breaker')}
-                    </button>
-                    <button
-                        onClick={() => setActiveGame('match3')}
-                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'match3'
-                            ? 'bg-fuchsia-500 text-black shadow-[0_0_20px_rgba(217,70,239,0.5)]'
-                            : 'bg-white/10 hover:bg-white/20'
-                            }`}
-                    >
-                        {t('game.match3')}
-                    </button>
-                    <button
-                        onClick={() => setActiveGame('pokemon')}
-                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'pokemon'
-                            ? 'bg-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.5)]'
-                            : 'bg-white/10 hover:bg-white/20'
-                            }`}
-                    >
-                        {t('game.pokemon_quiz')}
-                    </button>
-                    <button
-                        onClick={() => setActiveGame('maze')}
-                        className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform hover:scale-105 ${activeGame === 'maze'
-                            ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]'
-                            : 'bg-white/10 hover:bg-white/20'
-                            }`}
-                    >
-                        {t('game.maze')}
-                    </button>
+                    {['brick', 'match3', 'pokemon', 'maze'].map((gameKey) => {
+                        const isEnabled = gameStatuses[gameKey] !== false; // Default true if undefined
+                        const isLocked = !isEnabled && !isSuperAdmin;
+
+                        return (
+                            <div key={gameKey} className="relative group flex flex-col items-center gap-2">
+                                <button
+                                    onClick={() => setActiveGame(gameKey as any)}
+                                    // Make button appear disabled if locked, but Admins can always click to test
+                                    disabled={isLocked && !isSuperAdmin && !isAdmin}
+                                    className={`px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-xl font-bold transition-all duration-300 transform ${activeGame === gameKey
+                                        ? 'scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                                        : 'hover:scale-105'
+                                        } ${!isEnabled
+                                            ? 'bg-gray-800 text-gray-500 opacity-70 grayscale border border-red-500/50'
+                                            : activeGame === gameKey
+                                                ? getGameColor(gameKey)
+                                                : 'bg-white/10 hover:bg-white/20'
+                                        }`}
+                                >
+                                    {t(`game.${gameKey === 'brick' ? 'brick_breaker' : gameKey === 'pokemon' ? 'pokemon_quiz' : gameKey}`)}
+                                    {!isEnabled && <span className="absolute -top-2 -right-2 bg-red-600 text-[10px] px-1 rounded text-white shadow-sm font-bold tracking-widest">OFF</span>}
+                                </button>
+
+                                {/* Admin Game Controls - Always Visible for Any Admin */}
+                                {(isSuperAdmin || isAdmin) && (
+                                    <div className="flex flex-col items-center gap-1 mt-1">
+                                        <div className={`text-[10px] font-mono font-bold ${isEnabled ? 'text-green-400' : 'text-red-400'}`}>
+                                            [{isEnabled ? 'ACTIVE' : 'DISABLED'}]
+                                        </div>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleGameStatus(gameKey);
+                                            }}
+                                            className={`text-[10px] font-bold px-4 py-1.5 rounded-full border transition-colors shadow-lg ${isEnabled
+                                                ? 'bg-red-900/40 border-red-500 text-red-200 hover:bg-red-600 hover:text-white'
+                                                : 'bg-green-900/40 border-green-500 text-green-200 hover:bg-green-600 hover:text-white'
+                                                }`}
+                                        >
+                                            {isEnabled ? 'DISABLE' : 'ENABLE'}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Login Warning for Unauthenticated Users */}
@@ -184,29 +312,78 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false }: Ga
                 )}
 
                 {/* Game Container */}
-                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : activeGame === 'maze' ? 'min-h-[600px] md:aspect-auto' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>
-                    <AnimatePresence mode="wait">
+                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[600px]' : activeGame === 'maze' ? 'min-h-[600px] md:aspect-auto' : 'min-h-[500px] md:min-h-0 md:aspect-video'} grid grid-cols-1`}>
+                    <AnimatePresence mode="popLayout">
                         <motion.div
                             key={activeGame}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.3 }}
-                            className="w-full h-full"
+                            className="w-full h-full col-start-1 row-start-1"
                         >
                             {activeGame === 'brick' ? (
-                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
+                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                             ) : activeGame === 'match3' ? (
-                                <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
+                                <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                             ) : activeGame === 'pokemon' ? (
-                                <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
+                                <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                             ) : (
-                                <MazeGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} />
+                                <MazeGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                             )}
                         </motion.div>
                     </AnimatePresence>
                 </div>
             </div>
+            {/* Guest High Score Alert Modal */}
+            <AnimatePresence>
+                {showGuestAlert && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                        onClick={() => setShowGuestAlert(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()} // Prevent close on modal click
+                            className={`bg-white/10 border border-white/20 backdrop-blur-md p-6 md:p-8 rounded-2xl max-w-sm w-full shadow-[0_0_50px_rgba(236,72,153,0.3)] text-center relative overflow-hidden`}
+                        >
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"></div>
+
+                            <h3 className="text-2xl font-black font-heading mb-4 bg-gradient-to-r from-purple-200 to-pink-200 bg-clip-text text-transparent">
+                                <Trans i18nKey="game.you_win" /> {/* Reusing 'You Win' or just Generic Title */}
+                                🏆
+                            </h3>
+
+                            <p className="text-white/90 mb-6 font-medium text-lg">
+                                {t('game.highscore_guest_alert')}
+                            </p>
+
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={() => {
+                                        setShowGuestAlert(false);
+                                        onOpenLogin();
+                                    }}
+                                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-pink-500/25"
+                                >
+                                    {t('auth.login')} / {t('auth.register')}
+                                </button>
+                                <button
+                                    onClick={() => setShowGuestAlert(false)}
+                                    className="w-full py-2 text-white/50 hover:text-white transition-colors text-sm font-bold"
+                                >
+                                    {t('admin.cancel')}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
