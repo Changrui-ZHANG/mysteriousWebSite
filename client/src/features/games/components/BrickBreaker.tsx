@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: { isDarkMode: boolean; onSubmitScore: (score: number) => void; personalBest?: { score: number } | null, isAuthenticated: boolean, onGameStart?: () => void }) {
+export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, isAuthenticated }: { isDarkMode: boolean; onSubmitScore: (score: number) => void; personalBest?: { score: number } | null, isAuthenticated: boolean }) {
     const { t } = useTranslation();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [gameState, setGameState] = useState<'start' | 'playing' | 'gameover' | 'won'>('start');
@@ -98,7 +98,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                         bricks[c][r].y = brickY;
                         ctx.beginPath();
                         ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                        ctx.fillStyle = `hsl(${c * 40}, 70%, 50%)`; // Rainbow rainbow rows
+                        ctx.fillStyle = `hsl(${c * 40}, 70 %, 50 %)`; // Rainbow rainbow rows
                         ctx.fill();
                         ctx.closePath();
                     }
@@ -215,7 +215,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
     }, [gameState, isDarkMode]);
 
     return (
-        <div className={`relative w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-black/80' : 'bg-white/80'}`}>
+        <div className={`relative w - full h - full flex flex - col items - center justify - center border border - white / 20 rounded - xl backdrop - blur - md overflow - hidden transition - colors duration - 500 ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} `}>
             <div className="absolute top-4 left-6 text-xl font-bold font-mono z-10 flex gap-4">
                 <span className="text-cyan-400">
                     {t('game.score')}: {score}

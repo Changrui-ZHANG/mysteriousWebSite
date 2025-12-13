@@ -323,7 +323,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                             className="w-full h-full col-start-1 row-start-1"
                         >
                             {activeGame === 'brick' ? (
-                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
+                                <BrickBreaker isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} />
                             ) : activeGame === 'match3' ? (
                                 <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                             ) : activeGame === 'pokemon' ? (

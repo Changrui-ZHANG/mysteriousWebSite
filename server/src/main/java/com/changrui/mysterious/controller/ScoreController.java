@@ -1,7 +1,7 @@
 package com.changrui.mysterious.controller;
 
 import com.changrui.mysterious.model.Score;
-import com.changrui.mysterious.repository.AppUserRepository;
+
 import com.changrui.mysterious.repository.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,6 @@ public class ScoreController {
 
     @Autowired
     private ScoreRepository scoreRepository;
-
-    @Autowired
-    private AppUserRepository userRepository;
 
     @GetMapping("/top/{gameType}")
     public ResponseEntity<List<Score>> getTopScores(@PathVariable String gameType) {
