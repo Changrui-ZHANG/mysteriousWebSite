@@ -25,10 +25,12 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest }:
 
     useEffect(() => {
         // Autosave score logic
+        // Only submit when score or attempts actually change
         if (score > 0) {
             onSubmitScore(score, attempts);
         }
-    }, [score, attempts, onSubmitScore]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [score, attempts]);
 
     const loadNewPokemon = async () => {
         setLoading(true);
