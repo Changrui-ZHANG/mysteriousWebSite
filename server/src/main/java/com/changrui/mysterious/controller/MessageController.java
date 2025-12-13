@@ -30,14 +30,18 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addMessage(@RequestBody Message message) {
-        if (messageService.isMuted() && !message.getName().equals("Admin")) { // Simple check, ideally check admin
-                                                                              // status securely
-            return ResponseEntity.status(403).body("Chat is muted by admin");
+    public ResponseEntity<?> addMessage(@RequestBody Message message,
+            @RequestParam(required = false) String adminCode) {
+        if (messageService.isMuted()) {
+            // Allow if valid admin code is provided
+            boolean isAdmin = "Changrui".equals(adminCode);
+            if (!isAdmin) {
+                return ResponseEntity.status(403).body("Chat is muted by admin");
+            }
         }
 
-        // Verify if the user exists in the database
-        if (appUserRepository.existsById(message.getUserId())) {
+        // Verify if the user exists in the database OR if it is an Admin message
+        if (appUserRepository.existsById(message.getUserId()) || "Changrui".equals(adminCode)) {
             message.setVerified(true);
         } else {
             message.setVerified(false);

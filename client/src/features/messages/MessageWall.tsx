@@ -217,8 +217,13 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
         // Determine sender details
         const senderId = user ? user.userId : currentUserId;
-        const senderName = user ? user.username : (tempName.trim() || t('messages.anonymous'));
-        const isAnon = user ? false : !tempName.trim();
+
+        let senderName = user ? user.username : tempName.trim();
+        if (!senderName) {
+            senderName = (isAdmin && !user) ? "Admin" : (t('messages.anonymous') || "Anonymous");
+        }
+
+        const isAnon = user ? false : (!tempName.trim() && !isAdmin);
 
         const message: Partial<Message> = {
             id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -231,7 +236,8 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         };
 
         try {
-            const response = await fetch(API_URL, {
+            const endpoint = isAdmin ? `${API_URL}?adminCode=${ADMIN_CODE}` : API_URL;
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(message)
@@ -363,8 +369,8 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
                                             <div className={`px-3 py-2 rounded-lg relative group ${isOwn
                                                 ? msg.isVerified
-                                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm border-2 border-emerald-300/50 shadow-lg shadow-green-500/20'
-                                                    : 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-tr-sm'
+                                                    ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-tr-sm border-2 border-cyan-400 shadow-lg shadow-cyan-500/30'
+                                                    : 'bg-green-600 text-white rounded-tr-sm' // Solid for unverified
                                                 : msg.isVerified
                                                     ? isDarkMode
                                                         ? 'bg-gradient-to-br from-cyan-900/30 to-blue-900/20 rounded-tl-sm border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
