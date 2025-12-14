@@ -18,7 +18,8 @@
         "cv": "CV",
         "game": "ARCADE",
         "messages": "MESSAGES",
-        "suggestions": "SUGGESTIONS"
+        "suggestions": "SUGGESTIONS",
+        "calendar": "CALENDAR"
     },
     "game": {
         "arcade_zone": "NEON ARCADE",

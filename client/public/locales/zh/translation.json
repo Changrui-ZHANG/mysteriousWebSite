@@ -18,7 +18,8 @@
         "cv": "简历",
         "game": "街机厅",
         "messages": "留言",
-        "suggestions": "建议"
+        "suggestions": "建议",
+        "calendar": "日历"
     },
     "game": {
         "arcade_zone": "霓虹街机",

@@ -11,6 +11,7 @@ import { CV } from './pages/CVPage'
 import { Game } from './pages/GamePage'
 import { MessageWall } from './features/messages/MessageWall'
 import { SuggestionsPage } from './pages/SuggestionsPage'
+import { CalendarPage } from './pages/CalendarPage'
 import './App.css'
 
 interface User {
@@ -134,6 +135,7 @@ function AppContent() {
                     <Route path="/game" element={<Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} />} />
                     <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />} />
                     <Route path="/suggestions" element={<SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} />} />
+                    <Route path="/calendar" element={<CalendarPage isDarkMode={isDarkMode} isAdmin={isAdmin} />} />
                 </Routes>
             </div>
         </div>

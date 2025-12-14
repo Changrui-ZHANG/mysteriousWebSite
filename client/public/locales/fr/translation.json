@@ -18,7 +18,8 @@
         "cv": "CV",
         "game": "ARCADE",
         "messages": "MESSAGES",
-        "suggestions": "SUGGESTIONS"
+        "suggestions": "SUGGESTIONS",
+        "calendar": "CALENDRIER"
     },
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
