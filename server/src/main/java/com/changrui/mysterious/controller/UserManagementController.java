@@ -2,6 +2,7 @@ package com.changrui.mysterious.controller;
 
 import com.changrui.mysterious.model.AppUser;
 import com.changrui.mysterious.repository.AppUserRepository;
+import com.changrui.mysterious.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,23 +13,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
-        "http://changrui.freeboxos.fr:3001", "http://changrui.freeboxos.fr", "http://changrui.freeboxos.fr:5173" })
 @RequestMapping("/api/superadmin")
 public class UserManagementController {
 
     @Autowired
     private AppUserRepository userRepository;
 
-    private static final String SUPER_ADMIN_CODE = "ChangruiZ";
-
-    private boolean isSuperAdmin(String code) {
-        return SUPER_ADMIN_CODE.equals(code);
-    }
+    @Autowired
+    private AdminService adminService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(@RequestParam String superAdminCode) {
-        if (!isSuperAdmin(superAdminCode)) {
+        if (!adminService.isSuperAdmin(superAdminCode)) {
             return ResponseEntity.status(403).body(Map.of("message", "Invalid super admin code"));
         }
 
@@ -60,7 +56,7 @@ public class UserManagementController {
 
     @PostMapping("/users")
     public ResponseEntity<?> createUser(@RequestBody Map<String, String> body, @RequestParam String superAdminCode) {
-        if (!isSuperAdmin(superAdminCode)) {
+        if (!adminService.isSuperAdmin(superAdminCode)) {
             return ResponseEntity.status(403).body(Map.of("message", "Invalid super admin code"));
         }
 
@@ -92,7 +88,7 @@ public class UserManagementController {
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody Map<String, String> body,
             @RequestParam String superAdminCode) {
-        if (!isSuperAdmin(superAdminCode)) {
+        if (!adminService.isSuperAdmin(superAdminCode)) {
             return ResponseEntity.status(403).body(Map.of("message", "Invalid super admin code"));
         }
 
@@ -117,7 +113,7 @@ public class UserManagementController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id, @RequestParam String superAdminCode) {
-        if (!isSuperAdmin(superAdminCode)) {
+        if (!adminService.isSuperAdmin(superAdminCode)) {
             return ResponseEntity.status(403).body(Map.of("message", "Invalid super admin code"));
         }
 

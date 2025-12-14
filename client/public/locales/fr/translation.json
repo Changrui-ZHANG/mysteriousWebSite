@@ -21,6 +21,28 @@
         "suggestions": "SUGGESTIONS",
         "calendar": "CALENDRIER"
     },
+    "calendar": {
+        "title": "Calendrier",
+        "zones_admin_label": "Zones (Admin):",
+        "zones": {
+            "zone_a": "Lyon/Bordeaux",
+            "zone_b": "Marseille/Lille",
+            "zone_c": "Paris/IDF",
+            "corse": "Corse",
+            "guadeloupe": "Guadeloupe",
+            "guyane": "Guyane",
+            "reunion": "La Réunion",
+            "martinique": "Martinique",
+            "mayotte": "Mayotte"
+        },
+        "tooltip": {
+            "vacation": "Vacances ({{zone}})"
+        },
+        "errors": {
+            "config_update_failed": "Échec de la mise à jour de la configuration",
+            "failed_to_load": "Impossible de charger le calendrier"
+        }
+    },
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
         "choose_your_challenge": "Choisissez un jeu pour commencer",
@@ -50,12 +72,14 @@
         "use_arrows": "Utilisez les flèches pour vous déplacer",
         "use_mouse": "Glissez à la souris ou utilisez ZQSD/Flèches",
         "time": "Temps",
-        "rules": "Règles",
-        "controls": "Contrôles",
-        "bonus": "Bonus",
-        "combos": "Combos",
-        "speed": "Vitesse",
-        "quiz": "Quiz",
+        "combo": "Combo",
+        "combo_multiplier": "Combo x{{multiplier}} !",
+        "mute": "Muet",
+        "unmute": "Son",
+        "flip_to_rules": "Voir Règles",
+        "flip_to_game": "Retour au Jeu",
+        "admin_code_prompt": "Code Admin :",
+        "toggle_failed": "Échec du changement de statut",
         "brick_breaker_rules": "Détruisez toutes les briques sans laisser tomber la balle !",
         "brick_breaker_controls": "Utilisez la souris pour déplacer la raquette.",
         "brick_breaker_bonus": "Casser des briques augmente le score !",
@@ -127,6 +151,7 @@
         "login_required": "Veuillez vous connecter pour soumettre des suggestions",
         "all_suggestions": "Toutes les Suggestions",
         "your_suggestions": "Vos Suggestions",
+        "submit_failed": "Échec de l'envoi de la suggestion",
         "no_suggestions": "Aucune suggestion pour le moment. Soyez le premier à partager une idée !",
         "pending": "En attente",
         "reviewed": "Revue",

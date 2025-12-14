@@ -12,6 +12,7 @@ import { Game } from './pages/GamePage'
 import { MessageWall } from './features/messages/MessageWall'
 import { SuggestionsPage } from './pages/SuggestionsPage'
 import { CalendarPage } from './pages/CalendarPage'
+import { ADMIN_CODES, STORAGE_KEYS } from './constants/auth'
 import './App.css'
 
 interface User {
@@ -29,7 +30,7 @@ function AppContent() {
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('messageWall_user');
+        const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
@@ -44,26 +45,24 @@ function AppContent() {
 
     const handleLogin = (newUser: User) => {
         setUser(newUser);
-        localStorage.setItem('messageWall_user', JSON.stringify(newUser));
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
         setShowAuthModal(false); // Close modal on success
     };
 
     const handleLogout = () => {
         setUser(null);
-        localStorage.removeItem('messageWall_user');
+        localStorage.removeItem(STORAGE_KEYS.USER);
     };
 
     // Global Admin State
     const [isAdmin, setIsAdmin] = useState(false);
     const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-    const ADMIN_CODE = 'Changrui';
-    const SUPER_ADMIN_CODE = 'ChangruiZ';
 
     useEffect(() => {
-        const storedAdmin = localStorage.getItem('messageWall_isAdmin');
+        const storedAdmin = localStorage.getItem(STORAGE_KEYS.IS_ADMIN);
         if (storedAdmin === 'true') setIsAdmin(true);
 
-        const storedSuperAdmin = localStorage.getItem('messageWall_isSuperAdmin');
+        const storedSuperAdmin = localStorage.getItem(STORAGE_KEYS.IS_SUPER_ADMIN);
         if (storedSuperAdmin === 'true') {
             setIsSuperAdmin(true);
             setIsAdmin(true);
@@ -71,15 +70,15 @@ function AppContent() {
     }, []);
 
     const handleAdminLogin = (code: string) => {
-        if (code === SUPER_ADMIN_CODE) {
+        if (code === ADMIN_CODES.SUPER_ADMIN) {
             setIsSuperAdmin(true);
             setIsAdmin(true);
-            localStorage.setItem('messageWall_isSuperAdmin', 'true');
-            localStorage.setItem('messageWall_isAdmin', 'true');
+            localStorage.setItem(STORAGE_KEYS.IS_SUPER_ADMIN, 'true');
+            localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
             return true;
-        } else if (code === ADMIN_CODE) {
+        } else if (code === ADMIN_CODES.ADMIN) {
             setIsAdmin(true);
-            localStorage.setItem('messageWall_isAdmin', 'true');
+            localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
             return true;
         }
         return false;
@@ -88,8 +87,8 @@ function AppContent() {
     const handleAdminLogout = () => {
         setIsAdmin(false);
         setIsSuperAdmin(false);
-        localStorage.removeItem('messageWall_isAdmin');
-        localStorage.removeItem('messageWall_isSuperAdmin');
+        localStorage.removeItem(STORAGE_KEYS.IS_ADMIN);
+        localStorage.removeItem(STORAGE_KEYS.IS_SUPER_ADMIN);
     };
 
     return (

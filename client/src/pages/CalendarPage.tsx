@@ -1,6 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { fetchJson, postJson } from '../utils/api';
+import { useAdminCode } from '../hooks/useAdminCode';
+import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../constants/calendar';
+import { API_ENDPOINTS } from '../constants/api';
 
 interface Holiday {
     date: string;
@@ -20,45 +24,18 @@ interface CalendarPageProps {
     isAdmin: boolean;
 }
 
-const ZONE_LABELS: Record<string, string> = {
-    'Zone A': 'Lyon/Bordeaux',
-    'Zone B': 'Marseille/Lille',
-    'Zone C': 'Paris/IDF',
-    'Corse': 'Corse',
-    'Guadeloupe': 'Guadeloupe',
-    'Guyane': 'Guyane',
-    'Réunion': 'La Réunion',
-    'Martinique': 'Martinique',
-    'Mayotte': 'Mayotte',
-};
-
-// Mapping to show descriptive holiday names
-const HOLIDAY_NAMES: Record<string, string> = {
-    '1er janvier': 'Jour de l\'an',
-    'Lundi de Pâques': 'Lundi de Pâques',
-    '1er mai': 'Fête du Travail',
-    '8 mai': 'Victoire 1945',
-    'Ascension': 'Ascension',
-    'Lundi de Pentecôte': 'Lundi de Pentecôte',
-    '14 juillet': 'Fête Nationale',
-    'Assomption': 'Assomption',
-    'Toussaint': 'Toussaint',
-    '11 novembre': 'Armistice 1918',
-    'Jour de Noël': 'Noël',
-};
-
 export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
     const { t, i18n } = useTranslation();
+    const adminCode = useAdminCode();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [holidays, setHolidays] = useState<Holiday[]>([]);
     const [schoolHolidays, setSchoolHolidays] = useState<SchoolHoliday[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedZones, setSelectedZones] = useState<string[]>(['Zone C']);
+    const [selectedZones, setSelectedZones] = useState<string[]>(DEFAULT_ZONES);
 
     // Load global zone configuration from backend on mount
     useEffect(() => {
-        fetch('/api/calendar-config')
-            .then(res => res.json())
+        fetchJson<{ activeZones: string[] }>(API_ENDPOINTS.CALENDAR.CONFIG)
             .then(data => {
                 if (data.activeZones) {
                     setSelectedZones(data.activeZones);
@@ -76,27 +53,15 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
         setSelectedZones(newZones);
 
         // If admin, persist to backend for all users
-        if (isAdmin) {
-            // Determine admin code based on stored admin status
-            const isSuperAdmin = localStorage.getItem('messageWall_isSuperAdmin') === 'true';
-            const adminCode = isSuperAdmin ? 'ChangruiZ' : 'Changrui';
-
+        if (isAdmin && adminCode) {
             try {
-                const response = await fetch('/api/calendar-config', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ zones: newZones, adminCode })
+                await postJson(API_ENDPOINTS.CALENDAR.CONFIG, {
+                    zones: newZones,
+                    adminCode
                 });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    alert(error.error || 'Failed to update configuration');
-                    // Revert on error
-                    setSelectedZones(selectedZones);
-                }
             } catch (err) {
                 console.error('Failed to update calendar config', err);
-                alert('Failed to update configuration');
+                alert(t('calendar.errors.config_update_failed') || 'Failed to update configuration');
                 // Revert on error
                 setSelectedZones(selectedZones);
             }
@@ -111,32 +76,27 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
             setLoading(true);
             try {
                 // Fetch Public Holidays
-                const feriesRes = await fetch(`https://calendrier.api.gouv.fr/jours-feries/metropole/${year}.json`);
-                const feriesData = await feriesRes.json();
+                const feriesData = await fetchJson<Record<string, string>>(
+                    API_ENDPOINTS.EXTERNAL.PUBLIC_HOLIDAYS(year)
+                );
                 const feriesList = Object.entries(feriesData).map(([date, name]) => ({
                     date,
-                    nom_jour_ferie: name as string
+                    nom_jour_ferie: name
                 }));
                 setHolidays(feriesList);
 
                 // Fetch School Holidays - Split into two requests to safely handle the "OR" logic for school years
-                const year1 = `${year - 1}-${year}`; // e.g., 2024-2025
-                const year2 = `${year}-${year + 1}`; // e.g., 2025-2026
-
-                const [schoolRes1, schoolRes2] = await Promise.all([
-                    fetch(`https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=2000&refine.annee_scolaire=${year1}`),
-                    fetch(`https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=2000&refine.annee_scolaire=${year2}`)
-                ]);
+                const year1 = `${year - 1}-${year}`;
+                const year2 = `${year}-${year + 1}`;
 
                 const [schoolData1, schoolData2] = await Promise.all([
-                    schoolRes1.json(),
-                    schoolRes2.json()
+                    fetchJson<any>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year1)),
+                    fetchJson<any>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year2))
                 ]);
 
                 const records = [...(schoolData1.records || []), ...(schoolData2.records || [])];
 
                 // Helper to convert API date string (UTC) to Local Date String YYYY-MM-DD
-                // This handles the "23:00 UTC" issue which is actually the next day in France
                 const toLocalDateISO = (dateStr: string) => {
                     const date = new Date(dateStr);
                     const year = date.getFullYear();
@@ -149,12 +109,11 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                     .filter((r: any) => r.fields.population !== 'Enseignants')
                     .map((r: any) => ({
                         description: r.fields.description,
-                        start_date: toLocalDateISO(r.fields.start_date), // Corrects 2024-12-20T23:00 -> 2024-12-21
-                        end_date: toLocalDateISO(r.fields.end_date),     // Corrects 2025-01-05T23:00 -> 2025-01-06
+                        start_date: toLocalDateISO(r.fields.start_date),
+                        end_date: toLocalDateISO(r.fields.end_date),
                         zones: r.fields.zones,
                         location: r.fields.location
                     }));
-                // Deduplicate slightly (optional but good)
                 setSchoolHolidays(mappedSchool);
 
             } catch (error) {

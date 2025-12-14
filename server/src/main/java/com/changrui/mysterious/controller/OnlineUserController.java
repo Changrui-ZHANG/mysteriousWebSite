@@ -1,54 +1,60 @@
 package com.changrui.mysterious.controller;
 
+import com.changrui.mysterious.dto.common.ApiResponse;
+import com.changrui.mysterious.exception.UnauthorizedException;
+import com.changrui.mysterious.exception.ValidationException;
 import com.changrui.mysterious.service.OnlineUserService;
+import com.changrui.mysterious.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller for tracking online users
+ */
 @RestController
-@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
-        "http://changrui.freeboxos.fr:3001", "http://changrui.freeboxos.fr", "http://changrui.freeboxos.fr:5173" })
 @RequestMapping("/api/presence")
 public class OnlineUserController {
 
     @Autowired
     private OnlineUserService onlineUserService;
 
-    private static final String ADMIN_CODE = "Changrui";
+    @Autowired
+    private AdminService adminService;
 
     @PostMapping("/heartbeat")
-    public ResponseEntity<?> heartbeat(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<ApiResponse<Void>> heartbeat(@RequestBody Map<String, String> payload) {
         String userId = payload.get("userId");
-        if (userId != null && !userId.isEmpty()) {
-            onlineUserService.updateHeartbeat(userId);
-            return ResponseEntity.ok().build();
+
+        if (userId == null || userId.isEmpty()) {
+            throw new ValidationException("User ID is required");
         }
-        return ResponseEntity.badRequest().build();
+
+        onlineUserService.updateHeartbeat(userId);
+        return ResponseEntity.ok(ApiResponse.successMessage("Heartbeat updated"));
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Map<String, Object>> getOnlineCount() {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getOnlineCount() {
         long count = onlineUserService.getOnlineCount();
         boolean showToAll = onlineUserService.isShowOnlineCountToAll();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("count", count);
-        response.put("showToAll", showToAll);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(Map.of(
+                "count", count,
+                "showToAll", showToAll)));
     }
 
     @PostMapping("/toggle-visibility")
-    public ResponseEntity<?> toggleVisibility(@RequestParam String adminCode) {
-        if (ADMIN_CODE.equals(adminCode)) {
-            onlineUserService.toggleShowOnlineCountToAll();
-            Map<String, Object> response = new HashMap<>();
-            response.put("showToAll", onlineUserService.isShowOnlineCountToAll());
-            return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<Map<String, Boolean>>> toggleVisibility(@RequestParam String adminCode) {
+        if (!adminService.isValidAdminCode(adminCode)) {
+            throw new UnauthorizedException("Invalid admin code");
         }
-        return ResponseEntity.status(403).body("Invalid admin code");
+
+        onlineUserService.toggleShowOnlineCountToAll();
+
+        return ResponseEntity.ok(ApiResponse.success(
+                Map.of("showToAll", onlineUserService.isShowOnlineCountToAll())));
     }
 }

@@ -6,6 +6,9 @@ import Match3 from '../features/games/components/Match3';
 import PokemonGame from '../features/games/components/PokemonGame';
 import MazeGame from '../features/games/components/MazeGame';
 import Leaderboard from '../features/games/components/Leaderboard';
+import { fetchJson, postJson } from '../utils/api';
+import { useAdminCode } from '../hooks/useAdminCode';
+import { API_ENDPOINTS } from '../constants/api';
 
 interface GameProps {
     isDarkMode: boolean;
@@ -22,6 +25,7 @@ interface User {
 
 export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
+    const adminCode = useAdminCode();
     const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon' | 'maze'>('brick');
 
     // Stats State
@@ -35,50 +39,40 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
 
     // Fetch Game Statuses
     useEffect(() => {
-        const fetchStatuses = async () => {
-            try {
-                const response = await fetch('/api/games');
-                if (response.ok) {
-                    const data = await response.json();
-                    const statusMap: Record<string, boolean> = {};
-                    data.forEach((s: any) => {
-                        statusMap[s.gameType] = s.enabled;
-                    });
-                    setGameStatuses(statusMap);
-                }
-            } catch (error) {
-                console.error("Failed to fetch game statuses", error);
-            }
-        };
-        fetchStatuses();
+        fetchJson<any[]>(API_ENDPOINTS.GAMES.LIST)
+            .then(data => {
+                const statusMap: Record<string, boolean> = {};
+                data.forEach((s: any) => {
+                    statusMap[s.gameType] = s.enabled;
+                });
+                setGameStatuses(statusMap);
+            })
+            .catch(error => console.error("Failed to fetch game statuses", error));
     }, []);
 
     const toggleGameStatus = async (gameKey: string) => {
-        let adminCode = "";
-
-        if (isSuperAdmin) {
-            adminCode = "ChangruiZ";
-        } else if (isAdmin) {
-            adminCode = "Changrui";
-        } else {
-            const input = prompt("Admin Code:");
+        if (!adminCode) {
+            const input = prompt(t('game.admin_code_prompt') || "Admin Code:");
             if (!input) return;
-            adminCode = input;
-        }
 
-        try {
-            const response = await fetch(`/api/games/${gameKey}/toggle?adminCode=${adminCode}`, {
-                method: 'POST'
-            });
-            if (response.ok) {
-                const updatedStatus = await response.json();
+            try {
+                const updatedStatus = await postJson<any>(`${API_ENDPOINTS.GAMES.TOGGLE.replace('{gameType}', gameKey)}?adminCode=${input}`, {});
                 setGameStatuses(prev => ({
                     ...prev,
                     [updatedStatus.gameType]: updatedStatus.enabled
                 }));
-            } else {
-                alert("Failed to toggle status");
+            } catch (error) {
+                console.error("Error toggling game status", error);
             }
+            return;
+        }
+
+        try {
+            const updatedStatus = await postJson<any>(`${API_ENDPOINTS.GAMES.TOGGLE.replace('{gameType}', gameKey)}?adminCode=${adminCode}`, {});
+            setGameStatuses(prev => ({
+                ...prev,
+                [updatedStatus.gameType]: updatedStatus.enabled
+            }));
         } catch (error) {
             console.error("Error toggling game status", error);
         }
@@ -105,19 +99,14 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
 
     useEffect(() => {
         const fetchPersonalBest = async () => {
-            if (!user) {
+            if (!user || !user.userId) {
                 setPersonalBest(null);
                 return;
             }
             try {
-                // Ensure no spaces in URL and bypass cache
-                const response = await fetch(`/api/scores/user/${user.userId}/${activeGame}?_t=${Date.now()}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setPersonalBest({ score: data.score, attempts: data.attempts });
-                } else {
-                    setPersonalBest({ score: 0 });
-                }
+                // Use fetchJson for auto-unwrapping ApiResponse
+                const data = await fetchJson<any>(`/api/scores/user/${user.userId}/${activeGame}?_t=${Date.now()}`);
+                setPersonalBest({ score: data.score, attempts: data.attempts });
             } catch (error) {
                 console.error("Failed to fetch personal best", error);
                 setPersonalBest({ score: 0 });
@@ -135,35 +124,32 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
             if (hasGuestAlertShownRef.current) return;
 
             try {
-                // Fetch current top 3
-                const res = await fetch(`/api/scores/top/${activeGame}`);
-                if (res.ok) {
-                    const topScores: any[] = await res.json();
+                // Fetch current top 3 using fetchJson
+                const topScores: any[] = await fetchJson(`/api/scores/top/${activeGame}`);
 
-                    // Logic: Eligible if board has space (<3) OR score beats the worst one on board
-                    let isEligible = false;
+                // Logic: Eligible if board has space (<3) OR score beats the worst one on board
+                let isEligible = false;
 
-                    if (topScores.length < 3) {
-                        isEligible = true;
+                if (topScores.length < 3) {
+                    isEligible = true;
+                } else {
+                    const thresholdScoreVal = topScores[topScores.length - 1].score;
+                    if (activeGame === 'maze') {
+                        // Lower is better (and assume threshold > 0, though we fixed 0 bug)
+                        if (score < thresholdScoreVal || thresholdScoreVal === 0) {
+                            isEligible = true;
+                        }
                     } else {
-                        const thresholdScoreVal = topScores[topScores.length - 1].score;
-                        if (activeGame === 'maze') {
-                            // Lower is better (and assume threshold > 0, though we fixed 0 bug)
-                            if (score < thresholdScoreVal || thresholdScoreVal === 0) {
-                                isEligible = true;
-                            }
-                        } else {
-                            // Higher is better
-                            if (score > thresholdScoreVal) {
-                                isEligible = true;
-                            }
+                        // Higher is better
+                        if (score > thresholdScoreVal) {
+                            isEligible = true;
                         }
                     }
+                }
 
-                    if (isEligible) {
-                        setShowGuestAlert(true);
-                        hasGuestAlertShownRef.current = true;
-                    }
+                if (isEligible) {
+                    setShowGuestAlert(true);
+                    hasGuestAlertShownRef.current = true;
                 }
             } catch (err) {
                 console.error("Guest score check failed", err);
@@ -193,18 +179,17 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         }
 
         try {
-            const response = await fetch('/api/scores', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    gameType: activeGame,
-                    score: score,
-                    userId: user.userId,
-                    username: user.username,
-                    attempts: attempts
-                })
+            if (!user.userId) {
+                console.error("Cannot submit score: User ID is missing");
+                return;
+            }
+            const result = await postJson('/api/scores', {
+                gameType: activeGame,
+                score: score,
+                userId: user.userId,
+                username: user.username,
+                attempts: attempts
             });
-            const result = await response.json();
             console.log("Score submission result:", result);
 
             // Update local state without fetching

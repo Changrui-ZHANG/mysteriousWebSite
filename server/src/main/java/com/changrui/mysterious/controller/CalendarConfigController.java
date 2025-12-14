@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/calendar-config")
-@CrossOrigin(origins = "*")
 public class CalendarConfigController {
 
     @Autowired

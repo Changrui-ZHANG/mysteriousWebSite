@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaTimes } from 'react-icons/fa';
+import { postJson } from '../../utils/api';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -25,29 +26,21 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
 
         try {
             const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
 
-            const data = await response.json();
+            // Use postJson for auto-unwrapping
+            const data = await postJson<{ userId: string; username: string; message: string }>(endpoint, { username, password });
 
-            if (response.ok) {
-                if (authMode === 'login') {
-                    onLoginSuccess({ userId: data.userId, username: data.username });
-                    onClose();
-                    setUsername('');
-                    setPassword('');
-                } else {
-                    setAuthMode('login');
-                    setSuccess(t('auth.success_register'));
-                }
+            if (authMode === 'login') {
+                onLoginSuccess({ userId: data.userId, username: data.username });
+                onClose();
+                setUsername('');
+                setPassword('');
             } else {
-                setError(data.message || t('auth.failed'));
+                setAuthMode('login');
+                setSuccess(t('auth.success_register'));
             }
-        } catch (err) {
-            setError('Network error');
+        } catch (err: any) {
+            setError(err.message || t('auth.failed'));
         }
     };
 

@@ -1,18 +1,21 @@
 package com.changrui.mysterious.controller;
 
+import com.changrui.mysterious.dto.common.ApiResponse;
+import com.changrui.mysterious.exception.UnauthorizedException;
 import com.changrui.mysterious.model.Message;
 import com.changrui.mysterious.repository.AppUserRepository;
 import com.changrui.mysterious.service.MessageService;
+import com.changrui.mysterious.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Controller for chat messages
+ */
 @RestController
-@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
-        "http://changrui.freeboxos.fr:3001", "http://changrui.freeboxos.fr", "http://changrui.freeboxos.fr:5173" })
 @RequestMapping("/api/messages")
 public class MessageController {
 
@@ -22,6 +25,9 @@ public class MessageController {
     @Autowired
     private AppUserRepository appUserRepository;
 
+    @Autowired
+    private AdminService adminService;
+
     @GetMapping
     public ResponseEntity<List<Message>> getAllMessages() {
         return ResponseEntity.ok()
@@ -30,63 +36,65 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addMessage(@RequestBody Message message,
+    public ResponseEntity<ApiResponse<Message>> addMessage(
+            @RequestBody Message message,
             @RequestParam(required = false) String adminCode) {
-        if (messageService.isMuted()) {
-            // Allow if valid admin code is provided
-            boolean isAdmin = "Changrui".equals(adminCode);
-            if (!isAdmin) {
-                return ResponseEntity.status(403).body("Chat is muted by admin");
-            }
+
+        if (messageService.isMuted() && !adminService.isValidAdminCode(adminCode)) {
+            throw new UnauthorizedException("Chat is muted by admin");
         }
 
-        // Verify if the user exists in the database OR if it is an Admin message
-        if (appUserRepository.existsById(message.getUserId()) || "Changrui".equals(adminCode)) {
+        // Verify if the user exists in DB OR if it is an Admin message
+        if (appUserRepository.existsById(message.getUserId()) || adminService.isValidAdminCode(adminCode)) {
             message.setVerified(true);
         } else {
             message.setVerified(false);
         }
-        return ResponseEntity.ok(messageService.addMessage(message));
+
+        Message saved = messageService.addMessage(message);
+        return ResponseEntity.ok(ApiResponse.success(saved));
     }
 
     @PostMapping("/toggle-mute")
-    public ResponseEntity<?> toggleMute(@RequestParam String adminCode) {
-        if ("Changrui".equals(adminCode)) {
-            boolean newState = !messageService.isMuted();
-            messageService.setMuted(newState);
-            return ResponseEntity.ok(Map.of("message", "Mute verified: " + newState, "isMuted", newState));
+    public ResponseEntity<ApiResponse<Boolean>> toggleMute(@RequestParam String adminCode) {
+        if (!adminService.isValidAdminCode(adminCode)) {
+            throw new UnauthorizedException("Invalid admin code");
         }
-        return ResponseEntity.status(401).body(Map.of("message", "Invalid admin code"));
+
+        boolean newState = !messageService.isMuted();
+        messageService.setMuted(newState);
+
+        return ResponseEntity.ok(ApiResponse.success("Mute toggled", newState));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMessage(
+    public ResponseEntity<ApiResponse<Void>> deleteMessage(
             @PathVariable String id,
             @RequestParam String userId,
             @RequestParam(required = false) String adminCode) {
 
-        // Check if admin code is provided and valid
-        if (adminCode != null && "Changrui".equals(adminCode)) {
-            // Admin can delete any message
+        // Admin can delete any message
+        if (adminService.isValidAdminCode(adminCode)) {
             messageService.deleteMessageById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(ApiResponse.successMessage("Message deleted"));
         }
 
         // Regular user can only delete their own messages
         boolean deleted = messageService.deleteMessage(id, userId);
-        if (deleted) {
-            return ResponseEntity.ok().build();
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(ApiResponse.successMessage("Message deleted"));
     }
 
     @PostMapping("/clear")
-    public ResponseEntity<?> clearAllMessages(@RequestParam String adminCode) {
-        // Simple admin verification (you can improve this)
-        if ("Changrui".equals(adminCode)) {
-            messageService.clearAllMessages();
-            return ResponseEntity.ok().build();
+    public ResponseEntity<ApiResponse<Void>> clearAllMessages(@RequestParam String adminCode) {
+        if (!adminService.isValidAdminCode(adminCode)) {
+            throw new UnauthorizedException("Invalid admin code");
         }
-        return ResponseEntity.status(403).body("Invalid admin code");
+
+        messageService.clearAllMessages();
+        return ResponseEntity.ok(ApiResponse.successMessage("All messages cleared"));
     }
 }

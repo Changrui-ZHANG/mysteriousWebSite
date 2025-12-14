@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { fetchJson, deleteJson } from '../../../utils/api';
 
 interface Score {
     id: string;
@@ -23,13 +24,17 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
 
     const fetchTopScores = async () => {
         try {
-            const response = await fetch(`/api/scores/top/${gameType}?_t=${Date.now()}`);
-            if (response.ok) {
-                const data = await response.json();
+            // Using fetchJson for auto-unwrapping ApiResponse
+            const data = await fetchJson<Score[]>(`/api/scores/top/${gameType}?_t=${Date.now()}`);
+            if (Array.isArray(data)) {
                 setScores(data);
+            } else {
+                console.error("Expected array of scores but got:", data);
+                setScores([]);
             }
         } catch (error) {
             console.error("Failed to fetch top scores", error);
+            setScores([]);
         }
     };
 
@@ -42,17 +47,11 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
 
         try {
             const SUPER_ADMIN_CODE = 'ChangruiZ'; // Should align with App.tsx
-            const response = await fetch(`/api/scores/${id}?adminCode=${SUPER_ADMIN_CODE}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                setRefresh(prev => prev + 1);
-            } else {
-                alert('Failed to reset score');
-            }
+            await deleteJson(`/api/scores/${id}?adminCode=${SUPER_ADMIN_CODE}`);
+            setRefresh(prev => prev + 1);
         } catch (error) {
             console.error('Failed to reset score', error);
+            alert('Failed to reset score');
         }
     };
 

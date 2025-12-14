@@ -21,6 +21,28 @@
         "suggestions": "SUGGESTIONS",
         "calendar": "CALENDAR"
     },
+    "calendar": {
+        "title": "Calendar",
+        "zones_admin_label": "Zones (Admin):",
+        "zones": {
+            "zone_a": "Lyon/Bordeaux",
+            "zone_b": "Marseille/Lille",
+            "zone_c": "Paris/IDF",
+            "corse": "Corsica",
+            "guadeloupe": "Guadeloupe",
+            "guyane": "French Guiana",
+            "reunion": "Réunion",
+            "martinique": "Martinique",
+            "mayotte": "Mayotte"
+        },
+        "tooltip": {
+            "vacation": "Vacation ({{zone}})"
+        },
+        "errors": {
+            "config_update_failed": "Failed to update configuration",
+            "failed_to_load": "Failed to load calendar"
+        }
+    },
     "game": {
         "arcade_zone": "NEON ARCADE",
         "choose_your_challenge": "Select a game to start playing",
@@ -56,6 +78,14 @@
         "combos": "Combos",
         "speed": "Speed",
         "quiz": "Quiz",
+        "combo": "Combo",
+        "combo_multiplier": "Combo x{{multiplier}}!",
+        "mute": "Mute",
+        "unmute": "Sound",
+        "flip_to_rules": "View Rules",
+        "flip_to_game": "Back to Game",
+        "admin_code_prompt": "Admin Code:",
+        "toggle_failed": "Failed to toggle status",
         "brick_breaker_rules": "Destroy all bricks without dropping the ball!",
         "brick_breaker_controls": "Use the mouse to move the paddle.",
         "brick_breaker_bonus": "Breaking bricks increases the score!",
@@ -127,6 +157,7 @@
         "login_required": "Please log in to submit suggestions",
         "all_suggestions": "All Suggestions",
         "your_suggestions": "Your Suggestions",
+        "submit_failed": "Failed to submit suggestion",
         "no_suggestions": "No suggestions yet. Be the first to share an idea!",
         "pending": "Pending",
         "reviewed": "Reviewed",

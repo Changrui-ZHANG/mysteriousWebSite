@@ -21,6 +21,28 @@
         "suggestions": "建议",
         "calendar": "日历"
     },
+    "calendar": {
+        "title": "日历",
+        "zones_admin_label": "区域（管理员）：",
+        "zones": {
+            "zone_a": "里昂/波尔多",
+            "zone_b": "马赛/里尔",
+            "zone_c": "巴黎/法兰西岛",
+            "corse": "科西嘉",
+            "guadeloupe": "瓜德罗普",
+            "guyane": "法属圭亚那",
+            "reunion": "留尼汪",
+            "martinique": "马提尼克",
+            "mayotte": "马约特"
+        },
+        "tooltip": {
+            "vacation": "假期 ({{zone}})"
+        },
+        "errors": {
+            "config_update_failed": "配置更新失败",
+            "failed_to_load": "加载日历失败"
+        }
+    },
     "game": {
         "arcade_zone": "霓虹街机",
         "choose_your_challenge": "选择一个游戏开始挑战",
@@ -56,6 +78,14 @@
         "combos": "连击",
         "speed": "速度",
         "quiz": "问答",
+        "combo": "连击",
+        "combo_multiplier": "连击 x{{multiplier}}！",
+        "mute": "静音",
+        "unmute": "声音",
+        "flip_to_rules": "查看规则",
+        "flip_to_game": "返回游戏",
+        "admin_code_prompt": "管理员代码：",
+        "toggle_failed": "切换状态失败",
         "brick_breaker_rules": "打碎所有砖块，不要让球掉落！",
         "brick_breaker_controls": "使用鼠标移动挡板。",
         "brick_breaker_bonus": "打碎砖块可增加分数！",
@@ -126,8 +156,9 @@
         "submitting": "提交中...",
         "login_required": "请登录以提交建议",
         "all_suggestions": "所有建议",
-        "your_suggestions": "您的建议",
+        "your_suggestions": "我的建议",
         "no_suggestions": "暂无建议。快来分享第一个想法吧！",
+        "submit_failed": "提交建议失败",
         "pending": "待处理",
         "reviewed": "已审核",
         "implemented": "已实现",

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaLightbulb, FaCheck, FaEye, FaTrash } from 'react-icons/fa';
+import { fetchJson, postJson } from '../utils/api';
+import { API_ENDPOINTS } from '../constants/api';
 
 interface Suggestion {
     id: string;
@@ -43,16 +45,13 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
     const fetchSuggestions = async () => {
         try {
             const endpoint = isAdmin
-                ? '/api/suggestions'
+                ? API_ENDPOINTS.SUGGESTIONS.LIST
                 : user ? `/api/suggestions/user/${user.userId}` : null;
 
             if (!endpoint) return;
 
-            const response = await fetch(endpoint);
-            if (response.ok) {
-                const data = await response.json();
-                setSuggestions(data);
-            }
+            const data = await fetchJson<Suggestion[]>(endpoint);
+            setSuggestions(data);
         } catch (err) {
             console.error('Failed to fetch suggestions:', err);
         }
@@ -71,25 +70,16 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
         setError(null);
 
         try {
-            const response = await fetch('/api/suggestions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: user.userId,
-                    username: user.username,
-                    suggestion: newSuggestion.trim()
-                })
+            await postJson(API_ENDPOINTS.SUGGESTIONS.ADD, {
+                userId: user.userId,
+                username: user.username,
+                suggestion: newSuggestion.trim()
             });
 
-            if (response.ok) {
-                setNewSuggestion('');
-                fetchSuggestions();
-            } else {
-                const data = await response.json();
-                setError(data.message || 'Failed to submit suggestion');
-            }
-        } catch (err) {
-            setError('Error submitting suggestion');
+            setNewSuggestion('');
+            fetchSuggestions();
+        } catch (err: any) {
+            setError(err.message || t('suggestions.submit_failed') || 'Failed to submit suggestion');
             console.error(err);
         } finally {
             setLoading(false);
@@ -98,31 +88,23 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
 
     const updateStatus = async (id: string, status: string) => {
         try {
-            const response = await fetch(`/api/suggestions/${id}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status })
+            await fetchJson(`/api/suggestions/${id}/status?status=${status}`, {
+                method: 'PUT'
             });
-
-            if (response.ok) {
-                fetchSuggestions();
-            }
+            fetchSuggestions();
         } catch (err) {
             console.error('Failed to update status:', err);
         }
     };
 
     const deleteSuggestion = async (id: string) => {
-        if (!confirm(t('suggestions.confirm_delete') || 'Delete this suggestion?')) return;
+        if (!window.confirm(t('suggestions.confirm_delete') || 'Delete this suggestion?')) return;
 
         try {
-            const response = await fetch(`/api/suggestions/${id}?userId=${user?.userId}`, {
+            await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(parseInt(id)), {
                 method: 'DELETE'
             });
-
-            if (response.ok) {
-                fetchSuggestions();
-            }
+            fetchSuggestions();
         } catch (err) {
             console.error('Failed to delete suggestion:', err);
         }

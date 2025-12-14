@@ -13,8 +13,8 @@ public class CalendarConfigService {
     @Autowired
     private CalendarConfigRepository repository;
 
-    private static final String ADMIN_CODE = "Changrui";
-    private static final String SUPER_ADMIN_CODE = "ChangruiZ";
+    @Autowired
+    private AdminService adminService;
 
     /**
      * Get the global calendar configuration (creates default if doesn't exist)
@@ -30,9 +30,8 @@ public class CalendarConfigService {
     /**
      * Update active zones (admin only)
      */
-    public CalendarConfig updateZones(List<String> zones, String adminCode) {
-        // Verify admin code
-        if (!ADMIN_CODE.equals(adminCode) && !SUPER_ADMIN_CODE.equals(adminCode)) {
+    public CalendarConfig updateZones(List<String> zones, String adminCode) throws SecurityException {
+        if (!adminService.isValidAdminCode(adminCode)) {
             throw new SecurityException("Invalid admin code");
         }
 

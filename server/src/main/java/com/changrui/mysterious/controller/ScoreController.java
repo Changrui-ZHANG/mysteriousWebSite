@@ -1,29 +1,35 @@
 package com.changrui.mysterious.controller;
 
+import com.changrui.mysterious.dto.common.ApiResponse;
+import com.changrui.mysterious.dto.score.ScoreSubmissionDTO;
+import com.changrui.mysterious.exception.EntityNotFoundException;
 import com.changrui.mysterious.model.Score;
-
 import com.changrui.mysterious.repository.ScoreRepository;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = { "http://localhost:5173", "http://localhost", "http://localhost:3001",
-        "http://changrui.freeboxos.fr:3001", "http://changrui.freeboxos.fr", "http://changrui.freeboxos.fr:5173" })
 @RequestMapping("/api/scores")
 public class ScoreController {
+
+    private static final Logger log = LoggerFactory.getLogger(ScoreController.class);
 
     @Autowired
     private ScoreRepository scoreRepository;
 
     @GetMapping("/top/{gameType}")
-    public ResponseEntity<List<Score>> getTopScores(@PathVariable String gameType) {
+    public ResponseEntity<ApiResponse<List<Score>>> getTopScores(@PathVariable String gameType) {
         List<Score> rawScores;
         boolean asc = "maze".equals(gameType);
 
@@ -38,12 +44,9 @@ public class ScoreController {
         Set<String> seenUsers = new HashSet<>();
 
         for (Score s : rawScores) {
-            // Safety check for null userId
             if (s.getUserId() != null && !seenUsers.contains(s.getUserId())) {
-                // For Maze, filter out '0' scores if they are considered invalid/defaults
                 if (asc && s.getScore() == 0)
                     continue;
-
                 seenUsers.add(s.getUserId());
                 topScores.add(s);
                 if (topScores.size() >= 3)
@@ -51,11 +54,14 @@ public class ScoreController {
             }
         }
 
-        return ResponseEntity.ok(topScores);
+        return ResponseEntity.ok(ApiResponse.success(topScores));
     }
 
     @GetMapping("/user/{userId}/{gameType}")
-    public ResponseEntity<Score> getUserHighScore(@PathVariable String userId, @PathVariable String gameType) {
+    public ResponseEntity<ApiResponse<Score>> getUserHighScore(
+            @PathVariable String userId,
+            @PathVariable String gameType) {
+
         Score score;
         if ("maze".equals(gameType)) {
             score = scoreRepository.findTopByUserIdAndGameTypeOrderByScoreAsc(userId, gameType);
@@ -64,81 +70,94 @@ public class ScoreController {
         }
 
         if (score == null) {
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException("Score", userId + "/" + gameType);
         }
-        return ResponseEntity.ok(score);
+        return ResponseEntity.ok(ApiResponse.success(score));
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> submitScore(@RequestBody Map<String, Object> body) {
-        try {
-            System.out.println("DEBUG: Entering submitScore");
-            String gameType = (String) body.get("gameType");
-            Integer scoreValue = (Integer) body.get("score");
-            String userId = (String) body.get("userId");
-            Integer attempts = body.containsKey("attempts") ? (Integer) body.get("attempts") : null;
+    public ResponseEntity<ApiResponse<Map<String, Object>>> submitScore(
+            @Valid @RequestBody ScoreSubmissionDTO dto) {
 
-            if (gameType == null || userId == null || scoreValue == null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Missing required fields"));
+        log.debug("Entering submitScore");
+        log.info("Processing {} score: {} for user: {}", dto.gameType(), dto.score(), dto.userId());
+
+        // Look up existing scores for this user and game
+        List<Score> existingScores = scoreRepository.findByUserIdAndGameType(dto.userId(), dto.gameType());
+
+        if (!existingScores.isEmpty()) {
+            // Sort based on game type logic
+            if ("maze".equals(dto.gameType())) {
+                existingScores.sort((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore()));
+            } else {
+                existingScores.sort((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
             }
 
-            System.out.println("DEBUG: Processing " + gameType + " Score: " + scoreValue + " for User: " + userId);
+            Score bestScore = existingScores.get(0);
 
-            String username = (String) body.get("username");
-
-            // Look up existing scores for this user and game
-            List<Score> existingScores = scoreRepository.findByUserIdAndGameType(userId, gameType);
-
-            if (!existingScores.isEmpty()) {
-                // Sort based on game type logic to find the "best" entry currently in DB
-                if ("maze".equals(gameType)) {
-                    // ASC for Maze (Lower is better)
-                    existingScores.sort((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore()));
-                } else {
-                    // DESC for others (Higher is better)
-                    existingScores.sort((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
+            if ("maze".equals(dto.gameType())) {
+                if (dto.score() >= bestScore.getScore() && bestScore.getScore() != 0) {
+                    log.debug("Score {} is not better than existing {}", dto.score(), bestScore.getScore());
+                    return ResponseEntity.ok(ApiResponse.success(
+                            "Score not high enough",
+                            Map.of("message", "Score not high enough", "newHighScore", false)));
                 }
-
-                // Best existing score
-                Score bestScore = existingScores.get(0);
-
-                if ("maze".equals(gameType)) {
-                    // Lower is better. New score must be LOWER than bestScore.
-                    // Also filter out if bestScore is 0 (invalid default?) but usually 0 is best.
-                    // Assuming valid moves > 0.
-                    if (scoreValue >= bestScore.getScore() && bestScore.getScore() != 0) {
-                        System.out
-                                .println("DEBUG: Score " + scoreValue + " is not better than " + bestScore.getScore());
-                        return ResponseEntity.ok(Map.of("message", "Score not high enough", "newLink", false));
-                        // Originally we might return logic to client, but here we just return OK.
-                    }
-                } else {
-                    // Higher is better.
-                    if (scoreValue <= bestScore.getScore()) {
-                        System.out
-                                .println("DEBUG: Score " + scoreValue + " is not better than " + bestScore.getScore());
-                        return ResponseEntity.ok(Map.of("message", "Score not high enough", "newLink", false));
-                    }
+            } else {
+                if (dto.score() <= bestScore.getScore()) {
+                    log.debug("Score {} is not better than existing {}", dto.score(), bestScore.getScore());
+                    return ResponseEntity.ok(ApiResponse.success(
+                            "Score not high enough",
+                            Map.of("message", "Score not high enough", "newHighScore", false)));
                 }
-
-                // If better, we update the EXISTING record or add new one?
-                // Logic seems to imply we keep history? But deduplication suggests we only care
-                // about top.
-                // Re-reading logic: "submitScore" saves a NEW entry usually.
-                // But typically we might want to just save.
             }
 
-            // Create and save new score
-            Score newScore = new Score(username, userId, gameType, scoreValue, System.currentTimeMillis(), attempts);
-            scoreRepository.save(newScore);
-            System.out.println("DEBUG: Score Saved Successfully");
+            // Update existing score record (Single record per user policy)
+            bestScore.setScore(dto.score());
+            bestScore.setTimestamp(System.currentTimeMillis());
+            bestScore.setAttempts(dto.attempts());
+            scoreRepository.save(bestScore);
 
-            return ResponseEntity.ok(Map.of("message", "Score submitted successfully", "newHighScore", true));
+            log.info("Updated existing score for user {} in game {}: {}", dto.userId(), dto.gameType(), dto.score());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("message", "Error submitting score: " + e.getMessage()));
+            return ResponseEntity.ok(ApiResponse.success(
+                    "Score updated successfully",
+                    Map.of("message", "Score updated successfully", "newHighScore", true)));
         }
+
+        // Create and save new score only if no previous record exists
+        Score newScore = new Score(
+                dto.username(),
+                dto.userId(),
+                dto.gameType(),
+                dto.score(),
+                System.currentTimeMillis(),
+                dto.attempts());
+        scoreRepository.save(newScore);
+        log.info("Score saved successfully for user {} in game {}: {}", dto.userId(), dto.gameType(), dto.score());
+
+        return ResponseEntity.ok(ApiResponse.success(
+                "Score submitted successfully",
+                Map.of("message", "Score submitted successfully", "newHighScore", true)));
+    }
+
+    @Autowired
+    private com.changrui.mysterious.service.AdminService adminService;
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteScore(
+            @PathVariable String id,
+            @RequestParam String adminCode) {
+
+        if (!adminService.isValidAdminCode(adminCode)) {
+            throw new com.changrui.mysterious.exception.UnauthorizedException("Invalid admin code");
+        }
+
+        if (!scoreRepository.existsById(id)) {
+            throw new EntityNotFoundException("Score", id);
+        }
+
+        scoreRepository.deleteById(id);
+        return ResponseEntity.ok(ApiResponse.successMessage("Score deleted successfully"));
     }
 }
