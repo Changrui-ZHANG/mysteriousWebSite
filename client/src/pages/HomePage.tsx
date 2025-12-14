@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ScrollSection } from '../components/ScrollSection'
 import Lenis from '@studio-freight/lenis'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 import { GravityPlayground } from '../components/GravityPlayground'
@@ -159,17 +160,31 @@ export function Home({ isDarkMode }: HomeProps) {
                     <div>
                         <h4 className="font-bold mb-6">{t('footer_section.socials')}</h4>
                         <ul className="list-none p-0 opacity-70 leading-loose">
-                            <li>Twitter / X</li>
-                            <li>GitHub</li>
-                            <li>LinkedIn</li>
-                            <li>Instagram</li>
+                            <li>
+                                <a href="https://github.com/Changrui-ZHANG" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                    GitHub
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.linkedin.com/in/changrui-zhang/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                    LinkedIn
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold mb-6">{t('footer_section.legal')}</h4>
                         <ul className="list-none p-0 opacity-70 leading-loose">
-                            <li>{t('footer_section.privacy')}</li>
-                            <li>{t('footer_section.terms')}</li>
+                            <li>
+                                <Link to="/privacy" className="hover:text-white transition-colors">
+                                    {t('footer_section.privacy')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/terms" className="hover:text-white transition-colors">
+                                    {t('footer_section.terms')}
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                     <div>

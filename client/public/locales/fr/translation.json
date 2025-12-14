@@ -276,6 +276,80 @@
         "join": "Me Contacter",
         "copyright": "© 2025 Changrui ZHANG. Tous droits réservés."
     },
+    "legal_page": {
+        "updated": "Dernière mise à jour : Décembre 2025",
+        "terms": {
+            "title": "Conditions d'Utilisation",
+            "sections": {
+                "presentation": {
+                    "title": "1. Présentation du site",
+                    "content": "En vertu de l'article 6 de la loi n° 2004-575 et pour la confiance dans l'économie numérique, il est précisé aux utilisateurs l'identité des intervenants :",
+                    "details": "Propriétaire : Changrui ZHANG\nContact : Via le formulaire de contact ou LinkedIn.\nHébergement : Serveur personnel / Cloud privé."
+                },
+                "cgu": {
+                    "title": "2. Conditions générales d’utilisation",
+                    "content_1": "L’utilisation du site implique l’acceptation pleine et entière des conditions générales d’utilisation ci-après décrites.",
+                    "content_2": "Ce site est normalement accessible à tout moment aux utilisateurs. Une interruption pour maintenance technique peut être décidée par le propriétaire."
+                },
+                "services": {
+                    "title": "3. Description des services fournis",
+                    "content": "Le site a pour objet de fournir une information concernant l’ensemble des activités du propriétaire (Portfolio, CV, Projets). Le propriétaire s’efforce de fournir des informations aussi précises que possible."
+                },
+                "intellectual": {
+                    "title": "4. Propriété intellectuelle",
+                    "content_1": "Changrui ZHANG est propriétaire des droits de propriété intellectuelle ou détient les droits d’usage sur tous les éléments accessibles sur le site.",
+                    "content_2": "Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site est interdite, sauf autorisation écrite préalable."
+                },
+                "liability": {
+                    "title": "5. Limitations de responsabilité",
+                    "content": "Le propriétaire ne pourra être tenu responsable des dommages directs et indirects causés au matériel de l’utilisateur, lors de l’accès au site."
+                },
+                "data": {
+                    "title": "6. Gestion des données personnelles",
+                    "content_1": "Le site ne collecte des informations personnelles relatives à l'utilisateur que pour le besoin de certains services proposés par le site (ex: classement des jeux, messages).",
+                    "content_2": "Conformément à la loi relative à l’informatique, aux fichiers et aux libertés, tout utilisateur dispose d’un droit d’accès, de rectification et d’opposition aux données personnelles le concernant."
+                }
+            }
+        },
+        "privacy": {
+            "title": "Politique de Confidentialité",
+            "sections": {
+                "collection": {
+                    "title": "1. Collecte de l'information",
+                    "content_1": "Nous recueillons des informations lorsque vous vous inscrivez sur notre site, lorsque vous vous connectez à votre compte, participez à un jeu, et / ou lorsque vous vous déconnectez.",
+                    "content_2": "En outre, nous recevons et enregistrons automatiquement des informations à partir de votre ordinateur et navigateur, y compris votre adresse IP, vos logiciels et votre matériel."
+                },
+                "usage": {
+                    "title": "2. Utilisation des informations",
+                    "content": "Toute les informations que nous recueillons auprès de vous peuvent être utilisées pour :",
+                    "list": [
+                        "Personnaliser votre expérience et répondre à vos besoins individuels",
+                        "Fournir un contenu publicitaire personnalisé",
+                        "Améliorer notre site Web",
+                        "Améliorer le service client",
+                        "Vous contacter par e-mail",
+                        "Administrer un concours, une promotion, ou une enquête"
+                    ]
+                },
+                "ecommerce": {
+                    "title": "3. Confidentialité du commerce en ligne",
+                    "content": "Nous sommes les seuls propriétaires des informations recueillies sur ce site. Vos informations personnelles ne seront pas vendues, échangées, transférées, ou données à une autre société sans votre consentement."
+                },
+                "disclosure": {
+                    "title": "4. Divulgation à des tiers",
+                    "content": "Nous ne vendons, n’échangeons et ne transférons pas vos informations personnelles identifiables à des tiers. Cela ne comprend pas les tierce parties de confiance qui nous aident à exploiter notre site Web."
+                },
+                "security": {
+                    "title": "5. Protection des informations",
+                    "content": "Nous mettons en œuvre une variété de mesures de sécurité pour préserver la sécurité de vos informations personnelles. Nous utilisons un cryptage à la pointe de la technologie pour protéger les informations sensibles transmises en ligne."
+                },
+                "consent": {
+                    "title": "6. Consentement",
+                    "content": "En utilisant notre site, vous consentez à notre politique de confidentialité."
+                }
+            }
+        }
+    },
     "cv": {
         "role": "Développeur Fullstack",
         "sections": {

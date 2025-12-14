@@ -12,6 +12,8 @@ import { Game } from './pages/GamePage'
 import { MessageWall } from './features/messages/MessageWall'
 import { SuggestionsPage } from './pages/SuggestionsPage'
 import { CalendarPage } from './pages/CalendarPage'
+import { TermsPage } from './pages/TermsPage'
+import { PrivacyPage } from './pages/PrivacyPage'
 import { ADMIN_CODES, STORAGE_KEYS } from './constants/auth'
 import './App.css'
 
@@ -94,7 +96,8 @@ function AppContent() {
     return (
         <div className={`relative min-h-screen transition-colors duration-500 font-body ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
             <Preloader />
-            {location.pathname !== '/messages' && <ScrollProgress isDarkMode={isDarkMode} />}
+            {/* Hide scroll progress on messages page as it has its own scrolling behavior */}
+            {!location.pathname.startsWith('/messages') && <ScrollProgress isDarkMode={isDarkMode} />}
 
             {/* Global Auth Modal */}
             <AuthModal
@@ -135,6 +138,8 @@ function AppContent() {
                     <Route path="/messages" element={<MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />} />
                     <Route path="/suggestions" element={<SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} />} />
                     <Route path="/calendar" element={<CalendarPage isDarkMode={isDarkMode} isAdmin={isAdmin} />} />
+                    <Route path="/terms" element={<TermsPage isDarkMode={isDarkMode} />} />
+                    <Route path="/privacy" element={<PrivacyPage isDarkMode={isDarkMode} />} />
                 </Routes>
             </div>
         </div>

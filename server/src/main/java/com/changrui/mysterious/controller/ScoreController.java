@@ -70,7 +70,13 @@ public class ScoreController {
         }
 
         if (score == null) {
-            throw new EntityNotFoundException("Score", userId + "/" + gameType);
+            // Return a default "zero" score object explicitly instead of 404
+            // This prevents "Not Found" errors in the browser console for new players
+            Score emptyScore = new Score();
+            emptyScore.setUserId(userId);
+            emptyScore.setGameType(gameType);
+            emptyScore.setScore(0);
+            return ResponseEntity.ok(ApiResponse.success(emptyScore));
         }
         return ResponseEntity.ok(ApiResponse.success(score));
     }

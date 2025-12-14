@@ -282,6 +282,80 @@
         "join": "Contact Me",
         "copyright": "© 2025 Changrui ZHANG. All rights reserved."
     },
+    "legal_page": {
+        "updated": "Last updated: December 2025",
+        "terms": {
+            "title": "Terms of Service",
+            "sections": {
+                "presentation": {
+                    "title": "1. Website Presentation",
+                    "content": "In accordance with Article 6 of Law No. 2004-575 of June 21, 2004, for confidence in the digital economy, users of the site are informed of the identity of the various parties involved in its implementation and monitoring:",
+                    "details": "Owner: Changrui ZHANG\nContact: Via contact form or LinkedIn.\nHosting: Personal Server / Private Cloud."
+                },
+                "cgu": {
+                    "title": "2. General Conditions of Use",
+                    "content_1": "Use of the site implies full and complete acceptance of the general conditions of use described below. These conditions of use may be modified or supplemented at any time.",
+                    "content_2": "This site is normally accessible to users at all times. An interruption for technical maintenance may be decided by the owner."
+                },
+                "services": {
+                    "title": "3. Description of Services Provided",
+                    "content": "The purpose of the site is to provide information regarding all of the owner's activities (Portfolio, CV, Projects). The owner strives to provide information on the site that is as accurate as possible."
+                },
+                "intellectual": {
+                    "title": "4. Intellectual Property",
+                    "content_1": "Changrui ZHANG is the owner of the intellectual property rights or holds the usage rights on all elements accessible on the site.",
+                    "content_2": "Any reproduction, representation, modification, publication, adaptation of all or part of the elements of the site is prohibited, unless prior written permission is obtained."
+                },
+                "liability": {
+                    "title": "5. Limitation of Liability",
+                    "content": "The owner cannot be held responsible for direct and indirect damage caused to the user's equipment when accessing the site."
+                },
+                "data": {
+                    "title": "6. Personal Data Management",
+                    "content_1": "The site collects personal information relating to the user only for the need of certain services proposed by the site (ex: game leaderboards, messages).",
+                    "content_2": "In accordance with the provisions of the law relative to data processing, files and liberties, any user has a right of access, rectification and opposition to personal data concerning them."
+                }
+            }
+        },
+        "privacy": {
+            "title": "Privacy Policy",
+            "sections": {
+                "collection": {
+                    "title": "1. Information Collection",
+                    "content_1": "We collect information when you register on our site, log in to your account, participate in a game, and/or log out.",
+                    "content_2": "In addition, we automatically receive and record information from your computer and browser, including your IP address, software and hardware, and the page you request."
+                },
+                "usage": {
+                    "title": "2. Information Usage",
+                    "content": "Any information we collect from you may be used to:",
+                    "list": [
+                        "Personalize your experience and meet your individual needs",
+                        "Provide personalized advertising content",
+                        "Improve our website",
+                        "Improve customer service and your support needs",
+                        "Contact you via email",
+                        "Administer a contest, promotion, or survey"
+                    ]
+                },
+                "ecommerce": {
+                    "title": "3.  Online Commerce Privacy",
+                    "content": "We are the sole owners of the information collected on this site. Your personal information will not be sold, exchanged, transferred, or given to any other company for any reason, without your consent."
+                },
+                "disclosure": {
+                    "title": "4. Third Party Disclosure",
+                    "content": "We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our website."
+                },
+                "security": {
+                    "title": "5. Information Protection",
+                    "content": "We implement a variety of security measures to maintain the safety of your personal information. We use state-of-the-art encryption to protect sensitive information transmitted online."
+                },
+                "consent": {
+                    "title": "6. Consent",
+                    "content": "By using our site, you consent to our privacy policy."
+                }
+            }
+        }
+    },
     "cv": {
         "role": "Fullstack Developer",
         "sections": {
