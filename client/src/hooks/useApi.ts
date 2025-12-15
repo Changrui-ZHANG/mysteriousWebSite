@@ -80,7 +80,8 @@ export function useLazyApi<T>(
             setData(result);
             return result;
         } catch (err) {
-            const apiError = err instanceof ApiError ? err : new ApiError(0, err.message);
+            const message = err instanceof Error ? err.message : String(err);
+            const apiError = err instanceof ApiError ? err : new ApiError(0, message);
             setError(apiError);
             throw apiError;
         } finally {

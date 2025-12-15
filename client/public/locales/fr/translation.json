@@ -3,6 +3,8 @@
         "title": "Bienvenue",
         "arcade_title": "Jeux d'Arcade",
         "messages_title": "Mur de Messages",
+        "suggestions_title": "Boîte à Idées",
+        "calendar_title": "Calendrier",
         "theme": {
             "light": "Mode Clair",
             "dark": "Mode Sombre"

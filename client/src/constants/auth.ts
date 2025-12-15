@@ -1,9 +1,6 @@
 // Authentication and Authorization Constants
 
-export const ADMIN_CODES = {
-    ADMIN: 'Changrui',
-    SUPER_ADMIN: 'ChangruiZ'
-} as const;
+// ADMIN_CODES removed for security - validation is now server-side
 
 export const STORAGE_KEYS = {
     USER: 'messageWall_user',
@@ -15,14 +12,14 @@ export const STORAGE_KEYS = {
 export type AdminLevel = 'none' | 'admin' | 'super_admin';
 
 /**
- * Get current admin code based on localStorage status
+ * Get current admin code - DEPRECATED/SECURED
+ * Now just returns a placeholder if admin session exists
  */
 export function getAdminCode(): string | null {
     const isSuperAdmin = localStorage.getItem(STORAGE_KEYS.IS_SUPER_ADMIN) === 'true';
     const isAdmin = localStorage.getItem(STORAGE_KEYS.IS_ADMIN) === 'true';
 
-    if (isSuperAdmin) return ADMIN_CODES.SUPER_ADMIN;
-    if (isAdmin) return ADMIN_CODES.ADMIN;
+    if (isSuperAdmin || isAdmin) return "SESSION_ACTIVE";
     return null;
 }
 

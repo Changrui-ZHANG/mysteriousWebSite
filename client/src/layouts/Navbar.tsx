@@ -17,7 +17,7 @@ interface NavbarProps {
     onLogout?: () => void;
     isAdmin?: boolean;
     isSuperAdmin?: boolean;
-    onAdminLogin?: (code: string) => boolean;
+    onAdminLogin?: (code: string) => Promise<boolean>;
     onAdminLogout?: () => void;
 }
 
@@ -47,13 +47,16 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
     const [showAdminInput, setShowAdminInput] = useState(false);
     const [adminCode, setAdminCode] = useState('');
 
-    const submitAdminCode = (e?: React.FormEvent) => {
+    const submitAdminCode = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        if (onAdminLogin && onAdminLogin(adminCode)) {
-            setAdminCode('');
-            setShowAdminInput(false);
-        } else {
-            alert(t('admin.invalid_code') || 'Invalid admin code');
+        if (onAdminLogin) {
+            const success = await onAdminLogin(adminCode);
+            if (success) {
+                setAdminCode('');
+                setShowAdminInput(false);
+            } else {
+                alert(t('admin.invalid_code') || 'Invalid admin code');
+            }
         }
     };
 
@@ -96,7 +99,11 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                             ? t('navbar.arcade_title')
                             : location.pathname === '/messages'
                                 ? t('navbar.messages_title')
-                                : t('navbar.title')}
+                                : location.pathname === '/suggestions'
+                                    ? t('navbar.suggestions_title')
+                                    : location.pathname === '/calendar'
+                                        ? t('navbar.calendar_title')
+                                        : t('navbar.title')}
                 </Link>
 
                 {/* Mobile Menu Button */}
@@ -284,10 +291,13 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                 <div className="flex flex-col items-center gap-2 w-full max-w-xs p-4 rounded-xl bg-current/5 border border-current/10">
                                     <span className="text-xs opacity-50 uppercase tracking-widest font-bold">Admin Access</span>
                                     <form
-                                        onSubmit={(e) => {
+                                        onSubmit={async (e) => {
                                             e.preventDefault();
-                                            if (onAdminLogin && onAdminLogin(adminCode)) {
-                                                setAdminCode('');
+                                            if (onAdminLogin) {
+                                                const success = await onAdminLogin(adminCode);
+                                                if (success) {
+                                                    setAdminCode('');
+                                                }
                                             }
                                         }}
                                         className="flex w-full gap-2"

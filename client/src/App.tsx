@@ -14,7 +14,7 @@ import { SuggestionsPage } from './pages/SuggestionsPage'
 import { CalendarPage } from './pages/CalendarPage'
 import { TermsPage } from './pages/TermsPage'
 import { PrivacyPage } from './pages/PrivacyPage'
-import { ADMIN_CODES, STORAGE_KEYS } from './constants/auth'
+import { STORAGE_KEYS } from './constants/auth'
 import './App.css'
 
 interface User {
@@ -71,19 +71,47 @@ function AppContent() {
         }
     }, []);
 
-    const handleAdminLogin = (code: string) => {
-        if (code === ADMIN_CODES.SUPER_ADMIN) {
-            setIsSuperAdmin(true);
-            setIsAdmin(true);
-            localStorage.setItem(STORAGE_KEYS.IS_SUPER_ADMIN, 'true');
-            localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
-            return true;
-        } else if (code === ADMIN_CODES.ADMIN) {
-            setIsAdmin(true);
-            localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
-            return true;
+    const handleAdminLogin = async (code: string) => {
+        try {
+            // Updated to use server-side verification via postJson
+            // We use require AuthModal or Navbar to handle the async nature, 
+            // but here we just need to update the state if successful.
+            // Actually, handleAdminLogin is passed to Navbar -> AdminLoginModal.
+            // Ideally, the API call should happen there, or this function needs to return a Promise.
+
+            // However, looking at Navbar usage, it might expect a boolean return synchronously?
+            // Let's check Navbar usage. 
+            // Wait, if I change this signature, I might break Navbar.
+            // But for security, I MUST change it to async.
+
+            /* 
+               Directly calling the API here.
+               NOTE: The original function returned boolean synchronously. 
+               We must change it to return Promise<boolean>.
+            */
+
+            const { postJson } = await import('./utils/api');
+            // Dynamic import or move usage. Since we are in App.tsx, we can import at top level, 
+            // but let's just use the fetch logic here or simpler: use the one in api.ts
+
+            const response = await postJson<{ role: string; message: string }>('/api/auth/verify-admin', { code });
+
+            if (response.role === 'super_admin') {
+                setIsSuperAdmin(true);
+                setIsAdmin(true);
+                localStorage.setItem(STORAGE_KEYS.IS_SUPER_ADMIN, 'true');
+                localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
+                return true;
+            } else if (response.role === 'admin') {
+                setIsAdmin(true);
+                localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Admin login failed", error);
+            return false;
         }
-        return false;
     };
 
     const handleAdminLogout = () => {

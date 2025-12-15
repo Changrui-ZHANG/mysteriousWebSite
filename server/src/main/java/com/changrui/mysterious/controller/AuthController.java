@@ -39,6 +39,29 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("User registered successfully", response));
     }
 
+    @Autowired
+    private com.changrui.mysterious.service.AdminService adminService;
+
+    @PostMapping("/verify-admin")
+    public ResponseEntity<ApiResponse<StartAdminSessionDTO>> verifyAdmin(@Valid @RequestBody AdminVerifyDTO dto) {
+
+        try {
+            adminService.validateAdminCode(dto.code());
+        } catch (SecurityException e) {
+            throw new ValidationException("Invalid admin code");
+        }
+
+        com.changrui.mysterious.service.AdminService.AdminLevel level = adminService.getAdminLevel(dto.code());
+        String role = level == com.changrui.mysterious.service.AdminService.AdminLevel.SUPER_ADMIN ? "super_admin"
+                : "admin";
+
+        StartAdminSessionDTO response = new StartAdminSessionDTO(
+                role,
+                "Admin session started");
+
+        return ResponseEntity.ok(ApiResponse.success("Admin verification successful", response));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> login(@Valid @RequestBody LoginDTO dto) {
         AppUser user = userRepository.findByUsername(dto.username())

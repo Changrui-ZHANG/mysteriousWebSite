@@ -2,8 +2,6 @@ package com.changrui.mysterious.service;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 /**
  * Centralized service for admin authentication and authorization.
  * Replaces hardcoded admin codes scattered across controllers.
@@ -11,9 +9,11 @@ import java.util.Set;
 @Service
 public class AdminService {
 
-    private static final String ADMIN_CODE = "Changrui";
-    private static final String SUPER_ADMIN_CODE = "ChangruiZ";
-    private static final Set<String> VALID_ADMIN_CODES = Set.of(ADMIN_CODE, SUPER_ADMIN_CODE);
+    @org.springframework.beans.factory.annotation.Value("${app.admin.code}")
+    private String adminCode;
+
+    @org.springframework.beans.factory.annotation.Value("${app.super-admin.code}")
+    private String superAdminCode;
 
     /**
      * Check if the provided code is a valid admin code (either Admin or Super
@@ -23,7 +23,7 @@ public class AdminService {
      * @return true if valid, false otherwise
      */
     public boolean isValidAdminCode(String code) {
-        return code != null && VALID_ADMIN_CODES.contains(code);
+        return code != null && (code.equals(adminCode) || code.equals(superAdminCode));
     }
 
     /**
@@ -33,7 +33,7 @@ public class AdminService {
      * @return true if it's the admin code
      */
     public boolean isAdmin(String code) {
-        return ADMIN_CODE.equals(code);
+        return adminCode.equals(code);
     }
 
     /**
@@ -43,7 +43,7 @@ public class AdminService {
      * @return true if it's the super admin code
      */
     public boolean isSuperAdmin(String code) {
-        return SUPER_ADMIN_CODE.equals(code);
+        return superAdminCode.equals(code);
     }
 
     /**

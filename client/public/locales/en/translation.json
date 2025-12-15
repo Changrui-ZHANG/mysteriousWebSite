@@ -3,6 +3,8 @@
         "title": "Welcome",
         "arcade_title": "Arcade Games",
         "messages_title": "Message Wall",
+        "suggestions_title": "Suggestions Box",
+        "calendar_title": "Calendar",
         "theme": {
             "light": "Light Mode",
             "dark": "Dark Mode"

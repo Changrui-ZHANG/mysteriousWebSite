@@ -3,6 +3,8 @@
         "title": "欢迎",
         "arcade_title": "街机游戏",
         "messages_title": "留言墙",
+        "suggestions_title": "建议箱",
+        "calendar_title": "日历",
         "theme": {
             "light": "亮色模式",
             "dark": "暗色模式"
