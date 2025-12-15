@@ -6,7 +6,8 @@ export const STORAGE_KEYS = {
     USER: 'messageWall_user',
     IS_ADMIN: 'messageWall_isAdmin',
     IS_SUPER_ADMIN: 'messageWall_isSuperAdmin',
-    CALENDAR_ZONES: 'calendar_selectedZones'
+    CALENDAR_ZONES: 'calendar_selectedZones',
+    ADMIN_CODE: 'admin_session_code'
 } as const;
 
 export type AdminLevel = 'none' | 'admin' | 'super_admin';

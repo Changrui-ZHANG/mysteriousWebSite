@@ -22,6 +22,10 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
+    public Message getMessageById(String id) {
+        return messageRepository.findById(id).orElse(null);
+    }
+
     @Transactional
     public boolean deleteMessage(String id, String userId) {
         try {

@@ -159,9 +159,16 @@
         "reviewed": "Revue",
         "implemented": "Implémenté",
         "confirm_delete": "Supprimer cette suggestion ?",
+        "delete": "Supprimer",
+        "quote": "Citer",
         "archive": "Archive",
         "show_archive": "Afficher l'Archive",
-        "hide_archive": "Masquer l'Archive"
+        "hide_archive": "Masquer l'Archive",
+        "comments": "Commentaires",
+        "add_comment": "Ajouter un commentaire",
+        "post": "Publier",
+        "delete_comment": "Supprimer le commentaire",
+        "no_comments": "Pas de commentaires pour le moment."
     },
     "admin": {
         "manage_users": "Gérer les utilisateurs",
@@ -178,7 +185,29 @@
         "action": "Action",
         "add_user": "Ajouter un utilisateur",
         "add_new_user": "Ajouter un nouvel utilisateur",
-        "create": "Créer"
+        "create": "Créer",
+        "site_settings": "Paramètres du site",
+        "enter_code_prompt": "Entrez le code Admin pour modifier :",
+        "changes_effect_warning": "Les changements affectent tous les utilisateurs immédiatement. Rafraîchissez pour voir les effets.",
+        "verify": "Vérifier",
+        "invalid_code": "Code invalide",
+        "loading": "Chargement des paramètres...",
+        "critical": "CRITIQUE",
+        "settings": {
+            "maintenance_mode": "Mode Maintenance Global",
+            "maintenance_message": "Message de Maintenance",
+            "page_cv": "Page CV / À propos",
+            "page_game": "Page Jeux (Arcade)",
+            "page_messages": "Mur de Messages",
+            "page_suggestions": "Boîte à Idées",
+            "page_calendar": "Calendrier"
+        },
+        "login_required": "Connexion personnelle requise",
+        "login_audit_explanation": "Pour des raisons de sécurité et d'audit, vous devez être connecté avec votre compte personnel pour modifier les paramètres du site."
+    },
+    "maintenance": {
+        "title": "En Maintenance",
+        "description": "Le site est actuellement en maintenance. Nous serons de retour très bientôt."
     },
     "auth": {
         "login": "Se connecter",
@@ -200,7 +229,8 @@
         "unmute": "Réactiver le chat",
         "muted": "Le chat est suspendu par l'admin",
         "super_admin_code": "Code Super Admin",
-        "super_admin_panel": "Panneau Super Admin"
+        "super_admin_panel": "Panneau Super Admin",
+        "admin_access": "Accès Admin"
     },
     "hero": {
         "title": "Changrui ZHANG",

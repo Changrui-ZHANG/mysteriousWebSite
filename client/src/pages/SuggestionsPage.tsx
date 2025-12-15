@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaLightbulb, FaCheck, FaEye, FaTrash } from 'react-icons/fa';
+import { FaLightbulb, FaCheck, FaEye, FaTrash, FaQuoteRight } from 'react-icons/fa';
 import { fetchJson, postJson } from '../utils/api';
 import { API_ENDPOINTS } from '../constants/api';
 
@@ -12,6 +12,19 @@ interface Suggestion {
     suggestion: string;
     timestamp: string;
     status: 'pending' | 'reviewed' | 'implemented';
+    commentCount: number;
+}
+
+interface SuggestionComment {
+    id: string;
+    suggestionId: string;
+    userId: string;
+    username: string;
+    content: string;
+    timestamp: string;
+    quotedCommentId?: string;
+    quotedUsername?: string;
+    quotedContent?: string;
 }
 
 interface User {
@@ -110,6 +123,159 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
         }
     };
 
+    const CommentSection = ({ suggestionId, commentCount = 0 }: { suggestionId: string, commentCount?: number }) => {
+        const [comments, setComments] = useState<SuggestionComment[]>([]);
+        const [newComment, setNewComment] = useState('');
+        const [showComments, setShowComments] = useState(false);
+        const [loadingComments, setLoadingComments] = useState(false);
+        const [localCount, setLocalCount] = useState(commentCount);
+
+        const [replyingTo, setReplyingTo] = useState<SuggestionComment | null>(null);
+
+        const fetchComments = async () => {
+            try {
+                setLoadingComments(true);
+                const data = await fetchJson<SuggestionComment[]>(`/api/suggestions/${suggestionId}/comments`);
+                setComments(data);
+                setLocalCount(data.length);
+            } catch (err) {
+                console.error("Failed to fetch comments", err);
+            } finally {
+                setLoadingComments(false);
+            }
+        };
+
+        useEffect(() => {
+            if (showComments) {
+                fetchComments();
+            }
+        }, [showComments]);
+
+        const handlePostComment = async (e: React.FormEvent) => {
+            e.preventDefault();
+            if (!user || !newComment.trim()) return;
+
+            try {
+                await postJson(`/api/suggestions/${suggestionId}/comments`, {
+                    userId: user.userId,
+                    username: user.username,
+                    content: newComment.trim(),
+                    quotedCommentId: replyingTo?.id,
+                });
+                setNewComment('');
+                setReplyingTo(null);
+                fetchComments(); // Will update count
+            } catch (err) {
+                console.error("Failed to post comment", err);
+            }
+        };
+
+        const handleDeleteComment = async (commentId: string) => {
+            if (!window.confirm(t('suggestions.delete_comment') + '?')) return;
+            try {
+                await fetchJson(`/api/suggestions/comments/${commentId}`, { method: 'DELETE' });
+                fetchComments(); // Will update count
+            } catch (err) {
+                console.error("Failed to delete comment", err);
+            }
+        };
+
+        const handleQuote = (comment: SuggestionComment) => {
+            setReplyingTo(comment);
+            // Optional: scroll to input or focus
+        };
+
+        return (
+            <div className="mt-4 pt-4 border-t border-purple-500/20">
+                <button
+                    onClick={() => setShowComments(!showComments)}
+                    className="text-sm font-bold text-purple-400 hover:text-purple-300 transition-colors mb-2 flex items-center gap-2"
+                >
+                    {t('suggestions.comments')} ({showComments ? t('suggestions.hide_archive') || 'Hide' : localCount > 0 ? localCount : '0'})
+                </button>
+
+                <AnimatePresence>
+                    {showComments && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="space-y-3 mb-4 pl-4 border-l-2 border-purple-500/20">
+                                {loadingComments ? (
+                                    <p className="text-sm opacity-50">Loading...</p>
+                                ) : comments.length === 0 ? (
+                                    <p className="text-sm opacity-50">{t('suggestions.no_comments')}</p>
+                                ) : (
+                                    comments.map(comment => (
+                                        <div key={comment.id} className="text-sm">
+                                            <div className="flex justify-between items-start">
+                                                <span className="font-bold text-purple-300">{comment.username}</span>
+                                                <span className="text-xs opacity-50">{new Date(comment.timestamp).toLocaleDateString()}</span>
+                                            </div>
+                                            {comment.quotedContent && (
+                                                <div className={`mt-1 mb-2 pl-3 py-1 border-l-2 text-xs opacity-75 italic ${isDarkMode ? 'border-purple-500/50 bg-white/5' : 'border-purple-600/30 bg-black/5'}`}>
+                                                    <span className="font-bold not-italic mr-1">@{comment.quotedUsername}:</span>
+                                                    {comment.quotedContent}
+                                                </div>
+                                            )}
+                                            <p className="opacity-90">{comment.content}</p>
+                                            {(isAdmin || comment.userId === user?.userId) && (
+                                                <button onClick={() => handleDeleteComment(comment.id)} className="text-xs text-red-400 hover:underline mt-1">
+                                                    {t('suggestions.delete')}
+                                                </button>
+                                            )}
+                                            {user && (
+                                                <button
+                                                    onClick={() => handleQuote(comment)}
+                                                    className="text-xs text-purple-400 hover:underline mt-1 ml-3 flex items-center gap-1 inline-flex"
+                                                >
+                                                    <FaQuoteRight className="w-2 h-2" />
+                                                    {t('suggestions.quote')}
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {user && (
+                                <div className="mt-4">
+                                    {replyingTo && (
+                                        <div className={`mb-2 pl-3 py-1 border-l-2 text-xs opacity-80 flex justify-between items-center ${isDarkMode ? 'border-purple-500/50 bg-white/5' : 'border-purple-600/30 bg-black/5'}`}>
+                                            <span>
+                                                <span className="font-bold mr-1">@{replyingTo.username}:</span>
+                                                <span className="italic truncate max-w-[200px] inline-block align-bottom">{replyingTo.content}</span>
+                                            </span>
+                                            <button onClick={() => setReplyingTo(null)} className="text-red-400 hover:text-red-300 ml-2 font-bold px-2">✕</button>
+                                        </div>
+                                    )}
+                                    <form onSubmit={handlePostComment} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            placeholder={t('suggestions.add_comment') + "..."}
+                                            className={`flex-1 px-3 py-1 rounded text-sm border focus:outline-none focus:ring-1 focus:ring-purple-500 ${isDarkMode ? 'bg-black/40 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={!newComment.trim()}
+                                            className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded text-xs font-bold text-white transition-colors disabled:opacity-50"
+                                        >
+                                            {t('suggestions.post')}
+                                        </button>
+                                    </form>
+                                </div>
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    };
+
     const getStatusBadge = (status: string) => {
         const badges = {
             pending: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50', icon: FaLightbulb, label: t('suggestions.pending') || 'Pending' },
@@ -176,6 +342,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                         Reopen
                     </button>
                 )}
+
                 {(isAdmin || suggestion.userId === user?.userId) && (
                     <button
                         onClick={() => deleteSuggestion(suggestion.id)}
@@ -186,6 +353,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                     </button>
                 )}
             </div>
+            <CommentSection suggestionId={suggestion.id} commentCount={suggestion.commentCount} />
         </motion.div>
     );
 

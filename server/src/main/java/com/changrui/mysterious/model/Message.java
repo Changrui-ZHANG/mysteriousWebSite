@@ -30,6 +30,16 @@ public class Message {
     @Column(name = "is_verified", nullable = false, columnDefinition = "boolean default false")
     private boolean isVerified;
 
+    // Quote fields
+    @Column(name = "quoted_message_id")
+    private String quotedMessageId;
+
+    @Column(name = "quoted_name")
+    private String quotedName;
+
+    @Column(name = "quoted_message", length = 500)
+    private String quotedMessage;
+
     // Constructors
     public Message() {
     }
@@ -100,5 +110,29 @@ public class Message {
 
     public void setVerified(boolean verified) {
         isVerified = verified;
+    }
+
+    public String getQuotedMessageId() {
+        return quotedMessageId;
+    }
+
+    public void setQuotedMessageId(String quotedMessageId) {
+        this.quotedMessageId = quotedMessageId;
+    }
+
+    public String getQuotedName() {
+        return quotedName;
+    }
+
+    public void setQuotedName(String quotedName) {
+        this.quotedName = quotedName;
+    }
+
+    public String getQuotedMessage() {
+        return quotedMessage;
+    }
+
+    public void setQuotedMessage(String quotedMessage) {
+        this.quotedMessage = quotedMessage;
     }
 }

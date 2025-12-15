@@ -51,6 +51,18 @@ public class MessageController {
             message.setVerified(false);
         }
 
+        // Handle Quotes in Backend for security
+        if (message.getQuotedMessageId() != null && !message.getQuotedMessageId().isEmpty()) {
+            Message quoted = messageService.getMessageById(message.getQuotedMessageId());
+            if (quoted != null) {
+                message.setQuotedName(quoted.getName());
+                message.setQuotedMessage(quoted.getMessage());
+            } else {
+                // Sent ID invalid, clear it
+                message.setQuotedMessageId(null);
+            }
+        }
+
         Message saved = messageService.addMessage(message);
         return ResponseEntity.ok(ApiResponse.success(saved));
     }

@@ -165,9 +165,16 @@
         "reviewed": "Reviewed",
         "implemented": "Implemented",
         "confirm_delete": "Delete this suggestion?",
+        "delete": "Delete",
+        "quote": "Quote",
         "archive": "Archive",
         "show_archive": "Show Archive",
-        "hide_archive": "Hide Archive"
+        "hide_archive": "Hide Archive",
+        "comments": "Comments",
+        "add_comment": "Add a comment",
+        "post": "Post",
+        "delete_comment": "Delete comment",
+        "no_comments": "No comments yet."
     },
     "admin": {
         "manage_users": "Manage Users",
@@ -184,7 +191,29 @@
         "action": "Action",
         "add_user": "Add User",
         "add_new_user": "Add New User",
-        "create": "Create"
+        "create": "Create",
+        "site_settings": "Site Settings",
+        "enter_code_prompt": "Enter Admin Code to modify settings:",
+        "changes_effect_warning": "Changes affect all users immediately. You may need to refresh to see changes locally.",
+        "verify": "Verify",
+        "invalid_code": "Invalid Code",
+        "loading": "Loading settings...",
+        "critical": "CRITICAL",
+        "settings": {
+            "maintenance_mode": "Global Maintenance Mode",
+            "maintenance_message": "Maintenance Message",
+            "page_cv": "CV / About Page",
+            "page_game": "Arcade / Games Page",
+            "page_messages": "Message Wall",
+            "page_suggestions": "Suggestions Box",
+            "page_calendar": "Calendar Page"
+        },
+        "login_required": "Personal Login Required",
+        "login_audit_explanation": "For security and audit purposes, you must be logged in with your personal account to modify site settings."
+    },
+    "maintenance": {
+        "title": "Under Maintenance",
+        "description": "The site is currently undergoing necessary maintenance. We will be back shortly."
     },
     "auth": {
         "login": "Login",
@@ -206,7 +235,8 @@
         "unmute": "Unmute Chat",
         "muted": "Chat is muted by admin",
         "super_admin_code": "Super Admin Code",
-        "super_admin_panel": "Super Admin Panel"
+        "super_admin_panel": "Super Admin Panel",
+        "admin_access": "Admin Access"
     },
     "hero": {
         "title": "Changrui ZHANG",

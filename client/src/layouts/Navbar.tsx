@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaSignOutAlt, FaSun, FaMoon } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog } from 'react-icons/fa';
+import { AdminSiteControls } from '../features/admin/AdminSiteControls';
 
 interface User {
     userId: string;
@@ -17,8 +18,10 @@ interface NavbarProps {
     onLogout?: () => void;
     isAdmin?: boolean;
     isSuperAdmin?: boolean;
+    adminCode?: string;
     onAdminLogin?: (code: string) => Promise<boolean>;
     onAdminLogout?: () => void;
+    onRefreshSettings?: () => void;
 }
 
 // Helper component for Language Buttons
@@ -38,21 +41,22 @@ const LanguageButton = ({ lang, label, flagCode, currentLang, onClick }: { lang:
     </button>
 );
 
-export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, isAdmin = false, isSuperAdmin = false, onAdminLogin, onAdminLogout }: NavbarProps) {
+export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, isAdmin = false, isSuperAdmin = false, adminCode = '', onAdminLogin, onAdminLogout, onRefreshSettings }: NavbarProps) {
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
     // Admin Login State
     const [showAdminInput, setShowAdminInput] = useState(false);
-    const [adminCode, setAdminCode] = useState('');
+    const [loginCode, setLoginCode] = useState('');
+    const [showSiteControls, setShowSiteControls] = useState(false);
 
     const submitAdminCode = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (onAdminLogin) {
-            const success = await onAdminLogin(adminCode);
+            const success = await onAdminLogin(loginCode);
             if (success) {
-                setAdminCode('');
+                setLoginCode('');
                 setShowAdminInput(false);
             } else {
                 alert(t('admin.invalid_code') || 'Invalid admin code');
@@ -164,15 +168,24 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                     <div className="w-[1px] h-[20px] bg-current opacity-20"></div>
 
                     {/* Admin Section in Navbar */}
-                    <div className="relative">
+                    <div className="relative flex items-center">
                         {isAdmin ? (
-                            <button
-                                onClick={onAdminLogout}
-                                className={`text-xs px-2 py-1 rounded border ${isSuperAdmin ? 'border-purple-500 text-purple-400' : 'border-green-500 text-green-500'} hover:opacity-80 transition-opacity`}
-                                title="Admin Logout"
-                            >
-                                {isSuperAdmin ? 'SUPER ADMIN' : 'ADMIN'}
-                            </button>
+                            <>
+                                <button
+                                    onClick={onAdminLogout}
+                                    className={`text-xs px-2 py-1 rounded border ${isSuperAdmin ? 'border-purple-500 text-purple-400' : 'border-green-500 text-green-500'} hover:opacity-80 transition-opacity`}
+                                    title="Admin Logout"
+                                >
+                                    {isSuperAdmin ? 'SUPER ADMIN' : 'ADMIN'}
+                                </button>
+                                <button
+                                    onClick={() => setShowSiteControls(true)}
+                                    className="text-xl text-gray-400 hover:text-cyan-400 transition-colors ml-2"
+                                    title={t('admin.site_settings') || "Site Settings"}
+                                >
+                                    <FaCog />
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <button
@@ -186,8 +199,8 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     <form onSubmit={submitAdminCode} className={`absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 ${isDarkMode ? 'bg-black/90 border border-white/10' : 'bg-white border border-gray-200'}`}>
                                         <input
                                             type="password"
-                                            value={adminCode}
-                                            onChange={(e) => setAdminCode(e.target.value)}
+                                            value={loginCode}
+                                            onChange={(e) => setLoginCode(e.target.value)}
                                             placeholder="Code"
                                             className={`w-24 px-2 py-1 text-xs rounded border ${isDarkMode ? 'bg-white/10 border-white/20' : 'bg-gray-50 border-gray-300'}`}
                                             autoFocus
@@ -218,129 +231,148 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                         <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
                     </button>
                 </div>
-            </nav>
+            </nav >
 
             {/* Mobile Menu Overlay - Move outside nav to avoid mix-blend-difference */}
             <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, x: '100%' }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: '100%' }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className={`fixed inset-0 h-[100dvh] ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} flex flex-col items-center justify-start pt-28 pb-10 gap-8 md:hidden font-mono text-xl z-40 overflow-y-auto`}
-                    >
-                        {/* Navigation Links */}
-                        <div className="flex flex-col items-center gap-6 w-full px-8">
-                            {[
-                                { to: "/", label: t('nav.home') },
-                                { to: "/cv", label: t('nav.cv') },
-                                { to: "/game", label: t('nav.game') },
-                                { to: "/messages", label: t('nav.messages') },
-                                { to: "/suggestions", label: t('nav.suggestions') },
-                                { to: "/calendar", label: t('nav.calendar') }
-                            ].map((link) => (
-                                <Link
-                                    key={link.to}
-                                    onClick={() => setIsOpen(false)}
-                                    to={link.to}
-                                    className="w-full text-center py-2 hover:bg-current/10 rounded-lg transition-colors font-bold text-2xl"
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                        </div>
-
-                        <div className="w-24 h-[1px] bg-current opacity-20 shrink-0"></div>
-
-                        {/* Mobile Auth */}
-                        <div className="w-full px-8 flex flex-col items-center gap-4">
-                            {user ? (
-                                <div className="flex flex-col items-center gap-4 w-full">
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-sm opacity-60">Signed in as</span>
-                                        <span className="font-bold text-cyan-500 text-xl">{user.username}</span>
-                                    </div>
-                                    <button
-                                        onClick={() => { onLogout && onLogout(); }}
-                                        className="w-full py-3 border border-red-500 text-red-500 rounded-lg flex items-center justify-center gap-3 hover:bg-red-500 hover:text-white transition-all"
+                {
+                    isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, x: '100%' }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: '100%' }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className={`fixed inset-0 h-[100dvh] ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} flex flex-col items-center justify-start pt-28 pb-10 gap-8 md:hidden font-mono text-xl z-40 overflow-y-auto`}
+                        >
+                            {/* Navigation Links */}
+                            <div className="flex flex-col items-center gap-6 w-full px-8">
+                                {[
+                                    { to: "/", label: t('nav.home') },
+                                    { to: "/cv", label: t('nav.cv') },
+                                    { to: "/game", label: t('nav.game') },
+                                    { to: "/messages", label: t('nav.messages') },
+                                    { to: "/suggestions", label: t('nav.suggestions') },
+                                    { to: "/calendar", label: t('nav.calendar') }
+                                ].map((link) => (
+                                    <Link
+                                        key={link.to}
+                                        onClick={() => setIsOpen(false)}
+                                        to={link.to}
+                                        className="w-full text-center py-2 hover:bg-current/10 rounded-lg transition-colors font-bold text-2xl"
                                     >
-                                        <FaSignOutAlt /> {t('auth.logout')}
-                                    </button>
-                                </div>
-                            ) : (
-                                <button
-                                    onClick={() => { onOpenLogin(); setIsOpen(false); }}
-                                    className="w-full py-3 bg-green-500 text-white rounded-lg flex items-center justify-center gap-3 hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all font-bold"
-                                >
-                                    <FaUser /> {t('auth.login')}
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Mobile Admin */}
-                        <div className="w-full px-8 flex flex-col items-center gap-4">
-                            {isAdmin ? (
-                                <button
-                                    onClick={() => { onAdminLogout && onAdminLogout(); }}
-                                    className="text-purple-500 text-sm border border-purple-500 px-4 py-2 rounded-full hover:bg-purple-500 hover:text-white transition-colors"
-                                >
-                                    Log out {isSuperAdmin ? 'Super Admin' : 'Admin'}
-                                </button>
-                            ) : (
-                                <div className="flex flex-col items-center gap-2 w-full max-w-xs p-4 rounded-xl bg-current/5 border border-current/10">
-                                    <span className="text-xs opacity-50 uppercase tracking-widest font-bold">Admin Access</span>
-                                    <form
-                                        onSubmit={async (e) => {
-                                            e.preventDefault();
-                                            if (onAdminLogin) {
-                                                const success = await onAdminLogin(adminCode);
-                                                if (success) {
-                                                    setAdminCode('');
-                                                }
-                                            }
-                                        }}
-                                        className="flex w-full gap-2"
-                                    >
-                                        <input
-                                            type="password"
-                                            value={adminCode}
-                                            onChange={(e) => setAdminCode(e.target.value)}
-                                            className="flex-1 px-3 py-2 bg-white/10 rounded border border-current/20 text-center"
-                                            placeholder="Code"
-                                        />
-                                        <button
-                                            type="submit"
-                                            className="px-4 py-2 bg-current/10 hover:bg-current/20 rounded font-bold transition-colors"
-                                        >
-                                            →
-                                        </button>
-                                    </form>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="w-24 h-[1px] bg-current opacity-20 shrink-0"></div>
-
-                        {/* Settings */}
-                        <div className="flex flex-col items-center gap-6 w-full pb-8">
-                            <div className="flex gap-4 p-2 bg-current/5 rounded-full">
-                                <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
-                                <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
-                                <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
+                                        {link.label}
+                                    </Link>
+                                ))}
                             </div>
 
-                            <button
-                                onClick={toggleTheme}
-                                className="flex items-center gap-3 px-6 py-3 rounded-full border border-current/20 hover:bg-current/5 transition-colors uppercase tracking-widest text-sm font-bold"
-                            >
-                                {isDarkMode ? <FaSun className="text-yellow-400 w-5 h-5" /> : <FaMoon className="text-blue-500 w-5 h-5" />}
-                                <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            <div className="w-24 h-[1px] bg-current opacity-20 shrink-0"></div>
+
+                            {/* Mobile Auth */}
+                            <div className="w-full px-8 flex flex-col items-center gap-4">
+                                {user ? (
+                                    <div className="flex flex-col items-center gap-4 w-full">
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-sm opacity-60">Signed in as</span>
+                                            <span className="font-bold text-cyan-500 text-xl">{user.username}</span>
+                                        </div>
+                                        <button
+                                            onClick={() => { onLogout && onLogout(); }}
+                                            className="w-full py-3 border border-red-500 text-red-500 rounded-lg flex items-center justify-center gap-3 hover:bg-red-500 hover:text-white transition-all"
+                                        >
+                                            <FaSignOutAlt /> {t('auth.logout')}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => { onOpenLogin(); setIsOpen(false); }}
+                                        className="w-full py-3 bg-green-500 text-white rounded-lg flex items-center justify-center gap-3 hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all font-bold"
+                                    >
+                                        <FaUser /> {t('auth.login')}
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Mobile Admin */}
+                            <div className="w-full px-8 flex flex-col items-center gap-4">
+                                {isAdmin ? (
+                                    <div className="flex w-full items-center gap-2">
+                                        <button
+                                            onClick={() => { setIsOpen(false); setShowSiteControls(true); }}
+                                            className="flex-1 py-2 bg-current/5 border border-current/10 rounded-lg flex items-center justify-center gap-2 hover:bg-current/10 transition-colors font-bold text-xs"
+                                        >
+                                            <FaCog /> {t('admin.site_settings')}
+                                        </button>
+                                        <button
+                                            onClick={() => { onAdminLogout && onAdminLogout(); }}
+                                            className="flex-1 text-purple-500 text-xs border border-purple-500 px-2 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition-colors flex items-center justify-center gap-1"
+                                        >
+                                            <FaSignOutAlt /> {isSuperAdmin ? 'Super' : 'Admin'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 w-full max-w-xs p-4 rounded-xl bg-current/5 border border-current/10">
+                                        <span className="text-xs opacity-50 uppercase tracking-widest font-bold">Admin Access</span>
+                                        <form
+                                            onSubmit={async (e) => {
+                                                e.preventDefault();
+                                                if (onAdminLogin) {
+                                                    const success = await onAdminLogin(loginCode);
+                                                    if (success) {
+                                                        setLoginCode('');
+                                                    }
+                                                }
+                                            }}
+                                            className="flex w-full gap-2"
+                                        >
+                                            <input
+                                                type="password"
+                                                value={loginCode}
+                                                onChange={(e) => setLoginCode(e.target.value)}
+                                                className="flex-1 px-3 py-2 bg-white/10 rounded border border-current/20 text-center"
+                                                placeholder="Code"
+                                            />
+                                            <button
+                                                type="submit"
+                                                className="px-4 py-2 bg-current/10 hover:bg-current/20 rounded font-bold transition-colors"
+                                            >
+                                                →
+                                            </button>
+                                        </form>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="w-24 h-[1px] bg-current opacity-20 shrink-0"></div>
+
+                            {/* Settings */}
+                            <div className="flex flex-col items-center gap-6 w-full pb-8">
+                                <div className="flex gap-4 p-2 bg-current/5 rounded-full">
+                                    <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
+                                    <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
+                                    <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
+                                </div>
+
+                                <button
+                                    onClick={toggleTheme}
+                                    className="flex items-center gap-3 px-6 py-3 rounded-full border border-current/20 hover:bg-current/5 transition-colors uppercase tracking-widest text-sm font-bold"
+                                >
+                                    {isDarkMode ? <FaSun className="text-yellow-400 w-5 h-5" /> : <FaMoon className="text-blue-500 w-5 h-5" />}
+                                    <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
+                                </button>
+                            </div>
+                        </motion.div>
+                    )
+                }
+            </AnimatePresence >
+            <AdminSiteControls
+                isOpen={showSiteControls}
+                onClose={() => setShowSiteControls(false)}
+                adminCode={adminCode || ''}
+                isDarkMode={isDarkMode}
+                onSettingsChange={onRefreshSettings}
+                user={user}
+                onOpenLogin={onOpenLogin}
+            />
         </>
     );
 }

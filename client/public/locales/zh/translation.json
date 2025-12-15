@@ -165,9 +165,16 @@
         "reviewed": "已审核",
         "implemented": "已实现",
         "confirm_delete": "删除此建议？",
+        "delete": "删除",
+        "quote": "引用",
         "archive": "归档",
         "show_archive": "显示归档",
-        "hide_archive": "隐藏归档"
+        "hide_archive": "隐藏归档",
+        "comments": "评论",
+        "add_comment": "添加评论",
+        "post": "发布",
+        "delete_comment": "删除评论",
+        "no_comments": "暂无评论。"
     },
     "admin": {
         "manage_users": "管理用户",
@@ -184,7 +191,29 @@
         "action": "操作",
         "add_user": "添加用户",
         "add_new_user": "添加新用户",
-        "create": "创建"
+        "create": "创建",
+        "site_settings": "网站设置",
+        "enter_code_prompt": "输入管理员代码以修改设置：",
+        "changes_effect_warning": "更改立即生效。您可能需要刷新页面以查看本地更改。",
+        "verify": "验证",
+        "invalid_code": "代码无效",
+        "loading": "加载设置中...",
+        "critical": "关键",
+        "settings": {
+            "maintenance_mode": "全站维护模式",
+            "maintenance_message": "维护公告内容",
+            "page_cv": "简历 / 关于页面",
+            "page_game": "街机 / 游戏页面",
+            "page_messages": "留言墙",
+            "page_suggestions": "建议箱",
+            "page_calendar": "日历页面"
+        },
+        "login_required": "需要个人登录",
+        "login_audit_explanation": "出于安全和审计目的，您必须使用个人帐户登录才能修改网站设置。"
+    },
+    "maintenance": {
+        "title": "维护中",
+        "description": "网站正在进行必要的维护，我们将很快回来。"
     },
     "auth": {
         "login": "登录",
@@ -206,7 +235,8 @@
         "unmute": "解除禁言",
         "muted": "管理员已开启全员禁言",
         "super_admin_code": "超级管理员代码",
-        "super_admin_panel": "超级管理员面板"
+        "super_admin_panel": "超级管理员面板",
+        "admin_access": "管理员入口"
     },
     "hero": {
         "title": "张常瑞",

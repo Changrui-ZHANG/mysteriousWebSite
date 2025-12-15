@@ -13,6 +13,9 @@ interface Message {
     timestamp: number;
     isAnonymous: boolean;
     isVerified: boolean;
+    quotedMessageId?: string;
+    quotedName?: string;
+    quotedMessage?: string;
 }
 
 interface User {
@@ -36,6 +39,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [currentUserId, setCurrentUserId] = useState('');
+    const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
     // Translation State
     const [translations, setTranslations] = useState<Record<string, string>>({});
@@ -97,6 +101,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
     const [isGlobalMute, setIsGlobalMute] = useState(false);
     const [onlineCount, setOnlineCount] = useState(0);
     const [showOnlineCountToAll, setShowOnlineCountToAll] = useState(false);
+    const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
 
     const ADMIN_CODE = 'Changrui'; // Kept for API calls
     const SUPER_ADMIN_CODE = 'ChangruiZ'; // Kept for API calls
@@ -231,8 +236,9 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
             name: senderName,
             message: newMessage.trim(),
             timestamp: Date.now(),
-            isAnonymous: isAnon
+            isAnonymous: isAnon,
             // isVerified is set by backend based on userId
+            quotedMessageId: replyingTo?.id
         };
 
         try {
@@ -245,6 +251,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
             if (response.ok) {
                 setNewMessage('');
+                setReplyingTo(null);
                 fetchMessages();
             }
         } catch (error) {
@@ -309,9 +316,20 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         return new Date(timestamp).toLocaleDateString();
     };
 
+
+
     const getInitials = (name: string, isAnon: boolean) => {
         if (isAnon) return '?';
         return name.charAt(0).toUpperCase();
+    };
+
+    const scrollToMessage = (messageId: string) => {
+        const element = document.getElementById(`message-${messageId}`);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setHighlightedMessageId(messageId);
+            setTimeout(() => setHighlightedMessageId(null), 1000);
+        }
     };
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -342,11 +360,19 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                                 return (
                                     <motion.div
                                         key={msg.id}
+                                        id={`message-${msg.id}`}
                                         initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
+                                        animate={{
+                                            opacity: 1,
+                                            y: 0,
+                                            scale: highlightedMessageId === msg.id ? 1.05 : 1,
+                                            backgroundColor: highlightedMessageId === msg.id
+                                                ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
+                                                : undefined
+                                        }}
                                         exit={{ opacity: 0, scale: 0.9 }}
                                         transition={{ delay: index * 0.01 }}
-                                        className={`flex gap-2 items-start ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
+                                        className={`flex gap-2 items-start p-2 rounded-lg transition-colors ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
                                     >
                                         <div className={`w-10 h-10 rounded-md flex items-center justify-center font-bold text-xs flex-shrink-0 ${isOwn
                                             ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white'
@@ -380,6 +406,16 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                                                         : 'bg-white rounded-tl-sm shadow-sm'
                                                 }`}>
 
+                                                {msg.quotedMessage && (
+                                                    <div
+                                                        onClick={() => msg.quotedMessageId && scrollToMessage(msg.quotedMessageId)}
+                                                        className={`mb-2 pl-2 py-1 border-l-2 text-xs opacity-75 italic overflow-hidden cursor-pointer hover:opacity-100 transition-opacity ${isDarkMode ? 'border-white/30 bg-white/5' : 'border-black/20 bg-black/5'}`}
+                                                    >
+                                                        <span className="font-bold not-italic mr-1">{msg.quotedName}:</span>
+                                                        <span className="line-clamp-2">{msg.quotedMessage}</span>
+                                                    </div>
+                                                )}
+
                                                 <p className="text-base md:text-sm whitespace-pre-wrap break-words">
                                                     {showTranslated.has(msg.id) && translations[msg.id] ? (
                                                         <>
@@ -404,6 +440,13 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                                                     {canDeleteMessage(msg) && (
                                                         <button onClick={() => handleDelete(msg.id)} className="w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs flex items-center justify-center">×</button>
                                                     )}
+                                                    <button
+                                                        onClick={() => setReplyingTo(msg)}
+                                                        className="w-5 h-5 bg-purple-500 hover:bg-purple-400 rounded-full text-white text-xs flex items-center justify-center p-1"
+                                                        title="Reply"
+                                                    >
+                                                        ↩
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -423,6 +466,15 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                     </div>
                 )}
                 <div className={`max-w-4xl mx-auto p-3 ${isGlobalMute && !isAdmin ? 'opacity-50' : ''}`}>
+                    {replyingTo && (
+                        <div className={`mb-2 pl-3 py-1 border-l-2 text-xs opacity-80 flex justify-between items-center ${isDarkMode ? 'border-green-500/50 bg-white/5' : 'border-green-600/30 bg-black/5'}`}>
+                            <span>
+                                <span className="font-bold mr-1">{t('quote') || 'Replying to'} {replyingTo.name}:</span>
+                                <span className="italic truncate max-w-[200px] inline-block align-bottom">{replyingTo.message}</span>
+                            </span>
+                            <button onClick={() => setReplyingTo(null)} className="text-red-400 hover:text-red-300 ml-2 font-bold px-2">✕</button>
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
                         {/* Auth / Identity Display */}
                         {user ? (
