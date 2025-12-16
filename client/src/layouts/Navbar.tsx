@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
 import { AdminSiteControls } from '../features/admin/AdminSiteControls';
 
 interface User {
@@ -89,8 +89,27 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
         };
     }, [isOpen]);
 
-    const changeLanguage = (lng: string) => {
+    const changeLanguage = async (lng: string) => {
+        // Change language in i18n
         i18n.changeLanguage(lng);
+
+        // Save to localStorage
+        localStorage.setItem('preferredLanguage', lng);
+
+        // Save to database if user is logged in
+        if (user?.userId) {
+            try {
+                await fetch(`/api/users/${user.userId}/language`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ language: lng }),
+                });
+            } catch (error) {
+                console.error('Failed to save language preference:', error);
+            }
+        }
     };
 
     return (
@@ -107,13 +126,15 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     ? t('navbar.suggestions_title')
                                     : location.pathname === '/calendar'
                                         ? t('navbar.calendar_title')
-                                        : t('navbar.title')}
+                                        : location.pathname === '/learning'
+                                            ? t('navbar.linguist_title')
+                                            : t('navbar.title')}
                 </Link>
 
                 {/* Mobile Menu Button */}
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="md:hidden z-50 w-8 h-8 flex flex-col justify-center gap-1.5 focus:outline-none"
+                    className="lg:hidden z-50 w-8 h-8 flex flex-col justify-center gap-1.5 focus:outline-none"
                     style={{ position: 'relative', zIndex: 60 }} // Ensure button stays on top
                 >
                     <motion.span
@@ -131,14 +152,56 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                 </button>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex items-center gap-6 font-mono text-sm">
-                    <div className="flex gap-4 mr-4">
-                        <Link to="/" className="hover:text-cyan-400 transition-colors">{t('nav.home')}</Link>
-                        <Link to="/cv" className="hover:text-cyan-400 transition-colors">{t('nav.cv')}</Link>
-                        <Link to="/game" className="hover:text-cyan-400 transition-colors">{t('nav.game')}</Link>
-                        <Link to="/messages" className="hover:text-cyan-400 transition-colors">{t('nav.messages')}</Link>
-                        <Link to="/suggestions" className="hover:text-cyan-400 transition-colors">{t('nav.suggestions')}</Link>
-                        <Link to="/calendar" className="hover:text-cyan-400 transition-colors">{t('nav.calendar')}</Link>
+                <div className="hidden lg:flex items-center gap-6 font-mono text-sm max-w-full">
+                    {/* Prioritized Navigation Links */}
+                    <div className="flex items-center gap-6 mr-4">
+                        {[
+                            { to: "/", label: t('nav.home') },
+                            { to: "/cv", label: t('nav.cv') },
+                            { to: "/game", label: t('nav.game') },
+                            { to: "/messages", label: t('nav.messages') }
+                        ].map(link => (
+                            <Link
+                                key={link.to}
+                                to={link.to}
+                                className={`hover:text-cyan-400 transition-colors ${location.pathname === link.to ? 'text-cyan-400 font-bold' : ''}`}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+
+                        {/* Dropdown for More Links */}
+                        <div className="relative group">
+                            <button className={`flex items-center gap-1 hover:text-cyan-400 transition-colors uppercase tracking-widest ${['/suggestions', '/calendar'].includes(location.pathname) ? 'text-cyan-400 font-bold' : ''
+                                }`}>
+                                {t('nav.more')} <FaChevronDown className="text-xs transition-transform duration-300 group-hover:rotate-180" />
+                            </button>
+
+                            {/* Invisible bridge to prevent hover loss */}
+                            <div className="absolute top-full left-0 w-full h-4 bg-transparent z-40"></div>
+
+                            <div className={`absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 ${isDarkMode ? 'bg-[#0a0a0a]/95 border-white/10 text-white' : 'bg-white/95 border-black/5 text-gray-900'
+                                }`}>
+                                <div className={`absolute inset-0 rounded-xl pointer-events-none ${isDarkMode ? 'bg-gradient-to-b from-white/5 to-transparent' : 'bg-gradient-to-b from-black/5 to-transparent'
+                                    }`}></div>
+                                {[
+                                    { to: "/suggestions", label: t('nav.suggestions') },
+                                    { to: "/calendar", label: t('nav.calendar') },
+                                    { to: "/learning", label: t('nav.learning') }
+                                ].map(link => (
+                                    <Link
+                                        key={link.to}
+                                        to={link.to}
+                                        className={`relative block px-5 py-3 transition-colors text-sm tracking-wide uppercase ${location.pathname === link.to
+                                            ? 'text-cyan-500 font-bold bg-cyan-500/5'
+                                            : isDarkMode ? 'hover:bg-white/5' : 'hover:bg-black/5'
+                                            }`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="w-[1px] h-[20px] bg-current opacity-20"></div>
@@ -242,7 +305,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: '100%' }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className={`fixed inset-0 h-[100dvh] ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} flex flex-col items-center justify-start pt-28 pb-10 gap-8 md:hidden font-mono text-xl z-40 overflow-y-auto`}
+                            className={`fixed inset-0 h-[100dvh] ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} flex flex-col items-center justify-start pt-28 pb-10 gap-8 lg:hidden font-mono text-xl z-40 overflow-y-auto`}
                         >
                             {/* Navigation Links */}
                             <div className="flex flex-col items-center gap-6 w-full px-8">
@@ -252,7 +315,8 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     { to: "/game", label: t('nav.game') },
                                     { to: "/messages", label: t('nav.messages') },
                                     { to: "/suggestions", label: t('nav.suggestions') },
-                                    { to: "/calendar", label: t('nav.calendar') }
+                                    { to: "/calendar", label: t('nav.calendar') },
+                                    { to: "/learning", label: "Linguiste" }
                                 ].map((link) => (
                                     <Link
                                         key={link.to}

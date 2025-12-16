@@ -5,6 +5,7 @@
         "messages_title": "Mur de Messages",
         "suggestions_title": "Boîte à Idées",
         "calendar_title": "Calendrier",
+        "linguist_title": "Le Linguiste",
         "theme": {
             "light": "Mode Clair",
             "dark": "Mode Sombre"
@@ -15,13 +16,76 @@
             "zh": "中文"
         }
     },
+    "common": {
+        "close": "Fermer"
+    },
     "nav": {
         "home": "ACCUEIL",
         "cv": "CV",
         "game": "ARCADE",
         "messages": "MESSAGES",
         "suggestions": "SUGGESTIONS",
-        "calendar": "CALENDRIER"
+        "calendar": "CALENDRIER",
+        "learning": "LINGUISTE",
+        "more": "PLUS"
+    },
+    "holidays": {
+        "jour_de_l_an": {
+            "title": "Jour de l'an",
+            "description": "Le premier jour de l'année du calendrier grégorien. C'est une journée de festivités marquée par des vœux de bonne année, des repas en famille et des feux d'artifice."
+        },
+        "paques": {
+            "title": "Lundi de Pâques",
+            "description": "Une fête chrétienne majeure célébrant la résurrection de Jésus. Elle est associée à la chasse aux œufs et aux symboles de renouveau printanier."
+        },
+        "fete_travail": {
+            "title": "Fête du Travail",
+            "description": "La Fête internationale des travailleurs. En France, il est de tradition d'offrir du muguet comme porte-bonheur."
+        },
+        "victoire_1945": {
+            "title": "Victoire 1945",
+            "description": "Commémoration de la capitulation de l'Allemagne nazie en 1945, marquant la fin de la Seconde Guerre mondiale en Europe."
+        },
+        "ascension": {
+            "title": "Ascension",
+            "description": "Fête chrétienne célébrant la montée de Jésus au ciel, quarante jours après Pâques. Elle marque la fin de sa présence terrestre."
+        },
+        "pentecote": {
+            "title": "Lundi de Pentecôte",
+            "description": "Célèbre la descente du Saint-Esprit sur les apôtres, cinquante jours après Pâques. C'est un jour de solidarité en France."
+        },
+        "fete_nationale": {
+            "title": "Fête Nationale",
+            "description": "Commémore la prise de la Bastille le 14 juillet 1789, symbole de la fin de la monarchie absolue et de l'unité nationale."
+        },
+        "assomption": {
+            "title": "Assomption",
+            "description": "Célèbre la montée de la Vierge Marie au ciel, corps et âme, au terme de sa vie terrestre. C'est une fête mariale majeure."
+        },
+        "toussaint": {
+            "title": "Toussaint",
+            "description": "Fête catholique en l'honneur de tous les saints. C'est aussi un moment traditionnel pour se recueillir sur les tombes des défunts."
+        },
+        "armistice_1918": {
+            "title": "Armistice 1918",
+            "description": "Commémoration de l'armistice signé en 1918, mettant fin aux combats de la Première Guerre mondiale."
+        },
+        "noel": {
+            "title": "Noël",
+            "description": "Célébration de la naissance de Jésus pour les chrétiens, et fête culturelle majeure marquée par le Père Noël, les cadeaux et les repas festifs."
+        },
+        "saint_etienne": {
+            "title": "Saint Étienne",
+            "description": "Fête spécifique à l'Alsace-Moselle, célébrant Saint Étienne, le premier martyr chrétien."
+        },
+        "vendredi_saint": {
+            "title": "Vendredi Saint",
+            "description": "Jour spécifique à l'Alsace-Moselle, commémorant la crucifixion et la mort de Jésus."
+        },
+        "default": {
+            "title": "Jour Férié",
+            "description": "Un jour férié officiel célébré en France."
+        }
     },
     "calendar": {
         "title": "Calendrier",
@@ -158,17 +222,24 @@
         "pending": "En attente",
         "reviewed": "Revue",
         "implemented": "Implémenté",
+        "status_pending": "En attente",
+        "status_reviewed": "Revue",
+        "status_implemented": "Implémenté",
         "confirm_delete": "Supprimer cette suggestion ?",
         "delete": "Supprimer",
         "quote": "Citer",
         "archive": "Archive",
         "show_archive": "Afficher l'Archive",
         "hide_archive": "Masquer l'Archive",
+        "hide_comments": "Masquer",
         "comments": "Commentaires",
         "add_comment": "Ajouter un commentaire",
         "post": "Publier",
+        "post_comment": "Publier le commentaire",
         "delete_comment": "Supprimer le commentaire",
-        "no_comments": "Pas de commentaires pour le moment."
+        "no_comments": "Pas de commentaires pour le moment.",
+        "replying_to": "Répondre à",
+        "reopen": "Rouvrir"
     },
     "admin": {
         "manage_users": "Gérer les utilisateurs",
@@ -470,5 +541,16 @@
             "Jeux vidéos",
             "Sport"
         ]
+    },
+    "learning": {
+        "title": "Le Linguiste",
+        "login_required": "Veuillez vous connecter pour accéder à cette page.",
+        "discover": "Découverte",
+        "review": "Révision",
+        "no_favorites": "Aucun favori pour le moment.",
+        "back_to_discover": "Retourner en mode Découverte",
+        "load_error": "Impossible de charger le contenu.",
+        "retry": "Réessayer",
+        "new_expression": "Nouvelle Expression"
     }
 }

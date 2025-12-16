@@ -5,6 +5,7 @@
         "messages_title": "Message Wall",
         "suggestions_title": "Suggestions Box",
         "calendar_title": "Calendar",
+        "linguist_title": "The Linguist",
         "theme": {
             "light": "Light Mode",
             "dark": "Dark Mode"
@@ -15,13 +16,76 @@
             "zh": "中文"
         }
     },
+    "common": {
+        "close": "Close"
+    },
     "nav": {
         "home": "HOME",
         "cv": "CV",
         "game": "ARCADE",
         "messages": "MESSAGES",
         "suggestions": "SUGGESTIONS",
-        "calendar": "CALENDAR"
+        "calendar": "CALENDAR",
+        "learning": "LINGUIST",
+        "more": "MORE"
+    },
+    "holidays": {
+        "jour_de_l_an": {
+            "title": "New Year's Day",
+            "description": "The first day of the year in the Gregorian calendar. A day of festivities marked by New Year's greetings, family meals, and fireworks."
+        },
+        "paques": {
+            "title": "Easter Monday",
+            "description": "A major Christian festival celebrating the resurrection of Jesus. Associated with egg hunts and symbols of spring renewal."
+        },
+        "fete_travail": {
+            "title": "Labor Day",
+            "description": "International Workers' Day. In France, it is traditional to offer lily of the valley as a lucky charm."
+        },
+        "victoire_1945": {
+            "title": "Victory Day (1945)",
+            "description": "Commemoration of the surrender of Nazi Germany in 1945, marking the end of World War II in Europe."
+        },
+        "ascension": {
+            "title": "Ascension Day",
+            "description": "Christian feast celebrating the ascension of Jesus into heaven, forty days after Easter."
+        },
+        "pentecote": {
+            "title": "Whit Monday",
+            "description": "Celebrates the descent of the Holy Spirit upon the Apostles, fifty days after Easter. A day of solidarity in France."
+        },
+        "fete_nationale": {
+            "title": "Bastille Day",
+            "description": "Commemorates the Storming of the Bastille on July 14, 1789, symbolizing the end of absolute monarchy and national unity."
+        },
+        "assomption": {
+            "title": "Assumption of Mary",
+            "description": "Celebrates the assumption of the Virgin Mary into heaven, body and soul, at the end of her earthly life."
+        },
+        "toussaint": {
+            "title": "All Saints' Day",
+            "description": "Catholic feast in honor of all saints. It is also a traditional moment to visit the graves of the deceased."
+        },
+        "armistice_1918": {
+            "title": "Armistice Day (1918)",
+            "description": "Commemoration of the Armistice signed in 1918, ending the fighting of World War I."
+        },
+        "noel": {
+            "title": "Christmas",
+            "description": "Celebration of the birth of Jesus for Christians, and a major cultural festival marked by Santa Claus, gifts, and festive meals."
+        },
+        "saint_etienne": {
+            "title": "St Stephen's Day",
+            "description": "Holiday specific to Alsace-Moselle, celebrating Saint Stephen, the first Christian martyr."
+        },
+        "vendredi_saint": {
+            "title": "Good Friday",
+            "description": "Day specific to Alsace-Moselle, commemorating the crucifixion and death of Jesus."
+        },
+        "default": {
+            "title": "Public Holiday",
+            "description": "An official public holiday celebrated in France."
+        }
     },
     "calendar": {
         "title": "Calendar",
@@ -164,17 +228,24 @@
         "pending": "Pending",
         "reviewed": "Reviewed",
         "implemented": "Implemented",
+        "status_pending": "Pending",
+        "status_reviewed": "Reviewed",
+        "status_implemented": "Implemented",
         "confirm_delete": "Delete this suggestion?",
         "delete": "Delete",
         "quote": "Quote",
         "archive": "Archive",
         "show_archive": "Show Archive",
         "hide_archive": "Hide Archive",
+        "hide_comments": "Hide",
         "comments": "Comments",
         "add_comment": "Add a comment",
         "post": "Post",
+        "post_comment": "Post Comment",
         "delete_comment": "Delete comment",
-        "no_comments": "No comments yet."
+        "no_comments": "No comments yet.",
+        "replying_to": "Replying to",
+        "reopen": "Reopen"
     },
     "admin": {
         "manage_users": "Manage Users",
@@ -476,5 +547,16 @@
             "Video games",
             "Sport"
         ]
+    },
+    "learning": {
+        "title": "The Linguist",
+        "login_required": "Please log in to access this page.",
+        "discover": "Discover",
+        "review": "Review",
+        "no_favorites": "No favorites yet.",
+        "back_to_discover": "Back to Discover mode",
+        "load_error": "Unable to load content.",
+        "retry": "Retry",
+        "new_expression": "New Expression"
     }
 }

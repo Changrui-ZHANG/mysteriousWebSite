@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Navbar } from './layouts/Navbar'
 import AuthModal from './features/auth/AuthModal'
 import { Preloader } from './components/Preloader'
@@ -15,6 +16,7 @@ import { CalendarPage } from './pages/CalendarPage'
 import { TermsPage } from './pages/TermsPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { MaintenancePage } from './pages/MaintenancePage'
+import { LearningPage } from './pages/LearningPage'
 import { STORAGE_KEYS } from './constants/auth'
 import './App.css'
 
@@ -27,6 +29,7 @@ function AppContent() {
     const [isDarkMode, setIsDarkMode] = useState(true)
     const toggleTheme = () => setIsDarkMode(!isDarkMode)
     const location = useLocation()
+    const { i18n } = useTranslation()
 
     // Global Auth State
     const [user, setUser] = useState<User | null>(null);
@@ -39,7 +42,25 @@ function AppContent() {
     useEffect(() => {
         const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
+
+            // Fetch user's language preference from database
+            fetch(`/api/users/${parsedUser.userId}/language`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.language) {
+                        i18n.changeLanguage(data.language);
+                        localStorage.setItem('preferredLanguage', data.language);
+                    }
+                })
+                .catch(err => console.error('Failed to load language preference:', err));
+        } else {
+            // Load language from localStorage if not logged in
+            const savedLanguage = localStorage.getItem('preferredLanguage');
+            if (savedLanguage) {
+                i18n.changeLanguage(savedLanguage);
+            }
         }
 
         // Fetch public settings
@@ -53,7 +74,7 @@ function AppContent() {
                 console.error("Failed to load settings", err);
                 setSettingsLoaded(true); // Proceed anyway
             });
-    }, []);
+    }, [i18n]);
 
     // Sync body background with theme to prevent white flashes on mobile overscroll
     useEffect(() => {
@@ -66,6 +87,17 @@ function AppContent() {
         setUser(newUser);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
         setShowAuthModal(false); // Close modal on success
+
+        // Fetch and apply user's language preference immediately
+        fetch(`/api/users/${newUser.userId}/language`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.language) {
+                    i18n.changeLanguage(data.language);
+                    localStorage.setItem('preferredLanguage', data.language);
+                }
+            })
+            .catch(err => console.error('Failed to load language preference:', err));
     };
 
     const handleLogout = () => {
@@ -194,6 +226,7 @@ function AppContent() {
                             <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                             <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                             <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isDarkMode={isDarkMode} isAdmin={isAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                            <Route path="/learning" element={<LearningPage isDarkMode={isDarkMode} />} />
                             <Route path="/terms" element={<TermsPage isDarkMode={isDarkMode} />} />
                             <Route path="/privacy" element={<PrivacyPage isDarkMode={isDarkMode} />} />
                         </Routes>

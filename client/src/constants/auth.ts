@@ -17,11 +17,7 @@ export type AdminLevel = 'none' | 'admin' | 'super_admin';
  * Now just returns a placeholder if admin session exists
  */
 export function getAdminCode(): string | null {
-    const isSuperAdmin = localStorage.getItem(STORAGE_KEYS.IS_SUPER_ADMIN) === 'true';
-    const isAdmin = localStorage.getItem(STORAGE_KEYS.IS_ADMIN) === 'true';
-
-    if (isSuperAdmin || isAdmin) return "SESSION_ACTIVE";
-    return null;
+    return localStorage.getItem(STORAGE_KEYS.ADMIN_CODE);
 }
 
 /**

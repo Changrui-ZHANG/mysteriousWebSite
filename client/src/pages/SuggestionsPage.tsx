@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaLightbulb, FaCheck, FaEye, FaTrash, FaQuoteRight } from 'react-icons/fa';
+import { FaLightbulb, FaCheck, FaTrash, FaQuoteRight } from 'react-icons/fa';
 import { fetchJson, postJson } from '../utils/api';
 import { API_ENDPOINTS } from '../constants/api';
 
@@ -101,8 +101,12 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
 
     const updateStatus = async (id: string, status: string) => {
         try {
-            await fetchJson(`/api/suggestions/${id}/status?status=${status}`, {
-                method: 'PUT'
+            await fetch(`/api/suggestions/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status }),
             });
             fetchSuggestions();
         } catch (err) {
@@ -161,6 +165,8 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                     username: user.username,
                     content: newComment.trim(),
                     quotedCommentId: replyingTo?.id,
+                    quotedUsername: replyingTo?.username,
+                    quotedContent: replyingTo?.content,
                 });
                 setNewComment('');
                 setReplyingTo(null);
@@ -191,7 +197,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                     onClick={() => setShowComments(!showComments)}
                     className="text-sm font-bold text-purple-400 hover:text-purple-300 transition-colors mb-2 flex items-center gap-2"
                 >
-                    {t('suggestions.comments')} ({showComments ? t('suggestions.hide_archive') || 'Hide' : localCount > 0 ? localCount : '0'})
+                    {t('suggestions.comments')} ({showComments ? t('suggestions.hide_comments') || 'Hide' : localCount > 0 ? localCount : '0'})
                 </button>
 
                 <AnimatePresence>
@@ -200,74 +206,83 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden"
+                            className="space-y-3 overflow-hidden"
                         >
-                            <div className="space-y-3 mb-4 pl-4 border-l-2 border-purple-500/20">
-                                {loadingComments ? (
-                                    <p className="text-sm opacity-50">Loading...</p>
-                                ) : comments.length === 0 ? (
-                                    <p className="text-sm opacity-50">{t('suggestions.no_comments')}</p>
-                                ) : (
-                                    comments.map(comment => (
-                                        <div key={comment.id} className="text-sm">
-                                            <div className="flex justify-between items-start">
-                                                <span className="font-bold text-purple-300">{comment.username}</span>
-                                                <span className="text-xs opacity-50">{new Date(comment.timestamp).toLocaleDateString()}</span>
+                            {loadingComments ? (
+                                <div className="text-center py-4 opacity-60">Loading...</div>
+                            ) : comments.length === 0 ? (
+                                <div className="text-center py-4 opacity-60">{t('suggestions.no_comments')}</div>
+                            ) : (
+                                comments.map((comment) => (
+                                    <div key={comment.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-purple-900/20' : 'bg-purple-100/50'}`}>
+                                        {comment.quotedContent && (
+                                            <div className={`mb-2 pl-3 border-l-2 border-purple-500/50 text-sm opacity-70 italic`}>
+                                                <span className="font-bold">{comment.quotedUsername}:</span> {comment.quotedContent}
                                             </div>
-                                            {comment.quotedContent && (
-                                                <div className={`mt-1 mb-2 pl-3 py-1 border-l-2 text-xs opacity-75 italic ${isDarkMode ? 'border-purple-500/50 bg-white/5' : 'border-purple-600/30 bg-black/5'}`}>
-                                                    <span className="font-bold not-italic mr-1">@{comment.quotedUsername}:</span>
-                                                    {comment.quotedContent}
-                                                </div>
-                                            )}
-                                            <p className="opacity-90">{comment.content}</p>
-                                            {(isAdmin || comment.userId === user?.userId) && (
-                                                <button onClick={() => handleDeleteComment(comment.id)} className="text-xs text-red-400 hover:underline mt-1">
-                                                    {t('suggestions.delete')}
-                                                </button>
-                                            )}
-                                            {user && (
+                                        )}
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1">
+                                                <span className="font-bold text-purple-400 text-sm">{comment.username}</span>
+                                                <span className="text-xs opacity-60 ml-2">
+                                                    {new Date(comment.timestamp).toLocaleString()}
+                                                </span>
+                                                <p className="mt-1 whitespace-pre-wrap">{comment.content}</p>
+                                            </div>
+                                            <div className="flex gap-2 ml-2">
                                                 <button
                                                     onClick={() => handleQuote(comment)}
-                                                    className="text-xs text-purple-400 hover:underline mt-1 ml-3 flex items-center gap-1 inline-flex"
+                                                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                                                    title={t('suggestions.quote') || 'Quote'}
                                                 >
-                                                    <FaQuoteRight className="w-2 h-2" />
-                                                    {t('suggestions.quote')}
+                                                    <FaQuoteRight className="w-3 h-3" />
                                                 </button>
-                                            )}
+                                                {(isAdmin || comment.userId === user?.userId) && (
+                                                    <button
+                                                        onClick={() => handleDeleteComment(comment.id)}
+                                                        className="text-red-400 hover:text-red-300 transition-colors"
+                                                        title={t('suggestions.delete_comment') || 'Delete'}
+                                                    >
+                                                        <FaTrash className="w-3 h-3" />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
-                                    ))
-                                )}
-                            </div>
+                                    </div>
+                                ))
+                            )}
 
                             {user && (
-                                <div className="mt-4">
+                                <form onSubmit={handlePostComment} className="mt-4">
                                     {replyingTo && (
-                                        <div className={`mb-2 pl-3 py-1 border-l-2 text-xs opacity-80 flex justify-between items-center ${isDarkMode ? 'border-purple-500/50 bg-white/5' : 'border-purple-600/30 bg-black/5'}`}>
-                                            <span>
-                                                <span className="font-bold mr-1">@{replyingTo.username}:</span>
-                                                <span className="italic truncate max-w-[200px] inline-block align-bottom">{replyingTo.content}</span>
-                                            </span>
-                                            <button onClick={() => setReplyingTo(null)} className="text-red-400 hover:text-red-300 ml-2 font-bold px-2">✕</button>
+                                        <div className={`mb-2 p-2 rounded ${isDarkMode ? 'bg-purple-900/30' : 'bg-purple-100/70'} text-sm flex justify-between items-center`}>
+                                            <div>
+                                                <span className="opacity-70">{t('suggestions.replying_to') || 'Replying to'} </span>
+                                                <span className="font-bold text-purple-400">{replyingTo.username}</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setReplyingTo(null)}
+                                                className="text-red-400 hover:text-red-300 text-xs"
+                                            >
+                                                Cancel
+                                            </button>
                                         </div>
                                     )}
-                                    <form onSubmit={handlePostComment} className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={newComment}
-                                            onChange={(e) => setNewComment(e.target.value)}
-                                            placeholder={t('suggestions.add_comment') + "..."}
-                                            className={`flex-1 px-3 py-1 rounded text-sm border focus:outline-none focus:ring-1 focus:ring-purple-500 ${isDarkMode ? 'bg-black/40 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
-                                        />
-                                        <button
-                                            type="submit"
-                                            disabled={!newComment.trim()}
-                                            className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded text-xs font-bold text-white transition-colors disabled:opacity-50"
-                                        >
-                                            {t('suggestions.post')}
-                                        </button>
-                                    </form>
-                                </div>
+                                    <textarea
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                        placeholder={t('suggestions.add_comment') || 'Add a comment...'}
+                                        className={`w-full p-3 rounded-lg border ${isDarkMode ? 'bg-black/40 border-purple-500/30 text-white' : 'bg-white border-purple-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none`}
+                                        rows={2}
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={!newComment.trim()}
+                                        className="mt-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold text-white transition-colors text-sm"
+                                    >
+                                        {t('suggestions.post_comment') || 'Post Comment'}
+                                    </button>
+                                </form>
                             )}
                         </motion.div>
                     )}
@@ -278,21 +293,19 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
 
     const getStatusBadge = (status: string) => {
         const badges = {
-            pending: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50', icon: FaLightbulb, label: t('suggestions.pending') || 'Pending' },
-            reviewed: { color: 'bg-blue-500/20 text-blue-400 border-blue-500/50', icon: FaEye, label: t('suggestions.reviewed') || 'Reviewed' },
-            implemented: { color: 'bg-green-500/20 text-green-400 border-green-500/50', icon: FaCheck, label: t('suggestions.implemented') || 'Implemented' }
+            pending: { label: t('suggestions.status_pending') || 'Pending', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50' },
+            reviewed: { label: t('suggestions.status_reviewed') || 'Reviewed', color: 'bg-blue-500/20 text-blue-400 border-blue-500/50' },
+            implemented: { label: t('suggestions.status_implemented') || 'Implemented', color: 'bg-green-500/20 text-green-400 border-green-500/50' }
         };
         const badge = badges[status as keyof typeof badges] || badges.pending;
-        const Icon = badge.icon;
         return (
             <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${badge.color}`}>
-                <Icon className="w-3 h-3" />
                 {badge.label}
             </span>
         );
     };
 
-    const renderSuggestion = (suggestion: Suggestion, index: number, isArchived: boolean = false) => (
+    const SuggestionCard = ({ suggestion, index, isArchived = false }: { suggestion: Suggestion, index: number, isArchived?: boolean }) => (
         <motion.div
             key={suggestion.id}
             initial={{ x: -20, opacity: 0 }}
@@ -318,28 +331,31 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                             onClick={() => updateStatus(suggestion.id, 'pending')}
                             className="px-3 py-1 bg-yellow-600 hover:bg-yellow-500 rounded text-xs font-bold transition-colors"
                         >
-                            Pending
+                            {t('suggestions.status_pending') || 'Pending'}
                         </button>
                         <button
                             onClick={() => updateStatus(suggestion.id, 'reviewed')}
                             className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-xs font-bold transition-colors"
                         >
-                            Reviewed
+                            {t('suggestions.status_reviewed') || 'Reviewed'}
                         </button>
                         <button
                             onClick={() => updateStatus(suggestion.id, 'implemented')}
                             className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded text-xs font-bold transition-colors"
                         >
-                            Implemented
+                            {t('suggestions.status_implemented') || 'Implemented'}
                         </button>
                     </>
                 )}
                 {isAdmin && isArchived && (
                     <button
-                        onClick={() => updateStatus(suggestion.id, 'pending')}
+                        onClick={() => {
+                            updateStatus(suggestion.id, 'pending');
+                            setShowArchive(false); // Close archive view to show the reopened ticket
+                        }}
                         className="px-3 py-1 bg-yellow-600 hover:bg-yellow-500 rounded text-xs font-bold transition-colors"
                     >
-                        Reopen
+                        {t('suggestions.reopen') || 'Reopen'}
                     </button>
                 )}
 
@@ -470,7 +486,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                     {!showArchive && (
                         <>
                             <AnimatePresence mode="popLayout">
-                                {activeSuggestions.map((suggestion, index) => renderSuggestion(suggestion, index, false))}
+                                {activeSuggestions.map((suggestion, index) => <SuggestionCard key={suggestion.id} suggestion={suggestion} index={index} />)}
                             </AnimatePresence>
                             {activeSuggestions.length === 0 && (
                                 <div className={`${cardClass} text-center py-12 opacity-60`}>
@@ -490,7 +506,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                             {t('suggestions.archive') || 'Archive'} ({archivedSuggestions.length})
                         </h2>
                         <AnimatePresence mode="popLayout">
-                            {archivedSuggestions.map((suggestion, index) => renderSuggestion(suggestion, index, true))}
+                            {archivedSuggestions.map((suggestion, index) => <SuggestionCard key={suggestion.id} suggestion={suggestion} index={index} isArchived={true} />)}
                         </AnimatePresence>
                     </div>
                 )}

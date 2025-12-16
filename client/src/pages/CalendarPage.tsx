@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { FaQuestionCircle } from 'react-icons/fa';
 import { fetchJson, postJson } from '../utils/api';
 import { useAdminCode } from '../hooks/useAdminCode';
 import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../constants/calendar';
 import { API_ENDPOINTS } from '../constants/api';
+import { HolidayModal } from '../features/calendar/HolidayModal';
 
 interface Holiday {
     date: string;
@@ -32,6 +34,8 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
     const [schoolHolidays, setSchoolHolidays] = useState<SchoolHoliday[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedZones, setSelectedZones] = useState<string[]>(DEFAULT_ZONES);
+    const [selectedHoliday, setSelectedHoliday] = useState<{ date: string; nom_jour_ferie: string } | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Load global zone configuration from backend on mount
     useEffect(() => {
@@ -286,15 +290,34 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                                         return (
                                             <div
                                                 key={day}
-                                                className={`h-8 flex items-center justify-center rounded relative group cursor-default ${bgClass} ${textClass} ${!bgClass && isDarkMode ? 'hover:bg-white/5' : ''}`}
+                                                onClick={() => {
+                                                    if (holiday) {
+                                                        setSelectedHoliday({ date: formatDate(year, month, day), nom_jour_ferie: holiday.nom_jour_ferie });
+                                                        setIsModalOpen(true);
+                                                    }
+                                                }}
+                                                className={`h-8 flex items-center justify-center rounded relative group ${bgClass} ${textClass} ${!bgClass && isDarkMode ? 'hover:bg-white/5' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 transition-transform' : 'cursor-default'}`}
                                             >
                                                 {day}
+
+                                                {/* Holiday Indicator Icon */}
+                                                {holiday && (
+                                                    <div className="absolute top-0.5 right-0.5 z-10 opacity-40 hover:opacity-100 transition-opacity">
+                                                        <FaQuestionCircle className="text-[10px] text-blue-400 bg-white/50 dark:bg-gray-800/50 rounded-full" />
+                                                    </div>
+                                                )}
+
                                                 {/* Tooltip */}
                                                 {(holiday || schoolVar) && (
                                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 w-max max-w-[150px] p-2 rounded bg-black/90 text-white text-xs text-center pointer-events-none">
                                                         {holiday && (HOLIDAY_NAMES[holiday.nom_jour_ferie] || holiday.nom_jour_ferie)}
                                                         {holiday && schoolVar && <br />}
-                                                        {schoolVar?.description && `Vacances (${ZONE_LABELS[schoolVar.zones] || schoolVar.zones})`}
+                                                        {schoolVar?.description && (
+                                                            t('calendar.tooltip.vacation', {
+                                                                zone: ZONE_LABELS[schoolVar.zones] || schoolVar.zones,
+                                                                defaultValue: `Vacances (${ZONE_LABELS[schoolVar.zones] || schoolVar.zones})`
+                                                            })
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
@@ -305,6 +328,15 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                         ))}
                     </div>
                 )}
+            </div>
+
+            {/* Holiday Details Modal */}
+            <div className={isDarkMode ? 'dark' : ''}>
+                <HolidayModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    holiday={selectedHoliday}
+                />
             </div>
         </div>
     );

@@ -40,3 +40,12 @@ If you encounter issues, try stopping the containers and removing volumes before
 docker-compose down -v
 docker-compose up --build
 ```
+
+
+## Database Setup
+
+To set up the database, run the following command:
+
+```bash
+psql -h localhost -U postgres -d messagewall -f setup_complete.sql
+```

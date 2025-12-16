@@ -5,6 +5,7 @@
         "messages_title": "留言墙",
         "suggestions_title": "建议箱",
         "calendar_title": "日历",
+        "linguist_title": "语言学家",
         "theme": {
             "light": "亮色模式",
             "dark": "暗色模式"
@@ -15,13 +16,76 @@
             "zh": "中文"
         }
     },
+    "common": {
+        "close": "关闭"
+    },
     "nav": {
         "home": "主页",
         "cv": "简历",
         "game": "街机厅",
         "messages": "留言",
         "suggestions": "建议",
-        "calendar": "日历"
+        "calendar": "日历",
+        "learning": "语言学家",
+        "more": "更多"
+    },
+    "holidays": {
+        "jour_de_l_an": {
+            "title": "元旦",
+            "description": "公历新年的第一天。这一天充满了节日气氛，人们互致新年问候，吃团圆饭，燃放烟花庆祝。"
+        },
+        "paques": {
+            "title": "复活节星期一",
+            "description": "基督教庆祝耶稣复活的重要节日。与寻找复活节彩蛋和春天万物复苏的象征有关。"
+        },
+        "fete_travail": {
+            "title": "劳动节",
+            "description": "国际劳动节。在法国，人们有互赠铃兰花作为吉祥物的传统。"
+        },
+        "victoire_1945": {
+            "title": "二战胜利日",
+            "description": "纪念1945年纳粹德国投降，标志着第二次世界大战在欧洲战场的结束。"
+        },
+        "ascension": {
+            "title": "耶稣升天节",
+            "description": "基督教节日，庆祝耶稣在复活节后四十天升天，标志着他在人间使命的结束。"
+        },
+        "pentecote": {
+            "title": "圣灵降临节",
+            "description": "庆祝圣灵在复活节后五十天降临在使徒身上。在法国，这也是一个团结互助的日子。"
+        },
+        "fete_nationale": {
+            "title": "国庆日",
+            "description": "纪念1789年7月14日攻占巴士底狱，象征着绝对君主制的结束和民族团结。"
+        },
+        "assomption": {
+            "title": "圣母升天节",
+            "description": "庆祝圣母玛利亚在结束尘世生活后，肉身和灵魂一同升入天堂。"
+        },
+        "toussaint": {
+            "title": "诸圣节",
+            "description": "天主教纪念所有圣徒的节日。这也是人们扫墓祭奠逝去亲人的传统时刻。"
+        },
+        "armistice_1918": {
+            "title": "一战停战日",
+            "description": "纪念1918年签署停战协定，结束了第一次世界大战的战斗。"
+        },
+        "noel": {
+            "title": "圣诞节",
+            "description": "基督教庆祝耶稣诞生的节日，也是一个重要的文化节日，有圣诞老人、礼物和节日大餐。"
+        },
+        "saint_etienne": {
+            "title": "圣史蒂芬节",
+            "description": "阿尔萨斯-摩泽尔地区特有的节日，纪念第一位基督教殉道者圣斯蒂芬。"
+        },
+        "vendredi_saint": {
+            "title": "耶稣受难日",
+            "description": "阿尔萨斯-摩泽尔地区特有的节日，纪念耶稣受难和死亡。"
+        },
+        "default": {
+            "title": "公共假日",
+            "description": "法国庆祝的法定公共假日。"
+        }
     },
     "calendar": {
         "title": "日历",
@@ -164,17 +228,24 @@
         "pending": "待处理",
         "reviewed": "已审核",
         "implemented": "已实现",
+        "status_pending": "待处理",
+        "status_reviewed": "已审核",
+        "status_implemented": "已实现",
         "confirm_delete": "删除此建议？",
         "delete": "删除",
         "quote": "引用",
         "archive": "归档",
         "show_archive": "显示归档",
         "hide_archive": "隐藏归档",
+        "hide_comments": "隐藏",
         "comments": "评论",
         "add_comment": "添加评论",
         "post": "发布",
+        "post_comment": "发布评论",
         "delete_comment": "删除评论",
-        "no_comments": "暂无评论。"
+        "no_comments": "暂无评论。",
+        "replying_to": "回复",
+        "reopen": "重新打开"
     },
     "admin": {
         "manage_users": "管理用户",
@@ -445,11 +516,11 @@
                 ]
             },
             "quichefs": {
-                "title": "Ouichefs 项目 (Linux 内核)",
+                "title": "Quichefs 项目 (Linux 内核)",
                 "role": "系统开发人员",
                 "desc": [
                     "为 Linux 内核开发改进的物理链接系统。",
-                    "实施 UUID、分区问链接和块迁移。"
+                    "实施 UUID、分区间链接和块迁移。"
                 ]
             }
         },
@@ -476,5 +547,16 @@
             "电子游戏",
             "运动"
         ]
+    },
+    "learning": {
+        "title": "语言学家",
+        "login_required": "请登录以访问此页面。",
+        "discover": "探索",
+        "review": "复习",
+        "no_favorites": "暂无收藏。",
+        "back_to_discover": "返回探索模式",
+        "load_error": "无法加载内容。",
+        "retry": "重试",
+        "new_expression": "新表达"
     }
 }

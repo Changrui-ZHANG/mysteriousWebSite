@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FaSun, FaMoon } from 'react-icons/fa';
 
 interface MaintenancePageProps {
     isDarkMode: boolean;
@@ -11,8 +10,8 @@ interface MaintenancePageProps {
     onAdminLogin?: (code: string) => Promise<boolean>;
 }
 
-export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, toggleTheme, message, activatedBy, onAdminLogin }) => {
-    const { t, i18n } = useTranslation();
+export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, toggleTheme: _toggleTheme, message, activatedBy, onAdminLogin }) => {
+    const { t } = useTranslation();
     const [showAdminInput, setShowAdminInput] = React.useState(false);
     const [loginCode, setLoginCode] = React.useState('');
     const [isChecking, setIsChecking] = React.useState(false);
@@ -31,41 +30,10 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
         }
     };
 
-    const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
-    };
-
-    const LanguageButton = ({ lang, flagCode }: { lang: string, flagCode: string }) => (
-        <button
-            onClick={() => changeLanguage(lang)}
-            className={`opacity-50 hover:opacity-100 transition-opacity ${i18n.language === lang ? 'opacity-100 scale-110' : ''}`}
-        >
-            <img
-                src={`https://flagcdn.com/w40/${flagCode}.png`}
-                srcSet={`https://flagcdn.com/w80/${flagCode}.png 2x`}
-                alt={lang}
-                className="w-6 h-auto rounded-[2px] shadow-sm"
-            />
-        </button>
-    );
-
     return (
         <div className={`min-h-screen flex flex-col items-center justify-center p-8 text-center relative ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
 
-            {/* Top Right Controls */}
-            <div className="absolute top-6 right-6 flex items-center gap-4 z-50">
-                <div className="flex gap-2 mr-4">
-                    <LanguageButton lang="en" flagCode="gb" />
-                    <LanguageButton lang="fr" flagCode="fr" />
-                    <LanguageButton lang="zh" flagCode="cn" />
-                </div>
-                <button
-                    onClick={toggleTheme}
-                    className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-black/5 hover:bg-black/10'}`}
-                >
-                    {isDarkMode ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-blue-500" />}
-                </button>
-            </div>
+
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}

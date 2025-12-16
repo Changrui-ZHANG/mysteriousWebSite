@@ -59,4 +59,28 @@ public class AppUser {
     public void setPlainPassword(String plainPassword) {
         this.plainPassword = plainPassword;
     }
+
+    @Column(nullable = true)
+    private String preferredLanguage = "fr";
+
+    public String getPreferredLanguage() {
+        return preferredLanguage;
+    }
+
+    public void setPreferredLanguage(String preferredLanguage) {
+        this.preferredLanguage = preferredLanguage;
+    }
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_vocabulary_favorites", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "vocabulary_id")
+    private java.util.Set<Integer> vocabularyFavorites = new java.util.HashSet<>();
+
+    public java.util.Set<Integer> getVocabularyFavorites() {
+        return vocabularyFavorites;
+    }
+
+    public void setVocabularyFavorites(java.util.Set<Integer> vocabularyFavorites) {
+        this.vocabularyFavorites = vocabularyFavorites;
+    }
 }
