@@ -20,6 +20,7 @@ export interface Projectile {
     pierce: number;
     maxBounce: number;
     isCluster: boolean;
+    chain: number;
 }
 
 export interface Particle {
@@ -34,7 +35,7 @@ export interface Particle {
 export interface PowerUp {
     id: number;
     position: THREE.Vector3;
-    type: 'scatter' | 'rapid' | 'tech';
+    type: 'scatter' | 'rapid' | 'tech' | 'damage';
     color: string;
     active: boolean;
 }

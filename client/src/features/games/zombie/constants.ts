@@ -16,3 +16,5 @@ export const GHOST_CLICK_DELAY = 500; // ms to ignore mouse after touch
 export const TOUCH_DEADZONE = 0.05; // Normalized screen width
 export const TOUCH_SENSITIVITY = 2.5; // Multiplier for analog control
 export const MOUSE_LERP_FACTOR = 0.2; // Smoothing for PC mouse
+export const KNOCKBACK_FORCE = 0.5; // Meters to push back
+export const KNOCKBACK_RESISTANCE = { walker: 1, runner: 0.8, tank: 0.2 }; // Multiplier

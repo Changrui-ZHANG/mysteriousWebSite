@@ -2,7 +2,7 @@ import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { FIELD_DEPTH, FIELD_WIDTH, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, MOUSE_LERP_FACTOR } from './constants';
+import { FIELD_DEPTH, FIELD_WIDTH, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, MOUSE_LERP_FACTOR, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE } from './constants';
 import { Particle, PowerUp, Projectile, Zombie } from './types';
 import { Player } from './components/Player';
 import { useGameInput } from './hooks/useGameInput';
@@ -14,10 +14,13 @@ interface GameSceneProps {
     setWeaponCount: (n: number) => void;
     setWeaponDelay: (n: number) => void;
     setWeaponTech: (n: number) => void;
+    setWeaponDamage: (n: number) => void;
     playSound: (s: any) => void;
     onGameOver: () => void;
     isPaused: boolean;
     setDangerLevel: (n: number) => void;
+    setWave: (n: number) => void;
+    setKills: (updater: (prev: number) => number) => void;
 }
 
 export function GameScene({
@@ -27,10 +30,13 @@ export function GameScene({
     setWeaponCount,
     setWeaponDelay,
     setWeaponTech,
+    setWeaponDamage,
     playSound,
     onGameOver,
     isPaused,
-    setDangerLevel
+    setDangerLevel,
+    setWave,
+    setKills
 }: GameSceneProps) {
     // Load Textures
     const [texWalker, texRunner, texTank] = useTexture([
@@ -52,7 +58,12 @@ export function GameScene({
 
     // New Progression System
     const powerUps = useRef<PowerUp[]>([]);
-    const weaponStats = useRef({ count: 1, delay: 0.3, tech: 0 });
+    const weaponStats = useRef({
+        count: 1,
+        delay: 0.3,
+        tech: 0,
+        damage: 50
+    });
 
     // Instanced Mesh Refs
     const meshProjectiles = useRef<THREE.InstancedMesh>(null);
@@ -124,9 +135,9 @@ export function GameScene({
             const projectilesToAdd = [];
             const spacing = 0.3;
             const startX = -((stats.count - 1) * spacing) / 2;
-            const pierceCount = stats.tech >= 1 ? 1 : 0;
-            const bounceCount = stats.tech >= 2 ? 1 : 0;
-            const cluster = stats.tech >= 3;
+            const pierceCount = stats.tech >= 1 ? 3 : 0;
+            const bounceCount = stats.tech >= 2 ? 3 : 0;
+            const chainCount = stats.tech >= 3 ? 3 : 0;
 
             if (projectiles.current.length + stats.count < 1000) {
                 for (let i = 0; i < stats.count; i++) {
@@ -144,7 +155,8 @@ export function GameScene({
                         active: true,
                         pierce: pierceCount,
                         maxBounce: bounceCount,
-                        isCluster: cluster
+                        isCluster: false,
+                        chain: chainCount
                     });
                 });
                 playSound('click' as any);
@@ -157,7 +169,9 @@ export function GameScene({
         if (frameCount.current === 10 || frameCount.current % Math.floor(spawnRate) === 0) {
             if (zombies.current.length < 100) {
                 const spawnX = (Math.random() - 0.5) * FIELD_WIDTH;
-                let hp = 1 + Math.floor(difficultyLevel.current / 5);
+                // HP scales with wave: Base 100 + (Difficulty * 20)
+                // This ensures "2 shots to kill" feel at start (100 HP vs 50 Dmg)
+                let hp = 100 + (difficultyLevel.current * 20);
                 const typeRoll = Math.random();
                 let type: Zombie['type'] = 'walker';
                 let speed = ZOMBIE_BASE_SPEED + (difficultyLevel.current * 0.001);
@@ -231,32 +245,17 @@ export function GameScene({
             for (let j = projectiles.current.length - 1; j >= 0; j--) {
                 const p = projectiles.current[j];
                 if (p.position.distanceTo(z.position) < 1.2) {
-                    z.hp--;
+                    z.hp -= weaponStats.current.damage; // Apply weapon damage
                     hit = true;
+                    playSound('break' as any);
 
-                    if (p.isCluster) {
-                        for (let k = 0; k < 3; k++) {
-                            if (projectiles.current.length < 1000) {
-                                projectiles.current.push({
-                                    id: Math.random(),
-                                    position: p.position.clone(),
-                                    velocity: new THREE.Vector3((Math.random() - 0.5) * 0.5, 0, (Math.random() - 0.5) * 0.5),
-                                    active: true,
-                                    pierce: 0,
-                                    maxBounce: 0,
-                                    isCluster: false
-                                });
-                            }
-                        }
-                        p.isCluster = false;
-                    }
+                    // --- KNOCKBACK LOGIC ---
+                    const pushDir = z.position.clone().sub(playerPos.current).normalize();
+                    pushDir.y = 0;
+                    const resistance = KNOCKBACK_RESISTANCE[z.type] || 1;
+                    z.position.z -= KNOCKBACK_FORCE * resistance;
 
-                    if (p.pierce > 0) {
-                        p.pierce--;
-                    } else {
-                        projectiles.current.splice(j, 1);
-                    }
-
+                    // --- PARTICLES ---
                     if (particles.current.length < 1000) {
                         for (let k = 0; k < 3; k++) {
                             particles.current.push({
@@ -270,43 +269,79 @@ export function GameScene({
                         }
                     }
 
-                    if (z.hp <= 0) {
-                        scoreRef.current += (z.type === 'tank' ? 5 : z.type === 'runner' ? 2 : 1);
-                        setScore(scoreRef.current);
-                        playSound('break' as any);
-
-                        const distToPlayer = z.position.distanceTo(playerPos.current);
-                        const isClose = distToPlayer < 25;
-                        const dropChance = z.type === 'tank' ? 0.8 : (z.type === 'runner' ? 0.4 : 0.2);
-
-                        if (isClose && Math.random() < dropChance && powerUps.current.length < 50) {
-                            const lootRoll = Math.random();
-                            let type: PowerUp['type'] = 'scatter';
-                            let color = '#facc15';
-
-                            if (lootRoll > 0.8) {
-                                type = 'tech';
-                                color = '#ef4444';
-                            } else if (lootRoll > 0.5) {
-                                type = 'rapid';
-                                color = '#3b82f6';
+                    // --- CHAIN / PIERCE LOGIC ---
+                    if (p.chain > 0) {
+                        // CHAIN SHOT: Find nearest other zombie
+                        let closestZ = null;
+                        let minDst = 10;
+                        for (const otherZ of zombies.current) {
+                            if (otherZ.id !== z.id && otherZ.hp > 0) {
+                                const d = p.position.distanceTo(otherZ.position);
+                                if (d < minDst) {
+                                    minDst = d;
+                                    closestZ = otherZ;
+                                }
                             }
-
-                            powerUps.current.push({
-                                id: Math.random(),
-                                position: z.position.clone(),
-                                type,
-                                color,
-                                active: true
-                            });
                         }
+
+                        if (closestZ) {
+                            const dir = closestZ.position.clone().sub(p.position).normalize();
+                            p.velocity.copy(dir.multiplyScalar(PROJECTILE_SPEED));
+                            p.chain--;
+                            p.position.add(dir.multiplyScalar(0.5));
+                        } else {
+                            if (p.pierce > 0) p.pierce--;
+                            else {
+                                p.active = false;
+                                projectiles.current.splice(j, 1);
+                            }
+                        }
+                    } else if (p.pierce > 0) {
+                        p.pierce--;
+                    } else {
+                        p.active = false;
+                        projectiles.current.splice(j, 1);
                     }
-                    if (!hit) break;
+
+                    break;
                 }
             }
 
             if (hit && z.hp <= 0) {
                 zombies.current.splice(i, 1);
+                setKills(prev => prev + 1);
+                scoreRef.current += (z.type === 'tank' ? 5 : z.type === 'runner' ? 2 : 1);
+                setScore(scoreRef.current);
+
+                // Loot Drops
+                const distToPlayer = z.position.distanceTo(playerPos.current);
+                const isClose = distToPlayer < 25;
+                const dropChance = z.type === 'tank' ? 0.8 : (z.type === 'runner' ? 0.4 : 0.2);
+
+                if (isClose && Math.random() < dropChance && powerUps.current.length < 50) {
+                    const lootRoll = Math.random();
+                    let type: PowerUp['type'] = 'scatter';
+                    let color = '#facc15';
+
+                    if (lootRoll > 0.85) {
+                        type = 'damage';
+                        color = '#f97316'; // Orange for damage
+                    } else if (lootRoll > 0.7) {
+                        type = 'tech';
+                        color = '#ef4444';
+                    } else if (lootRoll > 0.4) {
+                        type = 'rapid';
+                        color = '#3b82f6';
+                    }
+
+                    powerUps.current.push({
+                        id: Math.random(),
+                        position: z.position.clone(),
+                        type,
+                        color,
+                        active: true
+                    });
+                }
             }
         }
 
@@ -360,6 +395,9 @@ export function GameScene({
                 } else if (p.type === 'tech') {
                     weaponStats.current.tech++;
                     setWeaponTech(weaponStats.current.tech);
+                } else if (p.type === 'damage') {
+                    weaponStats.current.damage += 10;
+                    setWeaponDamage(weaponStats.current.damage);
                 }
 
                 playSound('click' as any);
@@ -441,6 +479,10 @@ export function GameScene({
             meshParticles.current.instanceMatrix.needsUpdate = true;
             if (meshParticles.current.instanceColor) meshParticles.current.instanceColor.needsUpdate = true;
         }
+
+        // Update logical wave number based on difficulty
+        const currentWave = Math.floor(difficultyLevel.current);
+        setWave(currentWave);
     });
 
     return (
