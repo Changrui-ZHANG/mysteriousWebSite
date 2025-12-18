@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaLightbulb, FaCheck, FaTrash, FaQuoteRight } from 'react-icons/fa';
 import { fetchJson, postJson } from '../utils/api';
 import { API_ENDPOINTS } from '../constants/api';
+import { useTheme } from '../hooks/useTheme';
+import { GradientHeading, Button, GlassCard } from '../components';
 
 interface Suggestion {
     id: string;
@@ -41,6 +43,7 @@ interface SuggestionsPageProps {
 
 export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false }: SuggestionsPageProps) {
     const { t } = useTranslation();
+    const theme = useTheme(isDarkMode);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [newSuggestion, setNewSuggestion] = useState('');
     const [loading, setLoading] = useState(false);
@@ -373,33 +376,34 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
         </motion.div>
     );
 
-    const cardClass = `p-6 rounded-xl backdrop-blur-md border ${isDarkMode ? 'bg-black/60 border-purple-500/30' : 'bg-white/80 border-purple-500/20'}`;
+    const cardClass = theme.glassCard('purple');
 
     // Authentication gate - only logged in users can access
     if (!user) {
         return (
-            <div className={`min-h-screen pt-24 pb-12 px-4 md:px-8 transition-colors duration-500 ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
+            <div className={`min-h-screen pt-24 pb-12 px-4 md:px-8 transition-colors duration-500 ${theme.bgPage} ${theme.textPrimary}`}>
                 <div className="max-w-4xl mx-auto">
                     <motion.div
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         className="text-center"
                     >
-                        <div className={`p-12 rounded-xl backdrop-blur-md border ${isDarkMode ? 'bg-black/60 border-purple-500/30' : 'bg-white/80 border-purple-500/20'}`}>
+                        <GlassCard isDarkMode={isDarkMode} accentColor="purple" padding="lg" animated={false}>
                             <FaLightbulb className="w-20 h-20 mx-auto mb-6 text-purple-400" />
-                            <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 leading-tight pb-2">
+                            <GradientHeading gradient="purple-pink" level={1} className="mb-4">
                                 {t('suggestions.title') || 'Suggestions & Ideas'}
-                            </h1>
+                            </GradientHeading>
                             <p className="text-lg opacity-80 mb-8">
                                 {t('suggestions.login_to_view') || 'Please log in to view and submit suggestions'}
                             </p>
-                            <button
+                            <Button
+                                color="purple"
+                                size="lg"
                                 onClick={onOpenLogin}
-                                className="px-8 py-3 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors text-lg"
                             >
                                 {t('auth.login') || 'Log In'}
-                            </button>
-                        </div>
+                            </Button>
+                        </GlassCard>
                     </motion.div>
                 </div>
             </div>
@@ -407,7 +411,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
     }
 
     return (
-        <div className={`min-h-screen pt-24 pb-12 px-4 md:px-8 transition-colors duration-500 ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
+        <div className={`min-h-screen pt-24 pb-12 px-4 md:px-8 transition-colors duration-500 ${theme.bgPage} ${theme.textPrimary}`}>
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <motion.div
@@ -415,9 +419,9 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                     animate={{ y: 0, opacity: 1 }}
                     className="text-center mb-8"
                 >
-                    <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 leading-tight pb-2">
+                    <GradientHeading gradient="purple-pink" level={1} className="mb-4">
                         {t('suggestions.title') || 'Suggestions & Ideas'}
-                    </h1>
+                    </GradientHeading>
                     <p className="text-lg opacity-80">
                         {t('suggestions.subtitle') || 'Share your ideas to make this website better!'}
                     </p>

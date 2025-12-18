@@ -1,23 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSound } from '../../../hooks/useSound';
-
-import { FaVolumeUp, FaVolumeMute, FaQuestion, FaArrowLeft } from 'react-icons/fa';
+import { useTheme } from '../../../hooks/useTheme';
+import { useMute } from '../../../hooks/useMute';
+import { FaQuestion, FaArrowLeft } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { GradientHeading, IconButton, MuteButton, ScoreDisplay } from '../../../components';
 
 export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, isAuthenticated }: { isDarkMode: boolean; onSubmitScore: (score: number) => void; personalBest?: { score: number } | null, isAuthenticated: boolean }) {
     const { t } = useTranslation();
+    const theme = useTheme(isDarkMode);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [gameState, setGameState] = useState<'start' | 'playing' | 'gameover' | 'won'>('start');
     const [score, setScore] = useState(0);
-    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
-
-    const toggleMute = () => {
-        const newMute = !isMuted;
-        setIsMuted(newMute);
-        localStorage.setItem('arcade_muted', String(newMute));
-    };
 
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
@@ -255,32 +252,25 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
             >
                 {/* Front Face (Game) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-black/80' : 'bg-white/80'}`}
+                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md overflow-hidden transition-colors duration-500 ${theme.bgCard}`}
                     style={{ backfaceVisibility: 'hidden' }}
                 >
                     <div className="absolute top-4 left-6 text-xl font-bold font-mono z-20 flex gap-4">
-                        <span className="text-cyan-400">
-                            {t('game.score')}: {score}
-                            {personalBest && personalBest.score !== undefined && (
-                                <span className="ml-3 text-lg text-purple-400 opacity-80">
-                                    ({t('game.best')}: {Math.max(score, personalBest.score)})
-                                </span>
-                            )}
-                        </span>
-                        <button
+                        <ScoreDisplay
+                            score={score}
+                            personalBest={personalBest}
+                            color="cyan"
+                        />
+                        <IconButton
+                            icon={<FaQuestion />}
                             onClick={() => setIsFlipped(true)}
-                            className="text-white/70 hover:text-cyan-400 transition-colors"
+                            color="cyan"
                             title="Rules"
-                        >
-                            <FaQuestion />
-                        </button>
-                        <button
-                            onClick={toggleMute}
-                            className="text-white/70 hover:text-white transition-colors"
-                            title={isMuted ? "Unmute" : "Mute"}
-                        >
-                            {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
-                        </button>
+                        />
+                        <MuteButton
+                            isMuted={isMuted}
+                            onToggle={toggleMute}
+                        />
                     </div>
 
                     <canvas
@@ -294,9 +284,9 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-10 p-8 text-center">
                             {gameState === 'start' && (
                                 <>
-                                    <h2 className="text-3xl md:text-5xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4 md:mb-6">
+                                    <GradientHeading gradient="cyan-purple" level={2} className="mb-4 md:mb-6">
                                         {t('game.brick_breaker')}
-                                    </h2>
+                                    </GradientHeading>
                                     <p className="text-white/80 mb-6 md:mb-8 font-serif text-base md:text-xl">{t('game.brick_breaker_desc')}</p>
                                     <button
                                         onClick={() => { setScore(0); setGameState('playing'); playSound('click'); }}
@@ -336,13 +326,13 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
 
                 {/* Back Face (Rules) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-slate-900/90' : 'bg-white/90'}`}
+                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${theme.bgCard}`}
                     style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
                     <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
+                        <GradientHeading gradient="cyan-purple" level={2}>
                             {t('game.brick_breaker')} - {t('game.arcade_zone')}
-                        </h2>
+                        </GradientHeading>
                         <button
                             onClick={() => setIsFlipped(false)}
                             className="p-2 rounded-full hover:bg-white/10 transition-colors"

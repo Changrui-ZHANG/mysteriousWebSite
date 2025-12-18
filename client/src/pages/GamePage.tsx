@@ -5,10 +5,13 @@ import BrickBreaker from '../features/games/components/BrickBreaker';
 import Match3 from '../features/games/components/Match3';
 import PokemonGame from '../features/games/components/PokemonGame';
 import MazeGame from '../features/games/components/MazeGame';
+import ZombieShooter from '../features/games/components/ZombieShooter';
 import Leaderboard from '../features/games/components/Leaderboard';
 import { fetchJson, postJson } from '../utils/api';
 import { useAdminCode } from '../hooks/useAdminCode';
+import { useTheme } from '../hooks/useTheme';
 import { API_ENDPOINTS } from '../constants/api';
+import { GradientHeading } from '../components';
 
 interface GameProps {
     isDarkMode: boolean;
@@ -26,7 +29,8 @@ interface User {
 export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
     const adminCode = useAdminCode();
-    const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon' | 'maze'>('brick');
+    const theme = useTheme(isDarkMode);
+    const [activeGame, setActiveGame] = useState<'brick' | 'match3' | 'pokemon' | 'maze' | 'zombie'>('brick');
 
     // Stats State
     const [personalBest, setPersonalBest] = useState<{ score: number, attempts?: number } | null>(null);
@@ -84,6 +88,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
             case 'match3': return 'bg-fuchsia-500 text-black shadow-[0_0_20px_rgba(217,70,239,0.5)]';
             case 'pokemon': return 'bg-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.5)]';
             case 'maze': return 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]';
+            case 'zombie': return 'bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.5)]';
             default: return 'bg-white/10';
         }
     };
@@ -205,7 +210,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
     };
 
     return (
-        <div className={`min-h-screen pt-24 pb-12 px-4 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+        <div className={`min-h-screen pt-24 pb-12 px-4 ${theme.textPrimary} ${isDarkMode ? 'bg-black' : 'bg-gray-100'}`}>
 
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
@@ -215,9 +220,9 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center w-full"
                     >
-                        <h1 className="text-4xl md:text-7xl font-black font-heading mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                        <GradientHeading gradient="purple-pink" level={1} className="mb-4">
                             {t('game.arcade_zone')}
-                        </h1>
+                        </GradientHeading>
                         <p className="text-xl opacity-70 font-serif italic">
                             {t('game.choose_your_challenge')}
                         </p>
@@ -234,9 +239,8 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                 </div>
 
                 {/* Game Selector Tabs */}
-                {/* Game Selector Tabs */}
                 <div className="flex justify-center gap-4 md:gap-8 mb-12 flex-wrap">
-                    {['brick', 'match3', 'pokemon', 'maze'].map((gameKey) => {
+                    {['brick', 'match3', 'pokemon', 'maze', 'zombie'].map((gameKey) => {
                         const isEnabled = gameStatuses[gameKey] !== false; // Default true if undefined
                         const isLocked = !isEnabled && !isSuperAdmin;
 
@@ -327,8 +331,10 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                                     <Match3 isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                                 ) : activeGame === 'pokemon' ? (
                                     <PokemonGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
-                                ) : (
+                                ) : activeGame === 'maze' ? (
                                     <MazeGame isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
+                                ) : (
+                                    <ZombieShooter isDarkMode={isDarkMode} onSubmitScore={submitScore} personalBest={personalBest} isAuthenticated={!!user} onGameStart={resetGuestAlert} />
                                 );
                             })()}
                         </motion.div>

@@ -1,9 +1,14 @@
 // New UI Components (named exports)
 export { Button } from './Button';
+export { FlipCard } from './FlipCard';
 export { GlassCard } from './GlassCard';
 export { GradientHeading } from './GradientHeading';
+export { IconButton } from './IconButton';
 export { LoadingSpinner } from './LoadingSpinner';
+export { Modal } from './Modal';
+export { MuteButton } from './MuteButton';
 export { PageContainer } from './PageContainer';
+export { ScoreDisplay } from './ScoreDisplay';
 
 // Existing Components (named exports)
 export { Gallery } from './Gallery';

@@ -3,7 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { getRandomPokemon, Pokemon } from '../../../utils/pokeapi';
 import { useSound } from '../../../hooks/useSound';
-import { FaVolumeUp, FaVolumeMute, FaQuestion, FaArrowLeft } from 'react-icons/fa';
+import { useTheme } from '../../../hooks/useTheme';
+import { useMute } from '../../../hooks/useMute';
+import { FaQuestion, FaArrowLeft } from 'react-icons/fa';
+import { GradientHeading, IconButton, MuteButton, Button } from '../../../components';
 
 interface PokemonGameProps {
     isDarkMode: boolean;
@@ -15,6 +18,7 @@ interface PokemonGameProps {
 
 export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: PokemonGameProps) {
     const { t } = useTranslation();
+    const theme = useTheme(isDarkMode);
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
     const [options, setOptions] = useState<string[]>([]);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -22,14 +26,8 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
     const [score, setScore] = useState(0);
     const [attempts, setAttempts] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
-
-    const toggleMute = () => {
-        const newMute = !isMuted;
-        setIsMuted(newMute);
-        localStorage.setItem('arcade_muted', String(newMute));
-    };
 
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
@@ -151,7 +149,7 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
         return `${baseClass} bg-gray-600 text-gray-300 opacity-50`;
     };
 
-    const cardClass = `p-6 rounded-xl backdrop-blur-md border ${isDarkMode ? 'bg-black/60 border-purple-500/30' : 'bg-white/80 border-purple-500/20'}`;
+    const cardClass = theme.glassCard('purple');
 
     return (
         <div className="w-full h-full" style={{ perspective: '1000px' }}>
@@ -179,26 +177,25 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
+                            <IconButton
+                                icon={<FaQuestion size={20} />}
                                 onClick={() => setIsFlipped(true)}
-                                className="text-purple-400 hover:text-purple-300 transition-colors"
+                                color="purple"
                                 title="Rules"
-                            >
-                                <FaQuestion size={20} />
-                            </button>
-                            <button
-                                onClick={toggleMute}
-                                className="text-purple-400 hover:text-purple-300 transition-colors"
-                                title={isMuted ? "Unmute" : "Mute"}
-                            >
-                                {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
-                            </button>
-                            <button
+                            />
+                            <MuteButton
+                                isMuted={isMuted}
+                                onToggle={toggleMute}
+                                color="purple"
+                            />
+                            <Button
                                 onClick={loadNewPokemon}
-                                className="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors text-sm md:text-base ml-2"
+                                color="purple"
+                                size="sm"
+                                className="ml-2"
                             >
                                 {t('pokemon.next')}
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
@@ -289,13 +286,13 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
 
                 {/* Back Face (Rules) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-slate-900/90' : 'bg-white/90'}`}
+                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${theme.bgCard}`}
                     style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
                     <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+                        <GradientHeading gradient="purple-pink" level={2}>
                             {t('game.pokemon_quiz')} - {t('game.arcade_zone')}
-                        </h2>
+                        </GradientHeading>
                         <button
                             onClick={() => setIsFlipped(false)}
                             className="p-2 rounded-full hover:bg-white/10 transition-colors"

@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaSyncAlt, FaLightbulb, FaVolumeUp, FaHeart, FaRegHeart, FaStar } from 'react-icons/fa';
 import { useSpeech } from '../hooks/useSpeech';
+import { useTheme } from '../hooks/useTheme';
 import { fetchJson, postJson } from '../utils/api';
 import { STORAGE_KEYS } from '../constants/auth';
 import AuthModal from '../features/auth/AuthModal';
+import { GradientHeading, Button, LoadingSpinner } from '../components';
 
 interface VocabularyItem {
     id: number;
@@ -25,6 +27,7 @@ interface User {
 export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
     const { t, i18n } = useTranslation();
     const { speak } = useSpeech({ lang: 'fr-FR' });
+    const theme = useTheme(isDarkMode);
 
     // State
     const [item, setItem] = useState<VocabularyItem | null>(null);
@@ -265,27 +268,29 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
             />
 
             {!user ? (
-                <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                <div className={`min-h-screen flex items-center justify-center ${theme.textPrimary}`}>
                     <div className="text-center">
-                        <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
+                        <GradientHeading gradient="amber-orange" level={1} className="mb-4">
                             {t('learning.title')}
-                        </h1>
+                        </GradientHeading>
                         <p className="text-lg opacity-70 mb-6">{t('learning.login_required')}</p>
-                        <button
+                        <Button
+                            color="amber"
+                            size="lg"
+                            rounded="full"
                             onClick={() => setShowAuthModal(true)}
-                            className="px-6 py-3 bg-amber-500 text-white rounded-full font-bold hover:bg-amber-600 transition-colors"
                         >
                             {t('auth.login')}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             ) : (
-                <div className={`min-h-screen pt-24 pb-12 px-4 flex flex-col items-center justify-center transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                <div className={`min-h-screen pt-24 pb-12 px-4 flex flex-col items-center justify-center transition-colors duration-500 ${theme.textPrimary}`}>
 
                     <div className="max-w-2xl w-full text-center mb-8">
-                        <h1 className="text-4xl md:text-5xl font-bold font-serif mb-4 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
+                        <GradientHeading gradient="amber-orange" level={1} className="font-serif mb-4">
                             {t('learning.title')}
-                        </h1>
+                        </GradientHeading>
 
                         <div className="flex justify-center gap-4 mt-6">
                             <button
@@ -306,15 +311,7 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
                     <div className="w-full max-w-4xl relative min-h-[400px]">
                         <AnimatePresence mode="wait">
                             {loading ? (
-                                <motion.div
-                                    key="loader"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute inset-0 flex items-center justify-center h-64"
-                                >
-                                    <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
-                                </motion.div>
+                                <LoadingSpinner size="lg" color="amber" className="absolute inset-0 h-64" />
                             ) : (mode === 'review' && favoriteItems.length === 0) ? (
                                 <div className="text-center py-20 opacity-50">
                                     <FaRegHeart className="text-6xl mx-auto mb-4" />

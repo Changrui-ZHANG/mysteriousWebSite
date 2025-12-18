@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight, FaTrophy, FaVolumeUp, FaVolumeMute, FaQuestion, FaClock } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight, FaTrophy, FaQuestion, FaClock } from 'react-icons/fa';
 import { useSound } from '../../../hooks/useSound';
+import { useTheme } from '../../../hooks/useTheme';
+import { useMute } from '../../../hooks/useMute';
+import { GradientHeading, IconButton, MuteButton, Button } from '../../../components';
 
 interface MazeGameProps {
     isDarkMode: boolean;
@@ -22,6 +25,7 @@ interface MazeData {
 
 export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: MazeGameProps) {
     const { t } = useTranslation();
+    const theme = useTheme(isDarkMode);
     const [maze, setMaze] = useState<MazeData | null>(null);
     const [playerPos, setPlayerPos] = useState<{ x: number; y: number } | null>(null);
     const [gameState, setGameState] = useState<'loading' | 'playing' | 'won'>('loading');
@@ -29,7 +33,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     const [startTime, setStartTime] = useState<number>(0);
     const [isDragging, setIsDragging] = useState(false);
     const gridRef = useRef<HTMLDivElement>(null);
-    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { isMuted, toggleMute } = useMute();
     const [shiftTimer, setShiftTimer] = useState(3);
 
     const { playSound } = useSound(!isMuted);
@@ -39,12 +43,6 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     const [isMoving, setIsMoving] = useState(false);
     const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [isFlipped, setIsFlipped] = useState(false);
-
-    const toggleMute = () => {
-        const newMute = !isMuted;
-        setIsMuted(newMute);
-        localStorage.setItem('arcade_muted', String(newMute));
-    };
 
     const fetchMaze = async () => {
         playSound('click');
@@ -469,7 +467,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
             >
                 {/* Front Face (Game) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center p-4 ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} backdrop-blur-md rounded-xl border border-white/20 select-none`}
+                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center p-4 ${theme.bgCard} backdrop-blur-md rounded-xl border border-white/20 select-none`}
                     style={{ backfaceVisibility: 'hidden' }}
                 >
 
@@ -488,26 +486,24 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                             )}
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
+                            <IconButton
+                                icon={<FaQuestion size={20} />}
                                 onClick={() => setIsFlipped(true)}
-                                className="text-cyan-400 hover:text-cyan-300 transition-colors mr-2"
+                                color="cyan"
                                 title="Rules"
-                            >
-                                <FaQuestion size={20} />
-                            </button>
-                            <button
-                                onClick={toggleMute}
-                                className="text-cyan-400 hover:text-cyan-300 transition-colors mr-2"
-                                title={isMuted ? "Unmute" : "Mute"}
-                            >
-                                {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
-                            </button>
-                            <button
+                            />
+                            <MuteButton
+                                isMuted={isMuted}
+                                onToggle={toggleMute}
+                                color="cyan"
+                            />
+                            <Button
                                 onClick={fetchMaze}
-                                className="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded text-sm font-bold transition-colors"
+                                color="cyan"
+                                size="sm"
                             >
                                 {t('game.new_maze')}
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
@@ -723,13 +719,13 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
 
                 {/* Back Face (Rules) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-slate-900/90' : 'bg-white/90'}`}
+                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${theme.bgCard}`}
                     style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
                     <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                        <GradientHeading gradient="cyan-blue" level={2}>
                             {t('game.maze')} - {t('game.arcade_zone')}
-                        </h2>
+                        </GradientHeading>
                         <button
                             onClick={() => setIsFlipped(false)}
                             className="p-2 rounded-full hover:bg-white/10 transition-colors"

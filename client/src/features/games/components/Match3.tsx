@@ -2,7 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useSound } from '../../../hooks/useSound';
-import { FaVolumeUp, FaVolumeMute, FaQuestion, FaArrowLeft } from 'react-icons/fa';
+import { useTheme } from '../../../hooks/useTheme';
+import { useMute } from '../../../hooks/useMute';
+import { FaQuestion, FaArrowLeft } from 'react-icons/fa';
+import { GradientHeading, IconButton, MuteButton, Button } from '../../../components';
 
 const WIDTH = 8;
 const CANDY_COLORS = [
@@ -24,17 +27,12 @@ interface Match3Props {
 
 export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: Match3Props) {
     const { t } = useTranslation();
+    const theme = useTheme(isDarkMode);
     const [board, setBoard] = useState<string[]>([]);
     const [score, setScore] = useState(0);
     const [selectedCandies, setSelectedCandies] = useState<number[]>([]);
-    const [isMuted, setIsMuted] = useState(() => localStorage.getItem('arcade_muted') === 'true');
+    const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
-
-    const toggleMute = () => {
-        const newMute = !isMuted;
-        setIsMuted(newMute);
-        localStorage.setItem('arcade_muted', String(newMute));
-    };
 
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
@@ -247,7 +245,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
             >
                 {/* Front Face (Game) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black/80' : 'bg-white/80'} p-4`}
+                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md transition-colors duration-500 overflow-hidden ${theme.bgCard} p-4`}
                     style={{ backfaceVisibility: 'hidden' }}
                 >
                     <div className="w-full flex justify-between items-center px-4 mb-4 md:px-8">
@@ -267,21 +265,24 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button
+                            <IconButton
+                                icon={<FaQuestion size={20} />}
                                 onClick={() => setIsFlipped(true)}
-                                className={`transition-colors ${isDarkMode ? 'text-white/70 hover:text-cyan-400' : 'text-slate-700 hover:text-purple-600'}`}
+                                color="purple"
                                 title="Rules"
+                            />
+                            <MuteButton
+                                isMuted={isMuted}
+                                onToggle={toggleMute}
+                            />
+                            <Button
+                                onClick={resetGame}
+                                variant="ghost"
+                                size="sm"
+                                rounded="full"
                             >
-                                <FaQuestion size={20} />
-                            </button>
-                            <button
-                                onClick={toggleMute}
-                                className={`transition-colors ${isDarkMode ? 'text-white/70 hover:text-white' : 'text-slate-700 hover:text-black'}`}
-                                title={isMuted ? "Unmute" : "Mute"}
-                            >
-                                {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
-                            </button>
-                            <button onClick={resetGame} className={`text-sm font-bold px-3 py-1 rounded-full transition-colors ${isDarkMode ? 'text-white/50 hover:text-white bg-white/10' : 'text-slate-600 hover:text-white bg-black/5 hover:bg-slate-600'}`}>{t('game.reset')}</button>
+                                {t('game.reset')}
+                            </Button>
                         </div>
                     </div>
 
@@ -311,13 +312,13 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
 
                 {/* Back Face (Rules) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-slate-900/90' : 'bg-white/90'}`}
+                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${theme.bgCard}`}
                     style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
                     <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 to-purple-500">
+                        <GradientHeading gradient="purple-pink" level={2}>
                             {t('game.match3')} - {t('game.arcade_zone')}
-                        </h2>
+                        </GradientHeading>
                         <button
                             onClick={() => setIsFlipped(false)}
                             className="p-2 rounded-full hover:bg-white/10 transition-colors"

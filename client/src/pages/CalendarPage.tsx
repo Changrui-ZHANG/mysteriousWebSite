@@ -4,9 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { fetchJson, postJson } from '../utils/api';
 import { useAdminCode } from '../hooks/useAdminCode';
+import { useTheme } from '../hooks/useTheme';
 import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../constants/calendar';
 import { API_ENDPOINTS } from '../constants/api';
 import { HolidayModal } from '../features/calendar/HolidayModal';
+import { LoadingSpinner, GradientHeading } from '../components';
 
 interface Holiday {
     date: string;
@@ -29,6 +31,7 @@ interface CalendarPageProps {
 export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
     const { t, i18n } = useTranslation();
     const adminCode = useAdminCode();
+    const theme = useTheme(isDarkMode);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [holidays, setHolidays] = useState<Holiday[]>([]);
     const [schoolHolidays, setSchoolHolidays] = useState<SchoolHoliday[]>([]);
@@ -195,12 +198,12 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
     );
 
     return (
-        <div className={`min-h-screen pt-24 pb-12 px-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+        <div className={`min-h-screen pt-24 pb-12 px-4 ${theme.textPrimary}`}>
             <div className="max-w-7xl mx-auto">
                 <header className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <h1 className="text-4xl font-bold font-heading bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent capitalize">
+                    <GradientHeading gradient="cyan-purple" level={1}>
                         {t('nav.calendar')} {year}
-                    </h1>
+                    </GradientHeading>
 
                     {/* Zone Selector - ONLY FOR ADMIN */}
                     {isAdmin && (
@@ -232,9 +235,7 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                 </header>
 
                 {loading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
+                    <LoadingSpinner size="lg" color="blue" className="py-20" />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {months.map(month => (
