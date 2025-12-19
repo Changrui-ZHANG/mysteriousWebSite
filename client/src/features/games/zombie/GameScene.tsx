@@ -1,9 +1,9 @@
-import { useTexture } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useTexture, Html } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useMemo, useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { FIELD_DEPTH, FIELD_WIDTH, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, MOUSE_LERP_FACTOR, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE } from './constants';
-import { Particle, PowerUp, Projectile, Zombie } from './types';
+import { FIELD_DEPTH, FIELD_WIDTH, FRONT_WALL_Z, BACK_WALL_Z, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE } from './constants';
+import { Particle, PowerUp, Projectile, Zombie, FloatingText } from './types';
 import { Player } from './components/Player';
 import { useGameInput } from './hooks/useGameInput';
 
@@ -15,12 +15,20 @@ interface GameSceneProps {
     setWeaponDelay: (n: number) => void;
     setWeaponTech: (n: number) => void;
     setWeaponDamage: (n: number) => void;
+    setCritChance: (n: number) => void;
     playSound: (s: any) => void;
     onGameOver: () => void;
     isPaused: boolean;
     setDangerLevel: (n: number) => void;
     setWave: (n: number) => void;
+    weaponBounce: number;
+    isHoming: boolean;
+    setWeaponBounce: (n: number) => void;
     setKills: (updater: (prev: number) => number) => void;
+    onNotification: (text: string, color: string) => void;
+    critBonus: number;
+    onShowSuperRewards: () => void;
+    onMobileButtons?: (handlers: { moveLeft: (on: boolean) => void, moveRight: (on: boolean) => void }) => void;
 }
 
 export function GameScene({
@@ -31,18 +39,27 @@ export function GameScene({
     setWeaponDelay,
     setWeaponTech,
     setWeaponDamage,
+    setCritChance,
     playSound,
     onGameOver,
     isPaused,
     setDangerLevel,
     setWave,
-    setKills
+    weaponBounce,
+    isHoming,
+    setWeaponBounce,
+    setKills,
+    onNotification,
+    critBonus,
+    onShowSuperRewards,
+    onMobileButtons,
 }: GameSceneProps) {
     // Load Textures
-    const [texWalker, texRunner, texTank] = useTexture([
+    const [texWalker, texRunner, texTank, texBoss] = useTexture([
         '/textures/zombie_walker.png',
         '/textures/zombie_runner.png',
-        '/textures/zombie_tank.png'
+        '/textures/zombie_tank.png',
+        '/textures/zombie_boss.png'
     ]);
 
     // Game State Refs
@@ -50,11 +67,17 @@ export function GameScene({
     const projectiles = useRef<Projectile[]>([]);
     const zombies = useRef<Zombie[]>([]);
     const particles = useRef<Particle[]>([]);
+    const perfectStreak = useRef(0);
+    const wasBreached = useRef(false);
+    const floatingTexts = useRef<FloatingText[]>([]);
+    const lastSuperWave = useRef(0);
     const frameCount = useRef(0);
     const lastShotTime = useRef(0);
     const difficultyLevel = useRef(1);
-    const scoreRef = useRef(0);
+    const scoreRef = useRef(1);
     const lastDangerLevel = useRef(0);
+
+    const { gl } = useThree();
 
     // New Progression System
     const powerUps = useRef<PowerUp[]>([]);
@@ -62,7 +85,11 @@ export function GameScene({
         count: 1,
         delay: 0.3,
         tech: 0,
-        damage: 50
+        damage: 50,
+        critChance: 5,
+        critMultiplier: 2,
+        maxBounce: 1,
+        isHoming: false
     });
 
     // Instanced Mesh Refs
@@ -71,7 +98,10 @@ export function GameScene({
     const meshWalkers = useRef<THREE.InstancedMesh>(null);
     const meshRunners = useRef<THREE.InstancedMesh>(null);
     const meshTanks = useRef<THREE.InstancedMesh>(null);
+    const meshBosses = useRef<THREE.InstancedMesh>(null);
     const meshParticles = useRef<THREE.InstancedMesh>(null);
+    const meshHealthBg = useRef<THREE.InstancedMesh>(null);
+    const meshHealthFill = useRef<THREE.InstancedMesh>(null);
     const dummy = useMemo(() => new THREE.Object3D(), []);
 
     // Geometries & Materials
@@ -82,9 +112,49 @@ export function GameScene({
     const particleMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#fff' }), []);
     const powerUpGeometry = useMemo(() => new THREE.BoxGeometry(0.5, 0.5, 0.5), []);
     const powerUpMaterial = useMemo(() => new THREE.MeshStandardMaterial({ color: '#fff', roughness: 0.2, metalness: 0.8, emissive: '#444444', emissiveIntensity: 0.5 }), []);
+    const healthBarGeometry = useMemo(() => new THREE.PlaneGeometry(1, 0.12), []);
+    const healthBarBgMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#000000', transparent: true, opacity: 0.5 }), []);
+    const healthBarFillMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#10b981' }), []);
 
     // Controls (Modularized Hook)
-    const { keys, lastInputSource, isPointerDown } = useGameInput();
+    const { keys, lastInputSource, isPointerDown, mouseDeltaX } = useGameInput();
+
+    useEffect(() => {
+        weaponStats.current.maxBounce = weaponBounce;
+    }, [weaponBounce]);
+
+    useEffect(() => {
+        weaponStats.current.isHoming = isHoming;
+    }, [isHoming]);
+
+    // Virtual Buttons Hookup
+    useEffect(() => {
+        if (onMobileButtons) {
+            onMobileButtons({
+                moveLeft: (on: boolean) => { if (keys.current) { keys.current['KeyA'] = on; lastInputSource.current = 'keyboard'; } },
+                moveRight: (on: boolean) => { if (keys.current) { keys.current['KeyD'] = on; lastInputSource.current = 'keyboard'; } }
+            });
+        }
+    }, [onMobileButtons, keys, lastInputSource]);
+
+    // Handle Pointer Lock
+    useEffect(() => {
+        const handleLock = () => {
+            if (gameState === 'playing' && !isPaused) {
+                if (!document.pointerLockElement) {
+                    gl.domElement.requestPointerLock();
+                }
+            }
+        };
+
+        // If paused or gameover, release the lock
+        if ((isPaused || gameState !== 'playing') && document.pointerLockElement) {
+            document.exitPointerLock();
+        }
+
+        window.addEventListener('mousedown', handleLock);
+        return () => window.removeEventListener('mousedown', handleLock);
+    }, [gameState, isPaused, gl]);
 
     useFrame((state) => {
         state.camera.lookAt(0, 0, -5);
@@ -107,21 +177,30 @@ export function GameScene({
 
         // 1b. Move Player (Mouse vs Touch)
         if (lastInputSource.current === 'mouse') {
-            // PC MOUSE: Absolute Mapping (Hover)
-            const targetX = state.pointer.x * (FIELD_WIDTH / 2);
-            playerPos.current.x = THREE.MathUtils.lerp(playerPos.current.x, targetX, MOUSE_LERP_FACTOR);
+            const isLocked = !!document.pointerLockElement;
+
+            if (isLocked) {
+                // RELATIVE MOVEMENT (Pointer Locked)
+                const sensitivity = 0.04;
+                playerPos.current.x += mouseDeltaX.current * sensitivity;
+                mouseDeltaX.current = 0; // Reset after consuming
+            } else {
+                // If not locked, we don't move or we move very slowly to cursor
+                // We clear delta to avoid buildup
+                mouseDeltaX.current = 0;
+            }
+
+            // Safety Clamp to Field
             playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x));
         } else if (lastInputSource.current === 'touch') {
-            // MOBILE TOUCH: Analog Zone Control (Variable Speed)
-            if (isPointerDown.current) {
-                // state.pointer.x is -1 (left) to 1 (right)
-                // We map this magnitude to speed for "gentle" control
-
+            // MOBILE TOUCH: Check if virtual buttons are NOT active before doing analog
+            if (keys.current['KeyA'] || keys.current['KeyD']) {
+                if (keys.current['KeyA']) playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, playerPos.current.x - PLAYER_SPEED);
+                if (keys.current['KeyD']) playerPos.current.x = Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x + PLAYER_SPEED);
+            } else if (isPointerDown.current) {
+                // Analog Zone Control Fallback
                 if (Math.abs(state.pointer.x) > TOUCH_DEADZONE) {
-                    // Calculate speed factor (0 to 1) based on distance from center
-                    // We want max speed at around 0.5 (halfway to edge) so it's responsive
                     const speedFactor = Math.min(1, Math.abs(state.pointer.x) * TOUCH_SENSITIVITY);
-
                     const moveAmount = PLAYER_SPEED * speedFactor * Math.sign(state.pointer.x);
                     playerPos.current.x += moveAmount;
                     playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x));
@@ -136,7 +215,7 @@ export function GameScene({
             const spacing = 0.3;
             const startX = -((stats.count - 1) * spacing) / 2;
             const pierceCount = stats.tech >= 1 ? 3 : 0;
-            const bounceCount = stats.tech >= 2 ? 3 : 0;
+            const bounceCount = stats.maxBounce + (stats.tech >= 2 ? 3 : 0);
             const chainCount = stats.tech >= 3 ? 3 : 0;
 
             if (projectiles.current.length + stats.count < 1000) {
@@ -169,16 +248,23 @@ export function GameScene({
         if (frameCount.current === 10 || frameCount.current % Math.floor(spawnRate) === 0) {
             if (zombies.current.length < 100) {
                 const spawnX = (Math.random() - 0.5) * FIELD_WIDTH;
-                // HP scales with wave: Base 100 + (Difficulty * 20)
-                // This ensures "2 shots to kill" feel at start (100 HP vs 50 Dmg)
-                let hp = 100 + (difficultyLevel.current * 20);
+                // HP scales with wave: Base 100 * (1.2 ^ (Wave-1))
+                // Flawless Bonus: +50% HP if 5 waves without breach
+                let hp = 100 * Math.pow(1.2, difficultyLevel.current - 1);
+                if (perfectStreak.current >= 5) hp *= 1.5;
                 const typeRoll = Math.random();
                 let type: Zombie['type'] = 'walker';
                 let speed = ZOMBIE_BASE_SPEED + (difficultyLevel.current * 0.001);
                 let color = '#10b981';
                 let size = 1;
 
-                if (typeRoll > 0.9) {
+                if (typeRoll > 0.96) {
+                    type = 'boss';
+                    hp *= 10;
+                    speed *= 0.3;
+                    color = '#a855f7'; // Purple for Boss
+                    size = 2.5;
+                } else if (typeRoll > 0.88) {
                     type = 'tank';
                     hp *= 4;
                     speed *= 0.4;
@@ -206,22 +292,82 @@ export function GameScene({
             }
         }
 
-        if (frameCount.current % 600 === 0) difficultyLevel.current++;
+        if (frameCount.current % 600 === 0) {
+            // Check for Perfect Wave
+            if (!wasBreached.current) {
+                perfectStreak.current++;
+                if (perfectStreak.current === 5) {
+                    onNotification("DÉFI ÉLITE ACTIVÉ : +50% HP", "#ef4444");
+                } else if (perfectStreak.current < 5) {
+                    onNotification(`SÉCURITÉ PARFAITE : STREAK ${perfectStreak.current}`, "#22d3ee");
+                }
+            } else {
+                if (perfectStreak.current >= 5) {
+                    onNotification("DÉFI ÉLITE TERMINÉ", "#60a5fa");
+                }
+                perfectStreak.current = 0;
+            }
+            wasBreached.current = false; // Reset for next wave
+
+            difficultyLevel.current++;
+            setWave(difficultyLevel.current);
+            scoreRef.current = Math.floor(difficultyLevel.current);
+            setScore(scoreRef.current);
+            onNotification(`VAGUE ${difficultyLevel.current}`, "#60a5fa");
+
+            // Super Reward every 10 waves
+            const waveNum = Math.floor(difficultyLevel.current);
+            if (waveNum % 10 === 0 && waveNum !== lastSuperWave.current) {
+                lastSuperWave.current = waveNum;
+                onShowSuperRewards();
+            }
+        }
 
         // 4. Update Projectiles
         for (let i = projectiles.current.length - 1; i >= 0; i--) {
             const p = projectiles.current[i];
             p.position.add(p.velocity);
 
+            // Homing Logic
+            if (weaponStats.current.isHoming && zombies.current.length > 0) {
+                let nearestZ: Zombie | null = null;
+                let minDist = 30; // Max search distance
+
+                zombies.current.forEach(z => {
+                    if (z.hp > 0) {
+                        const d = p.position.distanceTo(z.position);
+                        if (d < minDist) {
+                            minDist = d;
+                            nearestZ = z;
+                        }
+                    }
+                });
+
+                if (nearestZ) {
+                    const targetDir = (nearestZ as Zombie).position.clone().sub(p.position).normalize();
+                    // Smoothly interpolate current velocity towards target direction
+                    p.velocity.lerp(targetDir.multiplyScalar(PROJECTILE_SPEED), 0.1);
+                }
+            }
+
             if (p.maxBounce > 0) {
+                // X-Bounce (Sides)
                 if (p.position.x > FIELD_WIDTH / 2 || p.position.x < -FIELD_WIDTH / 2) {
                     p.velocity.x = -p.velocity.x;
                     p.maxBounce--;
                     p.position.x = Math.max(-FIELD_WIDTH / 2, Math.min(FIELD_WIDTH / 2, p.position.x));
                 }
+                // Z-Bounce (Front/Back)
+                if (p.position.z > FRONT_WALL_Z || p.position.z < BACK_WALL_Z) {
+                    p.velocity.z = -p.velocity.z;
+                    p.maxBounce--;
+                    p.position.z = Math.max(BACK_WALL_Z, Math.min(FRONT_WALL_Z, p.position.z));
+                }
             }
 
-            if (p.position.z < -FIELD_DEPTH - 5) {
+            // Enhanced Cleanup: Remove only if out of bounce arena or too far
+            if (p.position.z < BACK_WALL_Z - 5 || p.position.z > FRONT_WALL_Z + 5 ||
+                Math.abs(p.position.x) > FIELD_WIDTH / 2 + 5) {
                 projectiles.current.splice(i, 1);
             }
         }
@@ -230,6 +376,9 @@ export function GameScene({
         for (let i = zombies.current.length - 1; i >= 0; i--) {
             const z = zombies.current[i];
             z.position.z += z.speed;
+
+            // Detect Secure Zone Breach (Z > -22)
+            if (z.position.z > -22) wasBreached.current = true;
 
             if (z.position.x < playerPos.current.x - 0.5) z.position.x += 0.02;
             else if (z.position.x > playerPos.current.x + 0.5) z.position.x -= 0.02;
@@ -245,9 +394,23 @@ export function GameScene({
             for (let j = projectiles.current.length - 1; j >= 0; j--) {
                 const p = projectiles.current[j];
                 if (p.position.distanceTo(z.position) < 1.2) {
-                    z.hp -= weaponStats.current.damage; // Apply weapon damage
+                    const stats = weaponStats.current;
+                    const isCrit = Math.random() < stats.critChance / 100;
+                    const finalDamage = isCrit ? stats.damage * (1 + critBonus / 100) : stats.damage;
+                    z.hp -= finalDamage;
                     hit = true;
-                    playSound('break' as any);
+                    playSound(isCrit ? 'click' : 'break' as any);
+
+                    // --- FLOATING DAMAGE TEXT ---
+                    floatingTexts.current.push({
+                        id: Math.random(),
+                        position: z.position.clone().add(new THREE.Vector3(0, 1.5, 0)),
+                        content: `${Math.round(finalDamage)}`,
+                        color: isCrit ? '#facc15' : '#ffffff',
+                        life: 40,
+                        maxLife: 40,
+                        isCrit: isCrit
+                    });
 
                     // --- KNOCKBACK LOGIC ---
                     const pushDir = z.position.clone().sub(playerPos.current).normalize();
@@ -262,8 +425,8 @@ export function GameScene({
                                 id: Math.random(),
                                 position: z.position.clone(),
                                 velocity: new THREE.Vector3((Math.random() - 0.5) * 0.3, Math.random() * 0.3, (Math.random() - 0.5) * 0.3),
-                                color: z.hp <= 0 ? '#10b981' : '#fbbf24',
-                                life: z.hp <= 0 ? 40 : 20,
+                                color: isCrit ? '#facc15' : (z.hp <= 0 ? '#10b981' : '#fbbf24'),
+                                life: isCrit ? 50 : (z.hp <= 0 ? 40 : 20),
                                 active: true
                             });
                         }
@@ -310,26 +473,31 @@ export function GameScene({
             if (hit && z.hp <= 0) {
                 zombies.current.splice(i, 1);
                 setKills(prev => prev + 1);
-                scoreRef.current += (z.type === 'tank' ? 5 : z.type === 'runner' ? 2 : 1);
-                setScore(scoreRef.current);
 
                 // Loot Drops
                 const distToPlayer = z.position.distanceTo(playerPos.current);
                 const isClose = distToPlayer < 25;
-                const dropChance = z.type === 'tank' ? 0.8 : (z.type === 'runner' ? 0.4 : 0.2);
+                const isInDangerZone = z.position.z >= 0;
+                const dropChance = (isInDangerZone || z.type === 'boss') ? 1.0 : (z.type === 'tank' ? 0.8 : (z.type === 'runner' ? 0.4 : 0.2));
 
                 if (isClose && Math.random() < dropChance && powerUps.current.length < 50) {
                     const lootRoll = Math.random();
                     let type: PowerUp['type'] = 'scatter';
                     let color = '#facc15';
 
-                    if (lootRoll > 0.85) {
+                    if (lootRoll > 0.9) {
+                        type = 'crit';
+                        color = '#facc15'; // Yellow for Crit
+                    } else if (lootRoll > 0.75) {
+                        type = 'bounce';
+                        color = '#ffffff'; // White for Bounce
+                    } else if (lootRoll > 0.6) {
                         type = 'damage';
-                        color = '#f97316'; // Orange for damage
-                    } else if (lootRoll > 0.7) {
+                        color = '#f97316';
+                    } else if (lootRoll > 0.45) {
                         type = 'tech';
                         color = '#ef4444';
-                    } else if (lootRoll > 0.4) {
+                    } else if (lootRoll > 0.2) {
                         type = 'rapid';
                         color = '#3b82f6';
                     }
@@ -389,15 +557,27 @@ export function GameScene({
                 if (p.type === 'scatter') {
                     weaponStats.current.count++;
                     setWeaponCount(weaponStats.current.count);
+                    onNotification("+1 CANON", "#facc15");
                 } else if (p.type === 'rapid') {
                     weaponStats.current.delay = Math.max(0.05, weaponStats.current.delay * 0.9);
                     setWeaponDelay(weaponStats.current.delay);
+                    onNotification("+++ CADENCE", "#3b82f6");
                 } else if (p.type === 'tech') {
                     weaponStats.current.tech++;
                     setWeaponTech(weaponStats.current.tech);
+                    onNotification("TECH UPGRADED", "#ef4444");
                 } else if (p.type === 'damage') {
                     weaponStats.current.damage += 10;
                     setWeaponDamage(weaponStats.current.damage);
+                    onNotification("+10 DÉGÂTS", "#f97316");
+                } else if (p.type === 'crit') {
+                    weaponStats.current.critChance = Math.min(100, weaponStats.current.critChance + 10);
+                    setCritChance(weaponStats.current.critChance);
+                    onNotification("+10% CRIT", "#facc15");
+                } else if (p.type === 'bounce') {
+                    weaponStats.current.maxBounce++;
+                    setWeaponBounce(weaponStats.current.maxBounce);
+                    onNotification("+1 REBOND", "#ffffff");
                 }
 
                 playSound('click' as any);
@@ -439,8 +619,8 @@ export function GameScene({
             meshProjectiles.current.instanceMatrix.needsUpdate = true;
         }
 
-        if (meshWalkers.current && meshRunners.current && meshTanks.current) {
-            let idxW = 0, idxR = 0, idxT = 0;
+        if (meshWalkers.current && meshRunners.current && meshTanks.current && meshBosses.current) {
+            let idxW = 0, idxR = 0, idxT = 0, idxB = 0;
             zombies.current.forEach((z) => {
                 dummy.position.copy(z.position);
                 dummy.rotation.set(0, 0, 0);
@@ -448,7 +628,9 @@ export function GameScene({
                 dummy.scale.setScalar(z.size || 1);
                 dummy.updateMatrix();
 
-                if (z.type === 'tank') {
+                if (z.type === 'boss') {
+                    meshBosses.current!.setMatrixAt(idxB++, dummy.matrix);
+                } else if (z.type === 'tank') {
                     meshTanks.current!.setMatrixAt(idxT++, dummy.matrix);
                 } else if (z.type === 'runner') {
                     meshRunners.current!.setMatrixAt(idxR++, dummy.matrix);
@@ -460,10 +642,57 @@ export function GameScene({
             meshWalkers.current.count = idxW;
             meshRunners.current.count = idxR;
             meshTanks.current.count = idxT;
+            meshBosses.current.count = idxB;
 
             meshWalkers.current.instanceMatrix.needsUpdate = true;
             meshRunners.current.instanceMatrix.needsUpdate = true;
             meshTanks.current.instanceMatrix.needsUpdate = true;
+            meshBosses.current.instanceMatrix.needsUpdate = true;
+        }
+
+        // --- HEALTH BARS RENDER ---
+        if (meshHealthBg.current && meshHealthFill.current) {
+            let idxH = 0;
+            zombies.current.forEach((z) => {
+                // Only show health bar if zombie is damaged
+                if (z.hp >= z.maxHp) return;
+
+                const hpPercent = Math.max(0, z.hp / z.maxHp);
+                const barWidth = (z.size || 1) * 1.2;
+
+                // Background
+                dummy.position.copy(z.position);
+                dummy.position.y += (z.size || 1) + 0.5; // Offset above zombie
+                dummy.position.z += 0.2; // Slightly forward
+                dummy.scale.set(barWidth, 1, 1);
+                dummy.rotation.x = -Math.PI / 4; // Tilt towards camera
+                dummy.updateMatrix();
+                meshHealthBg.current!.setMatrixAt(idxH, dummy.matrix);
+
+                // Fill
+                const fillScale = barWidth * hpPercent;
+                dummy.scale.set(fillScale, 0.8, 1);
+                // Offset horizontal position to keep it left-aligned
+                const offsetX = (barWidth * (1 - hpPercent)) / 2;
+                dummy.position.x -= offsetX;
+                dummy.position.y += 0.01; // Slightly higher
+                dummy.updateMatrix();
+                meshHealthFill.current!.setMatrixAt(idxH, dummy.matrix);
+
+                // Color transition from Green to Red
+                const color = new THREE.Color().lerpColors(
+                    new THREE.Color('#ef4444'),
+                    new THREE.Color('#10b981'),
+                    hpPercent
+                );
+                meshHealthFill.current!.setColorAt(idxH, color);
+                idxH++;
+            });
+            meshHealthBg.current.count = idxH;
+            meshHealthFill.current.count = idxH;
+            meshHealthBg.current.instanceMatrix.needsUpdate = true;
+            meshHealthFill.current.instanceMatrix.needsUpdate = true;
+            if (meshHealthFill.current.instanceColor) meshHealthFill.current.instanceColor.needsUpdate = true;
         }
 
         if (meshParticles.current) {
@@ -480,9 +709,15 @@ export function GameScene({
             if (meshParticles.current.instanceColor) meshParticles.current.instanceColor.needsUpdate = true;
         }
 
-        // Update logical wave number based on difficulty
-        const currentWave = Math.floor(difficultyLevel.current);
-        setWave(currentWave);
+
+
+        // Update Floating Texts
+        for (let i = floatingTexts.current.length - 1; i >= 0; i--) {
+            const ft = floatingTexts.current[i];
+            ft.position.y += 0.02; // Float up
+            ft.life--;
+            if (ft.life <= 0) floatingTexts.current.splice(i, 1);
+        }
     });
 
     return (
@@ -498,8 +733,59 @@ export function GameScene({
             <instancedMesh ref={meshTanks} args={[zombieGeometry, undefined, 50]} frustumCulled={false}>
                 <meshStandardMaterial map={texTank} color="#ffffff" roughness={0.5} />
             </instancedMesh>
+            <instancedMesh ref={meshBosses} args={[zombieGeometry, undefined, 10]} frustumCulled={false}>
+                <meshStandardMaterial map={texBoss} color="#ffffff" roughness={0.5} />
+            </instancedMesh>
+
+            <instancedMesh ref={meshHealthBg} args={[healthBarGeometry, healthBarBgMaterial, 200]} frustumCulled={false} />
+            <instancedMesh ref={meshHealthFill} args={[healthBarGeometry, healthBarFillMaterial, 200]} frustumCulled={false} />
+
             <instancedMesh ref={meshParticles} args={[undefined, undefined, 1000]} geometry={particleGeometry} material={particleMaterial} frustumCulled={false} />
             <instancedMesh ref={meshPowerUps} args={[undefined, undefined, 50]} geometry={powerUpGeometry} material={powerUpMaterial} frustumCulled={false} />
+
+            {/* Damage Numbers */}
+            {floatingTexts.current.map((ft) => {
+                const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+                return (
+                    <Html
+                        key={ft.id}
+                        position={ft.position}
+                        center
+                        pointerEvents="none"
+                        distanceFactor={isTouch ? 8 : 10}
+                    >
+                        <div
+                            className={`font-black italic whitespace-nowrap select-none flex flex-col items-center justify-center`}
+                            style={{
+                                color: ft.color,
+                                fontSize: isTouch ? (ft.isCrit ? '3rem' : '1.8rem') : (ft.isCrit ? '2rem' : '1.2rem'),
+                                opacity: (ft.life / ft.maxLife) * 0.8,
+                                textShadow: ft.isCrit ? '0 0 10px rgba(250, 204, 21, 0.6), 0 0 4px rgba(0,0,0,0.8)' : '0 1px 2px rgba(0,0,0,0.6)',
+                                transform: `scale(${ft.isCrit ? 1.2 : 1})`,
+                                fontWeight: 900,
+                                letterSpacing: '-0.02em',
+                                fontFamily: 'monospace'
+                            }}
+                        >
+                            {ft.isCrit && <div className="text-[0.6rem] uppercase tracking-[0.2em] mb-[-0.2rem] opacity-90 text-yellow-500 font-bold">CRITIQUE</div>}
+                            {ft.content}
+                        </div>
+                    </Html>
+                );
+            })}
+            {/* Pointer Lock Hint - Only for PC (not touch) */}
+            {!document.pointerLockElement && gameState === 'playing' && !isPaused &&
+                lastInputSource.current !== 'touch' &&
+                !('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+                window.innerWidth > 768 && (
+                    <Html position={[0, 2, 0]} center>
+                        <div className="bg-black/80 px-4 py-2 rounded-lg border border-cyan-500/50 backdrop-blur-sm pointer-events-none">
+                            <span className="text-cyan-400 font-black text-xs uppercase tracking-widest animate-pulse text-center">
+                                CLIQUEZ POUR CAPTURER LA SOURIS
+                            </span>
+                        </div>
+                    </Html>
+                )}
         </group>
     );
 }

@@ -9,6 +9,7 @@ export function useGameInput() {
     const lastInputSource = useRef<InputSource>('keyboard');
     const isPointerDown = useRef(false);
     const ignoreMouseUntil = useRef(0);
+    const mouseDeltaX = useRef(0);
 
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
@@ -42,9 +43,11 @@ export function useGameInput() {
             if (Date.now() < ignoreMouseUntil.current) return;
             isPointerDown.current = false;
         };
-        const onMouseMove = () => {
+        const onMouseMove = (e: MouseEvent) => {
             if (Date.now() < ignoreMouseUntil.current) return;
             lastInputSource.current = 'mouse';
+            // Capture movementX for relative movement (Pointer Lock compatible)
+            mouseDeltaX.current += e.movementX;
         };
 
         window.addEventListener('keydown', onKeyDown);
@@ -70,5 +73,18 @@ export function useGameInput() {
         };
     }, []);
 
-    return { keys, lastInputSource, isPointerDown };
+    const triggerMove = (direction: 'left' | 'right' | null) => {
+        if (direction === 'left') {
+            keys.current['KeyA'] = true;
+            keys.current['KeyD'] = false;
+        } else if (direction === 'right') {
+            keys.current['KeyD'] = true;
+            keys.current['KeyA'] = false;
+        } else {
+            keys.current['KeyA'] = false;
+            keys.current['KeyD'] = false;
+        }
+    };
+
+    return { keys, lastInputSource, isPointerDown, mouseDeltaX, triggerMove };
 }

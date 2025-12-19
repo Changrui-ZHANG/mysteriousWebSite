@@ -7,7 +7,7 @@ export interface Zombie {
     hp: number;
     maxHp: number;
     active: boolean;
-    type: 'walker' | 'runner' | 'tank';
+    type: 'walker' | 'runner' | 'tank' | 'boss';
     color: string;
     size?: number;
 }
@@ -35,9 +35,19 @@ export interface Particle {
 export interface PowerUp {
     id: number;
     position: THREE.Vector3;
-    type: 'scatter' | 'rapid' | 'tech' | 'damage';
+    type: 'scatter' | 'rapid' | 'tech' | 'damage' | 'crit' | 'bounce';
     color: string;
     active: boolean;
+}
+
+export interface FloatingText {
+    id: number;
+    position: THREE.Vector3;
+    content: string;
+    color: string;
+    life: number;
+    maxLife: number;
+    isCrit?: boolean;
 }
 
 export interface ZombieShooterProps {
@@ -46,4 +56,12 @@ export interface ZombieShooterProps {
     personalBest?: { score: number; attempts?: number;[key: string]: any } | null;
     isAuthenticated?: boolean;
     onGameStart?: () => void;
+}
+export interface SuperUpgrade {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    type: 'damage_mult' | 'crit_bonus' | 'pierce' | 'fire_rate' | 'tech' | 'homing';
+    value: number;
 }

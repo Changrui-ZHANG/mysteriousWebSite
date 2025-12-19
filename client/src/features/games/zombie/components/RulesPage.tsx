@@ -36,7 +36,33 @@ export function RulesPage({ onBack }: RulesPageProps) {
                         </div>
                         <div className="bg-white/5 p-3 rounded-lg">
                             <span className="text-yellow-400 font-bold">Mobile:</span>
-                            <span className="text-white/70 ml-2">Touchez l'écran pour vous déplacer.</span>
+                            <span className="text-white/70 ml-2">Utilisez les pads tactiques en bas de l'écran pour bouger.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-3">📊 Interface Tactique (Mobile)</h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs md:text-sm">
+                        <div className="bg-cyan-500/5 p-2 border border-cyan-500/20 rounded-lg flex items-center gap-2">
+                            <span className="text-lg">🚀</span>
+                            <span className="text-white/80">**Cadence** : Vitesse de tir</span>
+                        </div>
+                        <div className="bg-cyan-500/5 p-2 border border-cyan-500/20 rounded-lg flex items-center gap-2">
+                            <span className="text-lg">⚡</span>
+                            <span className="text-white/80">**Dégâts** : Puissance par tir</span>
+                        </div>
+                        <div className="bg-cyan-500/5 p-2 border border-cyan-500/20 rounded-lg flex items-center gap-2">
+                            <span className="text-lg">🎯</span>
+                            <span className="text-white/80">**Critique** : % de chance de coup critique</span>
+                        </div>
+                        <div className="bg-cyan-500/5 p-2 border border-cyan-500/20 rounded-lg flex items-center gap-2">
+                            <span className="text-lg">🔫</span>
+                            <span className="text-white/80">**Canons** : Nombre de projectiles</span>
+                        </div>
+                        <div className="bg-cyan-500/5 p-2 border border-cyan-500/20 rounded-lg flex items-center gap-2">
+                            <span className="text-lg">🛡️</span>
+                            <span className="text-white/80">**Rebond** : Nombre de rebonds</span>
                         </div>
                     </div>
                 </section>
@@ -58,6 +84,13 @@ export function RulesPage({ onBack }: RulesPageProps) {
                             </div>
                             <p className="text-xs md:text-sm text-white/60">Réduit le délai entre les tirs</p>
                         </div>
+                        <div className="bg-white/5 p-3 rounded-lg border border-yellow-500/30">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></span>
+                                <h4 className="font-bold text-white">Critique (Jaune)</h4>
+                            </div>
+                            <p className="text-xs md:text-sm text-white/60">+10% Chance de Critique (Bonus de dégâts variable)</p>
+                        </div>
                         <div className="bg-white/5 p-3 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
                                 <span className="w-3 h-3 rounded-full bg-red-500"></span>
@@ -70,7 +103,14 @@ export function RulesPage({ onBack }: RulesPageProps) {
                                 <span className="w-3 h-3 rounded-full bg-orange-500"></span>
                                 <h4 className="font-bold text-white">Dégâts (Orange)</h4>
                             </div>
-                            <p className="text-xs md:text-sm text-white/60">+1 Dégât par tir</p>
+                            <p className="text-xs md:text-sm text-white/60">+10 Dégâts par tir</p>
+                        </div>
+                        <div className="bg-white/5 p-3 rounded-lg border border-white/30">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="w-3 h-3 rounded-full bg-white"></span>
+                                <h4 className="font-bold text-white">Rebond (Blanc)</h4>
+                            </div>
+                            <p className="text-xs md:text-sm text-white/60">+1 Rebond sur les murs</p>
                         </div>
                     </div>
                 </section>
@@ -108,30 +148,41 @@ export function RulesPage({ onBack }: RulesPageProps) {
                             <span className="text-red-400">●</span> <span className="text-white font-bold">Tank:</span>
                             <span className="text-white/60 ml-1">Lent, HP Élevé (4x), résiste au knockback</span>
                         </div>
+                        <div className="bg-purple-500/20 p-2 rounded border border-purple-500/30">
+                            <span className="text-purple-400">●</span> <span className="text-white font-bold">Boss:</span>
+                            <span className="text-white/60 ml-1 text-xs">Très Lent, HP Légendaire (10x), BUTIN GARANTI</span>
+                        </div>
                     </div>
                 </section>
 
                 <section>
                     <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">📈 Score</h3>
                     <div className="space-y-2 text-sm md:text-base">
-                        <div className="bg-white/5 p-2 rounded flex justify-between">
-                            <span className="text-white">Elimination Walker</span>
-                            <span className="text-cyan-400 font-bold">+1 pt</span>
+                        <div className="bg-cyan-900/20 p-4 rounded border border-cyan-500/30">
+                            <p className="text-white mb-2">Le score est déterminé par la **dernière vague atteinte**.</p>
+                            <p className="text-white/60 text-xs">Terminez des vagues pour augmenter votre score global et débloquer des récompenses d'élite.</p>
                         </div>
-                        <div className="bg-white/5 p-2 rounded flex justify-between">
-                            <span className="text-white">Elimination Runner</span>
-                            <span className="text-cyan-400 font-bold">+2 pts</span>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">🎁 Récompenses Spéciales</h3>
+                    <div className="space-y-2 text-sm md:text-base">
+                        <div className="bg-purple-500/10 p-3 rounded-lg border border-purple-500/30 italic text-purple-300">
+                            "Le Boss laisse tomber systématiquement un Power-Up à sa mort."
                         </div>
-                        <div className="bg-white/5 p-2 rounded flex justify-between">
-                            <span className="text-white">Elimination Tank</span>
-                            <span className="text-cyan-400 font-bold">+5 pts</span>
+                        <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/30 font-bold text-red-400 animate-pulse">
+                            DÉFENSE DÉSESPÉRÉE : Tout zombie éliminé dans la ZONE ROUGE laisse tomber un Power-Up !
+                        </div>
+                        <div className="bg-cyan-500/10 p-3 rounded-lg border border-cyan-500/30 text-xs italic text-cyan-200">
+                            DÉFI ÉLITE : Si aucun zombie n'entre dans la Zone Sécurisée pendant 5 vagues, leur santé augmente de +50%.
                         </div>
                     </div>
                 </section>
 
                 <div className="text-center pt-4 border-t border-cyan-500/20">
                     <p className="text-white/50 text-xs md:text-sm">
-                        💡 Astuce: Les HP des zombies augmentent avec chaque vague. Améliorez vos dégâts!
+                        💡 Astuce: Les HP des zombies augmentent de <span className="text-yellow-400 font-bold">20% à chaque vague (exponentiel)</span>. Améliorez vos dégâts!
                     </p>
                 </div>
             </div>
