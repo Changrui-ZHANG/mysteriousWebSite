@@ -25,6 +25,7 @@ interface GameSceneProps {
     isHoming: boolean;
     setWeaponBounce: (n: number) => void;
     setKills: (updater: (prev: number) => number) => void;
+    setZombieHp: (n: number) => void;
     onNotification: (text: string, color: string) => void;
     critBonus: number;
     onShowSuperRewards: () => void;
@@ -49,6 +50,7 @@ export function GameScene({
     isHoming,
     setWeaponBounce,
     setKills,
+    setZombieHp,
     onNotification,
     critBonus,
     onShowSuperRewards,
@@ -315,6 +317,12 @@ export function GameScene({
             setWave(difficultyLevel.current);
             scoreRef.current = Math.floor(difficultyLevel.current);
             setScore(scoreRef.current);
+
+            // Calculate base HP for this wave
+            let baseHp = 100 * Math.pow(1.2, difficultyLevel.current - 1);
+            if (perfectStreak.current >= 5) baseHp *= 1.5;
+            setZombieHp(Math.round(baseHp));
+
             onNotification(`VAGUE ${difficultyLevel.current}`, "#60a5fa");
 
             // Super Reward every 10 waves

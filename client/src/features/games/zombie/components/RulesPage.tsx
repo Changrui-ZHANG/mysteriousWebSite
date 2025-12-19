@@ -89,7 +89,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
                                 <span className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></span>
                                 <h4 className="font-bold text-white">Critique (Jaune)</h4>
                             </div>
-                            <p className="text-xs md:text-sm text-white/60">+10% Chance de Critique (Bonus de dégâts variable)</p>
+                            <p className="text-xs md:text-sm text-white/60">+10% Chance de Critique (Bonus variable)</p>
                         </div>
                         <div className="bg-white/5 p-3 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
@@ -116,66 +116,61 @@ export function RulesPage({ onBack }: RulesPageProps) {
                 </section>
 
                 <section>
-                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-3">🔫 Modes de Tir</h3>
+                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-3">🔫 Modes de Tir & Super Upgrades</h3>
                     <div className="space-y-2 text-sm md:text-base">
                         <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/30">
-                            <span className="text-green-300 font-bold">PERF (Tech 1):</span>
-                            <span className="text-white/70 ml-2">Tirs perforants - traverse les ennemis</span>
-                        </div>
-                        <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/30">
-                            <span className="text-blue-300 font-bold">REB (Tech 2):</span>
-                            <span className="text-white/70 ml-2">Tirs rebondissants - rebondissent sur les murs</span>
+                            <span className="text-green-300 font-bold">PERFORANT:</span>
+                            <span className="text-white/70 ml-2 text-xs md:text-sm">Traverse plusieurs ennemis (Tech 1)</span>
                         </div>
                         <div className="bg-purple-500/10 p-3 rounded-lg border border-purple-500/30">
-                            <span className="text-purple-300 font-bold">CHAÎNE (Tech 3):</span>
-                            <span className="text-white/70 ml-2">Tirs en chaîne - sautent entre ennemis</span>
+                            <span className="text-purple-300 font-bold">CHAÎNE:</span>
+                            <span className="text-white/70 ml-2 text-xs md:text-sm">Les balles sautent vers l'ennemi le plus proche (Tech 3)</span>
+                        </div>
+                        <div className="bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/30">
+                            <span className="text-yellow-300 font-bold">PISTAGE TACTIQUE:</span>
+                            <span className="text-white/70 ml-2 text-xs md:text-sm">Les balles traquent automatiquement les cibles</span>
                         </div>
                     </div>
                 </section>
 
                 <section>
-                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">🧟 Types d'Ennemis</h3>
+                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">🎁 Systèmes de Récompenses</h3>
                     <div className="space-y-2 text-sm md:text-base">
-                        <div className="bg-white/5 p-2 rounded">
-                            <span className="text-green-400">●</span> <span className="text-white font-bold">Walker:</span>
-                            <span className="text-white/60 ml-1">Lent, HP Normal (1x)</span>
+                        <div className="bg-purple-500/20 p-3 rounded-lg border border-purple-500/30">
+                            <h4 className="text-purple-300 font-black uppercase text-xs mb-1 tracking-widest">Super Récompense</h4>
+                            <p className="text-white/80">Toutes les **10 vagues**, choisissez parmi 4 améliorations massives.</p>
                         </div>
-                        <div className="bg-white/5 p-2 rounded">
-                            <span className="text-yellow-400">●</span> <span className="text-white font-bold">Runner:</span>
-                            <span className="text-white/60 ml-1">Rapide, HP Faible (0.5x)</span>
-                        </div>
-                        <div className="bg-white/5 p-2 rounded">
-                            <span className="text-red-400">●</span> <span className="text-white font-bold">Tank:</span>
-                            <span className="text-white/60 ml-1">Lent, HP Élevé (4x), résiste au knockback</span>
-                        </div>
-                        <div className="bg-purple-500/20 p-2 rounded border border-purple-500/30">
-                            <span className="text-purple-400">●</span> <span className="text-white font-bold">Boss:</span>
-                            <span className="text-white/60 ml-1 text-xs">Très Lent, HP Légendaire (10x), BUTIN GARANTI</span>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">📈 Score</h3>
-                    <div className="space-y-2 text-sm md:text-base">
-                        <div className="bg-cyan-900/20 p-4 rounded border border-cyan-500/30">
-                            <p className="text-white mb-2">Le score est déterminé par la **dernière vague atteinte**.</p>
-                            <p className="text-white/60 text-xs">Terminez des vagues pour augmenter votre score global et débloquer des récompenses d'élite.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">🎁 Récompenses Spéciales</h3>
-                    <div className="space-y-2 text-sm md:text-base">
-                        <div className="bg-purple-500/10 p-3 rounded-lg border border-purple-500/30 italic text-purple-300">
-                            "Le Boss laisse tomber systématiquement un Power-Up à sa mort."
-                        </div>
-                        <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/30 font-bold text-red-400 animate-pulse">
-                            DÉFENSE DÉSESPÉRÉE : Tout zombie éliminé dans la ZONE ROUGE laisse tomber un Power-Up !
+                        <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/30 font-bold text-red-400">
+                            DÉFENSE DÉSESPÉRÉE : Ennemie tué en ZONE ROUGE = Power-Up garanti !
                         </div>
                         <div className="bg-cyan-500/10 p-3 rounded-lg border border-cyan-500/30 text-xs italic text-cyan-200">
-                            DÉFI ÉLITE : Si aucun zombie n'entre dans la Zone Sécurisée pendant 5 vagues, leur santé augmente de +50%.
+                            DÉFI ÉLITE : 5 vagues sans breach = HP zombies +50% (Score Bonus).
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-2">🧟 Bestiaire</h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs md:text-sm">
+                        <div className="bg-white/5 p-2 rounded flex flex-col items-center border border-white/10">
+                            <span className="text-green-400 text-lg">●</span>
+                            <span className="text-white font-bold">Walker</span>
+                            <span className="text-white/60 text-[10px]">HP 1x | Vitesse 1x</span>
+                        </div>
+                        <div className="bg-white/5 p-2 rounded flex flex-col items-center border border-white/10">
+                            <span className="text-yellow-400 text-lg">●</span>
+                            <span className="text-white font-bold">Runner</span>
+                            <span className="text-white/60 text-[10px]">HP 0.5x | Vitesse 1.6x</span>
+                        </div>
+                        <div className="bg-white/5 p-2 rounded flex flex-col items-center border border-white/10">
+                            <span className="text-red-400 text-lg">●</span>
+                            <span className="text-white font-bold">Tank</span>
+                            <span className="text-white/60 text-[10px]">HP 4x | Knockback 50%</span>
+                        </div>
+                        <div className="bg-purple-500/20 p-2 rounded flex flex-col items-center border border-purple-500/30">
+                            <span className="text-purple-400 text-lg">●</span>
+                            <span className="text-white font-bold text-cyan-300">BOSS</span>
+                            <span className="text-white/60 text-[10px]">HP 10x | BUTIN GARANTI</span>
                         </div>
                     </div>
                 </section>

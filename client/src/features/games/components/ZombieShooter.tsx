@@ -29,6 +29,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     const [dangerLevel, setDangerLevel] = useState(0);
     const [wave, setWave] = useState(1);
     const [kills, setKills] = useState(0);
+    const [zombieHp, setZombieHp] = useState(100);
     const [isFlipped, setIsFlipped] = useState(false);
     const [gameId, setGameId] = useState(0);
     const [critBonus, setCritBonus] = useState(100);
@@ -69,6 +70,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
         setDangerLevel(0);
         setWave(1);
         setKills(0);
+        setZombieHp(100);
         setNotifications([]);
         setGameState('playing');
         setGameId(prev => prev + 1);
@@ -145,6 +147,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                                         setDangerLevel={setDangerLevel}
                                         setWave={setWave}
                                         setKills={setKills}
+                                        setZombieHp={setZombieHp}
                                         playSound={playSound}
                                         onGameOver={handleGameOver}
                                         isPaused={isFlipped || isPickingUpgrade}
@@ -167,17 +170,21 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                     {/* NOTIFICATIONS LAYER */}
                     <div className="absolute bottom-[40%] md:bottom-44 left-8 z-[70] pointer-events-none flex flex-col gap-2">
                         <AnimatePresence>
-                            {notifications.map((n) => (
+                            {notifications.map((n, i) => (
                                 <motion.div
                                     key={n.id}
                                     initial={{ x: -100, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
+                                    animate={{
+                                        x: 0,
+                                        opacity: i === notifications.length - 1 ? 1 : 0.4
+                                    }}
                                     exit={{ x: 50, opacity: 0 }}
-                                    className="px-4 py-2 rounded-r-lg border-l-4 font-black italic tracking-tighter text-lg bg-black/60 backdrop-blur-sm"
+                                    transition={{ duration: 0.3 }}
+                                    className="px-1.5 md:px-4 py-1 md:py-2 rounded-r-lg border-l-4 font-black italic tracking-tighter text-xs md:text-lg bg-black/60 backdrop-blur-sm"
                                     style={{
                                         color: n.color,
                                         borderColor: n.color,
-                                        textShadow: `0 0 10px ${n.color}44`
+                                        textShadow: i === notifications.length - 1 ? `0 0 10px ${n.color}88` : 'none'
                                     }}
                                 >
                                     {n.text}
@@ -202,6 +209,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                         dangerLevel={dangerLevel}
                         wave={wave}
                         kills={kills}
+                        zombieHp={zombieHp}
                         isMuted={isMuted}
                         toggleMute={toggleMute}
                         setIsFlipped={setIsFlipped}
