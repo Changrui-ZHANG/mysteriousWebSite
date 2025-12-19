@@ -218,7 +218,8 @@ export function GameScene({
             const bounceCount = stats.maxBounce + (stats.tech >= 2 ? 3 : 0);
             const chainCount = stats.tech >= 3 ? 3 : 0;
 
-            if (projectiles.current.length + stats.count < 1000) {
+
+            if (projectiles.current.length + stats.count < 200) {
                 for (let i = 0; i < stats.count; i++) {
                     projectilesToAdd.push({
                         x: startX + (i * spacing),
@@ -235,7 +236,8 @@ export function GameScene({
                         pierce: pierceCount,
                         maxBounce: bounceCount,
                         isCluster: false,
-                        chain: chainCount
+                        chain: chainCount,
+                        life: 300 // ~5 seconds at 60fps
                     });
                 });
                 playSound('click' as any);
@@ -326,6 +328,14 @@ export function GameScene({
         // 4. Update Projectiles
         for (let i = projectiles.current.length - 1; i >= 0; i--) {
             const p = projectiles.current[i];
+
+            // Decrement TTL
+            p.life--;
+            if (p.life <= 0) {
+                projectiles.current.splice(i, 1);
+                continue;
+            }
+
             p.position.add(p.velocity);
 
             // Homing Logic
@@ -401,16 +411,18 @@ export function GameScene({
                     hit = true;
                     playSound(isCrit ? 'click' : 'break' as any);
 
-                    // --- FLOATING DAMAGE TEXT ---
-                    floatingTexts.current.push({
-                        id: Math.random(),
-                        position: z.position.clone().add(new THREE.Vector3(0, 1.5, 0)),
-                        content: `${Math.round(finalDamage)}`,
-                        color: isCrit ? '#facc15' : '#ffffff',
-                        life: 40,
-                        maxLife: 40,
-                        isCrit: isCrit
-                    });
+                    // --- FLOATING DAMAGE TEXT --- (max 50)
+                    if (floatingTexts.current.length < 50) {
+                        floatingTexts.current.push({
+                            id: Math.random(),
+                            position: z.position.clone().add(new THREE.Vector3(0, 1.5, 0)),
+                            content: `${Math.round(finalDamage)}`,
+                            color: isCrit ? '#facc15' : '#ffffff',
+                            life: 40,
+                            maxLife: 40,
+                            isCrit: isCrit
+                        });
+                    }
 
                     // --- KNOCKBACK LOGIC ---
                     const pushDir = z.position.clone().sub(playerPos.current).normalize();
@@ -418,15 +430,15 @@ export function GameScene({
                     const resistance = KNOCKBACK_RESISTANCE[z.type] || 1;
                     z.position.z -= KNOCKBACK_FORCE * resistance;
 
-                    // --- PARTICLES ---
-                    if (particles.current.length < 1000) {
-                        for (let k = 0; k < 3; k++) {
+                    // --- PARTICLES --- (max 300)
+                    if (particles.current.length < 300) {
+                        for (let k = 0; k < 2; k++) { // Reduced from 3 to 2
                             particles.current.push({
                                 id: Math.random(),
                                 position: z.position.clone(),
                                 velocity: new THREE.Vector3((Math.random() - 0.5) * 0.3, Math.random() * 0.3, (Math.random() - 0.5) * 0.3),
                                 color: isCrit ? '#facc15' : (z.hp <= 0 ? '#10b981' : '#fbbf24'),
-                                life: isCrit ? 50 : (z.hp <= 0 ? 40 : 20),
+                                life: isCrit ? 30 : (z.hp <= 0 ? 25 : 15), // Reduced life
                                 active: true
                             });
                         }

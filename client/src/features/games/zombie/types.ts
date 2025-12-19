@@ -21,6 +21,7 @@ export interface Projectile {
     maxBounce: number;
     isCluster: boolean;
     chain: number;
+    life: number; // TTL in frames
 }
 
 export interface Particle {

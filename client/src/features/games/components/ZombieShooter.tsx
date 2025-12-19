@@ -165,7 +165,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                     />
 
                     {/* NOTIFICATIONS LAYER */}
-                    <div className="absolute bottom-[40%] md:bottom-32 left-8 z-40 pointer-events-none flex flex-col-reverse gap-2">
+                    <div className="absolute bottom-[40%] md:bottom-44 left-8 z-[70] pointer-events-none flex flex-col gap-2">
                         <AnimatePresence>
                             {notifications.map((n) => (
                                 <motion.div
