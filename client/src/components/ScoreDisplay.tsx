@@ -46,12 +46,12 @@ export function ScoreDisplay({
 
     return (
         <div className={`text-xl font-bold font-mono ${colors.primary} ${className}`}>
-            {t('game.score')}: {attempts !== undefined ? `${score}/${attempts}` : score}
+            {t('game.score')}: {attempts != null ? `${score}/${attempts}` : score}
 
             {showBest && personalBest && personalBest.score !== undefined && personalBest.score > 0 && (
                 <span className={`ml-3 text-lg ${colors.secondary} opacity-80`}>
                     ({t('game.best')}: {bestScore}
-                    {personalBest.attempts !== undefined && `/${personalBest.attempts}`})
+                    {personalBest.attempts != null && `/${personalBest.attempts}`})
                 </span>
             )}
         </div>

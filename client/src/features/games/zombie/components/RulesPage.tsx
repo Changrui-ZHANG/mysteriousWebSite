@@ -118,17 +118,35 @@ export function RulesPage({ onBack }: RulesPageProps) {
                 <section>
                     <h3 className="text-lg md:text-xl font-bold text-cyan-400 mb-3">🔫 Modes de Tir & Super Upgrades</h3>
                     <div className="space-y-2 text-sm md:text-base">
-                        <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/30">
-                            <span className="text-green-300 font-bold">PERFORANT:</span>
-                            <span className="text-white/70 ml-2 text-xs md:text-sm">Traverse plusieurs ennemis (Tech 1)</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="bg-green-500/10 p-2 rounded-lg border border-green-500/30">
+                                <span className="text-green-300 font-bold text-xs">TECH 1: PERFORANT</span>
+                                <p className="text-white/70 text-[10px]">Traverse les ennemis</p>
+                            </div>
+                            <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/30">
+                                <span className="text-blue-300 font-bold text-xs">TECH 2: REBOND +</span>
+                                <p className="text-white/70 text-[10px]">Augmente les rebonds max</p>
+                            </div>
+                            <div className="bg-purple-500/10 p-2 rounded-lg border border-purple-500/30">
+                                <span className="text-purple-300 font-bold text-xs">TECH 3: CHAÎNE</span>
+                                <p className="text-white/70 text-[10px]">Saute vers la cible proche</p>
+                            </div>
+                            <div className="bg-cyan-500/10 p-2 rounded-lg border border-cyan-500/30">
+                                <span className="text-cyan-300 font-bold text-xs">TECH 4: CRYO-CHOC</span>
+                                <p className="text-white/70 text-[10px]">Ralentit les ennemis (25%)</p>
+                            </div>
+                            <div className="bg-orange-500/10 p-2 rounded-lg border border-orange-500/30">
+                                <span className="text-orange-300 font-bold text-xs">TECH 5: RÉSONANCE</span>
+                                <p className="text-white/70 text-[10px]">Dégâts de zone (AoE) à l'impact</p>
+                            </div>
+                            <div className="bg-red-500/10 p-2 rounded-lg border border-red-500/30">
+                                <span className="text-red-300 font-bold text-xs">TECH 6: SINGULARITÉ</span>
+                                <p className="text-white/70 text-[10px]">Vortex sur coups critiques</p>
+                            </div>
                         </div>
-                        <div className="bg-purple-500/10 p-3 rounded-lg border border-purple-500/30">
-                            <span className="text-purple-300 font-bold">CHAÎNE:</span>
-                            <span className="text-white/70 ml-2 text-xs md:text-sm">Les balles sautent vers l'ennemi le plus proche (Tech 3)</span>
-                        </div>
-                        <div className="bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/30">
-                            <span className="text-yellow-300 font-bold">PISTAGE TACTIQUE:</span>
-                            <span className="text-white/70 ml-2 text-xs md:text-sm">Les balles traquent automatiquement les cibles</span>
+                        <div className="bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/30 mt-2">
+                            <span className="text-yellow-300 font-bold uppercase text-xs">PISTAGE TACTIQUE (Super):</span>
+                            <span className="text-white/70 ml-2 text-xs">Les balles traquent automatiquement les cibles</span>
                         </div>
                     </div>
                 </section>
@@ -138,7 +156,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
                     <div className="space-y-2 text-sm md:text-base">
                         <div className="bg-purple-500/20 p-3 rounded-lg border border-purple-500/30">
                             <h4 className="text-purple-300 font-black uppercase text-xs mb-1 tracking-widest">Super Récompense</h4>
-                            <p className="text-white/80">Toutes les **10 vagues**, choisissez parmi 4 améliorations massives.</p>
+                            <p className="text-white/80">Toutes les **10 vagues**, choisissez parmi 3 améliorations massives.</p>
                         </div>
                         <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/30 font-bold text-red-400">
                             DÉFENSE DÉSESPÉRÉE : Ennemie tué en ZONE ROUGE = Power-Up garanti !

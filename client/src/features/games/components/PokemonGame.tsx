@@ -3,10 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { getRandomPokemon, Pokemon } from '../../../utils/pokeapi';
 import { useSound } from '../../../hooks/useSound';
+import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
-import { FaQuestion, FaArrowLeft } from 'react-icons/fa';
-import { GradientHeading, IconButton, MuteButton, Button } from '../../../components';
+import { FaQuestion, FaArrowLeft, FaExpand, FaCompress } from 'react-icons/fa';
+import { GradientHeading, Button } from '../../../components';
+import { useBGMVolume } from '../../../hooks/useBGMVolume';
+import { useFullScreen } from '../../../hooks/useFullScreen';
+import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import { useRef } from 'react';
 
 interface PokemonGameProps {
     isDarkMode: boolean;
@@ -28,26 +33,22 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
     const [loading, setLoading] = useState(false);
     const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
+    const { volume, setVolume } = useBGMVolume(0.4);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
 
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
+
+    useBGM('https://cdn.pixabay.com/audio/2025/11/11/audio_3c21779078.mp3', !isMuted && !isFlipped, volume);
 
     useEffect(() => {
         loadNewPokemon();
     }, []);
 
+    // Resubmit score when user logs in or score changes, but with better control
     useEffect(() => {
-        // Autosave score logic
-        // Only submit when score or attempts actually change
         if (score > 0) {
-            onSubmitScore(score, attempts);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [score, attempts]);
-
-    // Resubmit score when user logs in
-    useEffect(() => {
-        if (isAuthenticated && score > 0) {
             onSubmitScore(score, attempts);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,6 +65,7 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
         // If score resets?
         if (score === 0 && onGameStart) onGameStart(); // Reset alert if starting from 0
 
+        if (score > 0) onSubmitScore(score, attempts);
         playSound('click'); // Play click sound on next/load
 
 
@@ -152,16 +154,43 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
     const cardClass = theme.glassCard('purple');
 
     return (
-        <div className="w-full h-full" style={{ perspective: '1000px' }}>
+        <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullScreen ? 'bg-slate-900 overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
+            {/* EXTERNAL GLOBAL CONTROLS */}
+            <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
+                <div className="w-32 mr-2 flex items-center">
+                    <ElasticSlider
+                        defaultValue={volume * 100}
+                        onChange={(v) => setVolume(v / 100)}
+                        color="purple"
+                        isMuted={isMuted}
+                        onToggleMute={toggleMute}
+                    />
+                </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
+                    className="text-purple-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                >
+                    {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
+                </button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
+                    className="text-purple-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Aide / Règles"
+                >
+                    <FaQuestion size={18} />
+                </button>
+            </div>
+
             <motion.div
-                className="w-full h-full relative"
+                className="flex-1 w-full h-full relative mx-4 mb-4"
                 animate={{ rotateY: isFlipped ? 180 : 0 }}
                 transition={{ duration: 0.6 }}
                 style={{ transformStyle: 'preserve-3d' }}
             >
                 {/* Front Face (Game) */}
                 <div
-                    className="absolute inset-0 w-full h-full overflow-y-auto p-4 md:p-6 font-mono flex flex-col scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-transparent"
+                    className="absolute inset-0 w-full h-full overflow-y-auto p-4 md:p-6 font-mono flex flex-col scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-transparent border border-white/20 rounded-b-xl"
                     style={{ backfaceVisibility: 'hidden' }}
                 >
                     {/* Score Header */}
@@ -177,17 +206,6 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <IconButton
-                                icon={<FaQuestion size={20} />}
-                                onClick={() => setIsFlipped(true)}
-                                color="purple"
-                                title="Rules"
-                            />
-                            <MuteButton
-                                isMuted={isMuted}
-                                onToggle={toggleMute}
-                                color="purple"
-                            />
                             <Button
                                 onClick={loadNewPokemon}
                                 color="purple"
@@ -301,25 +319,38 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-6 text-left">
-                        <section>
-                            <h3 className="text-xl font-bold text-purple-400 mb-2">🐾 {t('game.pokemon_quiz')}</h3>
-                            <p className="text-white/80 leading-relaxed">
+                    <div className="flex-1 overflow-y-auto space-y-6 text-left scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent pr-2">
+                        <section className="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
+                            <h3 className="text-xl font-bold text-purple-400 mb-3 flex items-center gap-2">
+                                <span className="bg-purple-500/20 p-2 rounded-lg">🐾</span>
+                                {t('game.objective')}
+                            </h3>
+                            <p className="text-white/80 leading-relaxed text-sm md:text-base">
                                 {t('game.pokemon_rules')}
                             </p>
                         </section>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white/5 p-4 rounded-lg">
-                                <span className="block text-2xl mb-2">❓</span>
-                                <h4 className="font-bold text-white mb-1">{t('game.quiz')}</h4>
-                                <p className="text-sm text-white/60">{t('game.pokemon_quiz_desc')}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-purple-500/30 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">❓</span>
+                                    <h4 className="font-bold text-white">{t('game.controls')}</h4>
+                                </div>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('game.pokemon_quiz_desc')}</p>
                             </div>
-                            <div className="bg-white/5 p-4 rounded-lg">
-                                <span className="block text-2xl mb-2">🏆</span>
-                                <h4 className="font-bold text-white mb-1">{t('game.score')}</h4>
-                                <p className="text-sm text-white/60">{t('game.pokemon_score_desc')}</p>
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-yellow-500/30 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">🏆</span>
+                                    <h4 className="font-bold text-white">{t('game.score')}</h4>
+                                </div>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('game.pokemon_score_desc')}</p>
                             </div>
+                        </div>
+
+                        <div className="bg-gradient-to-r from-purple-500/10 to-transparent p-4 rounded-xl border-l-4 border-purple-400">
+                            <p className="text-xs md:text-sm text-purple-200 italic">
+                                💡 Astuce : Plus vous répondez vite, plus vous prouvez votre maîtrise du Pokédex !
+                            </p>
                         </div>
                     </div>
                 </div>

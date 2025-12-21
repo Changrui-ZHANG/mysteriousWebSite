@@ -22,7 +22,7 @@ export const API_ENDPOINTS = {
     // Games
     GAMES: {
         LIST: `${API_BASE}/games`,
-        TOGGLE: `${API_BASE}/games/toggle`,
+        TOGGLE: `${API_BASE}/games/{gameType}/toggle`,
         LEADERBOARD: (gameType: string) => `${API_BASE}/scores/leaderboard/${gameType}`,
         SUBMIT_SCORE: `${API_BASE}/scores`,
         PERSONAL_BEST: (userId: string, gameType: string) =>

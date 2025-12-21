@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
-import { FaVolumeMute, FaVolumeUp, FaQuestion } from 'react-icons/fa';
 
 
 interface HUDProps {
@@ -19,9 +18,6 @@ interface HUDProps {
     wave: number;
     kills: number;
     zombieHp: number;
-    isMuted: boolean;
-    toggleMute: () => void;
-    setIsFlipped: (v: boolean) => void;
     onStart: () => void;
 }
 
@@ -43,9 +39,6 @@ export function HUD({
     wave,
     kills,
     zombieHp,
-    isMuted,
-    toggleMute,
-    setIsFlipped,
     onStart,
 }: HUDProps) {
 
@@ -74,187 +67,168 @@ export function HUD({
 
 
 
-            {/* Tactical Header */}
-            <div className="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-start z-[60]">
+            {/* Tactical Header - More Compact */}
+            <div className="absolute top-0 left-0 w-full p-2 md:p-4 flex justify-between items-start z-[60]">
                 {/* Left: System Status & Primary Stats */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={(e) => { e.stopPropagation(); toggleMute(); }}
-                            className="text-cyan-400 p-2 bg-black/40 border border-cyan-500/30 rounded-lg backdrop-blur-sm pointer-events-auto active:scale-95 transition-transform"
-                            title={isMuted ? "Activer le son" : "Couper le son"}
-                        >
-                            {isMuted ? <FaVolumeMute size={18} /> : <FaVolumeUp size={18} />}
-                        </button>
                         <div className="flex flex-col">
-                            <span className="text-[8px] text-cyan-400 font-bold tracking-widest opacity-60 uppercase leading-none">System</span>
-                            {/* Mobile Tech Pips */}
-                            <div className="flex gap-1 mt-0.5 md:hidden">
-                                {weaponTech >= 1 && <div className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e]" />}
-                                {weaponTech >= 2 && <div className="w-1 h-1 rounded-full bg-blue-500 shadow-[0_0_5px_#3b82f6]" />}
-                                {weaponTech >= 3 && <div className="w-1 h-1 rounded-full bg-purple-500 shadow-[0_0_5px_#a855f7]" />}
-                                {isHoming && <div className="w-1 h-1 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15] animate-pulse" />}
+                            <span className="text-[7px] text-cyan-400 font-bold tracking-[0.2em] opacity-60 uppercase leading-none">Status Système</span>
+                            {/* Mobile Persistent Tech Row - Larger */}
+                            <div className="flex items-center gap-1 mt-0.5 md:hidden">
+                                {[1, 2, 3, 4, 5, 6].map(t => (
+                                    <span key={t} className={`text-[9px] font-black px-1 rounded-sm border ${weaponTech >= t
+                                        ? 'text-white border-cyan-500/50 bg-cyan-900/40 shadow-[0_0_5px_rgba(6,182,212,0.5)]'
+                                        : 'text-white/20 border-white/5 bg-transparent'
+                                        }`}>T{t}</span>
+                                ))}
+                                <span className={`text-[8px] font-black px-1 ml-1 ${isHoming ? 'text-yellow-400 animate-pulse' : 'text-white/10'}`}>P</span>
                             </div>
-                            {isHoming && <div className="text-[6px] text-yellow-500 font-black tracking-tighter mt-1 animate-pulse">PISTAGE ACTIVÉ</div>}
                         </div>
                     </div>
 
                     {/* MOBILE PRIMARY STATS (Left Side) */}
-                    <div className="flex flex-col gap-1 md:hidden pl-1">
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm">🚀</span>
-                            <span className="text-[10px] font-black text-cyan-400 leading-none">{fireRate}%</span>
+                    <div className="flex flex-row gap-3 md:hidden pl-1 mt-1">
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs">🚀</span>
+                            <span className="text-[9px] font-black text-cyan-400 leading-none">{fireRate}%</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm">⚡</span>
-                            <span className="text-[10px] font-black text-red-500 leading-none">{weaponDamage}</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs">⚡</span>
+                            <span className="text-[9px] font-black text-red-500 leading-none">{weaponDamage}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm">🔫</span>
-                            <span className="text-[10px] font-black text-white leading-none">x{weaponCount}</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs">🔫</span>
+                            <span className="text-[9px] font-black text-white leading-none">x{weaponCount}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Right: Scores & Secondary Stats */}
-                <div className="flex flex-col items-end gap-1.5 md:gap-2">
-                    <div className="flex items-center gap-2">
-                        {/* MOBILE ONLY RULES */}
-                        <button
-                            onClick={(e) => { e.stopPropagation(); setIsFlipped(true); }}
-                            className="md:hidden text-cyan-400 p-2 bg-black/40 border border-cyan-500/30 rounded-lg backdrop-blur-sm pointer-events-auto active:scale-95 transition-transform"
-                        >
-                            <FaQuestion size={18} />
-                        </button>
-
-                        <div className="flex gap-1.5 md:gap-2">
-                            <div className="bg-black/60 border border-cyan-500/30 px-2 md:px-3 py-0.5 md:py-1 transform -skew-x-12 backdrop-blur-md">
+                <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center gap-1.5">
+                        <div className="flex gap-1">
+                            <div className="bg-black/60 border border-cyan-500/30 px-2 py-0.5 transform -skew-x-12 backdrop-blur-md">
                                 <div className="transform skew-x-12 flex flex-col items-center">
-                                    <span className="text-[6px] md:text-[8px] text-cyan-400 tracking-widest uppercase font-bold">Vague</span>
-                                    <span className="text-base md:text-2xl font-black text-white leading-none">{wave}</span>
+                                    <span className="text-[6px] md:text-[7px] text-cyan-400 tracking-widest uppercase font-bold">Vague</span>
+                                    <span className="text-sm md:text-xl font-black text-white leading-none">{wave}</span>
                                 </div>
                             </div>
-                            <div className="bg-black/60 border border-cyan-500/30 px-2 md:px-3 py-0.5 md:py-1 transform -skew-x-12 backdrop-blur-md">
+                            <div className="bg-black/60 border border-cyan-500/30 px-2 py-0.5 transform -skew-x-12 backdrop-blur-md">
                                 <div className="transform skew-x-12 flex flex-col items-center">
-                                    <span className="text-[6px] md:text-[8px] text-cyan-400 tracking-widest uppercase font-bold">Kills</span>
-                                    <span className="text-base md:text-2xl font-black text-white leading-none">{kills}</span>
+                                    <span className="text-[6px] md:text-[7px] text-cyan-400 tracking-widest uppercase font-bold">Kills</span>
+                                    <span className="text-sm md:text-xl font-black text-white leading-none">{kills}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {/* PB / Score Display - Slightly Larger */}
-                    <div className="relative mt-1">
+                    {/* PB / Score Display - Compact */}
+                    <div className="relative">
                         <div className="absolute inset-0 bg-black/60 transform -skew-x-12 border border-cyan-500/30 blur-[1px]" />
-                        <div className="relative border-l-2 border-cyan-500/40 px-3 py-1 transform -skew-x-12 backdrop-blur-sm">
-                            <div className="transform skew-x-12 flex items-center gap-2">
-                                <span className="text-[8px] md:text-[10px] text-cyan-400 font-bold tracking-widest uppercase leading-none">Record</span>
-                                <span className="text-base md:text-lg font-black text-white leading-none">
+                        <div className="relative border-l-2 border-cyan-500/40 px-2 py-0.5 transform -skew-x-12 backdrop-blur-sm">
+                            <div className="transform skew-x-12 flex items-center gap-1.5">
+                                <span className="text-[7px] md:text-[8px] text-cyan-400 font-bold uppercase leading-none">Record</span>
+                                <span className="text-sm md:text-base font-black text-white leading-none">
                                     {personalBest?.score || 0}
                                 </span>
                             </div>
                         </div>
                     </div>
                     {/* MOBILE SECONDARY STATS (Right Side) */}
-                    <div className="flex flex-col gap-1 md:hidden items-end pr-1">
-                        <div className="flex items-center gap-2 flex-row-reverse">
-                            <span className="text-sm">🎯</span>
-                            <span className="text-[10px] font-black text-yellow-500 leading-none">{critChance}%</span>
+                    <div className="flex flex-row gap-3 md:hidden items-center pr-1">
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs">🎯</span>
+                            <span className="text-[9px] font-black text-yellow-500 leading-none">{critChance}%</span>
                         </div>
-                        <div className="flex items-center gap-2 flex-row-reverse">
-                            <span className="text-sm">🛡️</span>
-                            <span className="text-[10px] font-black text-white leading-none">x{weaponBounce}</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs">🛡️</span>
+                            <span className="text-[9px] font-black text-white leading-none">x{weaponBounce}</span>
                         </div>
-                        <div className="flex items-center gap-2 flex-row-reverse">
-                            <span className="text-[12px]">💚</span>
-                            <span className="text-[10px] font-black text-green-500 leading-none">{zombieHp}</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-[10px]">💚</span>
+                            <span className="text-[9px] font-black text-green-500 leading-none">{zombieHp}</span>
                         </div>
                     </div>
-
-
                 </div>
             </div>
 
-            {/* Bottom Weapon HUD - Desktop Only */}
-            < div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-4 z-[60] hidden md:block" >
-                <div className="flex flex-col items-center gap-2">
-                    <div className="flex items-end justify-center gap-4 w-full">
-                        {/* Weapon Stats Left */}
-                        <div className="flex-1 bg-black/60 border-t-2 border-cyan-500/50 p-3 backdrop-blur-sm rounded-bl-xl clip-path-polygon-[0_0,100%_0,90%_100%,0%_100%]">
-                            <div className="flex flex-col gap-1 w-full">
-                                <div className="flex justify-between items-center text-cyan-300 gap-1">
-                                    <div className="flex-1 flex flex-col items-center">
-                                        <span className="text-[10px] uppercase opacity-70 font-bold">Cadence</span>
-                                        <span className="text-xl font-bold">{fireRate}%</span>
-                                    </div>
-                                    <div className="h-8 w-[1px] bg-cyan-500/30" />
-                                    <div className="flex-1 flex flex-col items-center">
-                                        <span className="text-[10px] uppercase opacity-70 font-bold">Dégâts</span>
-                                        <span className="text-xl font-bold text-red-400">{weaponDamage}</span>
-                                    </div>
-                                    <div className="h-8 w-[1px] bg-cyan-500/30" />
-                                    <div className="flex-1 flex flex-col items-center">
-                                        <span className="text-[10px] uppercase opacity-70 font-bold">Chance Crit</span>
-                                        <span className="text-xl font-bold text-yellow-500">{critChance}%</span>
-                                    </div>
-                                </div>
+            {/* Bottom Weapon HUD - Redesigned for Compactness & Visibility */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-3xl px-4 z-[60] hidden md:block">
+                <div className="flex flex-col items-center">
+                    {/* Tech Bay - Prominent & Horizontal */}
+                    <div className="flex items-center justify-center gap-3 mb-2 px-6 py-1.5 bg-black/40 backdrop-blur-sm border-x border-t border-cyan-500/30 rounded-t-2xl">
+                        {[1, 2, 3, 4, 5, 6].map(t => (
+                            <div key={t} className="flex flex-col items-center">
+                                <span className={`text-[10px] font-black transition-all duration-300 ${weaponTech >= t
+                                    ? `text-white drop-shadow-[0_0_10px_#22d3ee]`
+                                    : 'text-white/10'
+                                    }`}>T{t}</span>
+                                <div className={`w-6 h-1 mt-1 rounded-full transition-all duration-500 ${weaponTech >= t
+                                    ? (t === 1 ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' :
+                                        t === 2 ? 'bg-blue-500 shadow-[0_0_8px_#3b82f6]' :
+                                            t === 3 ? 'bg-purple-500 shadow-[0_0_8px_#a855f7]' :
+                                                t === 4 ? 'bg-cyan-500 shadow-[0_0_8px_#06b6d4]' :
+                                                    t === 5 ? 'bg-orange-500 shadow-[0_0_8px_#f97316]' :
+                                                        'bg-red-500 shadow-[0_0_8px_#ef4444]')
+                                    : 'bg-white/5'
+                                    }`} />
+                            </div>
+                        ))}
+                        <div className="w-[2px] h-4 bg-white/10 mx-1" />
+                        <div className="flex flex-col items-center">
+                            <span className={`text-[9px] font-black ${isHoming ? 'text-yellow-400 animate-pulse' : 'text-white/10'}`}>PISTAGE</span>
+                            <div className={`w-10 h-1 mt-1 rounded-full ${isHoming ? 'bg-yellow-400 shadow-[0_0_8px_#facc15]' : 'bg-white/5'}`} />
+                        </div>
+                    </div>
+
+                    <div className="flex items-end justify-center gap-2 w-full">
+                        {/* Left Stats Cluster */}
+                        <div className="flex-1 bg-black/80 border border-cyan-500/30 p-2 backdrop-blur-md rounded-lg flex justify-around">
+                            <div className="flex flex-col items-center">
+                                <span className="text-[8px] uppercase opacity-50 font-bold">Cadence</span>
+                                <span className="text-base font-bold text-cyan-400">{fireRate}%</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-[8px] uppercase opacity-50 font-bold">Dégâts</span>
+                                <span className="text-base font-bold text-red-500">{weaponDamage}</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-[8px] uppercase opacity-50 font-bold">Crit%</span>
+                                <span className="text-base font-bold text-yellow-500">{critChance}%</span>
                             </div>
                         </div>
 
-                        {/* Main Cannon Count */}
-                        <div className="relative group shrink-0">
-                            <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
-                            <div className="bg-black/80 border-2 border-cyan-400 px-8 py-4 rounded-lg transform -translate-y-4 shadow-[0_0_20px_rgba(34,211,238,0.3)] min-w-[140px] text-center backdrop-blur-md">
-                                <div className="text-[9px] uppercase tracking-[0.2em] text-cyan-200 mb-1 font-bold">Canons</div>
-                                <div className="text-5xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
-                                    {weaponCount}
-                                </div>
+                        {/* Centered Cannon Control */}
+                        <div className="relative group mx-2">
+                            <div className="absolute inset-0 bg-cyan-500/10 blur-xl rounded-full opacity-20" />
+                            <div className="bg-black border-2 border-cyan-500 px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.2)] text-center relative overflow-hidden">
+                                <div className="text-[8px] uppercase tracking-tighter text-cyan-400/80 font-bold">Canons</div>
+                                <div className="text-3xl font-black text-white leading-none">{weaponCount}</div>
                             </div>
                         </div>
 
-                        {/* Weapon Stats Right */}
-                        <div className="flex-1 bg-black/60 border-t-2 border-cyan-500/50 p-3 backdrop-blur-sm rounded-br-xl clip-path-polygon-[10%_0,100%_0,100%_100%,0%_100%]">
-                            <div className="flex items-center justify-between w-full text-cyan-300 gap-1">
-                                <div className="flex-1 flex flex-col items-center">
-                                    <span className="text-[10px] uppercase opacity-70 font-bold">Bonus Crit</span>
-                                    <span className="text-xl font-bold text-orange-400">+{critBonus}%</span>
-                                </div>
-                                <div className="h-8 w-[1px] bg-cyan-500/30" />
-                                <div className="flex-1 flex flex-col items-center">
-                                    <span className="text-[10px] uppercase opacity-70 font-bold">Rebonds</span>
-                                    <span className="text-xl font-bold text-blue-400">x{weaponBounce}</span>
-                                </div>
-                                <div className="h-8 w-[1px] bg-cyan-500/30" />
-                                <div className="flex-1 flex flex-col items-center">
-                                    <span className="text-[10px] uppercase opacity-70 font-bold">HP Zombies</span>
-                                    <span className="text-xl font-bold text-green-400">{zombieHp}</span>
-                                </div>
-
-                                <div className="h-8 w-[2px] bg-cyan-500/50 mx-2" />
-
-                                <div className="flex items-center gap-1">
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); toggleMute(); }}
-                                        className="text-cyan-400 hover:text-white transition-colors pointer-events-auto p-1"
-                                        title={isMuted ? "Activer le son" : "Couper le son"}
-                                    >
-                                        {isMuted ? <FaVolumeMute size={18} /> : <FaVolumeUp size={18} />}
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); setIsFlipped(true); }}
-                                        className="text-cyan-400 hover:text-white transition-colors pointer-events-auto p-1"
-                                        title="Règles"
-                                    >
-                                        <FaQuestion size={18} />
-                                    </button>
-                                </div>
+                        {/* Right Stats Cluster */}
+                        <div className="flex-1 bg-black/80 border border-cyan-500/30 p-2 backdrop-blur-md rounded-lg flex justify-around">
+                            <div className="flex flex-col items-center">
+                                <span className="text-[8px] uppercase opacity-50 font-bold">Bonus</span>
+                                <span className="text-base font-bold text-orange-400">+{critBonus}%</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-[8px] uppercase opacity-50 font-bold">Rebounds</span>
+                                <span className="text-base font-bold text-blue-400">x{weaponBounce}</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-[8px] uppercase opacity-50 font-bold">Z-HP</span>
+                                <span className="text-base font-bold text-green-500">{zombieHp}</span>
                             </div>
                         </div>
                     </div>
-                    <div className="text-[10px] text-red-400 font-black animate-pulse uppercase tracking-widest h-4">
-                        {dangerLevel > 0.8 ? 'DANGER CRITIQUE' : dangerLevel > 0.5 ? 'ALERTE' : ''}
+
+                    <div className="text-[9px] text-red-500 font-black animate-pulse uppercase tracking-[0.3em] h-3 mt-1">
+                        {dangerLevel > 0.8 ? '!! DANGER CRITIQUE !!' : dangerLevel > 0.5 ? '! ALERTE !' : ''}
                     </div>
                 </div>
-            </div >
+            </div>
 
             {/* Intro / Menu Overlay */}
             <AnimatePresence>

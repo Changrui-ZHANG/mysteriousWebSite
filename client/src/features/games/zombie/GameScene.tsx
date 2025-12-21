@@ -154,8 +154,8 @@ export function GameScene({
             document.exitPointerLock();
         }
 
-        window.addEventListener('mousedown', handleLock);
-        return () => window.removeEventListener('mousedown', handleLock);
+        gl.domElement.addEventListener('mousedown', handleLock);
+        return () => gl.domElement.removeEventListener('mousedown', handleLock);
     }, [gameState, isPaused, gl]);
 
     useFrame((state) => {
@@ -291,6 +291,7 @@ export function GameScene({
                     active: true,
                     type,
                     color,
+                    baseColor: color,
                     size
                 });
             }
@@ -391,15 +392,25 @@ export function GameScene({
         }
 
         // 5. Update Zombies & Collisions
+        const currentTime = state.clock.elapsedTime;
         for (let i = zombies.current.length - 1; i >= 0; i--) {
             const z = zombies.current[i];
-            z.position.z += z.speed;
+
+            // Handle Slow Effect (Tech 4)
+            let currentSpeed = z.speed;
+            if (z.slowedUntil && z.slowedUntil > currentTime) {
+                currentSpeed *= 0.75;
+                z.color = '#60a5fa'; // Cryo-tint
+            } else {
+                z.color = z.baseColor;
+            }
+            z.position.z += currentSpeed;
 
             // Detect Secure Zone Breach (Z > -22)
             if (z.position.z > -22) wasBreached.current = true;
 
-            if (z.position.x < playerPos.current.x - 0.5) z.position.x += 0.02;
-            else if (z.position.x > playerPos.current.x + 0.5) z.position.x -= 0.02;
+            if (z.position.x < playerPos.current.x - 0.5) z.position.x += 0.02 * (z.slowedUntil && z.slowedUntil > currentTime ? 0.75 : 1);
+            else if (z.position.x > playerPos.current.x + 0.5) z.position.x -= 0.02 * (z.slowedUntil && z.slowedUntil > currentTime ? 0.75 : 1);
 
             if (z.position.z > playerPos.current.z) {
                 setGameState('gameover');
@@ -418,6 +429,62 @@ export function GameScene({
                     z.hp -= finalDamage;
                     hit = true;
                     playSound(isCrit ? 'click' : 'break' as any);
+
+                    // --- TECH 4: CRYO-SHOCK ---
+                    if (stats.tech >= 4) {
+                        z.slowedUntil = currentTime + 1.5;
+                    }
+
+                    // --- TECH 5: RESONANCE (AoE) ---
+                    if (stats.tech >= 5) {
+                        const aoeRadius = 4;
+                        const aoeDamage = finalDamage * 0.3;
+                        zombies.current.forEach(otherZ => {
+                            if (otherZ.id !== z.id && otherZ.hp > 0) {
+                                if (otherZ.position.distanceTo(z.position) < aoeRadius) {
+                                    otherZ.hp -= aoeDamage;
+                                    // Visual feedback for AoE
+                                    if (particles.current.length < 300) {
+                                        particles.current.push({
+                                            id: Math.random(),
+                                            position: otherZ.position.clone(),
+                                            velocity: new THREE.Vector3(0, 0.1, 0),
+                                            color: '#22d3ee',
+                                            life: 10,
+                                            active: true
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // --- TECH 6: SINGULARITY (Vortex on Crit) ---
+                    if (stats.tech >= 6 && isCrit) {
+                        const vortexRadius = 6;
+                        zombies.current.forEach(otherZ => {
+                            if (otherZ.id !== z.id && otherZ.hp > 0) {
+                                const dist = otherZ.position.distanceTo(z.position);
+                                if (dist < vortexRadius) {
+                                    const pullDir = z.position.clone().sub(otherZ.position).normalize();
+                                    otherZ.position.add(pullDir.multiplyScalar(0.8)); // Strong pull
+                                }
+                            }
+                        });
+                        // Visual feedback for Singularity
+                        if (particles.current.length < 300) {
+                            for (let k = 0; k < 5; k++) {
+                                particles.current.push({
+                                    id: Math.random(),
+                                    position: z.position.clone().add(new THREE.Vector3((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2)),
+                                    velocity: playerPos.current.clone().sub(z.position).normalize().multiplyScalar(-0.1),
+                                    color: '#a855f7',
+                                    life: 20,
+                                    active: true
+                                });
+                            }
+                        }
+                    }
 
                     // --- FLOATING DAMAGE TEXT --- (max 50)
                     if (floatingTexts.current.length < 50) {
@@ -583,9 +650,9 @@ export function GameScene({
                     setWeaponDelay(weaponStats.current.delay);
                     onNotification("+++ CADENCE", "#3b82f6");
                 } else if (p.type === 'tech') {
-                    weaponStats.current.tech++;
+                    weaponStats.current.tech = Math.min(6, weaponStats.current.tech + 1);
                     setWeaponTech(weaponStats.current.tech);
-                    onNotification("TECH UPGRADED", "#ef4444");
+                    onNotification(weaponStats.current.tech === 6 ? "TECH MAXIMALE" : "TECH UPGRADED", "#ef4444");
                 } else if (p.type === 'damage') {
                     weaponStats.current.damage += 10;
                     setWeaponDamage(weaponStats.current.damage);

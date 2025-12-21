@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Suspense, useState, useMemo } from 'react';
 import { useMute } from '../../../hooks/useMute';
 import { useSound } from '../../../hooks/useSound';
+import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
+import { FaQuestion, FaArrowLeft, FaArrowRight, FaExpand, FaCompress } from 'react-icons/fa';
 import { HUD } from '../zombie/components/HUD';
 import { World } from '../zombie/components/World';
 import { RulesPage } from '../zombie/components/RulesPage';
@@ -11,11 +13,21 @@ import { GameScene } from '../zombie/GameScene';
 import { SuperRewardModal } from '../zombie/components/SuperRewardModal';
 import { SuperUpgrade } from '../zombie/types';
 import { ZombieShooterProps } from '../zombie/types';
+import { useBGMVolume } from '../../../hooks/useBGMVolume';
+import { useFullScreen } from '../../../hooks/useFullScreen';
+import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import { useRef } from 'react';
 
 export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest, onGameStart }: ZombieShooterProps) {
     const theme = useTheme(isDarkMode);
     const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
+    const { volume, setVolume } = useBGMVolume(0.4);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
+
+    // Flip state
+    const [isFlipped, setIsFlipped] = useState(false);
 
     const [gameState, setGameState] = useState<'intro' | 'playing' | 'gameover'>('intro');
     const [score, setScore] = useState(0);
@@ -30,8 +42,9 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     const [wave, setWave] = useState(1);
     const [kills, setKills] = useState(0);
     const [zombieHp, setZombieHp] = useState(100);
-    const [isFlipped, setIsFlipped] = useState(false);
     const [gameId, setGameId] = useState(0);
+
+    useBGM('https://cdn.pixabay.com/audio/2024/11/07/audio_6e5f80971b.mp3', !isMuted && gameState === 'playing' && !isFlipped, volume);
     const [critBonus, setCritBonus] = useState(100);
     const [isPickingUpgrade, setIsPickingUpgrade] = useState(false);
     const [upgradeChoices, setUpgradeChoices] = useState<SuperUpgrade[]>([]);
@@ -84,7 +97,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     const handleShowSuperRewards = () => {
         // Shuffle and take 3
         const shuffled = [...superUpgrades].sort(() => Math.random() - 0.5);
-        setUpgradeChoices(shuffled.slice(0, 4));
+        setUpgradeChoices(shuffled.slice(0, 3));
         setIsPickingUpgrade(true);
     };
 
@@ -111,16 +124,43 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     };
 
     return (
-        <div className={`relative w-full h-full overflow-hidden rounded-xl border border-white/20 ${theme.bgCard}`} style={{ perspective: '1000px' }}>
+        <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullScreen ? 'bg-black overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
+            {/* EXTERNAL GLOBAL CONTROLS */}
+            <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
+                <div className="w-32 mr-2 flex items-center">
+                    <ElasticSlider
+                        defaultValue={volume * 100}
+                        onChange={(v) => setVolume(v / 100)}
+                        color="cyan"
+                        isMuted={isMuted}
+                        onToggleMute={toggleMute}
+                    />
+                </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
+                    className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                >
+                    {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
+                </button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
+                    className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Aide / Règles"
+                >
+                    <FaQuestion size={18} />
+                </button>
+            </div>
+
             <motion.div
-                className="w-full h-full relative"
+                className="flex-1 h-full relative mx-4 mb-4"
                 animate={{ rotateY: isFlipped ? 180 : 0 }}
                 transition={{ duration: 0.6 }}
                 style={{ transformStyle: 'preserve-3d' }}
             >
                 {/* FRONT FACE: GAME + HUD */}
                 <div
-                    className={`absolute inset-0 w-full h-full bg-black overflow-hidden ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                    className={`absolute inset-0 w-full h-full bg-black overflow-hidden border border-white/20 rounded-b-xl ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
                     style={{
                         backfaceVisibility: 'hidden',
                         zIndex: isFlipped ? 0 : 10
@@ -210,61 +250,15 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                         wave={wave}
                         kills={kills}
                         zombieHp={zombieHp}
-                        isMuted={isMuted}
-                        toggleMute={toggleMute}
-                        setIsFlipped={setIsFlipped}
                         onStart={handleStart}
                     />
 
-                    {/* MOBILE VIRTUAL BUTTONS - Tactical Navigation Pads */}
-                    {gameState === 'playing' && !isPickingUpgrade && !isFlipped && (
-                        <div className="absolute inset-x-0 bottom-0 h-40 z-50 pointer-events-none flex items-stretch px-4 pb-4">
-                            <div
-                                className="flex-1 pointer-events-auto group relative overflow-hidden rounded-l-2xl border-l border-t border-b border-cyan-500/30 bg-gradient-to-br from-cyan-900/20 to-transparent backdrop-blur-sm"
-                                onTouchStart={() => { mobileMoveHandlers?.moveLeft(true); playSound('click'); }}
-                                onTouchEnd={() => mobileMoveHandlers?.moveLeft(false)}
-                                onMouseDown={() => mobileMoveHandlers?.moveLeft(true)}
-                                onMouseUp={() => mobileMoveHandlers?.moveLeft(false)}
-                            >
-                                <div className="absolute inset-0 bg-cyan-400/5 group-active:bg-cyan-400/20 transition-colors" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 rounded-lg border border-cyan-500/50 flex items-center justify-center rotate-45 group-active:scale-90 transition-transform bg-black/40">
-                                            <span className="text-2xl text-cyan-400 -rotate-45 font-black">{"<"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Corner Decoration */}
-                                <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-cyan-400" />
-                            </div>
 
-                            <div className="w-4" /> {/* Gap for Center UI clearance */}
-
-                            <div
-                                className="flex-1 pointer-events-auto group relative overflow-hidden rounded-r-2xl border-r border-t border-b border-cyan-500/30 bg-gradient-to-bl from-cyan-900/20 to-transparent backdrop-blur-sm"
-                                onTouchStart={() => { mobileMoveHandlers?.moveRight(true); playSound('click'); }}
-                                onTouchEnd={() => mobileMoveHandlers?.moveRight(false)}
-                                onMouseDown={() => mobileMoveHandlers?.moveRight(true)}
-                                onMouseUp={() => mobileMoveHandlers?.moveRight(false)}
-                            >
-                                <div className="absolute inset-0 bg-cyan-400/5 group-active:bg-cyan-400/20 transition-colors" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 rounded-lg border border-cyan-500/50 flex items-center justify-center rotate-45 group-active:scale-90 transition-transform bg-black/40">
-                                            <span className="text-2xl text-cyan-400 -rotate-45 font-black">{">"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Corner Decoration */}
-                                <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-cyan-400" />
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* BACK FACE: RULES */}
                 <div
-                    className={`absolute inset-0 w-full h-full ${isFlipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                    className={`absolute inset-0 w-full h-full border border-white/20 rounded-xl overflow-hidden ${theme.bgCard} ${isFlipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
                     style={{
                         backfaceVisibility: 'hidden',
                         transform: 'rotateY(180deg)',
@@ -274,6 +268,30 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                     <RulesPage onBack={() => setIsFlipped(false)} />
                 </div>
             </motion.div>
+
+            {/* MOBILE NAVIGATION CONTROLS - External to game screen */}
+            {gameState === 'playing' && !isPickingUpgrade && !isFlipped && (
+                <div className="flex justify-center gap-12 pb-6 md:hidden mx-4">
+                    <button
+                        className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                        onTouchStart={() => { mobileMoveHandlers?.moveLeft(true); playSound('click'); }}
+                        onTouchEnd={() => mobileMoveHandlers?.moveLeft(false)}
+                        onMouseDown={() => mobileMoveHandlers?.moveLeft(true)}
+                        onMouseUp={() => mobileMoveHandlers?.moveLeft(false)}
+                    >
+                        <FaArrowLeft size={28} />
+                    </button>
+                    <button
+                        className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                        onTouchStart={() => { mobileMoveHandlers?.moveRight(true); playSound('click'); }}
+                        onTouchEnd={() => mobileMoveHandlers?.moveRight(false)}
+                        onMouseDown={() => mobileMoveHandlers?.moveRight(true)}
+                        onMouseUp={() => mobileMoveHandlers?.moveRight(false)}
+                    >
+                        <FaArrowRight size={28} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

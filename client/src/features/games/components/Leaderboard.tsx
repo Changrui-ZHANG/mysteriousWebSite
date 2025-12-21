@@ -25,7 +25,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
     const fetchTopScores = async () => {
         try {
             // Using fetchJson for auto-unwrapping ApiResponse
-            const data = await fetchJson<Score[]>(`/api/scores/top/${gameType}?_t=${Date.now()}`);
+            const data = await fetchJson<Score[]>(`/api/scores/top/${gameType}`);
             if (Array.isArray(data)) {
                 setScores(data);
             } else {

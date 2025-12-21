@@ -2,10 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useSound } from '../../../hooks/useSound';
+import { useBGM } from '../../../hooks/useBGM';
+import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
-import { FaQuestion, FaArrowLeft } from 'react-icons/fa';
-import { GradientHeading, IconButton, MuteButton, Button } from '../../../components';
+import { FaQuestion, FaArrowLeft, FaExpand, FaCompress } from 'react-icons/fa';
+import { GradientHeading, Button } from '../../../components';
+import { useFullScreen } from '../../../hooks/useFullScreen';
+import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
 
 const WIDTH = 8;
 const CANDY_COLORS = [
@@ -33,9 +37,14 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
     const [selectedCandies, setSelectedCandies] = useState<number[]>([]);
     const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
+    const { volume, setVolume } = useBGMVolume(0.4);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
 
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
+
+    useBGM('https://cdn.pixabay.com/audio/2024/10/10/audio_2290aa59a9.mp3', !isMuted && !isFlipped, volume);
 
     // Combo state
     const [comboMultiplier, setComboMultiplier] = useState(0);
@@ -236,9 +245,36 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
     }
 
     return (
-        <div className="w-full h-full" style={{ perspective: '1000px' }}>
+        <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullScreen ? 'bg-slate-900 overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
+            {/* EXTERNAL GLOBAL CONTROLS */}
+            <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
+                <div className="w-32 mr-2 flex items-center">
+                    <ElasticSlider
+                        defaultValue={volume * 100}
+                        onChange={(v) => setVolume(v / 100)}
+                        color="pink"
+                        isMuted={isMuted}
+                        onToggleMute={toggleMute}
+                    />
+                </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
+                    className="text-pink-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                >
+                    {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
+                </button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
+                    className="text-pink-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Aide / Règles"
+                >
+                    <FaQuestion size={18} />
+                </button>
+            </div>
+
             <motion.div
-                className="w-full h-full relative"
+                className="flex-1 w-full h-full relative"
                 animate={{ rotateY: isFlipped ? 180 : 0 }}
                 transition={{ duration: 0.6 }}
                 style={{ transformStyle: 'preserve-3d' }}
@@ -265,16 +301,6 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <IconButton
-                                icon={<FaQuestion size={20} />}
-                                onClick={() => setIsFlipped(true)}
-                                color="purple"
-                                title="Rules"
-                            />
-                            <MuteButton
-                                isMuted={isMuted}
-                                onToggle={toggleMute}
-                            />
                             <Button
                                 onClick={resetGame}
                                 variant="ghost"
@@ -327,25 +353,38 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-6 text-left">
-                        <section>
-                            <h3 className="text-xl font-bold text-cyan-400 mb-2">🎯 {t('game.match3_desc')}</h3>
-                            <p className="text-white/80 leading-relaxed">
+                    <div className="flex-1 overflow-y-auto space-y-6 text-left scrollbar-thin scrollbar-thumb-fuchsia-500/50 scrollbar-track-transparent pr-2">
+                        <section className="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
+                            <h3 className="text-xl font-bold text-fuchsia-400 mb-3 flex items-center gap-2">
+                                <span className="bg-fuchsia-500/20 p-2 rounded-lg">🎯</span>
+                                {t('game.objective')}
+                            </h3>
+                            <p className="text-white/80 leading-relaxed text-sm md:text-base">
                                 {t('game.match3_rules_text')}
                             </p>
                         </section>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white/5 p-4 rounded-lg">
-                                <span className="block text-2xl mb-2">🎈</span>
-                                <h4 className="font-bold text-white mb-1">{t('game.combos')}</h4>
-                                <p className="text-sm text-white/60">{t('game.match3_combos')}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-fuchsia-500/30 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">💥</span>
+                                    <h4 className="font-bold text-white">{t('game.combos')}</h4>
+                                </div>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('game.match3_combos')}</p>
                             </div>
-                            <div className="bg-white/5 p-4 rounded-lg">
-                                <span className="block text-2xl mb-2">⚡</span>
-                                <h4 className="font-bold text-white mb-1">{t('game.speed')}</h4>
-                                <p className="text-sm text-white/60">{t('game.match3_speed')}</p>
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-yellow-500/30 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">⚡</span>
+                                    <h4 className="font-bold text-white">{t('game.speed')}</h4>
+                                </div>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('game.match3_speed')}</p>
                             </div>
+                        </div>
+
+                        <div className="bg-gradient-to-r from-fuchsia-500/10 to-transparent p-4 rounded-xl border-l-4 border-fuchsia-400">
+                            <p className="text-xs md:text-sm text-fuchsia-200 italic">
+                                💡 Astuce : Les alignements de 4 ou 5 blocs rapportent des bonus massifs !
+                            </p>
                         </div>
                     </div>
                 </div>

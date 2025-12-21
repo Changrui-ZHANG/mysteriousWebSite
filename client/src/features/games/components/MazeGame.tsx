@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight, FaTrophy, FaQuestion, FaClock } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight, FaTrophy, FaQuestion, FaClock, FaExpand, FaCompress } from 'react-icons/fa';
 import { useSound } from '../../../hooks/useSound';
+import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
-import { GradientHeading, IconButton, MuteButton, Button } from '../../../components';
+import { GradientHeading, Button } from '../../../components';
+import { useBGMVolume } from '../../../hooks/useBGMVolume';
+import { useFullScreen } from '../../../hooks/useFullScreen';
+import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
 
 interface MazeGameProps {
     isDarkMode: boolean;
@@ -34,15 +38,21 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     const [isDragging, setIsDragging] = useState(false);
     const gridRef = useRef<HTMLDivElement>(null);
     const { isMuted, toggleMute } = useMute();
+    const { playSound } = useSound(!isMuted);
+    const { volume, setVolume } = useBGMVolume(0.4);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
     const [shiftTimer, setShiftTimer] = useState(3);
 
-    const { playSound } = useSound(!isMuted);
+    // Flip state
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    useBGM('https://cdn.pixabay.com/audio/2024/10/15/audio_acaf834253.mp3', !isMuted && !isFlipped && gameState === 'playing', volume);
 
     // Animation states
     const [lastFacing, setLastFacing] = useState<1 | -1>(1); // 1 = right, -1 = left
     const [isMoving, setIsMoving] = useState(false);
     const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const [isFlipped, setIsFlipped] = useState(false);
 
     const fetchMaze = async () => {
         playSound('click');
@@ -458,9 +468,36 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     // const currentScore = Math.max(0, 5000 - Math.floor(((Date.now() - startTime) / 1000) * 10) - (moves * 2));
 
     return (
-        <div className="w-full h-full" style={{ perspective: '1000px' }}>
+        <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullScreen ? 'bg-slate-900 overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
+            {/* EXTERNAL GLOBAL CONTROLS */}
+            <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
+                <div className="w-32 mr-2 flex items-center">
+                    <ElasticSlider
+                        defaultValue={volume * 100}
+                        onChange={(v) => setVolume(v / 100)}
+                        color="cyan"
+                        isMuted={isMuted}
+                        onToggleMute={toggleMute}
+                    />
+                </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
+                    className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                >
+                    {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
+                </button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
+                    className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Aide / Règles"
+                >
+                    <FaQuestion size={18} />
+                </button>
+            </div>
+
             <motion.div
-                className="w-full h-full relative"
+                className="flex-1 w-full h-full relative"
                 animate={{ rotateY: isFlipped ? 180 : 0 }}
                 transition={{ duration: 0.6 }}
                 style={{ transformStyle: 'preserve-3d' }}
@@ -486,17 +523,6 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                             )}
                         </div>
                         <div className="flex items-center gap-2">
-                            <IconButton
-                                icon={<FaQuestion size={20} />}
-                                onClick={() => setIsFlipped(true)}
-                                color="cyan"
-                                title="Rules"
-                            />
-                            <MuteButton
-                                isMuted={isMuted}
-                                onToggle={toggleMute}
-                                color="cyan"
-                            />
                             <Button
                                 onClick={fetchMaze}
                                 color="cyan"
@@ -734,25 +760,38 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-6 text-left">
-                        <section>
-                            <h3 className="text-xl font-bold text-cyan-400 mb-2">🌀 {t('game.maze')}</h3>
-                            <p className="text-white/80 leading-relaxed">
+                    <div className="flex-1 overflow-y-auto space-y-6 text-left scrollbar-thin scrollbar-thumb-cyan-500/50 scrollbar-track-transparent pr-2">
+                        <section className="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                            <h3 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2">
+                                <span className="bg-cyan-500/20 p-2 rounded-lg">🌀</span>
+                                {t('game.objective')}
+                            </h3>
+                            <p className="text-white/80 leading-relaxed text-sm md:text-base">
                                 {t('game.maze_rules')}
                             </p>
                         </section>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white/5 p-4 rounded-lg">
-                                <span className="block text-2xl mb-2">🎮</span>
-                                <h4 className="font-bold text-white mb-1">{t('game.controls')}</h4>
-                                <p className="text-sm text-white/60">{t('game.use_mouse')}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-cyan-500/30 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">🎮</span>
+                                    <h4 className="font-bold text-white">{t('game.controls')}</h4>
+                                </div>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('game.use_mouse')}</p>
                             </div>
-                            <div className="bg-white/5 p-4 rounded-lg">
-                                <span className="block text-2xl mb-2">⏱️</span>
-                                <h4 className="font-bold text-white mb-1">{t('game.time')}</h4>
-                                <p className="text-sm text-white/60">{t('game.match3_speed')}</p>
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-red-500/30 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">☁️</span>
+                                    <h4 className="font-bold text-white">Brouillard</h4>
+                                </div>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('game.maze_collect')}</p>
                             </div>
+                        </div>
+
+                        <div className="bg-gradient-to-r from-cyan-500/10 to-transparent p-4 rounded-xl border-l-4 border-cyan-400">
+                            <p className="text-xs md:text-sm text-cyan-200 italic">
+                                💡 Astuce : Le point de départ est marqué (S) et la sortie est marquée (R).
+                            </p>
                         </div>
                     </div>
                 </div>

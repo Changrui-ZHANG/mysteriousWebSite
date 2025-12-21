@@ -114,7 +114,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
 
     return (
         <>
-            <nav className={`fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <nav className={`fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-[1000] backdrop-blur-md border-b shadow-sm ${isDarkMode ? 'bg-black/60 border-white/10 text-white shadow-black/50' : 'bg-white/60 border-black/5 text-gray-900 shadow-black/5'}`}>
                 <Link to="/" className="text-xl md:text-2xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity z-50 relative">
                     {location.pathname === '/cv'
                         ? 'Curriculum vitæ'

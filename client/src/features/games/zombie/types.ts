@@ -9,7 +9,9 @@ export interface Zombie {
     active: boolean;
     type: 'walker' | 'runner' | 'tank' | 'boss';
     color: string;
+    baseColor: string;
     size?: number;
+    slowedUntil?: number; // timestamp or frame count
 }
 
 export interface Projectile {

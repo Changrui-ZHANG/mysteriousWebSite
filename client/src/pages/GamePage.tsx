@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import BrickBreaker from '../features/games/components/BrickBreaker';
@@ -110,7 +110,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
             }
             try {
                 // Use fetchJson for auto-unwrapping ApiResponse
-                const data = await fetchJson<any>(`/api/scores/user/${user.userId}/${activeGame}?_t=${Date.now()}`);
+                const data = await fetchJson<any>(`/api/scores/user/${user.userId}/${activeGame}`);
                 setPersonalBest({ score: data.score, attempts: data.attempts });
             } catch (error) {
                 console.error("Failed to fetch personal best", error);
@@ -120,7 +120,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         fetchPersonalBest();
     }, [user, activeGame, refreshLeaderboard]);
 
-    const submitScore = async (score: number, attempts?: number) => {
+    const submitScore = useCallback(async (score: number, attempts?: number) => {
         if (!user) {
             // For guests: Check if valid score for leaderboard
             if (score <= 0) return;
@@ -163,13 +163,10 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         }
 
         // Only submit if it's a new high score (or low score for maze)
-        // Determine if logic should trigger local optimistic update (isNewBest)
-        // But ALWAYS submit to backend to ensure data consistency
         let isNewBest = false;
         if (personalBest && personalBest.score !== undefined) {
             if (activeGame === 'maze') {
                 // For maze, lower is better.
-                // Improvement if score < current best
                 if (score < personalBest.score || personalBest.score === 0) {
                     isNewBest = true;
                 }
@@ -181,6 +178,12 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
             }
         } else {
             isNewBest = true;
+        }
+
+        // CRITICAL OPTIMIZATION: Do not contact backend if it's not a record
+        if (!isNewBest) {
+            console.log("Score is not better than personal best. Skipping backend submission.");
+            return;
         }
 
         try {
@@ -198,16 +201,14 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
             console.log("Score submission result:", result);
 
             // Update local state without fetching
-            if (isNewBest) {
-                setPersonalBest({ score, attempts });
-            }
+            setPersonalBest({ score, attempts });
             // Trigger leaderboard refresh (Top 3 only)
             setRefreshLeaderboard(prev => prev + 1);
         } catch (error) {
             console.error("Failed to submit score", error);
             alert("Error saving score: " + error);
         }
-    };
+    }, [user, activeGame, personalBest]);
 
     return (
         <div className={`min-h-screen pt-24 pb-12 px-4 ${theme.textPrimary} ${isDarkMode ? 'bg-black' : 'bg-gray-100'}`}>
