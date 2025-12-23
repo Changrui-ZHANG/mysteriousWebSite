@@ -17,6 +17,7 @@ import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // ===== WEAPON INITIAL VALUES =====
 const WEAPON_DEFAULTS = {
@@ -58,12 +59,12 @@ const AUDIO_CONFIG = {
 
 // ===== SUPER UPGRADES =====
 const SUPER_UPGRADES = [
-    { id: 'dmg_50', name: 'Surcharge I', description: 'Dégâts de base +50%', icon: '🚀', type: 'damage_mult' as const, value: 1.5 },
-    { id: 'dmg_100', name: 'Surcharge II', description: 'Doube vos dégâts de base (x2)', icon: '⚡', type: 'damage_mult' as const, value: 2.0 },
-    { id: 'crit_b_50', name: 'Lames de Rasoir', description: 'Bonus de Critique +50%', icon: '🎯', type: 'crit_bonus' as const, value: 50 },
-    { id: 'crit_b_150', name: 'Exécuteur D\'Élite', description: 'Bonus de Critique +150%', icon: '💀', type: 'crit_bonus' as const, value: 150 },
-    { id: 'fire_50', name: 'Tempête de Plomb', description: 'Cadence de tir doublée (-50% délai)', icon: '🔥', type: 'fire_rate' as const, value: 0.5 },
-    { id: 'homing_shot', name: 'Pistage Tactique', description: 'Les balles cherchent automatiquement les ennemis', icon: '🎯', type: 'homing' as const, value: 1 },
+    { id: 'dmg_50', nameKey: 'game.zombie_upgrades.dmg_50_name', descKey: 'game.zombie_upgrades.dmg_50_desc', icon: '🚀', type: 'damage_mult' as const, value: 1.5 },
+    { id: 'dmg_100', nameKey: 'game.zombie_upgrades.dmg_100_name', descKey: 'game.zombie_upgrades.dmg_100_desc', icon: '⚡', type: 'damage_mult' as const, value: 2.0 },
+    { id: 'crit_b_50', nameKey: 'game.zombie_upgrades.crit_b_50_name', descKey: 'game.zombie_upgrades.crit_b_50_desc', icon: '🎯', type: 'crit_bonus' as const, value: 50 },
+    { id: 'crit_b_150', nameKey: 'game.zombie_upgrades.crit_b_150_name', descKey: 'game.zombie_upgrades.crit_b_150_desc', icon: '💀', type: 'crit_bonus' as const, value: 150 },
+    { id: 'fire_50', nameKey: 'game.zombie_upgrades.fire_50_name', descKey: 'game.zombie_upgrades.fire_50_desc', icon: '🔥', type: 'fire_rate' as const, value: 0.5 },
+    { id: 'homing_shot', nameKey: 'game.zombie_upgrades.homing_shot_name', descKey: 'game.zombie_upgrades.homing_shot_desc', icon: '🎯', type: 'homing' as const, value: 1 },
 ] as const;
 
 // ===== UPGRADE SELECTION =====
@@ -73,6 +74,7 @@ const UPGRADE_CONFIG = {
 } as const;
 
 export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest, onGameStart }: ZombieShooterProps) {
+    const { t } = useTranslation();
     const theme = useTheme(isDarkMode);
     const { isMuted, toggleMute } = useMute();
     const { playSound } = useSound(!isMuted);
@@ -105,7 +107,11 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     const [notifications, setNotifications] = useState<{ id: number; text: string; color: string }[]>([]);
     const [mobileMoveHandlers, setMobileMoveHandlers] = useState<{ moveLeft: (on: boolean) => void, moveRight: (on: boolean) => void } | null>(null);
 
-    const superUpgrades = useMemo(() => [...SUPER_UPGRADES], []);
+    const superUpgrades = useMemo(() => SUPER_UPGRADES.map(u => ({
+        ...u,
+        name: t(u.nameKey),
+        description: t(u.descKey),
+    })), [t]);
 
     const addNotification = (text: string, color: string) => {
         const id = Date.now();
@@ -142,7 +148,11 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     };
 
     const handleShowSuperRewards = () => {
-        const shuffled = [...superUpgrades].sort(() => Math.random() - 0.5);
+        const availableUpgrades = superUpgrades.filter(u => {
+            if (u.type === 'homing' && isHoming) return false;
+            return true;
+        });
+        const shuffled = [...availableUpgrades].sort(() => Math.random() - 0.5);
         setUpgradeChoices(shuffled.slice(0, UPGRADE_CONFIG.CHOICES_COUNT));
         setIsPickingUpgrade(true);
     };
@@ -165,7 +175,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                 setIsHoming(true);
                 break;
         }
-        addNotification(`INSTALLÉ : ${upgrade.name}`, "#22d3ee");
+        addNotification(`${t('game.zombie_hud.installed')} : ${upgrade.name}`, "#22d3ee");
         setIsPickingUpgrade(false);
     };
 
@@ -185,21 +195,21 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                 <button
                     onClick={(e) => { e.stopPropagation(); handleStart(); }}
                     className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Recommencer"
+                    title={t('game.zombie_hud.restart')}
                 >
                     <FaRedo size={18} />
                 </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                    title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}
                 >
                     {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
                 </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Aide / Règles"
+                    title={t('game.help_rules')}
                 >
                     <FaQuestion size={18} />
                 </button>

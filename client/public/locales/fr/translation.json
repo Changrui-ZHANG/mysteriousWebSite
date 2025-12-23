@@ -149,6 +149,85 @@
         "brick_breaker_rules": "Détruisez toutes les briques en faisant rebondir la balle sur votre raquette. Si la balle tombe sous la raquette, c'est terminé !",
         "brick_breaker_controls": "Déplacez votre souris (ou glissez sur mobile) pour contrôler la raquette.",
         "brick_breaker_bonus": "Certaines briques rapportent plus de points. Visez les coins pour des rebonds spectaculaires !",
+        "brick_breaker_maps": {
+            "tunnel": {
+                "name": "Le Tunnel",
+                "desc": "Percez le mur fortifié pour atteindre le trésor"
+            },
+            "pyramid": {
+                "name": "La Pyramide",
+                "desc": "Détruisez la pyramide mystérieuse"
+            },
+            "chambers": {
+                "name": "Les Chambres",
+                "desc": "Naviguez dans le labyrinthe de chambres"
+            },
+            "mosaic": {
+                "name": "La Mosaïque Royale",
+                "desc": "Un tapis de briques aux couleurs impériales"
+            },
+            "fortress": {
+                "name": "La Forteresse",
+                "desc": "Un bloc massif défiant toute destruction"
+            },
+            "galactic": {
+                "name": "L'Empire Galactique",
+                "desc": "Une densité extrême pour les vrais maîtres"
+            },
+            "bastion": {
+                "name": "Le Bastion",
+                "desc": "Une ligne de défense avec des tours fortifiées"
+            },
+            "coliseum": {
+                "name": "Le Colisée",
+                "desc": "Des anneaux concentriques de briques et de murs"
+            },
+            "royal_maze": {
+                "name": "Le Labyrinthe Royal",
+                "desc": "Un réseau complexe de couloirs et de briques"
+            },
+            "dark_maze": {
+                "name": "Le Dédale Sombre",
+                "desc": "De longs couloirs horizontaux remplis de secrets"
+            },
+            "crypts": {
+                "name": "Les Cryptes Oubliées",
+                "desc": "Un réseau vertical de chambres closes"
+            },
+            "crystal": {
+                "name": "Le Labyrinthe de Cristal",
+                "desc": "Des chemins diagonaux ultra-étroits"
+            },
+            "mines": {
+                "name": "Les Mines d'Or",
+                "desc": "Des filons précieux protégés par la roche"
+            },
+            "temple": {
+                "name": "Le Temple Maudit",
+                "desc": "Une structure ancienne piégée par des murs"
+            },
+            "station": {
+                "name": "La Station Intergalactique",
+                "desc": "Un design technologique symétrique pour un défi ultime"
+            },
+            "infinite": {
+                "name": "Le Dédale Infini",
+                "desc": "Un labyrinthe généré par le serveur à chaque partie"
+            }
+        },
+        "brick_breaker_difficulty": {
+            "easy": "Facile",
+            "medium": "Moyen",
+            "hard": "Difficile",
+            "expert": "Expert",
+            "extreme": "Extrême"
+        },
+        "brick_breaker_choose_map": "Choisir Carte",
+        "brick_breaker_map_selection": "Sélection de Carte",
+        "brick_breaker_selected": "Sélectionnée",
+        "brick_breaker_maps_unlocked": "{{count}} / {{total}} cartes débloquées",
+        "brick_breaker_new_map_unlocked": "Nouvelle carte débloquée : {{name}} !",
+        "brick_breaker_next_level": "Niveau Suivant",
         "match3_rules_text": "Alignez au moins 3 blocs de la même couleur horizontalement ou verticalement pour les faire exploser et marquer des points.",
         "match3_combos": "Créez des réactions en chaîne pour activer des multiplicateurs de score (x2, x3...). Plus vous enchaînez, plus le score explose !",
         "match3_speed": "Attention au chrono ! Chaque seconde compte pour atteindre le sommet du classement.",
@@ -168,7 +247,71 @@
         "survival": "Survivez le plus longtemps possible.",
         "move": "Déplacer",
         "game_disabled_desc": "Ce jeu est actuellement désactivé par l'administrateur.",
-        "next_shift": "Changement"
+        "next_shift": "Changement",
+        "zombie_hud": {
+            "system_status": "Status Système",
+            "wave": "Vague",
+            "kills": "Kills",
+            "record": "Record",
+            "tracking": "PISTAGE",
+            "fire_rate": "Cadence",
+            "damage": "Dégâts",
+            "crit_chance": "Crit%",
+            "cannons": "Canons",
+            "bonus": "Bonus",
+            "rebounds": "Rebonds",
+            "zombie_hp": "Z-HP",
+            "danger_critical": "!! DANGER CRITIQUE !!",
+            "danger_alert": "! ALERTE !",
+            "title_bg": "DÉFENSE ZOMBIE",
+            "protocol": "PROTOCOLE",
+            "protect_zone": "Protégez la zone. Collectez la Tech. Survivez.",
+            "initialize": "INITIALISER",
+            "system_failure": "ÉCHEC SYSTÈME",
+            "final_score": "Score Final",
+            "waves": "Vagues",
+            "eliminations": "Éliminations",
+            "restart": "Redémarrer",
+            "controls": "CONTROLES: SOURIS // CLAVIER",
+            "installed": "INSTALLÉ",
+            "capture_mouse": "CLIQUEZ POUR CAPTURER LA SOURIS",
+            "crit_hit": "CRITIQUE"
+        },
+        "zombie_upgrades": {
+            "dmg_50_name": "Surcharge I",
+            "dmg_50_desc": "Dégâts de base +50%",
+            "dmg_100_name": "Surcharge II",
+            "dmg_100_desc": "Double vos dégâts de base (x2)",
+            "crit_b_50_name": "Lames de Rasoir",
+            "crit_b_50_desc": "Bonus de Critique +50%",
+            "crit_b_150_name": "Exécuteur D'Élite",
+            "crit_b_150_desc": "Bonus de Critique +150%",
+            "fire_50_name": "Tempête de Plomb",
+            "fire_50_desc": "Cadence de tir doublée (-50% délai)",
+            "homing_shot_name": "Pistage Tactique",
+            "homing_shot_desc": "Les balles cherchent automatiquement les ennemis"
+        },
+        "zombie_modal": {
+            "title": "RÉCOMPENSE",
+            "title_highlight": "SUPRÊME",
+            "subtitle": "Choisissez un module d'amélioration d'élite",
+            "install": "Installer Module"
+        },
+        "zombie_notif": {
+            "elite_challenge": "DÉFI ÉLITE ACTIVÉ : +50% HP",
+            "perfect_streak": "SÉCURITÉ PARFAITE : STREAK {{streak}}",
+            "elite_complete": "DÉFI ÉLITE TERMINÉ",
+            "wave": "VAGUE {{wave}}",
+            "pickup_rate": "+++ CADENCE",
+            "pickup_tech_max": "TECH MAXIMALE",
+            "pickup_tech": "TECHNO AMÉLIORÉE",
+            "pickup_damage": "+10 DÉGÂTS",
+            "pickup_crit": "+10% CRIT",
+            "pickup_bounce": "+1 REBOND"
+        },
+        "fullscreen": "Plein écran",
+        "fullscreen_exit": "Quitter le plein écran",
+        "help_rules": "Aide / Règles"
     },
     "pokemon": {
         "guess_prompt": "Qui est ce Pokémon ?",
@@ -313,7 +456,8 @@
         "muted": "Le chat est suspendu par l'admin",
         "super_admin_code": "Code Super Admin",
         "super_admin_panel": "Panneau Super Admin",
-        "admin_access": "Accès Admin"
+        "admin_access": "Accès Admin",
+        "signed_in_as": "Connecté en tant que"
     },
     "hero": {
         "title": "Changrui ZHANG",

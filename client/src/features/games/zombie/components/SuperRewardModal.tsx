@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { SuperUpgrade } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface SuperRewardModalProps {
     isOpen: boolean;
@@ -8,6 +9,7 @@ interface SuperRewardModalProps {
 }
 
 export function SuperRewardModal({ isOpen, upgrades, onSelect }: SuperRewardModalProps) {
+    const { t } = useTranslation();
     return (
         <AnimatePresence>
             {isOpen && (
@@ -25,9 +27,9 @@ export function SuperRewardModal({ isOpen, upgrades, onSelect }: SuperRewardModa
                                 transition={{ delay: 0.2 }}
                                 className="text-3xl md:text-5xl font-black text-white italic tracking-tighter mb-2 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]"
                             >
-                                RÉCOMPENSE <span className="text-cyan-400">SUPRÊME</span>
+                                {t('game.zombie_modal.title')} <span className="text-cyan-400">{t('game.zombie_modal.title_highlight')}</span>
                             </motion.h2>
-                            <p className="text-cyan-400/60 uppercase tracking-[0.3em] text-[10px] md:text-xs">Choisissez un module d'amélioration d'élite</p>
+                            <p className="text-cyan-400/60 uppercase tracking-[0.3em] text-[10px] md:text-xs">{t('game.zombie_modal.subtitle')}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 pb-12 md:pb-0">
@@ -53,7 +55,7 @@ export function SuperRewardModal({ isOpen, upgrades, onSelect }: SuperRewardModa
                                         <p className="text-cyan-200/60 text-xs md:text-sm leading-relaxed mb-4 md:mb-6">{upgrade.description}</p>
 
                                         <div className="pt-3 md:pt-4 border-t border-cyan-500/20 mt-auto">
-                                            <span className="text-[10px] md:text-xs font-black text-cyan-400 tracking-widest uppercase group-hover:text-white transition-colors">Installer Module</span>
+                                            <span className="text-[10px] md:text-xs font-black text-cyan-400 tracking-widest uppercase group-hover:text-white transition-colors">{t('game.zombie_modal.install')}</span>
                                         </div>
                                     </div>
 

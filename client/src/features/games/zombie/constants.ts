@@ -1,6 +1,6 @@
 
 // Field & Camera
-export const FIELD_WIDTH = 30;
+export const FIELD_WIDTH = 10;
 export const FIELD_DEPTH = 60;
 export const FRONT_WALL_Z = 15;
 export const BACK_WALL_Z = -65;

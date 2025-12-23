@@ -155,6 +155,85 @@
         "brick_breaker_rules": "打碎所有砖块，不要让球掉落！",
         "brick_breaker_controls": "使用鼠标移动挡板。",
         "brick_breaker_bonus": "打碎砖块可增加分数！",
+        "brick_breaker_maps": {
+            "tunnel": {
+                "name": "隧道",
+                "desc": "穿透坚固城墙，获取宝藏"
+            },
+            "pyramid": {
+                "name": "金字塔",
+                "desc": "摧毁神秘的金字塔"
+            },
+            "chambers": {
+                "name": "密室",
+                "desc": "在密室迷宫中穿行"
+            },
+            "mosaic": {
+                "name": "皇家马赛克",
+                "desc": "帝王色彩的砖块地毯"
+            },
+            "fortress": {
+                "name": "堡垒",
+                "desc": "挑战坚不可摧的巨型方块"
+            },
+            "galactic": {
+                "name": "银河帝国",
+                "desc": "为真正的大师准备的极端密度"
+            },
+            "bastion": {
+                "name": "棱堡",
+                "desc": "配有加固塔楼的防线"
+            },
+            "coliseum": {
+                "name": "斗兽场",
+                "desc": "砖块和墙壁的同心环"
+            },
+            "royal_maze": {
+                "name": "皇家迷宫",
+                "desc": "复杂的走廊和砖块网络"
+            },
+            "dark_maze": {
+                "name": "黑暗迷宫",
+                "desc": "充满秘密的长条水平走廊"
+            },
+            "crypts": {
+                "name": "遗忘地穴",
+                "desc": "封闭房间的垂直网络"
+            },
+            "crystal": {
+                "name": "水晶迷宫",
+                "desc": "超窄的对角线路径"
+            },
+            "mines": {
+                "name": "金矿",
+                "desc": "被岩石保护的珍贵矿脉"
+            },
+            "temple": {
+                "name": "诅咒神殿",
+                "desc": "被墙壁困住的古老建筑"
+            },
+            "station": {
+                "name": "星际空间站",
+                "desc": "对称技术设计的终极挑战"
+            },
+            "infinite": {
+                "name": "无尽迷宫",
+                "desc": "服务器为每局游戏生成的迷宫"
+            }
+        },
+        "brick_breaker_difficulty": {
+            "easy": "简单",
+            "medium": "中等",
+            "hard": "困难",
+            "expert": "专家",
+            "extreme": "极限"
+        },
+        "brick_breaker_choose_map": "选择地图",
+        "brick_breaker_map_selection": "地图选择",
+        "brick_breaker_selected": "已选择",
+        "brick_breaker_maps_unlocked": "{{count}} / {{total}} 张地图已解锁",
+        "brick_breaker_new_map_unlocked": "新地图已解锁: {{name}}!",
+        "brick_breaker_next_level": "下一关",
         "match3_rules_text": "3个方块 = 3分。4个方块 = 8分。5个方块 = 15分。",
         "match3_combos": "连击是自动产生的连锁反应。当掉落的方块产生新的消除时，分数会成倍增加 (x2, x3...)。",
         "match3_speed": "速度要快，时间不等人！",
@@ -165,7 +244,72 @@
         "maze_collect": "收集奖励以获得更多时间。",
         "game_disabled": "游戏已禁用",
         "game_disabled_desc": "该游戏目前已被管理员禁用。",
-        "next_shift": "下次变换"
+        "zombie": "僵尸防御",
+        "next_shift": "下次变换",
+        "zombie_hud": {
+            "system_status": "系统状态",
+            "wave": "波次",
+            "kills": "击杀",
+            "record": "记录",
+            "tracking": "追踪",
+            "fire_rate": "射速",
+            "damage": "伤害",
+            "crit_chance": "暴击%",
+            "cannons": "炮数",
+            "bonus": "加成",
+            "rebounds": "反弹",
+            "zombie_hp": "僵尸HP",
+            "danger_critical": "!! 危险临界 !!",
+            "danger_alert": "! 警报 !",
+            "title_bg": "僵尸防御",
+            "protocol": "协议",
+            "protect_zone": "保卫区域。收集科技。生存下去。",
+            "initialize": "初始化",
+            "system_failure": "系统故障",
+            "final_score": "最终分数",
+            "waves": "波次",
+            "eliminations": "消灭",
+            "restart": "重新开始",
+            "controls": "控制: 鼠标 // 键盘",
+            "installed": "已安装",
+            "capture_mouse": "点击锁定鼠标",
+            "crit_hit": "暴击"
+        },
+        "zombie_upgrades": {
+            "dmg_50_name": "超载 I",
+            "dmg_50_desc": "基础伤害 +50%",
+            "dmg_100_name": "超载 II",
+            "dmg_100_desc": "基础伤害翻倍 (x2)",
+            "crit_b_50_name": "剃刀之刃",
+            "crit_b_50_desc": "暴击加成 +50%",
+            "crit_b_150_name": "精英处决者",
+            "crit_b_150_desc": "暴击加成 +150%",
+            "fire_50_name": "弹雨风暴",
+            "fire_50_desc": "射速翻倍 (-50% 延迟)",
+            "homing_shot_name": "战术追踪",
+            "homing_shot_desc": "子弹自动追踪敌人"
+        },
+        "zombie_modal": {
+            "title": "至高",
+            "title_highlight": "奖励",
+            "subtitle": "选择一个精英升级模块",
+            "install": "安装模块"
+        },
+        "zombie_notif": {
+            "elite_challenge": "精英挑战激活：+50% 生命值",
+            "perfect_streak": "完美防御：连胜 {{streak}}",
+            "elite_complete": "精英挑战完成",
+            "wave": "第 {{wave}} 波",
+            "pickup_rate": "+++ 射速",
+            "pickup_tech_max": "科技已满",
+            "pickup_tech": "科技升级",
+            "pickup_damage": "+10 伤害",
+            "pickup_crit": "+10% 暴击",
+            "pickup_bounce": "+1 弹射"
+        },
+        "fullscreen": "全屏",
+        "fullscreen_exit": "退出全屏",
+        "help_rules": "帮助 / 规则"
     },
     "pokemon": {
         "guess_prompt": "这是哪只宝可梦？",
@@ -307,7 +451,8 @@
         "muted": "管理员已开启全员禁言",
         "super_admin_code": "超级管理员代码",
         "super_admin_panel": "超级管理员面板",
-        "admin_access": "管理员入口"
+        "admin_access": "管理员入口",
+        "signed_in_as": "已登录为"
     },
     "hero": {
         "title": "张常瑞",

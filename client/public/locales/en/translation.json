@@ -155,6 +155,85 @@
         "brick_breaker_rules": "Destroy all bricks without dropping the ball!",
         "brick_breaker_controls": "Use the mouse to move the paddle.",
         "brick_breaker_bonus": "Breaking bricks increases the score!",
+        "brick_breaker_maps": {
+            "tunnel": {
+                "name": "The Tunnel",
+                "desc": "Breach the fortified wall to reach the treasure"
+            },
+            "pyramid": {
+                "name": "The Pyramid",
+                "desc": "Destroy the mysterious pyramid"
+            },
+            "chambers": {
+                "name": "The Chambers",
+                "desc": "Navigate through the maze of chambers"
+            },
+            "mosaic": {
+                "name": "The Royal Mosaic",
+                "desc": "A carpet of bricks in imperial colors"
+            },
+            "fortress": {
+                "name": "The Fortress",
+                "desc": "A massive block defying all destruction"
+            },
+            "galactic": {
+                "name": "The Galactic Empire",
+                "desc": "Extreme density for true masters"
+            },
+            "bastion": {
+                "name": "The Bastion",
+                "desc": "A line of defense with fortified towers"
+            },
+            "coliseum": {
+                "name": "The Coliseum",
+                "desc": "Concentric rings of bricks and walls"
+            },
+            "royal_maze": {
+                "name": "The Royal Labyrinth",
+                "desc": "A complex network of corridors and bricks"
+            },
+            "dark_maze": {
+                "name": "The Dark Maze",
+                "desc": "Long horizontal corridors filled with secrets"
+            },
+            "crypts": {
+                "name": "The Forgotten Crypts",
+                "desc": "A vertical network of closed chambers"
+            },
+            "crystal": {
+                "name": "The Crystal Labyrinth",
+                "desc": "Ultra-narrow diagonal paths"
+            },
+            "mines": {
+                "name": "The Gold Mines",
+                "desc": "Precious veins protected by rock"
+            },
+            "temple": {
+                "name": "The Cursed Temple",
+                "desc": "An ancient structure trapped by walls"
+            },
+            "station": {
+                "name": "The Intergalactic Station",
+                "desc": "A symmetrical technological design for the ultimate challenge"
+            },
+            "infinite": {
+                "name": "The Infinite Maze",
+                "desc": "A server-generated labyrinth for each game"
+            }
+        },
+        "brick_breaker_difficulty": {
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "expert": "Expert",
+            "extreme": "Extreme"
+        },
+        "brick_breaker_choose_map": "Choose Map",
+        "brick_breaker_map_selection": "Map Selection",
+        "brick_breaker_selected": "Selected",
+        "brick_breaker_maps_unlocked": "{{count}} / {{total}} maps unlocked",
+        "brick_breaker_new_map_unlocked": "New map unlocked: {{name}}!",
+        "brick_breaker_next_level": "Next Level",
         "match3_rules_text": "3 blocks = 3 pts. 4 blocks = 8 pts. 5 blocks = 15 pts.",
         "match3_combos": "A combo is an automatic chain reaction. When blocks fall and create new matches, points are multiplied (x2, x3...).",
         "match3_speed": "Be fast, time is not on your side!",
@@ -165,7 +244,72 @@
         "maze_collect": "Collect bonuses to gain extra time.",
         "game_disabled": "Game Disabled",
         "game_disabled_desc": "This game is currently disabled by the administrator.",
-        "next_shift": "Next Shift"
+        "zombie": "Zombie Defense",
+        "next_shift": "Next Shift",
+        "zombie_hud": {
+            "system_status": "System Status",
+            "wave": "Wave",
+            "kills": "Kills",
+            "record": "Record",
+            "tracking": "HOMING",
+            "fire_rate": "Fire Rate",
+            "damage": "Damage",
+            "crit_chance": "Crit%",
+            "cannons": "Cannons",
+            "bonus": "Bonus",
+            "rebounds": "Rebounds",
+            "zombie_hp": "Z-HP",
+            "danger_critical": "!! CRITICAL DANGER !!",
+            "danger_alert": "! ALERT !",
+            "title_bg": "ZOMBIE DEFENSE",
+            "protocol": "PROTOCOL",
+            "protect_zone": "Protect the zone. Collect Tech. Survive.",
+            "initialize": "INITIALIZE",
+            "system_failure": "SYSTEM FAILURE",
+            "final_score": "Final Score",
+            "waves": "Waves",
+            "eliminations": "Eliminations",
+            "restart": "Restart",
+            "controls": "CONTROLS: MOUSE // KEYBOARD",
+            "installed": "INSTALLED",
+            "capture_mouse": "CLICK TO CAPTURE MOUSE",
+            "crit_hit": "CRIT"
+        },
+        "zombie_upgrades": {
+            "dmg_50_name": "Overcharge I",
+            "dmg_50_desc": "Base damage +50%",
+            "dmg_100_name": "Overcharge II",
+            "dmg_100_desc": "Double your base damage (x2)",
+            "crit_b_50_name": "Razor Blades",
+            "crit_b_50_desc": "Crit Bonus +50%",
+            "crit_b_150_name": "Elite Executioner",
+            "crit_b_150_desc": "Crit Bonus +150%",
+            "fire_50_name": "Lead Storm",
+            "fire_50_desc": "Fire rate doubled (-50% delay)",
+            "homing_shot_name": "Tactical Tracking",
+            "homing_shot_desc": "Bullets automatically seek enemies"
+        },
+        "zombie_modal": {
+            "title": "SUPREME",
+            "title_highlight": "REWARD",
+            "subtitle": "Choose an elite upgrade module",
+            "install": "Install Module"
+        },
+        "zombie_notif": {
+            "elite_challenge": "ELITE CHALLENGE: +50% HP",
+            "perfect_streak": "PERFECT SECURITY: STREAK {{streak}}",
+            "elite_complete": "ELITE CHALLENGE COMPLETE",
+            "wave": "WAVE {{wave}}",
+            "pickup_rate": "+++ FIRE RATE",
+            "pickup_tech_max": "MAX TECH",
+            "pickup_tech": "TECH UPGRADED",
+            "pickup_damage": "+10 DAMAGE",
+            "pickup_crit": "+10% CRIT",
+            "pickup_bounce": "+1 BOUNCE"
+        },
+        "fullscreen": "Fullscreen",
+        "fullscreen_exit": "Exit Fullscreen",
+        "help_rules": "Help / Rules"
     },
     "pokemon": {
         "guess_prompt": "Who's that Pokemon?",
@@ -307,7 +451,8 @@
         "muted": "Chat is muted by admin",
         "super_admin_code": "Super Admin Code",
         "super_admin_panel": "Super Admin Panel",
-        "admin_access": "Admin Access"
+        "admin_access": "Admin Access",
+        "signed_in_as": "Signed in as"
     },
     "hero": {
         "title": "Changrui ZHANG",

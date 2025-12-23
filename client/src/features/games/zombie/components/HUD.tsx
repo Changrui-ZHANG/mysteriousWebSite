@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 interface HUDProps {
@@ -41,14 +42,14 @@ export function HUD({
     zombieHp,
     onStart,
 }: HUDProps) {
-
+    const { t } = useTranslation();
 
     // Mouse Parallax Effect (Simplistic for now, can perform later)
     useEffect(() => {
         // Just listener for now to enable reticle in future
     }, []);
 
-    const fireRate = Math.min(100, Math.round((0.3 / (weaponDelay || 0.3)) * 100));
+    const fireRate = Math.round((0.3 / (weaponDelay || 0.3)) * 100);
 
     // Danger Vignette
     const dangerOpacity = dangerLevel * 0.6; // Max 0.6 opacity
@@ -73,7 +74,7 @@ export function HUD({
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                         <div className="flex flex-col">
-                            <span className="text-[7px] text-cyan-400 font-bold tracking-[0.2em] opacity-60 uppercase leading-none">Status Système</span>
+                            <span className="text-[7px] text-cyan-400 font-bold tracking-[0.2em] opacity-60 uppercase leading-none">{t('game.zombie_hud.system_status')}</span>
                             {/* Mobile Persistent Tech Row - Larger */}
                             <div className="flex items-center gap-1 mt-0.5 md:hidden">
                                 {[1, 2, 3, 4, 5, 6].map(t => (
@@ -110,13 +111,13 @@ export function HUD({
                         <div className="flex gap-1">
                             <div className="bg-black/60 border border-cyan-500/30 px-2 py-0.5 transform -skew-x-12 backdrop-blur-md">
                                 <div className="transform skew-x-12 flex flex-col items-center">
-                                    <span className="text-[6px] md:text-[7px] text-cyan-400 tracking-widest uppercase font-bold">Vague</span>
+                                    <span className="text-[6px] md:text-[7px] text-cyan-400 tracking-widest uppercase font-bold">{t('game.zombie_hud.wave')}</span>
                                     <span className="text-sm md:text-xl font-black text-white leading-none">{wave}</span>
                                 </div>
                             </div>
                             <div className="bg-black/60 border border-cyan-500/30 px-2 py-0.5 transform -skew-x-12 backdrop-blur-md">
                                 <div className="transform skew-x-12 flex flex-col items-center">
-                                    <span className="text-[6px] md:text-[7px] text-cyan-400 tracking-widest uppercase font-bold">Kills</span>
+                                    <span className="text-[6px] md:text-[7px] text-cyan-400 tracking-widest uppercase font-bold">{t('game.zombie_hud.kills')}</span>
                                     <span className="text-sm md:text-xl font-black text-white leading-none">{kills}</span>
                                 </div>
                             </div>
@@ -127,7 +128,7 @@ export function HUD({
                         <div className="absolute inset-0 bg-black/60 transform -skew-x-12 border border-cyan-500/30 blur-[1px]" />
                         <div className="relative border-l-2 border-cyan-500/40 px-2 py-0.5 transform -skew-x-12 backdrop-blur-sm">
                             <div className="transform skew-x-12 flex items-center gap-1.5">
-                                <span className="text-[7px] md:text-[8px] text-cyan-400 font-bold uppercase leading-none">Record</span>
+                                <span className="text-[7px] md:text-[8px] text-cyan-400 font-bold uppercase leading-none">{t('game.zombie_hud.record')}</span>
                                 <span className="text-sm md:text-base font-black text-white leading-none">
                                     {personalBest?.score || 0}
                                 </span>
@@ -176,7 +177,7 @@ export function HUD({
                         ))}
                         <div className="w-[2px] h-4 bg-white/10 mx-1" />
                         <div className="flex flex-col items-center">
-                            <span className={`text-[9px] font-black ${isHoming ? 'text-yellow-400 animate-pulse' : 'text-white/10'}`}>PISTAGE</span>
+                            <span className={`text-[9px] font-black ${isHoming ? 'text-yellow-400 animate-pulse' : 'text-white/10'}`}>{t('game.zombie_hud.tracking')}</span>
                             <div className={`w-10 h-1 mt-1 rounded-full ${isHoming ? 'bg-yellow-400 shadow-[0_0_8px_#facc15]' : 'bg-white/5'}`} />
                         </div>
                     </div>
@@ -185,15 +186,15 @@ export function HUD({
                         {/* Left Stats Cluster */}
                         <div className="flex-1 bg-black/80 border border-cyan-500/30 p-2 backdrop-blur-md rounded-lg flex justify-around">
                             <div className="flex flex-col items-center">
-                                <span className="text-[8px] uppercase opacity-50 font-bold">Cadence</span>
+                                <span className="text-[8px] uppercase opacity-50 font-bold">{t('game.zombie_hud.fire_rate')}</span>
                                 <span className="text-base font-bold text-cyan-400">{fireRate}%</span>
                             </div>
                             <div className="flex flex-col items-center">
-                                <span className="text-[8px] uppercase opacity-50 font-bold">Dégâts</span>
+                                <span className="text-[8px] uppercase opacity-50 font-bold">{t('game.zombie_hud.damage')}</span>
                                 <span className="text-base font-bold text-red-500">{weaponDamage}</span>
                             </div>
                             <div className="flex flex-col items-center">
-                                <span className="text-[8px] uppercase opacity-50 font-bold">Crit%</span>
+                                <span className="text-[8px] uppercase opacity-50 font-bold">{t('game.zombie_hud.crit_chance')}</span>
                                 <span className="text-base font-bold text-yellow-500">{critChance}%</span>
                             </div>
                         </div>
@@ -202,7 +203,7 @@ export function HUD({
                         <div className="relative group mx-2">
                             <div className="absolute inset-0 bg-cyan-500/10 blur-xl rounded-full opacity-20" />
                             <div className="bg-black border-2 border-cyan-500 px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.2)] text-center relative overflow-hidden">
-                                <div className="text-[8px] uppercase tracking-tighter text-cyan-400/80 font-bold">Canons</div>
+                                <div className="text-[8px] uppercase tracking-tighter text-cyan-400/80 font-bold">{t('game.zombie_hud.cannons')}</div>
                                 <div className="text-3xl font-black text-white leading-none">{weaponCount}</div>
                             </div>
                         </div>
@@ -210,22 +211,22 @@ export function HUD({
                         {/* Right Stats Cluster */}
                         <div className="flex-1 bg-black/80 border border-cyan-500/30 p-2 backdrop-blur-md rounded-lg flex justify-around">
                             <div className="flex flex-col items-center">
-                                <span className="text-[8px] uppercase opacity-50 font-bold">Bonus</span>
+                                <span className="text-[8px] uppercase opacity-50 font-bold">{t('game.zombie_hud.bonus')}</span>
                                 <span className="text-base font-bold text-orange-400">+{critBonus}%</span>
                             </div>
                             <div className="flex flex-col items-center">
-                                <span className="text-[8px] uppercase opacity-50 font-bold">Rebounds</span>
+                                <span className="text-[8px] uppercase opacity-50 font-bold">{t('game.zombie_hud.rebounds')}</span>
                                 <span className="text-base font-bold text-blue-400">x{weaponBounce}</span>
                             </div>
                             <div className="flex flex-col items-center">
-                                <span className="text-[8px] uppercase opacity-50 font-bold">Z-HP</span>
+                                <span className="text-[8px] uppercase opacity-50 font-bold">{t('game.zombie_hud.zombie_hp')}</span>
                                 <span className="text-base font-bold text-green-500">{zombieHp}</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="text-[9px] text-red-500 font-black animate-pulse uppercase tracking-[0.3em] h-3 mt-1">
-                        {dangerLevel > 0.8 ? '!! DANGER CRITIQUE !!' : dangerLevel > 0.5 ? '! ALERTE !' : ''}
+                        {dangerLevel > 0.8 ? t('game.zombie_hud.danger_critical') : dangerLevel > 0.5 ? t('game.zombie_hud.danger_alert') : ''}
                     </div>
                 </div>
             </div>
@@ -242,13 +243,13 @@ export function HUD({
                         >
                             <div className="text-center relative">
                                 <div className="text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-blue-600 opacity-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 whitespace-nowrap blur-sm select-none">
-                                    DÉFENSE ZOMBIE
+                                    {t('game.zombie_hud.title_bg')}
                                 </div>
                                 <h1 className="text-5xl md:text-7xl font-black text-white mb-2 tracking-tighter drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
-                                    PROTOCOLE <span className="text-cyan-400">ZOMBIE</span>
+                                    {t('game.zombie_hud.protocol')} <span className="text-cyan-400">ZOMBIE</span>
                                 </h1>
                                 <p className="text-cyan-200/80 mb-12 text-lg tracking-widest max-w-md mx-auto uppercase text-sm border-t border-b border-cyan-500/30 py-4">
-                                    Protégez la zone. Collectez la Tech. Survivez.
+                                    {t('game.zombie_hud.protect_zone')}
                                 </p>
 
                                 <motion.button
@@ -259,7 +260,7 @@ export function HUD({
                                 >
                                     <div className="absolute inset-0 bg-cyan-400/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 skew-x-12" />
                                     <span className="relative text-cyan-300 font-bold tracking-[0.3em] group-hover:text-white transition-colors">
-                                        INITIALISER
+                                        {t('game.zombie_hud.initialize')}
                                     </span>
                                 </motion.button>
                             </div>
@@ -279,20 +280,20 @@ export function HUD({
                                 <div className="absolute top-0 inset-x-0 h-1 bg-red-500 animate-[loading_2s_ease-in-out_infinite]" />
 
                                 <h2 className="text-6xl font-black text-red-500 mb-6 tracking-tight glitch-text">
-                                    ÉCHEC SYSTÈME
+                                    {t('game.zombie_hud.system_failure')}
                                 </h2>
 
                                 <div className="flex justify-center gap-12 mb-8 text-2xl font-mono">
                                     <div className="flex flex-col">
-                                        <span className="text-xs text-red-400/60 uppercase">Score Final</span>
+                                        <span className="text-xs text-red-400/60 uppercase">{t('game.zombie_hud.final_score')}</span>
                                         <span className="text-white font-bold">{score}</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-xs text-red-400/60 uppercase">Vagues</span>
+                                        <span className="text-xs text-red-400/60 uppercase">{t('game.zombie_hud.waves')}</span>
                                         <span className="text-white font-bold">{wave}</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-xs text-red-400/60 uppercase">Éliminations</span>
+                                        <span className="text-xs text-red-400/60 uppercase">{t('game.zombie_hud.eliminations')}</span>
                                         <span className="text-white font-bold">{kills}</span>
                                     </div>
                                 </div>
@@ -302,7 +303,7 @@ export function HUD({
                                     onClick={onStart}
                                     className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-bold tracking-widest uppercase transition-colors"
                                 >
-                                    Redémarrer
+                                    {t('game.zombie_hud.restart')}
                                 </motion.button>
                             </div>
                         </motion.div>
@@ -314,7 +315,7 @@ export function HUD({
             {
                 gameState === 'playing' && (
                     <div className="absolute bottom-4 left-4 text-[10px] text-white/20 hidden md:block">
-                        CONTROLES: SOURIS // CLAVIER
+                        {t('game.zombie_hud.controls')}
                     </div>
                 )
             }

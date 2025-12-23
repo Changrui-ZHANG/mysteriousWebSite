@@ -1,6 +1,7 @@
 import { useTexture, Html } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useMemo, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import { FIELD_DEPTH, FIELD_WIDTH, FRONT_WALL_Z, BACK_WALL_Z, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE } from './constants';
 import { Particle, PowerUp, Projectile, Zombie, FloatingText } from './types';
@@ -56,6 +57,7 @@ export function GameScene({
     onShowSuperRewards,
     onMobileButtons,
 }: GameSceneProps) {
+    const { t } = useTranslation();
     // Load Textures
     const [texWalker, texRunner, texTank, texBoss] = useTexture([
         '/textures/zombie_walker.png',
@@ -302,13 +304,13 @@ export function GameScene({
             if (!wasBreached.current) {
                 perfectStreak.current++;
                 if (perfectStreak.current === 5) {
-                    onNotification("DÉFI ÉLITE ACTIVÉ : +50% HP", "#ef4444");
+                    onNotification(t('game.zombie_notif.elite_challenge'), "#ef4444");
                 } else if (perfectStreak.current < 5) {
-                    onNotification(`SÉCURITÉ PARFAITE : STREAK ${perfectStreak.current}`, "#22d3ee");
+                    onNotification(t('game.zombie_notif.perfect_streak', { streak: perfectStreak.current }), "#22d3ee");
                 }
             } else {
                 if (perfectStreak.current >= 5) {
-                    onNotification("DÉFI ÉLITE TERMINÉ", "#60a5fa");
+                    onNotification(t('game.zombie_notif.elite_complete'), "#60a5fa");
                 }
                 perfectStreak.current = 0;
             }
@@ -324,7 +326,7 @@ export function GameScene({
             if (perfectStreak.current >= 5) baseHp *= 1.5;
             setZombieHp(Math.round(baseHp));
 
-            onNotification(`VAGUE ${difficultyLevel.current}`, "#60a5fa");
+            onNotification(t('game.zombie_notif.wave', { wave: difficultyLevel.current }), "#60a5fa");
 
             // Super Reward every 10 waves
             const waveNum = Math.floor(difficultyLevel.current);
@@ -417,7 +419,8 @@ export function GameScene({
             let hit = false;
             for (let j = projectiles.current.length - 1; j >= 0; j--) {
                 const p = projectiles.current[j];
-                if (p.position.distanceTo(z.position) < 1.2) {
+                const collisionRadius = 0.7 + (z.size || 1) * 0.5;
+                if (p.position.distanceTo(z.position) < collisionRadius) {
                     const stats = weaponStats.current;
                     const isCrit = Math.random() < stats.critChance / 100;
                     const finalDamage = isCrit ? stats.damage * (1 + critBonus / 100) : stats.damage;
@@ -461,8 +464,10 @@ export function GameScene({
                             if (otherZ.id !== z.id && otherZ.hp > 0) {
                                 const dist = otherZ.position.distanceTo(z.position);
                                 if (dist < vortexRadius) {
-                                    const pullDir = z.position.clone().sub(otherZ.position).normalize();
-                                    otherZ.position.add(pullDir.multiplyScalar(0.8)); // Strong pull
+                                    // Pull BACKWARDS (towards spawn, away from player)
+                                    const pullDir = new THREE.Vector3(0, 0, -1); // Backward on Z
+                                    const pullResistance = KNOCKBACK_RESISTANCE[otherZ.type] || 1;
+                                    otherZ.position.add(pullDir.multiplyScalar(0.3 * pullResistance)); // Smoother, resisted pull
                                 }
                             }
                         });
@@ -643,23 +648,23 @@ export function GameScene({
                 } else if (p.type === 'rapid') {
                     weaponStats.current.delay = Math.max(0.05, weaponStats.current.delay * 0.9);
                     setWeaponDelay(weaponStats.current.delay);
-                    onNotification("+++ CADENCE", "#3b82f6");
+                    onNotification(t('game.zombie_notif.pickup_rate'), "#3b82f6");
                 } else if (p.type === 'tech') {
                     weaponStats.current.tech = Math.min(6, weaponStats.current.tech + 1);
                     setWeaponTech(weaponStats.current.tech);
-                    onNotification(weaponStats.current.tech === 6 ? "TECH MAXIMALE" : "TECH UPGRADED", "#ef4444");
+                    onNotification(weaponStats.current.tech === 6 ? t('game.zombie_notif.pickup_tech_max') : t('game.zombie_notif.pickup_tech'), "#ef4444");
                 } else if (p.type === 'damage') {
                     weaponStats.current.damage += 10;
                     setWeaponDamage(weaponStats.current.damage);
-                    onNotification("+10 DÉGÂTS", "#f97316");
+                    onNotification(t('game.zombie_notif.pickup_damage'), "#f97316");
                 } else if (p.type === 'crit') {
                     weaponStats.current.critChance = Math.min(100, weaponStats.current.critChance + 10);
                     setCritChance(weaponStats.current.critChance);
-                    onNotification("+10% CRIT", "#facc15");
+                    onNotification(t('game.zombie_notif.pickup_crit'), "#facc15");
                 } else if (p.type === 'bounce') {
                     weaponStats.current.maxBounce++;
                     setWeaponBounce(weaponStats.current.maxBounce);
-                    onNotification("+1 REBOND", "#ffffff");
+                    onNotification(t('game.zombie_notif.pickup_bounce'), "#ffffff");
                 }
 
                 playSound('click' as any);
@@ -849,7 +854,7 @@ export function GameScene({
                                 fontFamily: 'monospace'
                             }}
                         >
-                            {ft.isCrit && <div className="text-[0.6rem] uppercase tracking-[0.2em] mb-[-0.2rem] opacity-90 text-yellow-500 font-bold">CRITIQUE</div>}
+                            {ft.isCrit && <div className="text-[0.6rem] uppercase tracking-[0.2em] mb-[-0.2rem] opacity-90 text-yellow-500 font-bold">{t('game.zombie_hud.crit_hit')}</div>}
                             {ft.content}
                         </div>
                     </Html>
@@ -863,7 +868,7 @@ export function GameScene({
                     <Html position={[0, 2, 0]} center>
                         <div className="bg-black/80 px-4 py-2 rounded-lg border border-cyan-500/50 backdrop-blur-sm pointer-events-none">
                             <span className="text-cyan-400 font-black text-xs uppercase tracking-widest animate-pulse text-center">
-                                CLIQUEZ POUR CAPTURER LA SOURIS
+                                {t('game.zombie_hud.capture_mouse')}
                             </span>
                         </div>
                     </Html>

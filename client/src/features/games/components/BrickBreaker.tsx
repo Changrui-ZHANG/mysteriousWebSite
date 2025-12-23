@@ -90,120 +90,24 @@ const LEVEL_CONFIG = {
     /** Number of level variants */
     LEVEL_COUNT: 16,
 
-    /** Map metadata for selection screen */
+    /** Map metadata for selection screen - uses i18n keys */
     MAPS: [
-        {
-            id: 0,
-            name: 'Le Tunnel',
-            description: 'Percez le mur fortifié pour atteindre le trésor',
-            difficulty: 'Facile',
-            icon: '🎯'
-        },
-        {
-            id: 1,
-            name: 'La Pyramide',
-            description: 'Détruisez la pyramide mystérieuse',
-            difficulty: 'Moyen',
-            icon: '🔺'
-        },
-        {
-            id: 2,
-            name: 'Les Chambres',
-            description: 'Naviguez dans le labyrinthe de chambres',
-            difficulty: 'Difficile',
-            icon: '🏛️'
-        },
-        {
-            id: 3,
-            name: 'La Mosaïque Royale',
-            description: 'Un tapis de briques aux couleurs impériales',
-            difficulty: 'Moyen',
-            icon: '👑'
-        },
-        {
-            id: 4,
-            name: 'La Forteresse',
-            description: 'Un bloc massif défiant toute destruction',
-            difficulty: 'Difficile',
-            icon: '🏰'
-        },
-        {
-            id: 5,
-            name: 'L\'Empire Galactique',
-            description: 'Une densité extrême pour les vrais maîtres',
-            difficulty: 'Expert',
-            icon: '🌌'
-        },
-        {
-            id: 6,
-            name: 'Le Bastion',
-            description: 'Une ligne de défense avec des tours fortifiées',
-            difficulty: 'Moyen',
-            icon: '🛡️'
-        },
-        {
-            id: 7,
-            name: 'Le Colisée',
-            description: 'Des anneaux concentriques de briques et de murs',
-            difficulty: 'Difficile',
-            icon: '🏟️'
-        },
-        {
-            id: 8,
-            name: 'Le Labyrinthe Royal',
-            description: 'Un réseau complexe de couloirs et de briques',
-            difficulty: 'Expert',
-            icon: '🏛️'
-        },
-        {
-            id: 9,
-            name: 'Le Dédale Sombre',
-            description: 'De longs couloirs horizontaux remplis de secrets',
-            difficulty: 'Moyen',
-            icon: '🌑'
-        },
-        {
-            id: 10,
-            name: 'Les Cryptes Oubliées',
-            description: 'Un réseau vertical de chambres closes',
-            difficulty: 'Difficile',
-            icon: '💀'
-        },
-        {
-            id: 11,
-            name: 'Le Labyrinthe de Cristal',
-            description: 'Des chemins diagonaux ultra-étroits',
-            difficulty: 'Expert',
-            icon: '💎'
-        },
-        {
-            id: 12,
-            name: 'Les Mines d\'Or',
-            description: 'Des filons précieux protégés par la roche',
-            difficulty: 'Moyen',
-            icon: '⛏️'
-        },
-        {
-            id: 13,
-            name: 'Le Temple Maudit',
-            description: 'Une structure ancienne piégée par des murs',
-            difficulty: 'Difficile',
-            icon: '🛕'
-        },
-        {
-            id: 14,
-            name: 'La Station Intergalactique',
-            description: 'Un design technologique symétrique pour un défi ultime',
-            difficulty: 'Expert',
-            icon: '🛰️'
-        },
-        {
-            id: 15,
-            name: 'Le Dédale Infini',
-            description: 'Un labyrinthe généré par le serveur à chaque partie',
-            difficulty: 'Extreme',
-            icon: '🌀'
-        }
+        { id: 0, i18nKey: 'tunnel', difficultyKey: 'easy', icon: '🎯' },
+        { id: 1, i18nKey: 'pyramid', difficultyKey: 'medium', icon: '🔺' },
+        { id: 2, i18nKey: 'chambers', difficultyKey: 'hard', icon: '🏛️' },
+        { id: 3, i18nKey: 'mosaic', difficultyKey: 'medium', icon: '👑' },
+        { id: 4, i18nKey: 'fortress', difficultyKey: 'hard', icon: '🏰' },
+        { id: 5, i18nKey: 'galactic', difficultyKey: 'expert', icon: '🌌' },
+        { id: 6, i18nKey: 'bastion', difficultyKey: 'medium', icon: '🛡️' },
+        { id: 7, i18nKey: 'coliseum', difficultyKey: 'hard', icon: '🏟️' },
+        { id: 8, i18nKey: 'royal_maze', difficultyKey: 'expert', icon: '🏛️' },
+        { id: 9, i18nKey: 'dark_maze', difficultyKey: 'medium', icon: '🌑' },
+        { id: 10, i18nKey: 'crypts', difficultyKey: 'hard', icon: '💀' },
+        { id: 11, i18nKey: 'crystal', difficultyKey: 'expert', icon: '💎' },
+        { id: 12, i18nKey: 'mines', difficultyKey: 'medium', icon: '⛏️' },
+        { id: 13, i18nKey: 'temple', difficultyKey: 'hard', icon: '🛕' },
+        { id: 14, i18nKey: 'station', difficultyKey: 'expert', icon: '🛰️' },
+        { id: 15, i18nKey: 'infinite', difficultyKey: 'extreme', icon: '🌀' }
     ],
 
     // Tunnel Level
@@ -1282,9 +1186,9 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                         {/* Current Map Display */}
                                         <div className="mb-6 p-4 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
                                             <div className="text-4xl mb-2">{LEVEL_CONFIG.MAPS[selectedMap].icon}</div>
-                                            <div className="text-cyan-400 font-bold text-lg">{LEVEL_CONFIG.MAPS[selectedMap].name}</div>
-                                            <div className="text-white/60 text-sm">{LEVEL_CONFIG.MAPS[selectedMap].description}</div>
-                                            <div className="text-yellow-400 text-xs mt-1">Difficulté: {LEVEL_CONFIG.MAPS[selectedMap].difficulty}</div>
+                                            <div className="text-cyan-400 font-bold text-lg">{t(`game.brick_breaker_maps.${LEVEL_CONFIG.MAPS[selectedMap].i18nKey}.name`)}</div>
+                                            <div className="text-white/60 text-sm">{t(`game.brick_breaker_maps.${LEVEL_CONFIG.MAPS[selectedMap].i18nKey}.desc`)}</div>
+                                            <div className="text-yellow-400 text-xs mt-1">{t(`game.brick_breaker_difficulty.${LEVEL_CONFIG.MAPS[selectedMap].difficultyKey}`)}</div>
                                         </div>
 
                                         <div className="flex gap-4">
@@ -1293,14 +1197,14 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                                 className="px-6 py-3 bg-purple-500 text-white font-bold text-lg rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(168,85,247,0.6)]"
                                                 disabled={isLoadingMap}
                                             >
-                                                🗺️ {isLoadingMap ? 'Chargement...' : 'Choisir Carte'}
+                                                🗺️ {isLoadingMap ? t('game.loading') : t('game.brick_breaker_choose_map')}
                                             </button>
                                             <button
                                                 onClick={() => handleStartGame()}
                                                 className="px-8 py-3 bg-cyan-500 text-black font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(6,182,212,0.6)] disabled:opacity-50"
                                                 disabled={isLoadingMap}
                                             >
-                                                {isLoadingMap ? 'Génération...' : t('game.start_game')}
+                                                {isLoadingMap ? t('game.loading') : t('game.start_game')}
                                             </button>
                                         </div>
                                     </>
@@ -1331,21 +1235,21 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                         <h2 className="text-4xl md:text-6xl font-black font-heading text-green-400 mb-4">{t('game.you_win')}</h2>
                                         <p className="text-white/80 mb-6 md:mb-8 font-mono text-lg md:text-2xl">{t('game.final_score')}: {score}</p>
                                         {selectedMap + 1 < LEVEL_CONFIG.LEVEL_COUNT && unlockedMaps.includes(selectedMap + 1) && (
-                                            <p className="text-yellow-400 mb-4 font-bold">🎉 Nouvelle carte débloquée : {LEVEL_CONFIG.MAPS[selectedMap + 1].name} !</p>
+                                            <p className="text-yellow-400 mb-4 font-bold">🎉 {t('game.brick_breaker_new_map_unlocked', { name: t(`game.brick_breaker_maps.${LEVEL_CONFIG.MAPS[selectedMap + 1].i18nKey}.name`) })}</p>
                                         )}
                                         <div className="flex gap-4">
                                             <button
                                                 onClick={() => setShowMapSelector(true)}
                                                 className="px-6 py-3 bg-purple-500 text-white font-bold text-lg rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(168,85,247,0.6)]"
                                             >
-                                                🗺️ Choisir Carte
+                                                🗺️ {t('game.brick_breaker_choose_map')}
                                             </button>
                                             <button
                                                 onClick={() => handleStartGame()}
                                                 className="px-8 py-3 bg-green-500 text-black font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(34,197,94,0.6)] disabled:opacity-50"
                                                 disabled={isLoadingMap}
                                             >
-                                                {isLoadingMap ? 'Génération...' : t('game.play_again')}
+                                                {isLoadingMap ? t('game.loading') : t('game.play_again')}
                                             </button>
                                             {selectedMap + 1 < LEVEL_CONFIG.LEVEL_COUNT && (
                                                 <button
@@ -1353,7 +1257,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                                     className="px-8 py-3 bg-yellow-500 text-black font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(234,179,8,0.6)] disabled:opacity-50"
                                                     disabled={isLoadingMap}
                                                 >
-                                                    {isLoadingMap ? 'Chargement...' : '⏭️ Suivant'}
+                                                    {isLoadingMap ? t('game.loading') : `⏭️ ${t('game.brick_breaker_next_level')}`}
                                                 </button>
                                             )}
                                         </div>
@@ -1435,7 +1339,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h2 className="text-xl md:text-3xl font-bold text-center mb-4 md:mb-8 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                                    🗺️ Sélection de Carte
+                                    🗺️ {t('game.brick_breaker_map_selection')}
                                 </h2>
 
                                 <div
@@ -1478,21 +1382,21 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
 
                                                 <div className={isUnlocked ? '' : 'blur-sm'}>
                                                     <div className="text-5xl mb-3">{map.icon}</div>
-                                                    <h3 className="text-xl font-bold text-white mb-2">{map.name}</h3>
-                                                    <p className="text-sm text-white/60 mb-3">{map.description}</p>
+                                                    <h3 className="text-xl font-bold text-white mb-2">{t(`game.brick_breaker_maps.${map.i18nKey}.name`)}</h3>
+                                                    <p className="text-sm text-white/60 mb-3">{t(`game.brick_breaker_maps.${map.i18nKey}.desc`)}</p>
                                                     <div className={`
                                                         inline-block px-3 py-1 rounded-full text-xs font-bold
-                                                        ${map.difficulty === 'Facile' ? 'bg-green-500/20 text-green-400' :
-                                                            map.difficulty === 'Moyen' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                        ${map.difficultyKey === 'easy' ? 'bg-green-500/20 text-green-400' :
+                                                            map.difficultyKey === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
                                                                 'bg-red-500/20 text-red-400'}
                                                     `}>
-                                                        {map.difficulty}
+                                                        {t(`game.brick_breaker_difficulty.${map.difficultyKey}`)}
                                                     </div>
                                                 </div>
 
                                                 {isSelected && isUnlocked && (
                                                     <div className="absolute top-2 right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                                        ✓ Sélectionnée
+                                                        ✓ {t('game.brick_breaker_selected')}
                                                     </div>
                                                 )}
                                             </motion.button>
@@ -1502,7 +1406,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
 
                                 <div className="flex justify-between items-center">
                                     <div className="text-sm text-white/60">
-                                        {unlockedMaps.length} / {LEVEL_CONFIG.LEVEL_COUNT} cartes débloquées
+                                        {t('game.brick_breaker_maps_unlocked', { count: unlockedMaps.length, total: LEVEL_CONFIG.LEVEL_COUNT })}
                                     </div>
                                     <button
                                         onClick={() => {

@@ -316,7 +316,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     { to: "/messages", label: t('nav.messages') },
                                     { to: "/suggestions", label: t('nav.suggestions') },
                                     { to: "/calendar", label: t('nav.calendar') },
-                                    { to: "/learning", label: "Linguiste" }
+                                    { to: "/learning", label: t('nav.learning') }
                                 ].map((link) => (
                                     <Link
                                         key={link.to}
@@ -336,7 +336,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                 {user ? (
                                     <div className="flex flex-col items-center gap-4 w-full">
                                         <div className="flex flex-col items-center">
-                                            <span className="text-sm opacity-60">Signed in as</span>
+                                            <span className="text-sm opacity-60">{t('auth.signed_in_as')}</span>
                                             <span className="font-bold text-cyan-500 text-xl">{user.username}</span>
                                         </div>
                                         <button
@@ -375,7 +375,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center gap-2 w-full max-w-xs p-4 rounded-xl bg-current/5 border border-current/10">
-                                        <span className="text-xs opacity-50 uppercase tracking-widest font-bold">Admin Access</span>
+                                        <span className="text-xs opacity-50 uppercase tracking-widest font-bold">{t('auth.admin_access')}</span>
                                         <form
                                             onSubmit={async (e) => {
                                                 e.preventDefault();
