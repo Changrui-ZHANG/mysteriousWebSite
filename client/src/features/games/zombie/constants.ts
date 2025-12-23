@@ -11,7 +11,7 @@ export const PROJECTILE_SPEED = 0.8;
 
 // Zombies
 // Zombies
-export const ZOMBIE_BASE_SPEED = 0.05;
+export const ZOMBIE_BASE_SPEED = 0.02;
 
 // Controls
 export const GHOST_CLICK_DELAY = 500; // ms to ignore mouse after touch

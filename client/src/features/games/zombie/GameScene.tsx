@@ -404,13 +404,8 @@ export function GameScene({
             } else {
                 z.color = z.baseColor;
             }
+            // zombies move straight forward on the Z axis
             z.position.z += currentSpeed;
-
-            // Detect Secure Zone Breach (Z > -22)
-            if (z.position.z > -22) wasBreached.current = true;
-
-            if (z.position.x < playerPos.current.x - 0.5) z.position.x += 0.02 * (z.slowedUntil && z.slowedUntil > currentTime ? 0.75 : 1);
-            else if (z.position.x > playerPos.current.x + 0.5) z.position.x -= 0.02 * (z.slowedUntil && z.slowedUntil > currentTime ? 0.75 : 1);
 
             if (z.position.z > playerPos.current.z) {
                 setGameState('gameover');

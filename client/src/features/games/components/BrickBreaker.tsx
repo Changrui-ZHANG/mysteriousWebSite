@@ -20,9 +20,9 @@ const BALL_CONFIG = {
     /** Initial horizontal speed */
     INITIAL_SPEED_X: 0,
     /** Initial vertical speed (negative = upward) */
-    INITIAL_SPEED_Y: -1,
+    INITIAL_SPEED_Y: -5,
     /** Constant speed magnitude for uniform movement */
-    SPEED: 2,
+    SPEED: 5,
     /** Y offset from bottom for initial spawn */
     SPAWN_OFFSET_Y: 30,
 } as const;
@@ -247,14 +247,12 @@ const VISUAL_CONFIG = {
             PADDLE: '#e879f9',
             BACKGROUND: '#0f172a',
             WALL: '#94a3b8',
-            TRAIL: 'rgba(15, 23, 42, 0.4)',
         },
         LIGHT: {
             BALL: '#0891b2',
             PADDLE: '#c026d3',
             BACKGROUND: '#f8fafc',
             WALL: '#64748b',
-            TRAIL: 'rgba(248, 250, 252, 0.4)',
         },
         POWERUPS: {
             MULTI: '#facc15',
@@ -422,6 +420,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
             const rect = container.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
+            console.log('Internal Resolution Updated:', canvas.width, 'x', canvas.height);
         };
         updateCanvasSize();
         window.addEventListener('resize', updateCanvasSize);
@@ -930,8 +929,8 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                 return;
             }
 
-            // Batched clear
-            ctx.fillStyle = isDarkMode ? 'rgba(15, 23, 42, 0.4)' : 'rgba(248, 250, 252, 0.4)';
+            // Solid clear to remove trail/shadow
+            ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             drawBricks();
@@ -1140,6 +1139,8 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
         };
 
         const handleMouseMove = (e: MouseEvent) => {
+            // Calculation of scaleX (Mapping screen mouse X to internal coordinate system)
+            // This correctly handles ANY zoom level or screen stretch
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             paddleX = (e.clientX - rect.left) * scaleX - paddleWidthRef.current / 2;
@@ -1180,12 +1181,22 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                 clearTimeout(paddleWidthTimeoutRef.current);
             }
         };
-    }, [gameState, isDarkMode, playSound, selectedMap, randomMapData]);
+    }, [gameState, isDarkMode, playSound, selectedMap, randomMapData, isFullScreen]);
+
+    // Re-generate map when switching fullscreen to fill the new space with more bricks/walls
+    useEffect(() => {
+        if (gameState === 'playing') {
+            handleStartGame(selectedMap);
+        }
+    }, [isFullScreen]);
 
     return (
-        <div ref={containerRef} className={`relative w-full h-full flex flex-col ${isFullScreen ? 'bg-slate-900 overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
+        <div ref={containerRef} className={`relative w-full h-full flex flex-col ${isFullScreen ? 'bg-slate-900' : ''}`} style={{ perspective: '1000px' }}>
             {/* EXTERNAL GLOBAL CONTROLS */}
-            <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
+            <div className={`
+                flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border border-white/10 z-[100] transition-all
+                ${isFullScreen ? 'rounded-none border-x-0 border-t-0' : 'rounded-t-xl mx-4 mt-4'}
+            `}>
                 <div className="w-32 mr-2 flex items-center">
                     <ElasticSlider
                         defaultValue={volume * 100}
@@ -1228,7 +1239,10 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
             >
                 {/* Front Face (Game) */}
                 <div
-                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center border border-white/20 rounded-xl backdrop-blur-md overflow-hidden transition-colors duration-500 ${theme.bgCard}`}
+                    className={`
+                        absolute inset-0 w-full h-full flex flex-col items-center justify-center transition-all duration-500 ${theme.bgCard}
+                        ${isFullScreen ? 'rounded-none border-0' : 'border border-white/20 rounded-xl backdrop-blur-md overflow-hidden'}
+                    `}
                     style={{ backfaceVisibility: 'hidden' }}
                 >
                     <div className="absolute top-4 left-6 text-xl font-bold font-mono z-20 flex flex-col gap-1">
