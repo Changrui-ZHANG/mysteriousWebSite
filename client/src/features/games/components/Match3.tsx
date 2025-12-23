@@ -6,12 +6,30 @@ import { useBGM } from '../../../hooks/useBGM';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
-import { FaQuestion, FaArrowLeft, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { GradientHeading, Button } from '../../../components';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
 
-const WIDTH = 8;
+// ===== BOARD CONFIGURATION =====
+const BOARD_CONFIG = {
+    /** Grid width (columns and rows) */
+    WIDTH: 8,
+    /** Game loop interval in ms */
+    GAME_LOOP_INTERVAL: 100,
+    /** Score submission debounce in ms */
+    SCORE_SUBMIT_DEBOUNCE: 1000,
+} as const;
+
+const WIDTH = BOARD_CONFIG.WIDTH;
+
+// ===== AUDIO CONFIGURATION =====
+const AUDIO_CONFIG = {
+    /** Background music URL */
+    BGM_URL: 'https://cdn.pixabay.com/audio/2024/10/10/audio_2290aa59a9.mp3',
+} as const;
+
+// ===== CANDY COLORS =====
 const CANDY_COLORS = [
     'bg-red-500',
     'bg-orange-500',
@@ -19,7 +37,15 @@ const CANDY_COLORS = [
     'bg-green-500',
     'bg-blue-500',
     'bg-purple-500'
-];
+] as const;
+
+// ===== SCORING CONFIGURATION =====
+const SCORING_CONFIG = {
+    /** Minimum match length to score */
+    MIN_MATCH_LENGTH: 3,
+    /** Base points per extra candy in a match */
+    POINTS_PER_EXTRA: 1,
+} as const;
 
 interface Match3Props {
     isDarkMode: boolean;
@@ -44,7 +70,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
 
-    useBGM('https://cdn.pixabay.com/audio/2024/10/10/audio_2290aa59a9.mp3', !isMuted && !isFlipped, volume);
+    useBGM(AUDIO_CONFIG.BGM_URL, !isMuted && !isFlipped, volume);
 
     // Combo state
     const [comboMultiplier, setComboMultiplier] = useState(0);
@@ -81,7 +107,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                     matchLen++;
                 }
 
-                if (matchLen >= 3) {
+                if (matchLen >= SCORING_CONFIG.MIN_MATCH_LENGTH) {
                     for (let k = 0; k < matchLen; k++) {
                         matchedIndices.add(i + k);
                     }
@@ -103,7 +129,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                     matchLen++;
                 }
 
-                if (matchLen >= 3) {
+                if (matchLen >= SCORING_CONFIG.MIN_MATCH_LENGTH) {
                     for (let k = 0; k < matchLen; k++) {
                         matchedIndices.add((row + k) * WIDTH + col);
                     }
@@ -257,6 +283,13 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                         onToggleMute={toggleMute}
                     />
                 </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); createBoard(); setScore(0); playSound('click'); }}
+                    className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Recommencer"
+                >
+                    <FaRedo size={18} />
+                </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-pink-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"

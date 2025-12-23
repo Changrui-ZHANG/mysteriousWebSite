@@ -6,7 +6,7 @@ import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
-import { FaQuestion, FaArrowLeft, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { GradientHeading, Button } from '../../../components';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
@@ -166,6 +166,13 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
                         onToggleMute={toggleMute}
                     />
                 </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); setScore(0); setAttempts(0); loadNewPokemon(); }}
+                    className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Recommencer"
+                >
+                    <FaRedo size={18} />
+                </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-purple-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"

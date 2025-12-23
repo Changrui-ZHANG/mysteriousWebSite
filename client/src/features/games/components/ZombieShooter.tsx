@@ -5,7 +5,7 @@ import { useMute } from '../../../hooks/useMute';
 import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
-import { FaQuestion, FaArrowLeft, FaArrowRight, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaQuestion, FaArrowLeft, FaArrowRight, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { HUD } from '../zombie/components/HUD';
 import { World } from '../zombie/components/World';
 import { RulesPage } from '../zombie/components/RulesPage';
@@ -17,6 +17,60 @@ import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
+
+// ===== WEAPON INITIAL VALUES =====
+const WEAPON_DEFAULTS = {
+    /** Starting weapon count */
+    COUNT: 1,
+    /** Starting fire delay (seconds) */
+    DELAY: 0.3,
+    /** Starting tech level */
+    TECH: 0,
+    /** Starting base damage */
+    DAMAGE: 50,
+    /** Starting bounce count */
+    BOUNCE: 1,
+    /** Starting critical hit chance (%) */
+    CRIT_CHANCE: 5,
+    /** Starting critical bonus (%) */
+    CRIT_BONUS: 100,
+    /** Minimum fire delay (seconds) */
+    MIN_DELAY: 0.05,
+};
+
+// ===== ZOMBIE DEFAULTS =====
+const ZOMBIE_DEFAULTS = {
+    /** Starting zombie HP */
+    HP: 100,
+};
+
+// ===== NOTIFICATION CONFIGURATION =====
+const NOTIFICATION_CONFIG = {
+    /** Duration notifications stay on screen (ms) */
+    DURATION: 3000,
+} as const;
+
+// ===== AUDIO CONFIGURATION =====
+const AUDIO_CONFIG = {
+    /** Background music URL */
+    BGM_URL: 'https://cdn.pixabay.com/audio/2024/11/07/audio_6e5f80971b.mp3',
+} as const;
+
+// ===== SUPER UPGRADES =====
+const SUPER_UPGRADES = [
+    { id: 'dmg_50', name: 'Surcharge I', description: 'Dégâts de base +50%', icon: '🚀', type: 'damage_mult' as const, value: 1.5 },
+    { id: 'dmg_100', name: 'Surcharge II', description: 'Doube vos dégâts de base (x2)', icon: '⚡', type: 'damage_mult' as const, value: 2.0 },
+    { id: 'crit_b_50', name: 'Lames de Rasoir', description: 'Bonus de Critique +50%', icon: '🎯', type: 'crit_bonus' as const, value: 50 },
+    { id: 'crit_b_150', name: 'Exécuteur D\'Élite', description: 'Bonus de Critique +150%', icon: '💀', type: 'crit_bonus' as const, value: 150 },
+    { id: 'fire_50', name: 'Tempête de Plomb', description: 'Cadence de tir doublée (-50% délai)', icon: '🔥', type: 'fire_rate' as const, value: 0.5 },
+    { id: 'homing_shot', name: 'Pistage Tactique', description: 'Les balles cherchent automatiquement les ennemis', icon: '🎯', type: 'homing' as const, value: 1 },
+] as const;
+
+// ===== UPGRADE SELECTION =====
+const UPGRADE_CONFIG = {
+    /** Number of upgrade choices presented */
+    CHOICES_COUNT: 3,
+} as const;
 
 export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest, onGameStart }: ZombieShooterProps) {
     const theme = useTheme(isDarkMode);
@@ -31,59 +85,52 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
 
     const [gameState, setGameState] = useState<'intro' | 'playing' | 'gameover'>('intro');
     const [score, setScore] = useState(0);
-    const [weaponCount, setWeaponCount] = useState(1);
-    const [weaponDelay, setWeaponDelay] = useState(0.3);
-    const [weaponTech, setWeaponTech] = useState(0);
-    const [weaponDamage, setWeaponDamage] = useState(50);
-    const [weaponBounce, setWeaponBounce] = useState(1);
+    const [weaponCount, setWeaponCount] = useState<number>(WEAPON_DEFAULTS.COUNT);
+    const [weaponDelay, setWeaponDelay] = useState<number>(WEAPON_DEFAULTS.DELAY);
+    const [weaponTech, setWeaponTech] = useState<number>(WEAPON_DEFAULTS.TECH);
+    const [weaponDamage, setWeaponDamage] = useState<number>(WEAPON_DEFAULTS.DAMAGE);
+    const [weaponBounce, setWeaponBounce] = useState<number>(WEAPON_DEFAULTS.BOUNCE);
     const [isHoming, setIsHoming] = useState(false);
-    const [critChance, setCritChance] = useState(5);
+    const [critChance, setCritChance] = useState<number>(WEAPON_DEFAULTS.CRIT_CHANCE);
     const [dangerLevel, setDangerLevel] = useState(0);
     const [wave, setWave] = useState(1);
     const [kills, setKills] = useState(0);
-    const [zombieHp, setZombieHp] = useState(100);
+    const [zombieHp, setZombieHp] = useState<number>(ZOMBIE_DEFAULTS.HP);
     const [gameId, setGameId] = useState(0);
 
-    useBGM('https://cdn.pixabay.com/audio/2024/11/07/audio_6e5f80971b.mp3', !isMuted && gameState === 'playing' && !isFlipped, volume);
-    const [critBonus, setCritBonus] = useState(100);
+    useBGM(AUDIO_CONFIG.BGM_URL, !isMuted && gameState === 'playing' && !isFlipped, volume);
+    const [critBonus, setCritBonus] = useState<number>(WEAPON_DEFAULTS.CRIT_BONUS);
     const [isPickingUpgrade, setIsPickingUpgrade] = useState(false);
     const [upgradeChoices, setUpgradeChoices] = useState<SuperUpgrade[]>([]);
     const [notifications, setNotifications] = useState<{ id: number; text: string; color: string }[]>([]);
     const [mobileMoveHandlers, setMobileMoveHandlers] = useState<{ moveLeft: (on: boolean) => void, moveRight: (on: boolean) => void } | null>(null);
 
-    const superUpgrades = useMemo(() => [
-        { id: 'dmg_50', name: 'Surcharge I', description: 'Dégâts de base +50%', icon: '🚀', type: 'damage_mult' as const, value: 1.5 },
-        { id: 'dmg_100', name: 'Surcharge II', description: 'Doube vos dégâts de base (x2)', icon: '⚡', type: 'damage_mult' as const, value: 2.0 },
-        { id: 'crit_b_50', name: 'Lames de Rasoir', description: 'Bonus de Critique +50%', icon: '🎯', type: 'crit_bonus' as const, value: 50 },
-        { id: 'crit_b_150', name: 'Exécuteur D\'Élite', description: 'Bonus de Critique +150%', icon: '💀', type: 'crit_bonus' as const, value: 150 },
-        { id: 'fire_50', name: 'Tempête de Plomb', description: 'Cadence de tir doublée (-50% délai)', icon: '🔥', type: 'fire_rate' as const, value: 0.5 },
-        { id: 'homing_shot', name: 'Pistage Tactique', description: 'Les balles cherchent automatiquement les ennemis', icon: '🎯', type: 'homing' as const, value: 1 },
-    ], []);
+    const superUpgrades = useMemo(() => [...SUPER_UPGRADES], []);
 
     const addNotification = (text: string, color: string) => {
         const id = Date.now();
         setNotifications(prev => [...prev, { id, text, color }]);
         setTimeout(() => {
             setNotifications(prev => prev.filter(n => n.id !== id));
-        }, 3000);
+        }, NOTIFICATION_CONFIG.DURATION);
     };
 
     const handleStart = () => {
-        onGameStart?.(); // Notify parent
+        onGameStart?.();
         setScore(1);
-        setWeaponCount(1);
-        setWeaponDelay(0.3);
-        setWeaponTech(0);
-        setWeaponDamage(50);
-        setWeaponBounce(1);
+        setWeaponCount(WEAPON_DEFAULTS.COUNT);
+        setWeaponDelay(WEAPON_DEFAULTS.DELAY);
+        setWeaponTech(WEAPON_DEFAULTS.TECH);
+        setWeaponDamage(WEAPON_DEFAULTS.DAMAGE);
+        setWeaponBounce(WEAPON_DEFAULTS.BOUNCE);
         setIsHoming(false);
-        setCritChance(5);
-        setCritBonus(100);
+        setCritChance(WEAPON_DEFAULTS.CRIT_CHANCE);
+        setCritBonus(WEAPON_DEFAULTS.CRIT_BONUS);
         setIsPickingUpgrade(false);
         setDangerLevel(0);
         setWave(1);
         setKills(0);
-        setZombieHp(100);
+        setZombieHp(ZOMBIE_DEFAULTS.HP);
         setNotifications([]);
         setGameState('playing');
         setGameId(prev => prev + 1);
@@ -95,9 +142,8 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     };
 
     const handleShowSuperRewards = () => {
-        // Shuffle and take 3
         const shuffled = [...superUpgrades].sort(() => Math.random() - 0.5);
-        setUpgradeChoices(shuffled.slice(0, 3));
+        setUpgradeChoices(shuffled.slice(0, UPGRADE_CONFIG.CHOICES_COUNT));
         setIsPickingUpgrade(true);
     };
 
@@ -110,7 +156,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                 setCritBonus(prev => prev + upgrade.value);
                 break;
             case 'fire_rate':
-                setWeaponDelay(prev => Math.max(0.05, prev * upgrade.value));
+                setWeaponDelay(prev => Math.max(WEAPON_DEFAULTS.MIN_DELAY, prev * upgrade.value));
                 break;
             case 'tech':
                 setWeaponTech(prev => prev + upgrade.value);
@@ -136,6 +182,13 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                         onToggleMute={toggleMute}
                     />
                 </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); handleStart(); }}
+                    className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Recommencer"
+                >
+                    <FaRedo size={18} />
+                </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"

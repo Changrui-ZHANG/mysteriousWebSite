@@ -5,7 +5,7 @@ import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useMute } from '../../../hooks/useMute';
-import { FaQuestion, FaArrowLeft, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { registerAgent, getAgent, getMyShips, Agent, Ship } from '../../../utils/spacetraders';
 import { GradientHeading } from '../../../components/GradientHeading';
 import { useFullScreen } from '../../../hooks/useFullScreen';
@@ -148,6 +148,13 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                         onToggleMute={toggleMute}
                     />
                 </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); logout(); playSound('click'); }}
+                    className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Recommencer (Déconnexion)"
+                >
+                    <FaRedo size={18} />
+                </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"

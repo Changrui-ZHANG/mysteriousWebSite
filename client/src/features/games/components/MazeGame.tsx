@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight, FaTrophy, FaQuestion, FaClock, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight, FaTrophy, FaQuestion, FaClock, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
@@ -10,6 +10,43 @@ import { GradientHeading, Button } from '../../../components';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+
+// ===== FOG OF WAR CONFIGURATION =====
+const FOG_CONFIG = {
+    /** Vision radius around the player (cells) */
+    VISION_RADIUS: 3,
+} as const;
+
+// ===== AUDIO CONFIGURATION =====
+const AUDIO_CONFIG = {
+    /** Background music URL */
+    BGM_URL: 'https://cdn.pixabay.com/audio/2024/10/15/audio_acaf834253.mp3',
+} as const;
+
+// ===== MOVEMENT CONFIGURATION =====
+const MOVEMENT_CONFIG = {
+    /** Interval for continuous movement when holding a key (ms) */
+    HOLD_INTERVAL: 100,
+    /** Animation duration for move bounce (ms) */
+    MOVE_ANIMATION_DURATION: 150,
+} as const;
+
+// ===== MAZE SHIFTING CONFIGURATION =====
+const SHIFT_CONFIG = {
+    /** Initial countdown before first shift (seconds) */
+    INITIAL_COUNTDOWN: 3,
+    /** Interval between shifts (ms) */
+    SHIFT_INTERVAL: 1000,
+    /** Max attempts to find valid maze configuration */
+    MAX_ATTEMPTS: 50,
+    /** Number of random wall candidates to try when opening paths */
+    WALL_CANDIDATES: 10,
+    /** Extra walls to add for difficulty */
+    EXTRA_WALLS_COUNT: 2,
+    /** Block index offset range when blocking paths */
+    BLOCK_INDEX_MIN: 2,
+    BLOCK_INDEX_RANGE: 3,
+} as const;
 
 interface MazeGameProps {
     isDarkMode: boolean;
@@ -42,12 +79,12 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     const { volume, setVolume } = useBGMVolume(0.4);
     const containerRef = useRef<HTMLDivElement>(null);
     const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
-    const [shiftTimer, setShiftTimer] = useState(3);
+    const [shiftTimer, setShiftTimer] = useState<number>(SHIFT_CONFIG.INITIAL_COUNTDOWN);
 
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
 
-    useBGM('https://cdn.pixabay.com/audio/2024/10/15/audio_acaf834253.mp3', !isMuted && !isFlipped && gameState === 'playing', volume);
+    useBGM(AUDIO_CONFIG.BGM_URL, !isMuted && !isFlipped && gameState === 'playing', volume);
 
     // Animation states
     const [lastFacing, setLastFacing] = useState<1 | -1>(1); // 1 = right, -1 = left
@@ -69,7 +106,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                 setStartTime(Date.now());
                 setIsDragging(false);
                 setExploredCells(new Set());
-                setShiftTimer(3);
+                setShiftTimer(SHIFT_CONFIG.INITIAL_COUNTDOWN);
             }
         } catch (err) {
             console.error("Failed to load maze", err);
@@ -121,7 +158,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                 // Trigger move animation
                 setIsMoving(true);
                 if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current);
-                moveTimeoutRef.current = setTimeout(() => setIsMoving(false), 150);
+                moveTimeoutRef.current = setTimeout(() => setIsMoving(false), MOVEMENT_CONFIG.MOVE_ANIMATION_DURATION);
 
                 playSound('click');
 
@@ -267,7 +304,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
 
         setExploredCells(prev => {
             const newExplored = new Set(prev);
-            const radius = 3;
+            const radius = FOG_CONFIG.VISION_RADIUS;
             let changed = false;
 
             // Simple bounding box loop optimization
@@ -308,7 +345,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
         if (holdingDirection) {
             moveIntervalRef.current = setInterval(() => {
                 handleManualMove(holdingDirection.dx, holdingDirection.dy);
-            }, 100); // 100ms interval for smooth movement
+            }, MOVEMENT_CONFIG.HOLD_INTERVAL); // 100ms interval for smooth movement
         } else {
             if (moveIntervalRef.current) clearInterval(moveIntervalRef.current);
         }
@@ -372,7 +409,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                         const h = currentMaze.height;
 
                         // Retry loop to find a valid configuration
-                        for (let attempt = 0; attempt < 50; attempt++) {
+                        for (let attempt = 0; attempt < SHIFT_CONFIG.MAX_ATTEMPTS; attempt++) {
                             const newGrid = currentMaze.grid.map(row => [...row]);
 
                             // 1. Calculate CURRENT Path
@@ -383,7 +420,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                             // 2. Block a node ON THE CURRENT PATH (Force detour)
                             if (currentPath.length > 2) {
                                 // Block somewhat effectively
-                                const blockIndex = Math.min(currentPath.length - 2, 2 + Math.floor(Math.random() * 3));
+                                const blockIndex = Math.min(currentPath.length - 2, SHIFT_CONFIG.BLOCK_INDEX_MIN + Math.floor(Math.random() * SHIFT_CONFIG.BLOCK_INDEX_RANGE));
                                 const nodeToBlock = currentPath[blockIndex];
                                 if (nodeToBlock && newGrid[nodeToBlock.y][nodeToBlock.x] === 0) {
                                     newGrid[nodeToBlock.y][nodeToBlock.x] = 1;
@@ -394,7 +431,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                             // Candidates approach: Try 10 random walls, see which one gives longest path
                             let bestWall = { x: -1, y: -1, length: -1 };
 
-                            for (let k = 0; k < 10; k++) {
+                            for (let k = 0; k < SHIFT_CONFIG.WALL_CANDIDATES; k++) {
                                 const rx = 1 + Math.floor(Math.random() * (w - 2));
                                 const ry = 1 + Math.floor(Math.random() * (h - 2));
                                 if (newGrid[ry][rx] === 1) { // It's a wall candidate
@@ -425,7 +462,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
 
                             // 4. Add "False Paths" (Extra Walls)
                             // Add 1-2 random walls in open space to increase density/dead-ends
-                            for (let ex = 0; ex < 2; ex++) {
+                            for (let ex = 0; ex < SHIFT_CONFIG.EXTRA_WALLS_COUNT; ex++) {
                                 const rx = 1 + Math.floor(Math.random() * (w - 2));
                                 const ry = 1 + Math.floor(Math.random() * (h - 2));
                                 if (newGrid[ry][rx] === 0 && (rx !== currentPos.x || ry !== currentPos.y)) {
@@ -448,11 +485,11 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                         return currentMaze;
                     });
 
-                    return 3; // Reset timer
+                    return SHIFT_CONFIG.INITIAL_COUNTDOWN; // Reset timer
                 }
                 return prevTime - 1;
             });
-        }, 1000); // 1s interval
+        }, SHIFT_CONFIG.SHIFT_INTERVAL); // 1s interval
 
         return () => clearInterval(shiftInterval);
     }, [gameState]);
@@ -480,6 +517,13 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                         onToggleMute={toggleMute}
                     />
                 </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); fetchMaze(); }}
+                    className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    title="Recommencer"
+                >
+                    <FaRedo size={18} />
+                </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
@@ -555,7 +599,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                                 const isExplored = exploredCells.has(`${x}-${y}`);
                                 // Current vision radius for simple lighting effect (optional, implies "flashlight")
                                 const distSq = (x - playerPos.x) ** 2 + (y - playerPos.y) ** 2;
-                                const isVisible = distSq <= 9; // radius 3 squared
+                                const isVisible = distSq <= FOG_CONFIG.VISION_RADIUS * FOG_CONFIG.VISION_RADIUS; // radius squared
 
                                 // Fog Logic:
                                 // If not explored -> Black
