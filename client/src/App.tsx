@@ -39,17 +39,19 @@ function AppContent() {
     const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
     const [settingsLoaded, setSettingsLoaded] = useState(false);
 
+    // Initial Load: Auth, Language, and Settings
     useEffect(() => {
+        // 1. Load Auth
         const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
 
-            // Fetch user's language preference from database
+            // Fetch user's language preference from database ONLY ONCE on mount
             fetch(`/api/users/${parsedUser.userId}/language`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.language) {
+                    if (data.language && i18n.language !== data.language) {
                         i18n.changeLanguage(data.language);
                         localStorage.setItem('preferredLanguage', data.language);
                     }
@@ -58,12 +60,12 @@ function AppContent() {
         } else {
             // Load language from localStorage if not logged in
             const savedLanguage = localStorage.getItem('preferredLanguage');
-            if (savedLanguage) {
+            if (savedLanguage && i18n.language !== savedLanguage) {
                 i18n.changeLanguage(savedLanguage);
             }
         }
 
-        // Fetch public settings
+        // 2. Fetch public settings
         fetch('/api/settings/public')
             .then(res => res.json())
             .then(data => {
@@ -72,9 +74,9 @@ function AppContent() {
             })
             .catch(err => {
                 console.error("Failed to load settings", err);
-                setSettingsLoaded(true); // Proceed anyway
+                setSettingsLoaded(true);
             });
-    }, [i18n]);
+    }, []); // Only run once on mount
 
     // Sync body background with theme to prevent white flashes on mobile overscroll
     useEffect(() => {
