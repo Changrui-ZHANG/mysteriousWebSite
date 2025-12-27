@@ -26,14 +26,38 @@ This document defines the technical standards for the **Mysterious Web Site** fr
 
 ## 2. File Structure & Naming
 
-### **Naming Conventions**
+### **File Naming Conventions**
+
+| Category | File Name Convention | Example |
+|----------|---------------------|---------|
+| **Components** | PascalCase | `LiquidSphere.tsx`, `UserProfile.tsx` |
+| **Pages** | PascalCase + `Page` suffix | `HomePage.tsx`, `CVPage.tsx` |
+| **Layouts** | PascalCase | `Navbar.tsx`, `Footer.tsx` |
+| **Hooks** | camelCase + `use` prefix | `useScrollAnimation.ts`, `useTheme.ts` |
+| **Utils/Helpers** | camelCase | `formatDate.ts`, `calculateDistance.ts` |
+| **API Clients** | camelCase + `Api` suffix (optional) | `pokeApi.ts`, `spaceTraders.ts` |
+| **Type Files** | camelCase (domain name) | `calendar.ts`, `suggestions.ts` |
+| **Data Files** | camelCase + `Data` suffix | `cvData.tsx`, `holidayData.ts` |
+| **Constant Files** | camelCase (descriptive) | `endpoints.ts`, `authStorage.ts`, `calendarZones.ts` |
+| **Barrel Files** | `index.ts` | `index.ts` |
+| **Declaration Files** | kebab-case + `.d.ts` | `matter-extension.d.ts` |
+
+### **Content Naming Conventions**
+
 | Type | Convention | Example |
 |------|------------|---------|
-| Components | PascalCase | `LiquidSphere.tsx`, `UserProfile.tsx` |
-| Hooks | camelCase + `use` prefix | `useScrollAnimation.ts` |
-| Utils/Helpers | camelCase | `formatDate.ts`, `calculateDistance.ts` |
-| Constants | UPPER_SNAKE_CASE | `API_BASE_URL`, `MAX_RETRIES` |
-| Types/Interfaces | PascalCase + suffix | `UserProps`, `ExperienceData` |
+| Constants (values) | UPPER_SNAKE_CASE | `API_BASE_URL`, `MAX_RETRIES` |
+| Types/Interfaces | PascalCase | `UserProps`, `ExperienceData` |
+| Functions | camelCase | `fetchJson`, `formatDate` |
+| Variables | camelCase | `isDarkMode`, `currentUser` |
+
+### **File Extension Rules**
+
+| Extension | When to Use |
+|-----------|-------------|
+| `.tsx` | Files containing JSX (React components, data with icons) |
+| `.ts` | Pure TypeScript (hooks, utils, types, API clients) |
+| `.d.ts` | Type declaration files for external modules |
 
 ### **Directory Organization**
 ```

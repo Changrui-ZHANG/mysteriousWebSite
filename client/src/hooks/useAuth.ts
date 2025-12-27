@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { STORAGE_KEYS } from '../constants/auth';
+import { STORAGE_KEYS } from '../constants/authStorage';
 
 interface User {
     userId: string;

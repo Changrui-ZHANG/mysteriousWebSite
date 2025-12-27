@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaTimes } from 'react-icons/fa';
-import { postJson } from '../../api/api';
+import { postJson } from '../../api/httpClient';
 
 interface AuthModalProps {
     isOpen: boolean;

@@ -111,7 +111,7 @@ export const HOLIDAY_THEMES: Record<string, HolidayTheme> = {
     }
 };
 
-import { HOLIDAY_NAMES } from '../../constants/calendar';
+import { HOLIDAY_NAMES } from '../../constants/calendarZones';
 
 export const getHolidayTheme = (name: string): HolidayTheme => {
     // 1. Try to normalize name using our constant mapping (e.g. "1er janvier" -> "Jour de l'an")

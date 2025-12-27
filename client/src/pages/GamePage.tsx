@@ -7,10 +7,10 @@ import PokemonGame from '../features/games/components/PokemonGame';
 import MazeGame from '../features/games/components/MazeGame';
 import ZombieShooter from '../features/games/components/ZombieShooter';
 import Leaderboard from '../features/games/components/Leaderboard';
-import { fetchJson, postJson } from '../api/api';
+import { fetchJson, postJson } from '../api/httpClient';
 import { useAdminCode } from '../hooks/useAdminCode';
 import { useTheme } from '../hooks/useTheme';
-import { API_ENDPOINTS } from '../constants/api';
+import { API_ENDPOINTS } from '../constants/endpoints';
 import { GradientHeading } from '../components';
 import { GameSelector, GuestAlertModal } from '../components/game';
 

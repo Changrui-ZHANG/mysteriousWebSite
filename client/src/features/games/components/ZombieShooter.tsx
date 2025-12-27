@@ -8,7 +8,7 @@ import { useTheme } from '../../../hooks/useTheme';
 import { FaQuestion, FaArrowLeft, FaArrowRight, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { HUD } from '../zombie/components/HUD';
 import { World } from '../zombie/components/World';
-import { RulesPage } from '../zombie/components/RulesPage';
+import { RulesPanel } from '../zombie/components/RulesPanel';
 import { GameScene } from '../zombie/GameScene';
 import { SuperRewardModal } from '../zombie/components/SuperRewardModal';
 import { SuperUpgrade } from '../zombie/types';
@@ -328,7 +328,7 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
                         zIndex: isFlipped ? 10 : 0
                     }}
                 >
-                    <RulesPage onBack={() => setIsFlipped(false)} />
+                    <RulesPanel onBack={() => setIsFlipped(false)} />
                 </div>
             </motion.div>
 

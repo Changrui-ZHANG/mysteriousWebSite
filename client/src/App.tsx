@@ -14,7 +14,7 @@ import { TermsPage } from './pages/TermsPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { MaintenancePage } from './pages/MaintenancePage'
 import { LearningPage } from './pages/LearningPage'
-import { STORAGE_KEYS } from './constants/auth'
+import { STORAGE_KEYS } from './constants/authStorage'
 import './App.css'
 
 interface User {
@@ -125,7 +125,7 @@ function AppContent() {
 
     const handleAdminLogin = async (code: string) => {
         try {
-            const { postJson } = await import('./api/api');
+            const { postJson } = await import('./api/httpClient');
 
             const response = await postJson<{ role: string; message: string }>('/api/auth/verify-admin', { code });
 

@@ -2,14 +2,14 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
-import { fetchJson, postJson } from '../api/api';
+import { fetchJson, postJson } from '../api/httpClient';
 import { useAdminCode } from '../hooks/useAdminCode';
 import { useTheme } from '../hooks/useTheme';
-import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../constants/calendar';
-import { API_ENDPOINTS } from '../constants/api';
+import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../constants/calendarZones';
+import { API_ENDPOINTS } from '../constants/endpoints';
 import { HolidayModal } from '../features/calendar/HolidayModal';
 import { LoadingSpinner, GradientHeading } from '../components';
-import { getDaysInMonth, getFirstDayOfMonth, isWeekend, formatDate, toLocalDateISO } from '../utils/calendar';
+import { getDaysInMonth, getFirstDayOfMonth, isWeekend, formatDate, toLocalDateISO } from '../utils/dateUtils';
 import type { Holiday, SchoolHoliday } from '../types/calendar';
 
 interface CalendarPageProps {

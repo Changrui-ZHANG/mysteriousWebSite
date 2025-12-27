@@ -1,10 +1,10 @@
 import { FaArrowLeft } from 'react-icons/fa';
 
-interface RulesPageProps {
+interface RulesPanelProps {
     onBack: () => void;
 }
 
-export function RulesPage({ onBack }: RulesPageProps) {
+export function RulesPanel({ onBack }: RulesPanelProps) {
     return (
         <div className="absolute inset-0 w-full h-full flex flex-col p-4 md:p-8 bg-gradient-to-br from-black/95 via-gray-900/95 to-black/95 border-2 border-cyan-500/50 rounded-xl overflow-hidden pointer-events-auto">
             <div className="flex justify-between items-center mb-6 border-b border-cyan-500/30 pb-4">

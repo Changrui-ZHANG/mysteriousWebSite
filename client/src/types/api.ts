@@ -38,7 +38,7 @@ export interface Score {
 }
 
 /**
- * Suggestion types
+ * Suggestion status type
  */
 export interface SuggestionStatus {
     status: 'pending' | 'reviewed' | 'implemented';

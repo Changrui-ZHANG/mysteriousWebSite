@@ -6,7 +6,7 @@ import { useBGM } from '../../../hooks/useBGM';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useMute } from '../../../hooks/useMute';
 import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
-import { registerAgent, getAgent, getMyShips, Agent, Ship } from '../../../api/spacetraders';
+import { registerAgent, getAgent, getMyShips, Agent, Ship } from '../../../api/spaceTraders';
 import { GradientHeading } from '../../../components';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';

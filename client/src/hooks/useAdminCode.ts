@@ -1,4 +1,4 @@
-import { getAdminCode } from '../constants/auth';
+import { getAdminCode } from '../constants/authStorage';
 
 /**
  * Hook to get the current admin code

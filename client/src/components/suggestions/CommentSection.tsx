@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteRight, FaTrash } from 'react-icons/fa';
-import { fetchJson, postJson } from '../../api/api';
+import { fetchJson, postJson } from '../../api/httpClient';
 import type { SuggestionComment, SuggestionUser } from '../../types/suggestions';
 
 interface CommentSectionProps {

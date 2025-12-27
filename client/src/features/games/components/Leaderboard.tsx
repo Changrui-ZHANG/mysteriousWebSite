@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchJson, deleteJson } from '../../../api/api';
+import { fetchJson, deleteJson } from '../../../api/httpClient';
 
 interface Score {
     id: string;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { getRandomPokemon, Pokemon } from '../../../api/pokeapi';
+import { getRandomPokemon, Pokemon } from '../../../api/pokeApi';
 import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
