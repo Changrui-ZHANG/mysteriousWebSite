@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheckCircle, FaLanguage, FaSpinner } from 'react-icons/fa';
 import UserManagement from '../admin/UserManagement';
-import { ScrollProgress } from '../../components/ScrollProgress';
+import { ScrollProgress } from '../../components';
 
 interface Message {
     id: string;

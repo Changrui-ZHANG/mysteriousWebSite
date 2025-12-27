@@ -9,7 +9,7 @@ import { useMute } from '../../../hooks/useMute';
 import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
 import { GradientHeading, Button } from '../../../components';
 import { useFullScreen } from '../../../hooks/useFullScreen';
-import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 
 // ===== BOARD CONFIGURATION =====
 const BOARD_CONFIG = {

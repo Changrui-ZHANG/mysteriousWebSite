@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchJson, ApiError } from '../utils/api';
+import { fetchJson, ApiError } from '../api/api';
 
 interface UseApiResult<T> {
     data: T | null;

@@ -15,7 +15,7 @@ import { SuperUpgrade } from '../zombie/types';
 import { ZombieShooterProps } from '../zombie/types';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
-import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

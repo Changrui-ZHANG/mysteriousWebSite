@@ -3,10 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useTranslation } from 'react-i18next'
 import { Navbar } from './layouts/Navbar'
 import AuthModal from './features/auth/AuthModal'
-import { Preloader } from './components/Preloader'
-import { VisualEffect } from './components/VisualEffect'
-import { LiquidDecoration } from './components/LiquidDecoration'
-import { ScrollProgress } from './components/ScrollProgress'
+import { Preloader, VisualEffect, LiquidDecoration, ScrollProgress } from './components'
 import { Home } from './pages/HomePage'
 import { CV } from './pages/CVPage'
 import { Game } from './pages/GamePage'
@@ -128,7 +125,7 @@ function AppContent() {
 
     const handleAdminLogin = async (code: string) => {
         try {
-            const { postJson } = await import('./utils/api');
+            const { postJson } = await import('./api/api');
 
             const response = await postJson<{ role: string; message: string }>('/api/auth/verify-admin', { code });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, MotionProps } from 'framer-motion';
-import { useTheme } from '../hooks/useTheme';
+import { useTheme } from '../../hooks/useTheme';
 
 type AccentColor = 'purple' | 'cyan' | 'amber' | 'blue' | 'green';
 

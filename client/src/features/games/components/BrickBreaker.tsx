@@ -9,7 +9,7 @@ import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-ico
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import { GradientHeading, ScoreDisplay } from '../../../components';
-import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 
 // ===== BALL CONFIGURATION =====
 const BALL_CONFIG = {

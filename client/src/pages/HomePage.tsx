@@ -1,17 +1,10 @@
 import { useEffect, useState } from 'react'
-import { ScrollSection } from '../components/ScrollSection'
 import Lenis from '@studio-freight/lenis'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-
-import { GravityPlayground } from '../components/GravityPlayground'
-import { Gallery } from '../components/Gallery'
-
-// New Components
-import MagneticButton from '../components/MagneticButton'
-import { TextReveal } from '../components/TextReveal'
-import { TiltCard } from '../components/TiltCard'
+import { ScrollSection, GravityPlayground, Gallery, TextReveal, TiltCard } from '../components'
+import MagneticButton from '../components/ui/MagneticButton'
 
 interface HomeProps {
     isDarkMode: boolean;

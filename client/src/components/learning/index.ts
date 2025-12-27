@@ -1,0 +1,1 @@
+export { VocabularyCard } from './VocabularyCard';

@@ -1,6 +1,6 @@
 import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
-import { IconButton } from './IconButton';
-import { useMute } from '../hooks/useMute';
+import { IconButton } from '../ui/IconButton';
+import { useMute } from '../../hooks/useMute';
 
 type MuteButtonSize = 'sm' | 'md' | 'lg';
 type MuteButtonColor = 'default' | 'cyan' | 'purple' | 'amber' | 'white';

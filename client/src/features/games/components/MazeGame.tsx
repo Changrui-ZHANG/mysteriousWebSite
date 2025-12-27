@@ -9,7 +9,7 @@ import { useMute } from '../../../hooks/useMute';
 import { GradientHeading, Button } from '../../../components';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
-import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 
 // ===== FOG OF WAR CONFIGURATION =====
 const FOG_CONFIG = {

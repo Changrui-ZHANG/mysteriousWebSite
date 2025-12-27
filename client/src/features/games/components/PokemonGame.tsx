@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { getRandomPokemon, Pokemon } from '../../../utils/pokeapi';
+import { getRandomPokemon, Pokemon } from '../../../api/pokeapi';
 import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
@@ -10,7 +10,7 @@ import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-ico
 import { GradientHeading, Button } from '../../../components';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
-import ElasticSlider from '../../../components/ElasticSlider/ElasticSlider';
+import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
 
 interface PokemonGameProps {
