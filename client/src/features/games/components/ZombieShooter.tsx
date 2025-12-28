@@ -18,6 +18,7 @@ import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BGM_URLS } from '../../../constants/urls';
 
 // ===== WEAPON INITIAL VALUES =====
 const WEAPON_DEFAULTS = {
@@ -54,7 +55,7 @@ const NOTIFICATION_CONFIG = {
 // ===== AUDIO CONFIGURATION =====
 const AUDIO_CONFIG = {
     /** Background music URL */
-    BGM_URL: 'https://cdn.pixabay.com/audio/2024/11/07/audio_6e5f80971b.mp3',
+    BGM_URL: BGM_URLS.ZOMBIE_SHOOTER,
 } as const;
 
 // ===== SUPER UPGRADES =====

@@ -8,6 +8,7 @@ import { getCVData } from '../data/cvData';
 import { LiquidSphere } from '../components/cv/LiquidSphere';
 import { GlassPanel } from '../components/ui/GlassPanel';
 import { ExperienceCard } from '../components/cv/ExperienceCard';
+import { SOCIAL_LINKS } from '../constants/urls';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -244,35 +245,42 @@ export function CV({ isDarkMode }: CVProps) {
                     <GlassPanel className="md:col-span-4 p-12 rounded-[50px] bg-blue-600 !border-blue-500 shadow-[0_0_40px_rgba(37,99,235,0.4)] flex flex-col justify-between" isDarkMode={isDarkMode}>
                         <h4 className="text-sm font-mono tracking-[0.2em] text-white/60 uppercase font-bold">{t('cv.masters_degree')}</h4>
                         <div className="text-white relative z-10">
-                            <div className="text-4xl mb-4 text-blue-300 opacity-50 absolute right-0 top-0">{education[0].icon}</div>
                             <h5 className="text-3xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
                             <p className="text-white/80 text-lg uppercase tracking-wider">{education[0].degree}</p>
                         </div>
+                        {/* Stamp Logo */}
+                        <div className={`absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 ${isDarkMode ? 'invert opacity-5' : 'opacity-10'}`}>
+                            {education[0].icon}
+                        </div>
                     </GlassPanel>
 
-                    <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col justify-between overflow-hidden relative" isDarkMode={isDarkMode}>
+                    <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4 overflow-hidden relative" isDarkMode={isDarkMode}>
                         <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-blue-500`}></div>
                         <h4 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
                         <div className="relative z-10">
-                            <div className="text-4xl mb-4 text-blue-500 opacity-20 absolute right-0 top-0">{education[1].icon}</div>
                             <h5 className={`text-2xl font-black leading-tight mb-2 uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{education[1].school}</h5>
                             <p className={`text-lg font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{education[1].degree}</p>
                         </div>
-                    </GlassPanel>
-
-                    <GlassPanel className="md:col-span-12 p-12 rounded-[60px] flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group" isDarkMode={isDarkMode}>
-                        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000"></div>
-                        <div className="text-center md:text-left">
-                            <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
-                            <p className={`text-2xl font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{t('cv.connect_description')}</p>
+                        {/* Stamp Logo */}
+                        <div className={`absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 ${isDarkMode ? 'invert opacity-5' : 'opacity-10'}`}>
+                            {education[1].icon}
                         </div>
-                        <div className="flex gap-6 shrink-0 z-10">
-                            <a href="mailto:m.zhang.changrui@gmail.com" className="px-12 py-5 bg-blue-600 text-white rounded-full text-xl font-bold shadow-2xl hover:bg-blue-700 hover:scale-105 transition-all">{t('cv.direct_mail')}</a>
-                            <a href="https://linkedin.com/in/changrui-zhang" className={`px-12 py-5 border rounded-full text-xl font-bold hover:scale-105 transition-all ${isDarkMode ? 'border-white/20 bg-white/5 hover:bg-white/10' : 'border-slate-200 bg-white hover:bg-slate-50'
-                                }`}>{t('cv.linkedin')}</a>
-                        </div>
+                        <h5 className={`text-2xl font-black leading-tight mb-2 uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{education[1].school}</h5>
+                        <p className={`text-lg font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{education[1].degree}</p>
                     </GlassPanel>
                 </div>
+
+                <GlassPanel className="md:col-span-12 p-12 rounded-[60px] flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group" isDarkMode={isDarkMode}>
+                    <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000"></div>
+                    <div className="text-center md:text-left">
+                        <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
+                        <p className={`text-2xl font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{t('cv.connect_description')}</p>
+                    </div>
+                    <div className="flex gap-6 shrink-0 z-10">
+                        <a href="mailto:m.zhang.changrui@gmail.com" className="px-12 py-5 bg-blue-600 text-white rounded-full text-xl font-bold shadow-2xl hover:bg-blue-700 hover:scale-105 transition-all">{t('cv.direct_mail')}</a>
+                        <a href={SOCIAL_LINKS.LINKEDIN} className={`px-12 py-5 border rounded-full text-xl font-bold hover:scale-105 transition-all ${isDarkMode ? 'border-white/20 bg-white/5 hover:bg-white/10' : 'border-slate-200 bg-white hover:bg-slate-50'}`}>{t('cv.linkedin')}</a>
+                    </div>
+                </GlassPanel>
             </section>
 
             {/* Footer */}

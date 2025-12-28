@@ -10,14 +10,14 @@ import { useGameInput } from './hooks/useGameInput';
 
 interface GameSceneProps {
     gameState: string;
-    setGameState: (s: any) => void;
-    setScore: (s: any) => void;
+    setGameState: (s: 'intro' | 'playing' | 'gameover') => void;
+    setScore: (s: number | ((prev: number) => number)) => void;
     setWeaponCount: (n: number) => void;
     setWeaponDelay: (n: number) => void;
     setWeaponTech: (n: number) => void;
     setWeaponDamage: (n: number) => void;
     setCritChance: (n: number) => void;
-    playSound: (s: any) => void;
+    playSound: (s: 'hit' | 'break' | 'gameover' | 'win' | 'click' | 'powerup') => void;
     onGameOver: () => void;
     isPaused: boolean;
     setDangerLevel: (n: number) => void;
@@ -244,7 +244,7 @@ export function GameScene({
                         life: 300 // ~5 seconds at 60fps
                     });
                 });
-                playSound('click' as any);
+                playSound('click');
             }
             lastShotTime.current = state.clock.elapsedTime;
         }
@@ -426,7 +426,7 @@ export function GameScene({
                     const finalDamage = isCrit ? stats.damage * (1 + critBonus / 100) : stats.damage;
                     z.hp -= finalDamage;
                     hit = true;
-                    playSound(isCrit ? 'click' : 'break' as any);
+                    playSound(isCrit ? 'click' : 'break');
 
                     // --- TECH 4: CRYO-SHOCK ---
                     if (stats.tech >= 4) {
@@ -667,7 +667,7 @@ export function GameScene({
                     onNotification(t('game.zombie_notif.pickup_bounce'), "#ffffff");
                 }
 
-                playSound('click' as any);
+                playSound('click');
                 powerUps.current.splice(i, 1);
                 continue;
             }
@@ -680,33 +680,39 @@ export function GameScene({
         // --- RENDER UPDATE ---
 
         if (meshPowerUps.current) {
-            meshPowerUps.current.count = powerUps.current.length;
+            const mesh = meshPowerUps.current;
+            mesh.count = powerUps.current.length;
             powerUps.current.forEach((p, i) => {
                 dummy.position.copy(p.position);
                 dummy.scale.set(1, 1, 1);
                 dummy.rotation.x += 0.02;
                 dummy.rotation.y += 0.05;
                 dummy.updateMatrix();
-                meshPowerUps.current!.setMatrixAt(i, dummy.matrix);
-                meshPowerUps.current!.setColorAt(i, new THREE.Color(p.color));
+                mesh.setMatrixAt(i, dummy.matrix);
+                mesh.setColorAt(i, new THREE.Color(p.color));
             });
-            meshPowerUps.current.instanceMatrix.needsUpdate = true;
-            if (meshPowerUps.current.instanceColor) meshPowerUps.current.instanceColor.needsUpdate = true;
+            mesh.instanceMatrix.needsUpdate = true;
+            if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
         }
 
         if (meshProjectiles.current) {
-            meshProjectiles.current.count = projectiles.current.length;
+            const mesh = meshProjectiles.current;
+            mesh.count = projectiles.current.length;
             projectiles.current.forEach((p, i) => {
                 dummy.position.copy(p.position);
                 dummy.scale.set(1, 1, 1);
                 dummy.rotation.set(0, 0, 0);
                 dummy.updateMatrix();
-                meshProjectiles.current!.setMatrixAt(i, dummy.matrix);
+                mesh.setMatrixAt(i, dummy.matrix);
             });
-            meshProjectiles.current.instanceMatrix.needsUpdate = true;
+            mesh.instanceMatrix.needsUpdate = true;
         }
 
         if (meshWalkers.current && meshRunners.current && meshTanks.current && meshBosses.current) {
+            const walkers = meshWalkers.current;
+            const runners = meshRunners.current;
+            const tanks = meshTanks.current;
+            const bosses = meshBosses.current;
             let idxW = 0, idxR = 0, idxT = 0, idxB = 0;
             zombies.current.forEach((z) => {
                 dummy.position.copy(z.position);
@@ -716,29 +722,31 @@ export function GameScene({
                 dummy.updateMatrix();
 
                 if (z.type === 'boss') {
-                    meshBosses.current!.setMatrixAt(idxB++, dummy.matrix);
+                    bosses.setMatrixAt(idxB++, dummy.matrix);
                 } else if (z.type === 'tank') {
-                    meshTanks.current!.setMatrixAt(idxT++, dummy.matrix);
+                    tanks.setMatrixAt(idxT++, dummy.matrix);
                 } else if (z.type === 'runner') {
-                    meshRunners.current!.setMatrixAt(idxR++, dummy.matrix);
+                    runners.setMatrixAt(idxR++, dummy.matrix);
                 } else {
-                    meshWalkers.current!.setMatrixAt(idxW++, dummy.matrix);
+                    walkers.setMatrixAt(idxW++, dummy.matrix);
                 }
             });
 
-            meshWalkers.current.count = idxW;
-            meshRunners.current.count = idxR;
-            meshTanks.current.count = idxT;
-            meshBosses.current.count = idxB;
+            walkers.count = idxW;
+            runners.count = idxR;
+            tanks.count = idxT;
+            bosses.count = idxB;
 
-            meshWalkers.current.instanceMatrix.needsUpdate = true;
-            meshRunners.current.instanceMatrix.needsUpdate = true;
-            meshTanks.current.instanceMatrix.needsUpdate = true;
-            meshBosses.current.instanceMatrix.needsUpdate = true;
+            walkers.instanceMatrix.needsUpdate = true;
+            runners.instanceMatrix.needsUpdate = true;
+            tanks.instanceMatrix.needsUpdate = true;
+            bosses.instanceMatrix.needsUpdate = true;
         }
 
         // --- HEALTH BARS RENDER ---
         if (meshHealthBg.current && meshHealthFill.current) {
+            const bgMesh = meshHealthBg.current;
+            const fillMesh = meshHealthFill.current;
             let idxH = 0;
             zombies.current.forEach((z) => {
                 // Only show health bar if zombie is damaged
@@ -754,7 +762,7 @@ export function GameScene({
                 dummy.scale.set(barWidth, 1, 1);
                 dummy.rotation.x = -Math.PI / 4; // Tilt towards camera
                 dummy.updateMatrix();
-                meshHealthBg.current!.setMatrixAt(idxH, dummy.matrix);
+                bgMesh.setMatrixAt(idxH, dummy.matrix);
 
                 // Fill
                 const fillScale = barWidth * hpPercent;
@@ -764,7 +772,7 @@ export function GameScene({
                 dummy.position.x -= offsetX;
                 dummy.position.y += 0.01; // Slightly higher
                 dummy.updateMatrix();
-                meshHealthFill.current!.setMatrixAt(idxH, dummy.matrix);
+                fillMesh.setMatrixAt(idxH, dummy.matrix);
 
                 // Color transition from Green to Red
                 const color = new THREE.Color().lerpColors(
@@ -772,28 +780,29 @@ export function GameScene({
                     new THREE.Color('#10b981'),
                     hpPercent
                 );
-                meshHealthFill.current!.setColorAt(idxH, color);
+                fillMesh.setColorAt(idxH, color);
                 idxH++;
             });
-            meshHealthBg.current.count = idxH;
-            meshHealthFill.current.count = idxH;
-            meshHealthBg.current.instanceMatrix.needsUpdate = true;
-            meshHealthFill.current.instanceMatrix.needsUpdate = true;
-            if (meshHealthFill.current.instanceColor) meshHealthFill.current.instanceColor.needsUpdate = true;
+            bgMesh.count = idxH;
+            fillMesh.count = idxH;
+            bgMesh.instanceMatrix.needsUpdate = true;
+            fillMesh.instanceMatrix.needsUpdate = true;
+            if (fillMesh.instanceColor) fillMesh.instanceColor.needsUpdate = true;
         }
 
         if (meshParticles.current) {
-            meshParticles.current.count = particles.current.length;
+            const mesh = meshParticles.current;
+            mesh.count = particles.current.length;
             particles.current.forEach((p, i) => {
                 dummy.position.copy(p.position);
                 dummy.scale.setScalar(p.life / 20);
                 dummy.rotation.set(0, 0, 0);
                 dummy.updateMatrix();
-                meshParticles.current!.setMatrixAt(i, dummy.matrix);
-                meshParticles.current!.setColorAt(i, new THREE.Color(p.color));
+                mesh.setMatrixAt(i, dummy.matrix);
+                mesh.setColorAt(i, new THREE.Color(p.color));
             });
-            meshParticles.current.instanceMatrix.needsUpdate = true;
-            if (meshParticles.current.instanceColor) meshParticles.current.instanceColor.needsUpdate = true;
+            mesh.instanceMatrix.needsUpdate = true;
+            if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
         }
 
 

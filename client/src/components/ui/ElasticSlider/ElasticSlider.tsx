@@ -129,7 +129,7 @@ const ElasticSlider: React.FC<ElasticSliderProps> = ({
                     onPointerMove={handlePointerMove}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
-                    style={{ '--slider-color': color === 'cyan' ? '#22d3ee' : color === 'purple' ? '#a855f7' : color === 'pink' ? '#f472b6' : color } as any}
+                    style={{ '--slider-color': color === 'cyan' ? '#22d3ee' : color === 'purple' ? '#a855f7' : color === 'pink' ? '#f472b6' : color } as React.CSSProperties}
                 >
                     <motion.div
                         style={{

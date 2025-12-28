@@ -1,9 +1,10 @@
 import { FaTree, FaGlassCheers, FaDove, FaSun, FaFlag, FaCross, FaEgg } from 'react-icons/fa';
 import { GiPartyPopper, GiFlowers } from 'react-icons/gi';
+import { IconType } from 'react-icons';
 
 export interface HolidayTheme {
     key: string; // Translation key suffix
-    icon: any;   // React Icon component
+    icon: IconType;   // React Icon component
     color: string; // Tailwind color class for text/border/glow
     gradient: string; // Tailwind gradient class
 }

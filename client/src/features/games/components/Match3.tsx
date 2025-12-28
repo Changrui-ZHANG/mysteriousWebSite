@@ -10,6 +10,7 @@ import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-ico
 import { GradientHeading, Button } from '../../../components';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
+import { BGM_URLS } from '../../../constants/urls';
 
 // ===== BOARD CONFIGURATION =====
 const BOARD_CONFIG = {
@@ -26,7 +27,7 @@ const WIDTH = BOARD_CONFIG.WIDTH;
 // ===== AUDIO CONFIGURATION =====
 const AUDIO_CONFIG = {
     /** Background music URL */
-    BGM_URL: 'https://cdn.pixabay.com/audio/2024/10/10/audio_2290aa59a9.mp3',
+    BGM_URL: BGM_URLS.MATCH3,
 } as const;
 
 // ===== CANDY COLORS =====

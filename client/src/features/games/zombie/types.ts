@@ -56,7 +56,7 @@ export interface FloatingText {
 export interface ZombieShooterProps {
     isDarkMode: boolean;
     onSubmitScore: (score: number) => void;
-    personalBest?: { score: number; attempts?: number;[key: string]: any } | null;
+    personalBest?: { score: number; attempts?: number } | null;
     isAuthenticated?: boolean;
     onGameStart?: () => void;
 }

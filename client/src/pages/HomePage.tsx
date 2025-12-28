@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ScrollSection, GravityPlayground, Gallery, TextReveal, TiltCard } from '../components'
 import MagneticButton from '../components/ui/MagneticButton'
+import { SOCIAL_LINKS } from '../constants/urls'
 
 interface HomeProps {
     isDarkMode: boolean;
@@ -154,12 +155,12 @@ export function Home({ isDarkMode }: HomeProps) {
                         <h4 className="font-bold mb-6">{t('footer_section.socials')}</h4>
                         <ul className="list-none p-0 opacity-70 leading-loose">
                             <li>
-                                <a href="https://github.com/Changrui-ZHANG" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                <a href={SOCIAL_LINKS.GITHUB} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                                     GitHub
                                 </a>
                             </li>
                             <li>
-                                <a href="https://www.linkedin.com/in/changrui-zhang/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                <a href={SOCIAL_LINKS.LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                                     LinkedIn
                                 </a>
                             </li>

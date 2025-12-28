@@ -1,5 +1,7 @@
+import { EXTERNAL_APIS } from '../constants/urls';
+
 // PokeAPI Client
-const BASE_URL = 'https://pokeapi.co/api/v2';
+const BASE_URL = EXTERNAL_APIS.POKEMON;
 
 export interface Pokemon {
     id: number;

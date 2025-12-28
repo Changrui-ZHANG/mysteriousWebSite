@@ -10,6 +10,7 @@ import { GradientHeading, Button } from '../../../components';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
+import { BGM_URLS } from '../../../constants/urls';
 
 // ===== FOG OF WAR CONFIGURATION =====
 const FOG_CONFIG = {
@@ -20,7 +21,7 @@ const FOG_CONFIG = {
 // ===== AUDIO CONFIGURATION =====
 const AUDIO_CONFIG = {
     /** Background music URL */
-    BGM_URL: 'https://cdn.pixabay.com/audio/2024/10/15/audio_acaf834253.mp3',
+    BGM_URL: BGM_URLS.MAZE_GAME,
 } as const;
 
 // ===== MOVEMENT CONFIGURATION =====

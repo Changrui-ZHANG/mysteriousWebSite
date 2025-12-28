@@ -39,8 +39,9 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
                 setAuthMode('login');
                 setSuccess(t('auth.success_register'));
             }
-        } catch (err: any) {
-            setError(err.message || t('auth.failed'));
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : t('auth.failed');
+            setError(errorMessage);
         }
     };
 
@@ -72,7 +73,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
                                 <h2 className="text-2xl font-bold tracking-tight">
                                     {authMode === 'login' ? t('auth.login') : t('auth.register')}
                                 </h2>
-                                <button onClick={onClose} className="opacity-50 hover:opacity-100 transition-opacity p-1">
+                                <button onClick={onClose} className="opacity-50 hover:opacity-100 transition-opacity p-1" aria-label={t('common.close')}>
                                     <FaTimes className="text-lg" />
                                 </button>
                             </div>

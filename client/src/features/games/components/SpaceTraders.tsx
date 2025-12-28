@@ -11,6 +11,7 @@ import { GradientHeading } from '../../../components';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
+import { BGM_URLS } from '../../../constants/urls';
 
 interface SpaceTradersProps {
     isDarkMode: boolean;
@@ -31,7 +32,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
 
-    useBGM('https://cdn.pixabay.com/audio/2024/08/17/audio_d796bdb6af.mp3', !isMuted && !isFlipped, volume);
+    useBGM(BGM_URLS.SPACE_TRADERS, !isMuted && !isFlipped, volume);
 
     // Initial Load - only fetch if we have a valid token
     useEffect(() => {
@@ -62,9 +63,10 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
             setAgent(agentData);
             const shipsData = await getMyShips(authToken);
             setShips(shipsData);
-        } catch (err: any) {
-            setError(err.message);
-            if (err.message.includes('401')) {
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            setError(errorMessage);
+            if (errorMessage.includes('401')) {
                 logout();
             }
         } finally {
@@ -83,8 +85,9 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
             setAgent(data.agent);
             // Refresh to get ships (starter ship is usually assigned)
             await refreshData(data.token);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Registration failed';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }

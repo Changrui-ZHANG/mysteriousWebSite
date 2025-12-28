@@ -19,6 +19,9 @@ export { VisualEffect } from './ui/VisualEffect';
 export { default as MagneticButton } from './ui/MagneticButton';
 export { default as ElasticSlider } from './ui/ElasticSlider/ElasticSlider';
 
+// Error Handling
+export { ErrorBoundary } from './ErrorBoundary';
+
 // Game Components
 export { GravityPlayground } from './game/GravityPlayground';
 export { ScoreDisplay } from './game/ScoreDisplay';

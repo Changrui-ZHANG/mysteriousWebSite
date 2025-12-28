@@ -4,6 +4,7 @@
         "cancel": "Cancel",
         "delete": "Delete",
         "go": "Go",
+        "back": "Back",
         "unknown_error": "Unknown error"
     },
     "nav": {

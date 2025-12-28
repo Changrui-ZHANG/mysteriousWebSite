@@ -18,7 +18,7 @@ interface AdminSiteControlsProps {
     // Let's expect it as a prop.
     isDarkMode: boolean;
     onSettingsChange?: () => void;
-    user?: any; // Avoiding full interface duplication, or we can import User
+    user?: User;
     onOpenLogin?: () => void;
 }
 
@@ -26,6 +26,11 @@ interface SystemSetting {
     key: string;
     value: string;
     description: string;
+}
+
+interface User {
+    userId: string;
+    username: string;
 }
 
 export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, onClose, adminCode, isDarkMode, onSettingsChange, user, onOpenLogin }) => {
@@ -173,7 +178,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             🛠️ {t('admin.site_settings')}
                         </h2>
-                        <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full transition-colors">
+                        <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full transition-colors" aria-label={t('common.close')}>
                             <FaTimes />
                         </button>
                     </div>

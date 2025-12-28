@@ -12,6 +12,7 @@ import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { useRef } from 'react';
+import { BGM_URLS } from '../../../constants/urls';
 
 interface PokemonGameProps {
     isDarkMode: boolean;
@@ -40,7 +41,7 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
     // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
 
-    useBGM('https://cdn.pixabay.com/audio/2025/11/11/audio_3c21779078.mp3', !isMuted && !isFlipped, volume);
+    useBGM(BGM_URLS.POKEMON_GAME, !isMuted && !isFlipped, volume);
 
     useEffect(() => {
         loadNewPokemon();

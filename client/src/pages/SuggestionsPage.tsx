@@ -68,9 +68,10 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
 
             setNewSuggestion('');
             fetchSuggestions();
-        } catch (err: any) {
-            setError(err.message || t('suggestions.submit_failed'));
-            console.error(err);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : t('suggestions.submit_failed');
+            setError(errorMessage);
+            console.error('Failed to submit suggestion:', err);
         } finally {
             setLoading(false);
         }

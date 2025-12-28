@@ -4,6 +4,7 @@
         "cancel": "取消",
         "delete": "删除",
         "go": "确定",
+        "back": "返回",
         "unknown_error": "未知错误"
     },
     "nav": {

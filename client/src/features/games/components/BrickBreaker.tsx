@@ -11,6 +11,8 @@ import { useFullScreen } from '../../../hooks/useFullScreen';
 import { GradientHeading, ScoreDisplay } from '../../../components';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 
+import { BGM_URLS } from '../../../constants/urls';
+
 // ===== BALL CONFIGURATION =====
 const BALL_CONFIG = {
     /** Maximum number of balls allowed on screen */
@@ -82,7 +84,7 @@ const AUDIO_CONFIG = {
     /** Minimum ms between sound effects */
     THROTTLE_MS: 30,
     /** Background music URL */
-    BGM_URL: 'https://cdn.pixabay.com/audio/2025/02/17/audio_f01b9210e8.mp3',
+    BGM_URL: BGM_URLS.BRICK_BREAKER,
 } as const;
 
 // ===== LEVEL DESIGN CONFIGURATION =====
@@ -259,7 +261,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                 const m = Math.floor((targetRows - 1) / 6);
                 const rows = (m * 6) + 1;
 
-                console.log(`Fetching maze for: ${cols}x${rows} (Canvas: ${rect.width}x${rect.height}, Coverage: ${mazeCoverage})`);
+                // Debug logging removed for production
 
                 // Fetch random maze with cache buster
                 const response = await fetch(`/api/games/brickbreaker/random-map?width=${cols}&height=${rows}&t=${Date.now()}`);
@@ -324,7 +326,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
             const rect = container.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
-            console.log('Internal Resolution Updated:', canvas.width, 'x', canvas.height);
+            // Canvas size updated
         };
         updateCanvasSize();
         window.addEventListener('resize', updateCanvasSize);
@@ -681,7 +683,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
         const wallColor = colors.WALL;
 
         let lastSoundTime = 0;
-        const playSoundThrottled = (type: any) => {
+        const playSoundThrottled = (type: 'hit' | 'break' | 'gameover' | 'win' | 'click' | 'powerup') => {
             const now = Date.now();
             if (now - lastSoundTime > AUDIO_CONFIG.THROTTLE_MS) {
                 playSound(type);

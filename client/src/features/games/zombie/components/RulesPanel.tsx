@@ -14,7 +14,7 @@ export function RulesPanel({ onBack }: RulesPanelProps) {
                 <h2 className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
                     {t('zombie.rules.title')}
                 </h2>
-                <button onClick={onBack} className="p-2 rounded-full hover:bg-white/10 transition-colors">
+                <button onClick={onBack} className="p-2 rounded-full hover:bg-white/10 transition-colors" aria-label={t('common.back')}>
                     <FaArrowLeft className="text-white text-xl" />
                 </button>
             </div>
