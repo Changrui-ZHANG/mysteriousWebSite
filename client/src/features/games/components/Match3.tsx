@@ -286,7 +286,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                 <button
                     onClick={(e) => { e.stopPropagation(); createBoard(); setScore(0); playSound('click'); }}
                     className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Recommencer"
+                    title={t('game.reset')}
                 >
                     <FaRedo size={18} />
                 </button>
@@ -300,7 +300,7 @@ export default function Match3({ isDarkMode, onSubmitScore, personalBest, isAuth
                 <button
                     onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
                     className="text-pink-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Aide / Règles"
+                    title={t('game.help_rules')}
                 >
                     <FaQuestion size={18} />
                 </button>

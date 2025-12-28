@@ -166,8 +166,10 @@ try {
 -   Extract repeated patterns into reusable components rather than custom CSS.
 
 ### **Theming**
--   **Dark/Light Mode**: All components **must** support both modes via `isDarkMode` prop or context.
--   Test both modes before marking complete.
+-   **Dark/Light Mode**: 
+    -   **Rule**: Every new page or component **MUST** allow for seamless switching between Dark and Light modes from day one.
+    -   **Implementation**: Pass `isDarkMode` prop or use the theme context.
+    -   **Verification**: You must manually verify both modes before considering the task complete. No partial theming allowed.
 
 ### **Responsive Design**
 -   **Mobile-First**: Design for `sm` first, add breakpoints for larger screens.
@@ -183,9 +185,58 @@ try {
 
 ## 8. Internationalization (i18n)
 
--   **No Hardcoded Text**: All user-facing text must use `t('key')` from `react-i18next`.
--   **Hierarchical Keys**: `home.hero.title`, `cv.experience.role`.
+### **General Rules**
+-   **Strict No Hardcoded Text Rule**: It is strictly forbidden to have hardcoded text in JSX/TSX files.
+-   **Implementation**: All user-facing text must use `t('key')` from `react-i18next`.
+-   **Hierarchical Keys**: `section.element` or `section.subsection.element`.
 -   **Pluralization**: Use i18next's pluralization for quantities.
+-   **Supported Languages**: EN (fallback), FR, ZH
+-   **Synchronization**: All language files **MUST** have identical structure and keys.
+
+### **Translation File Organization**
+
+Files location: `public/locales/{lang}/translation.json`
+
+#### **Section Categories & Order**
+
+Sections are organized by **category**, then **alphabetically within each category**:
+
+| Priority | Category | Description | Examples |
+|----------|----------|-------------|----------|
+| 1 | `_common` | Shared/reusable elements | `common`, `nav`, `navbar` |
+| 2 | `_auth` | Authentication & authorization | `auth`, `admin`, `maintenance` |
+| 3 | `_pages` | Feature pages (alphabetical) | `calendar`, `cv`, `game`, `messages`... |
+| 4 | `_homepage` | Homepage-specific sections | `hero`, `story`, `features`, `gallery`... |
+| 5 | `_layout` | Layout elements | `footer_section`, `header`, `sidebar`... |
+| 6 | `_legal` | Legal/compliance pages | `legal_page`, `privacy`, `terms`... |
+| 7 | `_misc` | Everything else | `preloader`, `errors`, `notifications`... |
+
+#### **Naming Conventions**
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Page section | Page name (singular, lowercase) | `calendar`, `cv`, `game` |
+| Sub-feature | `parent.child` | `game.zombie_hud`, `cv.sections` |
+| Actions | `section.action_verb` | `admin.clear_all`, `messages.send` |
+| Status | `section.status_name` | `game.status_active` |
+| Errors | `section.errors.type` | `calendar.errors.failed_to_load` |
+| Common UI | `common.element` | `common.cancel`, `common.close` |
+
+#### **Adding New Translations**
+
+1. **Identify the category** from the table above
+2. **Find or create the section** in alphabetical order within its category
+3. **Add keys alphabetically** within the section
+4. **Update ALL language files** (EN, FR, ZH) simultaneously
+5. **Run validation script** to ensure consistency
+
+#### **Adding a New Page/Feature**
+
+When adding a new page (e.g., `shop`):
+1. Identify the category (`_pages` for feature pages)
+2. Create section `shop` in alphabetical order within that category
+3. Add to **ALL 3 language files** (EN, FR, ZH) at the same position
+4. Ensure all keys are translated before committing
 
 ---
 

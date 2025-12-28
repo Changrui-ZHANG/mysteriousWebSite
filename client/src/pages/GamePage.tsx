@@ -13,16 +13,7 @@ import { useTheme } from '../hooks/useTheme';
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { GradientHeading } from '../components';
 import { GameSelector, GuestAlertModal } from '../components/game';
-
-type GameKey = 'brick' | 'match3' | 'pokemon' | 'maze' | 'zombie';
-
-interface GameProps {
-    isDarkMode: boolean;
-    user?: { userId: string; username: string } | null;
-    onOpenLogin: () => void;
-    isSuperAdmin?: boolean;
-    isAdmin?: boolean;
-}
+import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps } from '../types/game';
 
 export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
@@ -30,7 +21,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
     const theme = useTheme(isDarkMode);
     const [activeGame, setActiveGame] = useState<GameKey>('brick');
 
-    const [personalBest, setPersonalBest] = useState<{ score: number, attempts?: number } | null>(null);
+    const [personalBest, setPersonalBest] = useState<PersonalBest | null>(null);
     const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
     const [gameStatuses, setGameStatuses] = useState<Record<string, boolean>>({});
 
@@ -39,10 +30,10 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
 
     // Fetch Game Statuses
     useEffect(() => {
-        fetchJson<any[]>(API_ENDPOINTS.GAMES.LIST)
+        fetchJson<GameStatus[]>(API_ENDPOINTS.GAMES.LIST)
             .then(data => {
                 const statusMap: Record<string, boolean> = {};
-                data.forEach((s: any) => { statusMap[s.gameType] = s.enabled; });
+                data.forEach((s) => { statusMap[s.gameType] = s.enabled; });
                 setGameStatuses(statusMap);
             })
             .catch(error => console.error("Failed to fetch game statuses", error));
@@ -53,7 +44,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         if (!code) return;
 
         try {
-            const updatedStatus = await postJson<any>(`${API_ENDPOINTS.GAMES.TOGGLE.replace('{gameType}', gameKey)}?adminCode=${code}`, {});
+            const updatedStatus = await postJson<GameStatus>(`${API_ENDPOINTS.GAMES.TOGGLE.replace('{gameType}', gameKey)}?adminCode=${code}`, {});
             setGameStatuses(prev => ({ ...prev, [updatedStatus.gameType]: updatedStatus.enabled }));
         } catch (error) {
             console.error("Error toggling game status", error);
@@ -68,7 +59,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         const fetchPersonalBest = async () => {
             if (!user?.userId) { setPersonalBest(null); return; }
             try {
-                const data = await fetchJson<any>(`/api/scores/user/${user.userId}/${activeGame}`);
+                const data = await fetchJson<ScoreData>(`/api/scores/user/${user.userId}/${activeGame}`);
                 setPersonalBest({ score: data.score, attempts: data.attempts });
             } catch (error) {
                 console.error("Failed to fetch personal best", error);
@@ -82,7 +73,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         if (!user) {
             if (score <= 0 || hasGuestAlertShownRef.current) return;
             try {
-                const topScores: any[] = await fetchJson(`/api/scores/top/${activeGame}`);
+                const topScores = await fetchJson<TopScore[]>(`/api/scores/top/${activeGame}`);
                 let isEligible = topScores.length < 3;
                 if (!isEligible && topScores.length >= 3) {
                     const thresholdScore = topScores[topScores.length - 1].score;

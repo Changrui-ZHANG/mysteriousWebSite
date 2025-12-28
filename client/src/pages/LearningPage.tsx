@@ -99,7 +99,7 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
         setMode(newMode);
         if (newMode === 'review') {
             if (favorites.size === 0) {
-                alert("Vous n'avez pas encore de favoris !");
+                alert(t('learning.no_favorites'));
                 setMode('discover');
                 return;
             }
@@ -111,7 +111,7 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
 
     const toggleFavorite = async (e: React.MouseEvent, targetItem: VocabularyItem) => {
         e.stopPropagation();
-        if (!user) { alert("Connectez-vous pour sauvegarder vos favoris !"); return; }
+        if (!user) { alert(t('learning.login_to_save')); return; }
 
         const isFav = favorites.has(targetItem.id);
         const newSet = new Set(favorites);

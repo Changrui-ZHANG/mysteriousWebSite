@@ -1114,7 +1114,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                     <button
                         onClick={(e) => { e.stopPropagation(); setPoints(0); setGameState('start'); playSound('click'); }}
                         className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                        title="Recommencer"
+                        title={t('game.reset')}
                     >
                         <FaRedo size={18} />
                     </button>
@@ -1129,7 +1129,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                 <button
                     onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Aide / Règles"
+                    title={t('game.help_rules')}
                 >
                     <FaQuestion size={18} />
                 </button>

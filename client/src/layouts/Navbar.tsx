@@ -237,14 +237,14 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                 <button
                                     onClick={onAdminLogout}
                                     className={`text-xs px-2 py-1 rounded border ${isSuperAdmin ? 'border-purple-500 text-purple-400' : 'border-green-500 text-green-500'} hover:opacity-80 transition-opacity`}
-                                    title="Admin Logout"
+                                    title={t('auth.logout')}
                                 >
-                                    {isSuperAdmin ? 'SUPER ADMIN' : 'ADMIN'}
+                                    {isSuperAdmin ? t('admin.super_admin') : t('admin.admin')}
                                 </button>
                                 <button
                                     onClick={() => setShowSiteControls(true)}
                                     className="text-xl text-gray-400 hover:text-cyan-400 transition-colors ml-2"
-                                    title={t('admin.site_settings') || "Site Settings"}
+                                    title={t('admin.site_settings')}
                                 >
                                     <FaCog />
                                 </button>
@@ -254,7 +254,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                 <button
                                     onClick={() => setShowAdminInput(!showAdminInput)}
                                     className="hover:scale-110 transition-transform"
-                                    title="Admin Access"
+                                    title={t('auth.admin_access')}
                                 >
                                     🔐
                                 </button>

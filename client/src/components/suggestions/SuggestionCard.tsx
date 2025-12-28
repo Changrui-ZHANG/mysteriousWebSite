@@ -87,7 +87,7 @@ export function SuggestionCard({
                         className="px-3 py-1 bg-red-600 hover:bg-red-500 rounded text-xs font-bold transition-colors flex items-center gap-1"
                     >
                         <FaTrash className="w-3 h-3" />
-                        Delete
+                        {t('common.delete')}
                     </button>
                 )}
             </div>

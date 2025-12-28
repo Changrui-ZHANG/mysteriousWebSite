@@ -67,7 +67,7 @@ export function GameSelector({
                         {(isSuperAdmin || isAdmin) && (
                             <div className="flex flex-col items-center gap-1 mt-1">
                                 <div className={`text-[10px] font-mono font-bold ${isEnabled ? 'text-green-400' : 'text-red-400'}`}>
-                                    [{isEnabled ? 'ACTIVE' : 'DISABLED'}]
+                                    [{isEnabled ? t('game.status_active') : t('game.status_disabled')}]
                                 </div>
                                 <button
                                     onClick={(e) => {
@@ -79,7 +79,7 @@ export function GameSelector({
                                         : 'bg-green-900/40 border-green-500 text-green-200 hover:bg-green-600 hover:text-white'
                                         }`}
                                 >
-                                    {isEnabled ? 'DISABLE' : 'ENABLE'}
+                                    {isEnabled ? t('game.action_disable') : t('game.action_enable')}
                                 </button>
                             </div>
                         )}

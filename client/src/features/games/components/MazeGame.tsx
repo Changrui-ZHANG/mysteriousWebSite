@@ -520,7 +520,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                 <button
                     onClick={(e) => { e.stopPropagation(); fetchMaze(); }}
                     className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Recommencer"
+                    title={t('game.reset')}
                 >
                     <FaRedo size={18} />
                 </button>
@@ -534,7 +534,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                 <button
                     onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Aide / Règles"
+                    title={t('game.help_rules')}
                 >
                     <FaQuestion size={18} />
                 </button>
@@ -727,7 +727,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                                         </div>
                                         <div className="h-[1px] bg-white/20 my-2" />
                                         <div className="flex justify-between text-yellow-400 font-bold text-lg">
-                                            <span>Score:</span>
+                                            <span>{t('game.score')}:</span>
                                             <span>{moves}</span>
                                         </div>
                                     </div>
@@ -826,7 +826,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                             <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-red-500/30 transition-colors">
                                 <div className="flex items-center gap-3 mb-3">
                                     <span className="text-2xl bg-white/10 p-2 rounded-xl">☁️</span>
-                                    <h4 className="font-bold text-white">Brouillard</h4>
+                                    <h4 className="font-bold text-white">{t('game.maze_fog')}</h4>
                                 </div>
                                 <p className="text-sm text-white/60 leading-relaxed">{t('game.maze_collect')}</p>
                             </div>
@@ -834,7 +834,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
 
                         <div className="bg-gradient-to-r from-cyan-500/10 to-transparent p-4 rounded-xl border-l-4 border-cyan-400">
                             <p className="text-xs md:text-sm text-cyan-200 italic">
-                                💡 Astuce : Le point de départ est marqué (S) et la sortie est marquée (R).
+                                💡 {t('game.maze_tip')}
                             </p>
                         </div>
                     </div>

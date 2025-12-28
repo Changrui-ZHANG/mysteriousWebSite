@@ -61,7 +61,7 @@ export function ExperienceCard({ exp, isDarkMode }: ExperienceCardProps) {
                     background: transparent;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
+                    background: ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.1)'};
                     border-radius: 20px;
                 }
                 .custom-scrollbar:hover::-webkit-scrollbar-thumb {

@@ -43,7 +43,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
     }, [gameType, refreshTrigger, refresh]);
 
     const handleReset = async (id: string, username: string) => {
-        if (!confirm(`Are you sure you want to reset the score for ${username} to 0?`)) return;
+        if (!confirm(t('game.confirm_reset_score', { username }))) return;
 
         try {
             const SUPER_ADMIN_CODE = 'ChangruiZ'; // Should align with App.tsx
@@ -51,7 +51,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
             setRefresh(prev => prev + 1);
         } catch (error) {
             console.error('Failed to reset score', error);
-            alert('Failed to reset score');
+            alert(t('game.error_reset_score'));
         }
     };
 
@@ -89,7 +89,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
                                     <button
                                         onClick={() => handleReset(score.id, score.username)}
                                         className="w-5 h-5 flex items-center justify-center bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded transition-colors"
-                                        title="Reset Score"
+                                        title={t('game.reset_score')}
                                     >
                                         ×
                                     </button>

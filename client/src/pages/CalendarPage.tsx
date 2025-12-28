@@ -10,7 +10,7 @@ import { API_ENDPOINTS } from '../constants/endpoints';
 import { HolidayModal } from '../features/calendar/HolidayModal';
 import { LoadingSpinner, GradientHeading } from '../components';
 import { getDaysInMonth, getFirstDayOfMonth, isWeekend, formatDate, toLocalDateISO } from '../utils/dateUtils';
-import type { Holiday, SchoolHoliday } from '../types/calendar';
+import type { Holiday, SchoolHoliday, SchoolHolidayApiResponse } from '../types/calendar';
 
 interface CalendarPageProps {
     isDarkMode: boolean;
@@ -67,14 +67,14 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                 const year1 = `${year - 1}-${year}`;
                 const year2 = `${year}-${year + 1}`;
                 const [schoolData1, schoolData2] = await Promise.all([
-                    fetchJson<any>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year1)),
-                    fetchJson<any>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year2))
+                    fetchJson<SchoolHolidayApiResponse>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year1)),
+                    fetchJson<SchoolHolidayApiResponse>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year2))
                 ]);
 
                 const records = [...(schoolData1.records || []), ...(schoolData2.records || [])];
                 setSchoolHolidays(records
-                    .filter((r: any) => r.fields.population !== 'Enseignants')
-                    .map((r: any) => ({
+                    .filter((r) => r.fields.population !== 'Enseignants')
+                    .map((r) => ({
                         description: r.fields.description,
                         start_date: toLocalDateISO(r.fields.start_date),
                         end_date: toLocalDateISO(r.fields.end_date),
@@ -120,7 +120,7 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
 
                     {isAdmin && (
                         <div className="flex flex-wrap items-center gap-2 bg-white/5 p-2 rounded-lg justify-center md:justify-start max-w-4xl">
-                            <span className="text-sm opacity-70 mr-2 w-full md:w-auto text-center md:text-left">Zones (Admin):</span>
+                            <span className="text-sm opacity-70 mr-2 w-full md:w-auto text-center md:text-left">{t('calendar.zones_admin_label')}</span>
                             {Object.entries(ZONE_LABELS).map(([zoneKey, label]) => (
                                 <button key={zoneKey} onClick={() => toggleZone(zoneKey)}
                                     className={`px-3 py-1 rounded text-xs font-bold transition-colors whitespace-nowrap ${selectedZones.includes(zoneKey) ? 'bg-blue-500 text-white shadow-lg' : 'bg-white/10 hover:bg-white/20 text-gray-400'}`}>

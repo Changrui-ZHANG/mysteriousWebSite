@@ -1,4 +1,20 @@
 {
+    "common": {
+        "close": "Fermer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "go": "Go"
+    },
+    "nav": {
+        "home": "ACCUEIL",
+        "cv": "CV",
+        "game": "ARCADE",
+        "messages": "MESSAGES",
+        "suggestions": "SUGGESTIONS",
+        "calendar": "CALENDRIER",
+        "learning": "LINGUISTE",
+        "more": "PLUS"
+    },
     "navbar": {
         "title": "Bienvenue",
         "arcade_title": "Jeux d'Arcade",
@@ -16,76 +32,84 @@
             "zh": "中文"
         }
     },
-    "common": {
-        "close": "Fermer"
+    "admin": {
+        "manage_users": "Gérer les utilisateurs",
+        "user_list": "Liste des utilisateurs",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "edit_user": "Modifier",
+        "delete_user": "Supprimer",
+        "save_changes": "Enregistrer",
+        "cancel": "Annuler",
+        "confirm_delete_user": "Supprimer cet utilisateur ?",
+        "show_password": "Afficher",
+        "hide_password": "Masquer",
+        "action": "Action",
+        "add_user": "Ajouter un utilisateur",
+        "add_new_user": "Ajouter un nouvel utilisateur",
+        "create": "Créer",
+        "site_settings": "Paramètres du site",
+        "enter_code_prompt": "Entrez le code Admin pour modifier :",
+        "changes_effect_warning": "Les changements affectent tous les utilisateurs immédiatement. Rafraîchissez pour voir les effets.",
+        "verify": "Vérifier",
+        "invalid_code": "Code invalide",
+        "loading": "Chargement des paramètres...",
+        "critical": "CRITIQUE",
+        "settings": {
+            "maintenance_mode": "Mode Maintenance Global",
+            "maintenance_message": "Message de Maintenance",
+            "page_cv": "Page CV / À propos",
+            "page_game": "Page Jeux (Arcade)",
+            "page_messages": "Mur de Messages",
+            "page_suggestions": "Boîte à Idées",
+            "page_calendar": "Calendrier"
+        },
+        "login_required": "Connexion personnelle requise",
+        "login_audit_explanation": "Pour des raisons de sécurité et d'audit, vous devez être connecté avec votre compte personnel pour modifier les paramètres du site.",
+        "admin": "Admin",
+        "super_admin": "Super Admin",
+        "refresh_count": "Actualiser le compteur",
+        "hide_count": "Masquer le compteur aux utilisateurs",
+        "show_count": "Afficher le compteur aux utilisateurs",
+        "mute": "Couper le chat",
+        "unmute": "Activer le chat",
+        "clear_all": "Tout effacer",
+        "confirm_clear": "Supprimer tous les messages ?",
+        "login_hint": "Utilisez le cadenas dans la barre de navigation pour vous connecter en tant qu'admin.",
+        "code_placeholder": "Code Admin",
+        "panel": "Panneau Admin",
+        "error_delete_user": "Erreur lors de la suppression de l'utilisateur",
+        "error_create_user": "Erreur lors de la création de l'utilisateur",
+        "error_update_user": "Erreur lors de la mise à jour de l'utilisateur"
     },
-    "nav": {
-        "home": "ACCUEIL",
-        "cv": "CV",
-        "game": "ARCADE",
-        "messages": "MESSAGES",
-        "suggestions": "SUGGESTIONS",
-        "calendar": "CALENDRIER",
-        "learning": "LINGUISTE",
-        "more": "PLUS"
+    "auth": {
+        "login": "Se connecter",
+        "register": "S'inscrire",
+        "logout": "Déconnexion",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "create_account": "Créer un compte",
+        "no_account": "Pas de compte ?",
+        "has_account": "Vous avez déjà un compte ?",
+        "success_register": "Inscription réussie ! Veuillez vous connecter.",
+        "failed": "Échec de l'authentification",
+        "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
+        "admin_code": "Code Admin",
+        "admin_panel": "Panneau Admin",
+        "quit_admin": "Quitter Admin",
+        "clear_all": "Tout effacer",
+        "mute": "Couper le chat",
+        "unmute": "Réactiver le chat",
+        "muted": "Le chat est suspendu par l'admin",
+        "super_admin_code": "Code Super Admin",
+        "super_admin_panel": "Panneau Super Admin",
+        "admin_access": "Accès Admin",
+        "signed_in_as": "Connecté en tant que"
     },
-    "holidays": {
-        "jour_de_l_an": {
-            "title": "Jour de l'an",
-            "description": "Le premier jour de l'année du calendrier grégorien. C'est une journée de festivités marquée par des vœux de bonne année, des repas en famille et des feux d'artifice."
-        },
-        "paques": {
-            "title": "Lundi de Pâques",
-            "description": "Une fête chrétienne majeure célébrant la résurrection de Jésus. Elle est associée à la chasse aux œufs et aux symboles de renouveau printanier."
-        },
-        "fete_travail": {
-            "title": "Fête du Travail",
-            "description": "La Fête internationale des travailleurs. En France, il est de tradition d'offrir du muguet comme porte-bonheur."
-        },
-        "victoire_1945": {
-            "title": "Victoire 1945",
-            "description": "Commémoration de la capitulation de l'Allemagne nazie en 1945, marquant la fin de la Seconde Guerre mondiale en Europe."
-        },
-        "ascension": {
-            "title": "Ascension",
-            "description": "Fête chrétienne célébrant la montée de Jésus au ciel, quarante jours après Pâques. Elle marque la fin de sa présence terrestre."
-        },
-        "pentecote": {
-            "title": "Lundi de Pentecôte",
-            "description": "Célèbre la descente du Saint-Esprit sur les apôtres, cinquante jours après Pâques. C'est un jour de solidarité en France."
-        },
-        "fete_nationale": {
-            "title": "Fête Nationale",
-            "description": "Commémore la prise de la Bastille le 14 juillet 1789, symbole de la fin de la monarchie absolue et de l'unité nationale."
-        },
-        "assomption": {
-            "title": "Assomption",
-            "description": "Célèbre la montée de la Vierge Marie au ciel, corps et âme, au terme de sa vie terrestre. C'est une fête mariale majeure."
-        },
-        "toussaint": {
-            "title": "Toussaint",
-            "description": "Fête catholique en l'honneur de tous les saints. C'est aussi un moment traditionnel pour se recueillir sur les tombes des défunts."
-        },
-        "armistice_1918": {
-            "title": "Armistice 1918",
-            "description": "Commémoration de l'armistice signé en 1918, mettant fin aux combats de la Première Guerre mondiale."
-        },
-        "noel": {
-            "title": "Noël",
-            "description": "Célébration de la naissance de Jésus pour les chrétiens, et fête culturelle majeure marquée par le Père Noël, les cadeaux et les repas festifs."
-        },
-        "saint_etienne": {
-            "title": "Saint Étienne",
-            "description": "Fête spécifique à l'Alsace-Moselle, célébrant Saint Étienne, le premier martyr chrétien."
-        },
-        "vendredi_saint": {
-            "title": "Vendredi Saint",
-            "description": "Jour spécifique à l'Alsace-Moselle, commémorant la crucifixion et la mort de Jésus."
-        },
-        "default": {
-            "title": "Jour Férié",
-            "description": "Un jour férié officiel célébré en France."
-        }
+    "maintenance": {
+        "title": "En Maintenance",
+        "description": "Le site est actuellement en maintenance. Nous serons de retour très bientôt.",
+        "disabled_by": "Désactivé par"
     },
     "calendar": {
         "title": "Calendrier",
@@ -108,6 +132,109 @@
             "config_update_failed": "Échec de la mise à jour de la configuration",
             "failed_to_load": "Impossible de charger le calendrier"
         }
+    },
+    "cv": {
+        "role": "Développeur Fullstack",
+        "name": "Changrui ZHANG",
+        "interactive_portfolio": "Portfolio Interactif",
+        "work_history": "Parcours Professionnel",
+        "experience_gallery": "Galerie d'Expériences.",
+        "core_components": "Composants Clés",
+        "specifications": "Spécifications.",
+        "full_stack_architecture": "Architecture Full Stack",
+        "masters_degree": "Master",
+        "bachelors_degree": "Licence",
+        "initiate_connect": "Initier le Contact.",
+        "connect_description": "Conçu pour des écosystèmes logiciels à fort impact.",
+        "direct_mail": "Email Direct",
+        "linkedin": "LinkedIn",
+        "system_status": "STATUT SYSTÈME: OPTIMAL",
+        "sections": {
+            "profile": "Profil",
+            "experience": "Expériences",
+            "skills": "Compétences",
+            "education": "Formation",
+            "soft_skills": "Savoir-être",
+            "languages": "Langues",
+            "interests": "Centres d'intérêt"
+        },
+        "profile_text": "Développeur back-end diplômé en Master Informatique (Sorbonne Université), expérimenté sur Spring Boot et ReactJS. Rigoureux, autonome et passionné par les défis techniques, je recherche un poste dans le développement back-end/fullstack. Je possède une carte de résident me permettant de travailler librement en France.",
+        "exp": {
+            "espace": {
+                "title": "Espace Web (Projet Personnel)",
+                "role": "Développeur Full Stack",
+                "desc": [
+                    "Développement autonome d'une application web personnelle full-stack.",
+                    "Intégration de l'authentification (JWT), des modes Sombre/Clair et du support multilingue.",
+                    "Amélioration de l'interface utilisateur avec ReactBit pour des composants dynamiques.",
+                    "Conteneurisation du projet avec Docker."
+                ]
+            },
+            "rakuten": {
+                "title": "Rakuten France",
+                "role": "Développeur Fullstack (Stage)",
+                "desc": [
+                    "Migrer et optimiser le composant de filtrage (250M exports/jour) : temps de configuration réduit de 2 min à <30 s.",
+                    "Développer en autonomie deux nouveaux supports d’import (XML + JSON) des fiches produits sur la plateforme, facilitant l’intégration de 250+ partenaires.",
+                    "Intégrer l’IA dans le traitement des données.",
+                    "Migrer de ReactJS 15+ vers 20+ et de JavaScript vers TypeScript.",
+                    "Développer en autonomie un outil de migration automatisée (3 semaines), garantissant l’intégrité de milliers de données clients et réduisant les erreurs manuelles.",
+                    "Développer en autonomie un programme de synchronisation des coupons de réduction, garantissant la fiabilité des promotions visibles par des millions d’utilisateurs.",
+                    "Réaliser des tests unitaires et automatisés pour garantir la fiabilité du code.",
+                    "Suivre les cahiers des charges et la roadmap produit afin de garantir la conformité des livrables et le respect des délais.",
+                    "Organiser des réunions de reporting et des meetings quotidiens en méthodologie Agile."
+                ]
+            },
+            "sorbonne": {
+                "title": "Sorbonne Université (E-commerce)",
+                "role": "Développeur Fullstack",
+                "desc": [
+                    "Pilotage d'une application e-shop collaborative avec feature flags.",
+                    "Développement full stack (Backend, Frontend, BD).",
+                    "Automatisation de la génération des variantes de gammes de produits."
+                ]
+            },
+            "database": {
+                "title": "Université Paris Cité (Modélisation de base de données)",
+                "role": "Développeur Base de Données",
+                "desc": [
+                    "Concevoir une base de données pour simuler les navigations de bateaux antiques.",
+                    "Utiliser PostgreSQL pour la conception et la gestion des données, en intégrant des outils de modélisation collaboratifs.",
+                    "Technologies: PostgreSQL / BOUML / StarUML"
+                ]
+            },
+            "quichefs": {
+                "title": "Projet Ouichefs (Noyau Linux)",
+                "role": "Développeur Système",
+                "desc": [
+                    "Développement d'un système de liens physiques amélioré pour le noyau Linux.",
+                    "Implémentation des UUIDs, des liens inter-partitions et de la migration de blocs."
+                ]
+            }
+        },
+        "edu": {
+            "master": "Master Informatique: Systèmes et Applications Répartis",
+            "licence": "Licence Informatique: Informatique Générale"
+        },
+        "soft_skills_list": [
+            "Autonomie",
+            "Rigueur",
+            "Bon relationnel",
+            "Esprit de synthèse",
+            "Capacité d’adaptation",
+            "Motivation",
+            "Curiosité",
+            "Esprit d’équipe"
+        ],
+        "languages_list": {
+            "zh": "Chinois (Maternel)",
+            "en": "Anglais (Professionnel)",
+            "fr": "Français (Bilingue)"
+        },
+        "interests_list": [
+            "Jeux vidéos",
+            "Sport"
+        ]
     },
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
@@ -234,8 +361,10 @@
         "pokemon_rules": "Testez vos connaissances Pokémon ! Identifiez la silhouette qui apparaît à l'écran parmi les propositions.",
         "pokemon_quiz_desc": "Choisissez la bonne réponse parmi les 4 options. Soyez précis et rapide !",
         "pokemon_score_desc": "Enchaînez les bonnes réponses pour prouver que vous êtes le meilleur dresseur.",
-        "maze_rules": "Explorez un labyrinthe généré procéduralement. Trouvez le portail de sortie (R) en partant du départ (S).",
+        "maze_rules": "Trouvez la sortie du labyrinthe avant la fin du temps !",
         "maze_collect": "Le brouillard de guerre limite votre vision. Mémorisez votre chemin et agissez vite.",
+        "maze_fog": "Brouillard",
+        "maze_tip": "Astuce : Le point de départ est marqué (S) et la sortie est marquée (R).",
         "game_disabled": "Jeu Désactivé",
         "zombie": "Zombie Defense",
         "zombie_desc": "Défendez la base contre la horde de zombies !",
@@ -311,37 +440,84 @@
         },
         "fullscreen": "Plein écran",
         "fullscreen_exit": "Quitter le plein écran",
-        "help_rules": "Aide / Règles"
+        "help_rules": "Aide / Règles",
+        "status_active": "ACTIF",
+        "status_disabled": "DÉSACTIVÉ",
+        "action_disable": "DÉSACTIVER",
+        "action_enable": "ACTIVER",
+        "confirm_reset_score": "Êtes-vous sûr de vouloir réinitialiser le score de {{username}} à 0 ?",
+        "error_reset_score": "Échec de la réinitialisation du score",
+        "reset_score": "Réinitialiser le score"
     },
-    "pokemon": {
-        "guess_prompt": "Qui est ce Pokémon ?",
-        "score": "Score",
-        "loading": "Chargement des données génétiques...",
-        "guess": "DEVINER",
-        "next": "POKÉMON SUIVANT",
-        "correct": "✓ CORRECT !",
-        "wrong": "✗ Réessayez !",
-        "hint": "Indice",
-        "letters": "lettres",
-        "answer": "Réponse"
+    "holidays": {
+        "jour_de_l_an": {
+            "title": "Jour de l'an",
+            "description": "Le premier jour de l'année du calendrier grégorien. C'est une journée de festivités marquée par des vœux de bonne année, des repas en famille et des feux d'artifice."
+        },
+        "paques": {
+            "title": "Lundi de Pâques",
+            "description": "Une fête chrétienne majeure célébrant la résurrection de Jésus. Elle est associée à la chasse aux œufs et aux symboles de renouveau printanier."
+        },
+        "fete_travail": {
+            "title": "Fête du Travail",
+            "description": "La Fête internationale des travailleurs. En France, il est de tradition d'offrir du muguet comme porte-bonheur."
+        },
+        "victoire_1945": {
+            "title": "Victoire 1945",
+            "description": "Commémoration de la capitulation de l'Allemagne nazie en 1945, marquant la fin de la Seconde Guerre mondiale en Europe."
+        },
+        "ascension": {
+            "title": "Ascension",
+            "description": "Fête chrétienne célébrant la montée de Jésus au ciel, quarante jours après Pâques. Elle marque la fin de sa présence terrestre."
+        },
+        "pentecote": {
+            "title": "Lundi de Pentecôte",
+            "description": "Célèbre la descente du Saint-Esprit sur les apôtres, cinquante jours après Pâques. C'est un jour de solidarité en France."
+        },
+        "fete_nationale": {
+            "title": "Fête Nationale",
+            "description": "Commémore la prise de la Bastille le 14 juillet 1789, symbole de la fin de la monarchie absolue et de l'unité nationale."
+        },
+        "assomption": {
+            "title": "Assomption",
+            "description": "Célèbre la montée de la Vierge Marie au ciel, corps et âme, au terme de sa vie terrestre. C'est une fête mariale majeure."
+        },
+        "toussaint": {
+            "title": "Toussaint",
+            "description": "Fête catholique en l'honneur de tous les saints. C'est aussi un moment traditionnel pour se recueillir sur les tombes des défunts."
+        },
+        "armistice_1918": {
+            "title": "Armistice 1918",
+            "description": "Commémoration de l'armistice signé en 1918, mettant fin aux combats de la Première Guerre mondiale."
+        },
+        "noel": {
+            "title": "Noël",
+            "description": "Célébration de la naissance de Jésus pour les chrétiens, et fête culturelle majeure marquée par le Père Noël, les cadeaux et les repas festifs."
+        },
+        "saint_etienne": {
+            "title": "Saint Étienne",
+            "description": "Fête spécifique à l'Alsace-Moselle, célébrant Saint Étienne, le premier martyr chrétien."
+        },
+        "vendredi_saint": {
+            "title": "Vendredi Saint",
+            "description": "Jour spécifique à l'Alsace-Moselle, commémorant la crucifixion et la mort de Jésus."
+        },
+        "default": {
+            "title": "Jour Férié",
+            "description": "Un jour férié officiel célébré en France."
+        }
     },
-    "spacetraders": {
-        "join_fleet": "Amirauté Spatiale",
-        "rules_title": "Règles d'Engagement",
-        "rules_text": "Pilotez votre flotte à travers la galaxie. Enregistrez un indicatif unique pour commencer votre carrière de marchand ou de pirate.",
-        "rules_market": "Commercez des ressources, améliorez vos vaisseaux et dominez le marché intergalactique.",
-        "register_desc": "Entrez un indicatif pour enregistrer un nouvel agent.",
-        "callsign_placeholder": "ENTREZ L'INDICATIF",
-        "register_agent": "Enregistrer l'Agent",
-        "agent": "AGENT",
-        "credits": "CRÉDITS",
-        "headquarters": "QUARTIER GÉNÉRAL",
-        "logout": "Déconnexion",
-        "command_fleet": "Flotte de Commandement",
-        "symbol": "Symbole",
-        "location": "Localisation",
-        "no_ships": "Aucun vaisseau trouvé. Achetez des vaisseaux pour commencer le commerce.",
-        "uplinking": "Liaison au Réseau Neural..."
+    "learning": {
+        "title": "Le Linguiste",
+        "login_required": "Veuillez vous connecter pour accéder à cette page.",
+        "discover": "Découverte",
+        "review": "Révision",
+        "no_favorites": "Aucun favori pour le moment.",
+        "back_to_discover": "Retourner en mode Découverte",
+        "load_error": "Impossible de charger le contenu.",
+        "retry": "Réessayer",
+        "new_expression": "Nouvelle Expression",
+        "login_to_save": "Connectez-vous pour sauvegarder vos favoris !"
     },
     "messages": {
         "title": "Mur de Messages",
@@ -359,7 +535,105 @@
         "just_now": "À l'instant",
         "anonymous": "Anonyme",
         "post_anonymously": "Publier anonymement",
-        "you": "Vous"
+        "you": "Vous",
+        "online": "en ligne",
+        "translate": "Traduire",
+        "reply": "Répondre",
+        "replying_to": "Réponse à",
+        "send": "Envoyer",
+        "set_name": "Définir le nom"
+    },
+    "pokemon": {
+        "guess_prompt": "Qui est ce Pokémon ?",
+        "score": "Score",
+        "loading": "Chargement des données génétiques...",
+        "guess": "DEVINER",
+        "next": "POKÉMON SUIVANT",
+        "correct": "✓ CORRECT !",
+        "wrong": "✗ Réessayez !",
+        "hint": "Indice",
+        "letters": "lettres",
+        "answer": "Réponse"
+    },
+    "zombie": {
+        "rules": {
+            "title": "ZOMBIE SHOOTER - GUIDE",
+            "objective": "Objectif",
+            "objective_desc": "Survivez le plus longtemps possible contre des vagues infinies de zombies. Éliminez-les et collectez des power-ups pour améliorer vos armes.",
+            "controls": "Contrôles",
+            "pc": "PC",
+            "pc_desc": "Déplacez votre souris pour bouger. Tir automatique.",
+            "mobile": "Mobile",
+            "mobile_desc": "Utilisez les pads tactiles en bas de l'écran pour bouger.",
+            "powerups": "Power-Ups",
+            "scatter": "Scatter (Jaune)",
+            "scatter_desc": "+1 Canon supplémentaire",
+            "firerate": "Cadence (Bleu)",
+            "firerate_desc": "Réduit le délai entre les tirs",
+            "crit": "Critique (Jaune)",
+            "crit_desc": "+10% Chance de Critique (Bonus variable)",
+            "tech": "Tech (Rouge)",
+            "tech_desc": "Débloque des modes de tir avancés",
+            "damage": "Dégâts (Orange)",
+            "damage_desc": "+10 Dégâts par tir",
+            "bounce": "Rebond (Blanc)",
+            "bounce_desc": "+1 Rebond sur les murs",
+            "tech_upgrades": "Modes de Tir & Super Upgrades",
+            "tech1": "TECH 1: PERFORANT",
+            "tech1_desc": "Traverse les ennemis",
+            "tech2": "TECH 2: REBOND +",
+            "tech2_desc": "Augmente les rebonds max",
+            "tech3": "TECH 3: CHAÎNE",
+            "tech3_desc": "Saute vers la cible proche",
+            "tech4": "TECH 4: CRYO-CHOC",
+            "tech4_desc": "Ralentit les ennemis (25%)",
+            "tech5": "TECH 5: RÉSONANCE",
+            "tech5_desc": "Dégâts de zone (AoE) à l'impact",
+            "tech6": "TECH 6: SINGULARITÉ",
+            "tech6_desc": "Vortex sur coups critiques",
+            "homing": "PISTAGE TACTIQUE (Super)",
+            "homing_desc": "Les balles traquent automatiquement les cibles",
+            "rewards": "Systèmes de Récompenses",
+            "super_reward": "Super Récompense",
+            "super_reward_desc": "Toutes les 10 vagues, choisissez parmi 3 améliorations massives.",
+            "desperate_defense": "DÉFENSE DÉSESPÉRÉE : Ennemi tué en ZONE ROUGE = Power-Up garanti !",
+            "elite_challenge": "DÉFI ÉLITE : 5 vagues sans breach = HP zombies +50% (Score Bonus).",
+            "bestiary": "Bestiaire",
+            "walker": "Walker",
+            "walker_stats": "HP 1x | Vitesse 1x",
+            "runner": "Runner",
+            "runner_stats": "HP 0.5x | Vitesse 1.6x",
+            "tank": "Tank",
+            "tank_stats": "HP 4x | Knockback 50%",
+            "boss": "BOSS",
+            "boss_stats": "HP 10x | BUTIN GARANTI",
+            "tip": "Astuce: Les HP des zombies augmentent de 20% à chaque vague (exponentiel). Améliorez vos dégâts!"
+        }
+    },
+    "spacetraders": {
+        "join_fleet": "Amirauté Spatiale",
+        "rules_title": "Règles d'Engagement",
+        "rules_text": "Pilotez votre flotte à travers la galaxie. Enregistrez un indicatif unique pour commencer votre carrière de marchand ou de pirate.",
+        "rules_market": "Commercez des ressources, améliorez vos vaisseaux et dominez le marché intergalactique.",
+        "register_desc": "Entrez un indicatif pour enregistrer un nouvel agent.",
+        "callsign_placeholder": "ENTREZ L'INDICATIF",
+        "register_agent": "Enregistrer l'Agent",
+        "agent": "AGENT",
+        "credits": "CRÉDITS",
+        "headquarters": "QUARTIER GÉNÉRAL",
+        "logout": "Déconnexion",
+        "command_fleet": "Flotte de Commandement",
+        "symbol": "Symbole",
+        "location": "Localisation",
+        "no_ships": "Aucun vaisseau trouvé. Achetez des vaisseaux pour commencer le commerce.",
+        "uplinking": "Liaison au Réseau Neural...",
+        "error": "ERREUR",
+        "auto_logout": "Déconnexion automatique dans 3 secondes...",
+        "clear_restart": "Effacer le Token & Redémarrer",
+        "economy": "Économie",
+        "network": "Réseau",
+        "network_desc": "Les données sont synchronisées en temps réel avec l'API SpaceTraders v2.",
+        "tip": "Astuce : Votre indicatif est votre identité galactique unique. Gardez-le précieusement !"
     },
     "suggestions": {
         "title": "Suggestions & Idées",
@@ -396,77 +670,6 @@
         "replying_to": "Répondre à",
         "reopen": "Rouvrir"
     },
-    "admin": {
-        "manage_users": "Gérer les utilisateurs",
-        "user_list": "Liste des utilisateurs",
-        "username": "Nom d'utilisateur",
-        "password": "Mot de passe",
-        "edit_user": "Modifier",
-        "delete_user": "Supprimer",
-        "save_changes": "Enregistrer",
-        "cancel": "Annuler",
-        "confirm_delete_user": "Supprimer cet utilisateur ?",
-        "show_password": "Afficher",
-        "hide_password": "Masquer",
-        "action": "Action",
-        "add_user": "Ajouter un utilisateur",
-        "add_new_user": "Ajouter un nouvel utilisateur",
-        "create": "Créer",
-        "site_settings": "Paramètres du site",
-        "enter_code_prompt": "Entrez le code Admin pour modifier :",
-        "changes_effect_warning": "Les changements affectent tous les utilisateurs immédiatement. Rafraîchissez pour voir les effets.",
-        "verify": "Vérifier",
-        "invalid_code": "Code invalide",
-        "loading": "Chargement des paramètres...",
-        "critical": "CRITIQUE",
-        "settings": {
-            "maintenance_mode": "Mode Maintenance Global",
-            "maintenance_message": "Message de Maintenance",
-            "page_cv": "Page CV / À propos",
-            "page_game": "Page Jeux (Arcade)",
-            "page_messages": "Mur de Messages",
-            "page_suggestions": "Boîte à Idées",
-            "page_calendar": "Calendrier"
-        },
-        "login_required": "Connexion personnelle requise",
-        "login_audit_explanation": "Pour des raisons de sécurité et d'audit, vous devez être connecté avec votre compte personnel pour modifier les paramètres du site."
-    },
-    "maintenance": {
-        "title": "En Maintenance",
-        "description": "Le site est actuellement en maintenance. Nous serons de retour très bientôt."
-    },
-    "auth": {
-        "login": "Se connecter",
-        "register": "S'inscrire",
-        "logout": "Déconnexion",
-        "username": "Nom d'utilisateur",
-        "password": "Mot de passe",
-        "create_account": "Créer un compte",
-        "no_account": "Pas de compte ?",
-        "has_account": "Vous avez déjà un compte ?",
-        "success_register": "Inscription réussie ! Veuillez vous connecter.",
-        "failed": "Échec de l'authentification",
-        "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
-        "admin_code": "Code Admin",
-        "admin_panel": "Panneau Admin",
-        "quit_admin": "Quitter Admin",
-        "clear_all": "Tout effacer",
-        "mute": "Couper le chat",
-        "unmute": "Réactiver le chat",
-        "muted": "Le chat est suspendu par l'admin",
-        "super_admin_code": "Code Super Admin",
-        "super_admin_panel": "Panneau Super Admin",
-        "admin_access": "Accès Admin",
-        "signed_in_as": "Connecté en tant que"
-    },
-    "hero": {
-        "title": "Changrui ZHANG",
-        "subtitle": "Façonner mon avenir, ligne par ligne."
-    },
-    "story": {
-        "title": "Ma Philosophie",
-        "description": "Je transforme des lignes de code en expériences visuelles et interactives, fusionnant logique rigoureuse et créativité sans limite pour donner vie aux idées."
-    },
     "features": {
         "velocity": {
             "title": "Rigueur",
@@ -480,28 +683,6 @@
             "title": "Ambition",
             "description": "Une volonté constante d'apprendre et de maîtriser les technologies de demain."
         }
-    },
-    "signature": "Changrui ZHANG",
-    "gravity": {
-        "title": "Mon Labo",
-        "instruction": "ZONE D'EXPÉRIMENTATION -- MES COMPÉTENCES EN ACTION",
-        "keywords": [
-            "Java",
-            "Spring Boot",
-            "React",
-            "Docker",
-            "Linux",
-            "SQL",
-            "TypeScript",
-            "CI/CD",
-            "Créativité",
-            "Git",
-            "Redis",
-            "Jenkins",
-            "Agile",
-            "API",
-            "Cloud"
-        ]
     },
     "gallery": {
         "nebula": {
@@ -524,6 +705,37 @@
             "title": "LINUX / OS",
             "description": "Maîtrise Système"
         }
+    },
+    "gravity": {
+        "title": "Mon Labo",
+        "instruction": "ZONE D'EXPÉRIMENTATION -- MES COMPÉTENCES EN ACTION",
+        "keywords": [
+            "Java",
+            "Spring Boot",
+            "React",
+            "Docker",
+            "Linux",
+            "SQL",
+            "TypeScript",
+            "CI/CD",
+            "Créativité",
+            "Git",
+            "Redis",
+            "Jenkins",
+            "Agile",
+            "API",
+            "Cloud"
+        ]
+    },
+    "hero": {
+        "title": "Changrui ZHANG",
+        "subtitle": "Façonner mon avenir, ligne par ligne.",
+        "explore": "Explorer"
+    },
+    "signature": "Changrui ZHANG",
+    "story": {
+        "title": "Ma Philosophie",
+        "description": "Je transforme des lignes de code en expériences visuelles et interactives, fusionnant logique rigoureuse et créativité sans limite pour donner vie aux idées."
     },
     "footer_section": {
         "tagline": "Architecte de solutions numériques.",
@@ -609,104 +821,8 @@
             }
         }
     },
-    "cv": {
-        "role": "Développeur Fullstack",
-        "sections": {
-            "profile": "Profil",
-            "experience": "Expériences",
-            "skills": "Compétences",
-            "education": "Formation",
-            "soft_skills": "Savoir-être",
-            "languages": "Langues",
-            "interests": "Centres d'intérêt"
-        },
-        "profile_text": "Développeur back-end diplômé en Master Informatique (Sorbonne Université), expérimenté sur Spring Boot et ReactJS. Rigoureux, autonome et passionné par les défis techniques, je recherche un poste dans le développement back-end/fullstack. Je possède une carte de résident me permettant de travailler librement en France.",
-        "exp": {
-            "espace": {
-                "title": "Espace Web (Projet Personnel)",
-                "role": "Développeur Full Stack",
-                "desc": [
-                    "Développement autonome d'une application web personnelle full-stack.",
-                    "Intégration de l'authentification (JWT), des modes Sombre/Clair et du support multilingue.",
-                    "Amélioration de l'interface utilisateur avec ReactBit pour des composants dynamiques.",
-                    "Conteneurisation du projet avec Docker."
-                ]
-            },
-            "rakuten": {
-                "title": "Rakuten France",
-                "role": "Développeur Fullstack (Stage)",
-                "desc": [
-                    "Migrer et optimiser le composant de filtrage (250M exports/jour) : temps de configuration réduit de 2 min à <30 s.",
-                    "Développer en autonomie deux nouveaux supports d’import (XML + JSON) des fiches produits sur la plateforme, facilitant l’intégration de 250+ partenaires.",
-                    "Intégrer l’IA dans le traitement des données.",
-                    "Migrer de ReactJS 15+ vers 20+ et de JavaScript vers TypeScript.",
-                    "Développer en autonomie un outil de migration automatisée (3 semaines), garantissant l’intégrité de milliers de données clients et réduisant les erreurs manuelles.",
-                    "Développer en autonomie un programme de synchronisation des coupons de réduction, garantissant la fiabilité des promotions visibles par des millions d’utilisateurs.",
-                    "Réaliser des tests unitaires et automatisés pour garantir la fiabilité du code.",
-                    "Suivre les cahiers des charges et la roadmap produit afin de garantir la conformité des livrables et le respect des délais.",
-                    "Organiser des réunions de reporting et des meetings quotidiens en méthodologie Agile."
-                ]
-            },
-            "sorbonne": {
-                "title": "Sorbonne Université (E-commerce)",
-                "role": "Développeur Fullstack",
-                "desc": [
-                    "Pilotage d'une application e-shop collaborative avec feature flags.",
-                    "Développement full stack (Backend, Frontend, BD).",
-                    "Automatisation de la génération des variantes de gammes de produits."
-                ]
-            },
-            "database": {
-                "title": "Université Paris Cité (Modélisation de base de données)",
-                "role": "Développeur Base de Données",
-                "desc": [
-                    "Concevoir une base de données pour simuler les navigations de bateaux antiques.",
-                    "Utiliser PostgreSQL pour la conception et la gestion des données, en intégrant des outils de modélisation collaboratifs.",
-                    "Technologies: PostgreSQL / BOUML / StarUML"
-                ]
-            },
-            "quichefs": {
-                "title": "Projet Ouichefs (Noyau Linux)",
-                "role": "Développeur Système",
-                "desc": [
-                    "Développement d'un système de liens physiques amélioré pour le noyau Linux.",
-                    "Implémentation des UUIDs, des liens inter-partitions et de la migration de blocs."
-                ]
-            }
-        },
-        "edu": {
-            "master": "Master Informatique: Systèmes et Applications Répartis",
-            "licence": "Licence Informatique: Informatique Générale"
-        },
-        "soft_skills_list": [
-            "Autonomie",
-            "Rigueur",
-            "Bon relationnel",
-            "Esprit de synthèse",
-            "Capacité d’adaptation",
-            "Motivation",
-            "Curiosité",
-            "Esprit d’équipe"
-        ],
-        "languages_list": {
-            "zh": "Chinois (Maternel)",
-            "en": "Anglais (Professionnel)",
-            "fr": "Français (Bilingue)"
-        },
-        "interests_list": [
-            "Jeux vidéos",
-            "Sport"
-        ]
-    },
-    "learning": {
-        "title": "Le Linguiste",
-        "login_required": "Veuillez vous connecter pour accéder à cette page.",
-        "discover": "Découverte",
-        "review": "Révision",
-        "no_favorites": "Aucun favori pour le moment.",
-        "back_to_discover": "Retourner en mode Découverte",
-        "load_error": "Impossible de charger le contenu.",
-        "retry": "Réessayer",
-        "new_expression": "Nouvelle Expression"
+    "preloader": {
+        "welcome": "BIENVENUE",
+        "loading": "CHARGEMENT"
     }
 }

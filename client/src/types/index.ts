@@ -5,3 +5,4 @@ export * from './api';
 export * from './calendar';
 export * from './learning';
 export * from './suggestions';
+export * from './game';

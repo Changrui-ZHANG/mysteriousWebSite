@@ -151,7 +151,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                 <button
                     onClick={(e) => { e.stopPropagation(); logout(); playSound('click'); }}
                     className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Recommencer (Déconnexion)"
+                    title={t('game.reset')}
                 >
                     <FaRedo size={18} />
                 </button>
@@ -165,7 +165,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                 <button
                     onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title="Aide / Règles"
+                    title={t('game.help_rules')}
                 >
                     <FaQuestion size={18} />
                 </button>
@@ -186,14 +186,14 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                         <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200">
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
-                                    <strong className="font-bold mr-2">ERROR:</strong> {error}
-                                    <div className="text-xs opacity-70 mt-1">Auto-logout in 3 seconds...</div>
+                                    <strong className="font-bold mr-2">{t('spacetraders.error')}:</strong> {error}
+                                    <div className="text-xs opacity-70 mt-1">{t('spacetraders.auto_logout')}</div>
                                 </div>
                                 <button
                                     onClick={logout}
                                     className="ml-4 px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg font-bold text-white transition-colors text-sm whitespace-nowrap"
                                 >
-                                    Clear Token & Restart
+                                    {t('spacetraders.clear_restart')}
                                 </button>
                             </div>
                         </div>
@@ -301,22 +301,22 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                             <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-cyan-500/30 transition-colors">
                                 <div className="flex items-center gap-3 mb-3">
                                     <span className="text-2xl bg-white/10 p-2 rounded-xl">💰</span>
-                                    <h4 className="font-bold text-white">Économie</h4>
+                                    <h4 className="font-bold text-white">{t('spacetraders.economy')}</h4>
                                 </div>
                                 <p className="text-sm text-white/60 leading-relaxed">{t('spacetraders.rules_market')}</p>
                             </div>
                             <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-purple-500/30 transition-colors">
                                 <div className="flex items-center gap-3 mb-3">
                                     <span className="text-2xl bg-white/10 p-2 rounded-xl">🛰️</span>
-                                    <h4 className="font-bold text-white">Réseau</h4>
+                                    <h4 className="font-bold text-white">{t('spacetraders.network')}</h4>
                                 </div>
-                                <p className="text-sm text-white/60 leading-relaxed">Les données sont synchronisées en temps réel avec l'API SpaceTraders v2.</p>
+                                <p className="text-sm text-white/60 leading-relaxed">{t('spacetraders.network_desc')}</p>
                             </div>
                         </div>
 
                         <div className="bg-gradient-to-r from-cyan-500/10 to-transparent p-4 rounded-xl border-l-4 border-cyan-400">
                             <p className="text-xs md:text-sm text-cyan-200 italic">
-                                💡 Astuce : Votre indicatif est votre identité galactique unique. Gardez-le précieusement !
+                                💡 {t('spacetraders.tip')}
                             </p>
                         </div>
                     </div>

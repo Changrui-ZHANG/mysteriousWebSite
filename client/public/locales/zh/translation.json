@@ -1,4 +1,20 @@
 {
+    "common": {
+        "close": "关闭",
+        "cancel": "取消",
+        "delete": "删除",
+        "go": "确定"
+    },
+    "nav": {
+        "home": "主页",
+        "cv": "简历",
+        "game": "街机厅",
+        "messages": "留言",
+        "suggestions": "建议",
+        "calendar": "日历",
+        "learning": "语言学家",
+        "more": "更多"
+    },
     "navbar": {
         "title": "欢迎",
         "arcade_title": "街机游戏",
@@ -16,76 +32,84 @@
             "zh": "中文"
         }
     },
-    "common": {
-        "close": "关闭"
+    "admin": {
+        "admin": "管理员",
+        "super_admin": "超级管理员",
+        "manage_users": "管理用户",
+        "user_list": "用户列表",
+        "username": "用户名",
+        "password": "密码",
+        "edit_user": "编辑",
+        "delete_user": "删除",
+        "save_changes": "保存",
+        "cancel": "取消",
+        "confirm_delete_user": "删除此用户？",
+        "show_password": "显示",
+        "hide_password": "隐藏",
+        "action": "操作",
+        "add_user": "添加用户",
+        "add_new_user": "添加新用户",
+        "create": "创建",
+        "site_settings": "网站设置",
+        "enter_code_prompt": "输入管理员代码以修改设置：",
+        "changes_effect_warning": "更改立即生效。您可能需要刷新页面以查看本地更改。",
+        "verify": "验证",
+        "invalid_code": "代码无效",
+        "loading": "加载设置中...",
+        "critical": "关键",
+        "settings": {
+            "maintenance_mode": "全站维护模式",
+            "maintenance_message": "维护公告内容",
+            "page_cv": "简历 / 关于页面",
+            "page_game": "街机 / 游戏页面",
+            "page_messages": "留言墙",
+            "page_suggestions": "建议箱",
+            "page_calendar": "日历页面"
+        },
+        "login_required": "需要个人登录",
+        "login_audit_explanation": "出于安全和审计目的，您必须使用个人帐户登录才能修改网站设置。",
+        "refresh_count": "刷新计数",
+        "hide_count": "对用户隐藏计数",
+        "show_count": "向用户显示计数",
+        "mute": "禁言",
+        "unmute": "解除禁言",
+        "clear_all": "清除全部",
+        "confirm_clear": "删除所有消息？",
+        "login_hint": "使用导航栏中的锁图标以管理员身份登录。",
+        "code_placeholder": "管理员代码",
+        "panel": "管理面板",
+        "error_delete_user": "删除用户时出错",
+        "error_create_user": "创建用户时出错",
+        "error_update_user": "更新用户时出错"
     },
-    "nav": {
-        "home": "主页",
-        "cv": "简历",
-        "game": "街机厅",
-        "messages": "留言",
-        "suggestions": "建议",
-        "calendar": "日历",
-        "learning": "语言学家",
-        "more": "更多"
+    "auth": {
+        "login": "登录",
+        "register": "注册",
+        "logout": "注销",
+        "username": "用户名",
+        "password": "密码",
+        "create_account": "创建账户",
+        "no_account": "没有账户？",
+        "has_account": "已有账户？",
+        "success_register": "注册成功！请登录。",
+        "failed": "认证失败",
+        "confirm_logout": "确定要注销吗？",
+        "admin_code": "管理员代码",
+        "admin_panel": "管理面板",
+        "quit_admin": "退出管理",
+        "clear_all": "全部清除",
+        "mute": "禁言",
+        "unmute": "解除禁言",
+        "muted": "管理员已开启全员禁言",
+        "super_admin_code": "超级管理员代码",
+        "super_admin_panel": "超级管理员面板",
+        "admin_access": "管理员入口",
+        "signed_in_as": "已登录为"
     },
-    "holidays": {
-        "jour_de_l_an": {
-            "title": "元旦",
-            "description": "公历新年的第一天。这一天充满了节日气氛，人们互致新年问候，吃团圆饭，燃放烟花庆祝。"
-        },
-        "paques": {
-            "title": "复活节星期一",
-            "description": "基督教庆祝耶稣复活的重要节日。与寻找复活节彩蛋和春天万物复苏的象征有关。"
-        },
-        "fete_travail": {
-            "title": "劳动节",
-            "description": "国际劳动节。在法国，人们有互赠铃兰花作为吉祥物的传统。"
-        },
-        "victoire_1945": {
-            "title": "二战胜利日",
-            "description": "纪念1945年纳粹德国投降，标志着第二次世界大战在欧洲战场的结束。"
-        },
-        "ascension": {
-            "title": "耶稣升天节",
-            "description": "基督教节日，庆祝耶稣在复活节后四十天升天，标志着他在人间使命的结束。"
-        },
-        "pentecote": {
-            "title": "圣灵降临节",
-            "description": "庆祝圣灵在复活节后五十天降临在使徒身上。在法国，这也是一个团结互助的日子。"
-        },
-        "fete_nationale": {
-            "title": "国庆日",
-            "description": "纪念1789年7月14日攻占巴士底狱，象征着绝对君主制的结束和民族团结。"
-        },
-        "assomption": {
-            "title": "圣母升天节",
-            "description": "庆祝圣母玛利亚在结束尘世生活后，肉身和灵魂一同升入天堂。"
-        },
-        "toussaint": {
-            "title": "诸圣节",
-            "description": "天主教纪念所有圣徒的节日。这也是人们扫墓祭奠逝去亲人的传统时刻。"
-        },
-        "armistice_1918": {
-            "title": "一战停战日",
-            "description": "纪念1918年签署停战协定，结束了第一次世界大战的战斗。"
-        },
-        "noel": {
-            "title": "圣诞节",
-            "description": "基督教庆祝耶稣诞生的节日，也是一个重要的文化节日，有圣诞老人、礼物和节日大餐。"
-        },
-        "saint_etienne": {
-            "title": "圣史蒂芬节",
-            "description": "阿尔萨斯-摩泽尔地区特有的节日，纪念第一位基督教殉道者圣斯蒂芬。"
-        },
-        "vendredi_saint": {
-            "title": "耶稣受难日",
-            "description": "阿尔萨斯-摩泽尔地区特有的节日，纪念耶稣受难和死亡。"
-        },
-        "default": {
-            "title": "公共假日",
-            "description": "法国庆祝的法定公共假日。"
-        }
+    "maintenance": {
+        "title": "维护中",
+        "description": "网站正在进行必要的维护，我们将很快回来。",
+        "disabled_by": "禁用者"
     },
     "calendar": {
         "title": "日历",
@@ -108,6 +132,109 @@
             "config_update_failed": "配置更新失败",
             "failed_to_load": "加载日历失败"
         }
+    },
+    "cv": {
+        "role": "全栈开发人员",
+        "name": "张常瑞",
+        "interactive_portfolio": "互动作品集",
+        "work_history": "工作经历",
+        "experience_gallery": "经验画廊。",
+        "core_components": "核心组件",
+        "specifications": "规格。",
+        "full_stack_architecture": "全栈架构",
+        "masters_degree": "硕士学位",
+        "bachelors_degree": "学士学位",
+        "initiate_connect": "建立联系。",
+        "connect_description": "为高影响力软件生态系统而设计。",
+        "direct_mail": "直接邮件",
+        "linkedin": "领英",
+        "system_status": "系统状态: 最佳",
+        "sections": {
+            "profile": "个人简介",
+            "experience": "工作经历",
+            "skills": "技能清单",
+            "education": "教育背景",
+            "soft_skills": "软技能",
+            "languages": "语言",
+            "interests": "兴趣爱好"
+        },
+        "profile_text": "后端开发人员，毕业于索邦大学（计算机科学硕士），拥有 Spring Boot 和 ReactJS 经验。严谨、自主，热衷于技术挑战，正在寻找后端/全栈开发职位。我持有居留许可，可以在法国自由工作。",
+        "exp": {
+            "espace": {
+                "title": "个人空间网站 (个人项目)",
+                "role": "全栈开发人员",
+                "desc": [
+                    "自主开发全栈个人空间 Web 应用程序。",
+                    "集成身份验证 (JWT)、深色/浅色模式和多语言支持。",
+                    "使用 ReactBit 增强 UI 以实现动态组件。",
+                    "使用 Docker 容器化项目。"
+                ]
+            },
+            "rakuten": {
+                "title": "Rakuten France",
+                "role": "全栈开发人员 (实习)",
+                "desc": [
+                    "迁移并优化过滤组件（每天 2.5 亿次导出）：配置时间从 2 分钟减少到 <30 秒。",
+                    "独立开发了两种新的产品表单导入支持（XML + JSON），促进了 250 多家合作伙伴的整合。",
+                    "在数据处理中集成 AI。",
+                    "前端从 React 15+ 迁移到 20+，JS 迁移到 TypeScript。",
+                    "独立开发自动化迁移工具（3周），确保数千条客户数据的完整性并减少人工错误。",
+                    "独立开发优惠券同步程序，确保数百万用户可见的促销活动的可靠性。",
+                    "执行单元测试和自动化测试以确保代码可靠性。",
+                    "遵循规格说明书和产品路线图，以确保交付物的合规性和按时交付。",
+                    "组织敏捷方法论中的汇报会议和每日站会。"
+                ]
+            },
+            "sorbonne": {
+                "title": "索邦大学 (电商项目)",
+                "role": "全栈开发人员",
+                "desc": [
+                    "试运行带有功能标志 (Feature Flags) 的协作网店应用程序。",
+                    "全栈开发（后端、前端、数据库）。",
+                    "自动化产品线 (Product Line) 变体生成。"
+                ]
+            },
+            "database": {
+                "title": "巴黎西岱大学 (数据库建模)",
+                "role": "数据库开发人员",
+                "desc": [
+                    "设计数据库以模拟古代船舶航行。",
+                    "使用 PostgreSQL 进行设计和数据管理，集成协作建模工具。",
+                    "技术: PostgreSQL / BOUML / StarUML"
+                ]
+            },
+            "quichefs": {
+                "title": "Quichefs 项目 (Linux 内核)",
+                "role": "系统开发人员",
+                "desc": [
+                    "为 Linux 内核开发改进的物理链接系统。",
+                    "实施 UUID、分区间链接和块迁移。"
+                ]
+            }
+        },
+        "edu": {
+            "master": "计算机硕士：分布式系统与应用",
+            "licence": "计算机学士：通用计算机科学"
+        },
+        "soft_skills_list": [
+            "自主性",
+            "严谨",
+            "良好的人际关系",
+            "综合能力",
+            "适应能力",
+            "动力",
+            "好奇心",
+            "团队精神"
+        ],
+        "languages_list": {
+            "zh": "中文 (母语)",
+            "en": "英语 (专业)",
+            "fr": "法语 (双语)"
+        },
+        "interests_list": [
+            "电子游戏",
+            "运动"
+        ]
     },
     "game": {
         "arcade_zone": "霓虹街机",
@@ -242,6 +369,8 @@
         "pokemon_score_desc": "尽可能多地答对问题！",
         "maze_rules": "在时间耗尽前找到迷宫的出口！",
         "maze_collect": "收集奖励以获得更多时间。",
+        "maze_fog": "迷雾",
+        "maze_tip": "提示：起点标记为(S)，出口标记为(R)。",
         "game_disabled": "游戏已禁用",
         "game_disabled_desc": "该游戏目前已被管理员禁用。",
         "zombie": "僵尸防御",
@@ -309,34 +438,84 @@
         },
         "fullscreen": "全屏",
         "fullscreen_exit": "退出全屏",
-        "help_rules": "帮助 / 规则"
+        "help_rules": "帮助 / 规则",
+        "status_active": "已启用",
+        "status_disabled": "已禁用",
+        "action_disable": "禁用",
+        "action_enable": "启用",
+        "confirm_reset_score": "确定要将 {{username}} 的分数重置为0吗？",
+        "error_reset_score": "重置分数失败",
+        "reset_score": "重置分数"
     },
-    "pokemon": {
-        "guess_prompt": "这是哪只宝可梦？",
-        "score": "分数",
-        "loading": "加载基因数据...",
-        "guess": "猜测",
-        "next": "下一只宝可梦",
-        "correct": "✓ 正确！",
-        "wrong": "✗ 再试一次！",
-        "hint": "提示",
-        "letters": "个字母",
-        "answer": "答案"
+    "holidays": {
+        "jour_de_l_an": {
+            "title": "元旦",
+            "description": "公历新年的第一天。这一天充满了节日气氛，人们互致新年问候，吃团圆饭，燃放烟花庆祝。"
+        },
+        "paques": {
+            "title": "复活节星期一",
+            "description": "基督教庆祝耶稣复活的重要节日。与寻找复活节彩蛋和春天万物复苏的象征有关。"
+        },
+        "fete_travail": {
+            "title": "劳动节",
+            "description": "国际劳动节。在法国，人们有互赠铃兰花作为吉祥物的传统。"
+        },
+        "victoire_1945": {
+            "title": "二战胜利日",
+            "description": "纪念1945年纳粹德国投降，标志着第二次世界大战在欧洲战场的结束。"
+        },
+        "ascension": {
+            "title": "耶稣升天节",
+            "description": "基督教节日，庆祝耶稣在复活节后四十天升天，标志着他在人间使命的结束。"
+        },
+        "pentecote": {
+            "title": "圣灵降临节",
+            "description": "庆祝圣灵在复活节后五十天降临在使徒身上。在法国，这也是一个团结互助的日子。"
+        },
+        "fete_nationale": {
+            "title": "国庆日",
+            "description": "纪念1789年7月14日攻占巴士底狱，象征着绝对君主制的结束和民族团结。"
+        },
+        "assomption": {
+            "title": "圣母升天节",
+            "description": "庆祝圣母玛利亚在结束尘世生活后，肉身和灵魂一同升入天堂。"
+        },
+        "toussaint": {
+            "title": "诸圣节",
+            "description": "天主教纪念所有圣徒的节日。这也是人们扫墓祭奠逝去亲人的传统时刻。"
+        },
+        "armistice_1918": {
+            "title": "一战停战日",
+            "description": "纪念1918年签署停战协定，结束了第一次世界大战的战斗。"
+        },
+        "noel": {
+            "title": "圣诞节",
+            "description": "基督教庆祝耶稣诞生的节日，也是一个重要的文化节日，有圣诞老人、礼物和节日大餐。"
+        },
+        "saint_etienne": {
+            "title": "圣史蒂芬节",
+            "description": "阿尔萨斯-摩泽尔地区特有的节日，纪念第一位基督教殉道者圣斯蒂芬。"
+        },
+        "vendredi_saint": {
+            "title": "耶稣受难日",
+            "description": "阿尔萨斯-摩泽尔地区特有的节日，纪念耶稣受难和死亡。"
+        },
+        "default": {
+            "title": "公共假日",
+            "description": "法国庆祝的法定公共假日。"
+        }
     },
-    "spacetraders": {
-        "join_fleet": "加入太空舰队",
-        "register_desc": "输入呼号以注册新代理。",
-        "callsign_placeholder": "输入呼号",
-        "register_agent": "注册代理",
-        "agent": "代理",
-        "credits": "信用点",
-        "headquarters": "总部",
-        "logout": "登出",
-        "command_fleet": "指挥舰队",
-        "symbol": "代号",
-        "location": "位置",
-        "no_ships": "未找到飞船。购买飞船以开始交易。",
-        "uplinking": "正在连接神经网络..."
+    "learning": {
+        "title": "语言学家",
+        "login_required": "请登录以访问此页面。",
+        "discover": "探索",
+        "review": "复习",
+        "no_favorites": "暂无收藏。",
+        "back_to_discover": "返回探索模式",
+        "load_error": "无法加载内容。",
+        "retry": "重试",
+        "new_expression": "新表达",
+        "login_to_save": "登录以保存您的收藏！"
     },
     "messages": {
         "title": "留言墙",
@@ -354,7 +533,102 @@
         "just_now": "刚刚",
         "anonymous": "匿名",
         "post_anonymously": "匿名发布",
-        "you": "你"
+        "you": "你",
+        "online": "在线",
+        "translate": "翻译",
+        "reply": "回复",
+        "replying_to": "回复",
+        "send": "发送",
+        "set_name": "设置名称"
+    },
+    "pokemon": {
+        "guess_prompt": "这是哪只宝可梦？",
+        "score": "分数",
+        "loading": "加载基因数据...",
+        "guess": "猜测",
+        "next": "下一只宝可梦",
+        "correct": "✓ 正确！",
+        "wrong": "✗ 再试一次！",
+        "hint": "提示",
+        "letters": "个字母",
+        "answer": "答案"
+    },
+    "zombie": {
+        "rules": {
+            "title": "僵尸射击 - 指南",
+            "objective": "目标",
+            "objective_desc": "在无尽的僵尸浪潮中尽可能长时间生存。消灭它们并收集能量提升来升级你的武器。",
+            "controls": "控制",
+            "pc": "电脑",
+            "pc_desc": "移动鼠标瞄准。自动射击。",
+            "mobile": "手机",
+            "mobile_desc": "使用屏幕底部的触控板移动。",
+            "powerups": "能量提升",
+            "scatter": "散射 (黄色)",
+            "scatter_desc": "+1 额外炮管",
+            "firerate": "射速 (蓝色)",
+            "firerate_desc": "减少射击间隔",
+            "crit": "暴击 (黄色)",
+            "crit_desc": "+10% 暴击几率 (可变加成)",
+            "tech": "科技 (红色)",
+            "tech_desc": "解锁高级射击模式",
+            "damage": "伤害 (橙色)",
+            "damage_desc": "+10 每发伤害",
+            "bounce": "弹射 (白色)",
+            "bounce_desc": "+1 墙壁弹射",
+            "tech_upgrades": "射击模式 & 超级升级",
+            "tech1": "科技 1: 穿透",
+            "tech1_desc": "穿透敌人",
+            "tech2": "科技 2: 弹射+",
+            "tech2_desc": "增加最大弹射次数",
+            "tech3": "科技 3: 连锁",
+            "tech3_desc": "跳跃到附近目标",
+            "tech4": "科技 4: 冰冻冲击",
+            "tech4_desc": "减速敌人 (25%)",
+            "tech5": "科技 5: 共振",
+            "tech5_desc": "冲击时造成范围伤害",
+            "tech6": "科技 6: 奇点",
+            "tech6_desc": "暴击时产生漩涡",
+            "homing": "战术追踪 (超级)",
+            "homing_desc": "子弹自动追踪目标",
+            "rewards": "奖励系统",
+            "super_reward": "超级奖励",
+            "super_reward_desc": "每10波，从3个强力升级中选择一个。",
+            "desperate_defense": "绝望防御：在红区击杀敌人 = 保证获得能量提升！",
+            "elite_challenge": "精英挑战：5波无突破 = 僵尸HP +50% (额外分数)。",
+            "bestiary": "怪物图鉴",
+            "walker": "行尸",
+            "walker_stats": "HP 1x | 速度 1x",
+            "runner": "奔跑者",
+            "runner_stats": "HP 0.5x | 速度 1.6x",
+            "tank": "坦克",
+            "tank_stats": "HP 4x | 击退 50%",
+            "boss": "BOSS",
+            "boss_stats": "HP 10x | 保证掉落",
+            "tip": "提示：僵尸HP每波增加20%（指数增长）。升级你的伤害！"
+        }
+    },
+    "spacetraders": {
+        "join_fleet": "加入太空舰队",
+        "register_desc": "输入呼号以注册新代理。",
+        "callsign_placeholder": "输入呼号",
+        "register_agent": "注册代理",
+        "agent": "代理",
+        "credits": "信用点",
+        "headquarters": "总部",
+        "logout": "登出",
+        "command_fleet": "指挥舰队",
+        "symbol": "代号",
+        "location": "位置",
+        "no_ships": "未找到飞船。购买飞船以开始交易。",
+        "uplinking": "正在连接神经网络...",
+        "error": "错误",
+        "auto_logout": "3秒后自动登出...",
+        "clear_restart": "清除令牌并重启",
+        "economy": "经济",
+        "network": "网络",
+        "network_desc": "数据与SpaceTraders v2 API实时同步。",
+        "tip": "提示：您的呼号是您独特的银河身份，请妥善保管！"
     },
     "suggestions": {
         "title": "建议与想法",
@@ -391,77 +665,6 @@
         "replying_to": "回复",
         "reopen": "重新打开"
     },
-    "admin": {
-        "manage_users": "管理用户",
-        "user_list": "用户列表",
-        "username": "用户名",
-        "password": "密码",
-        "edit_user": "编辑",
-        "delete_user": "删除",
-        "save_changes": "保存",
-        "cancel": "取消",
-        "confirm_delete_user": "删除此用户？",
-        "show_password": "显示",
-        "hide_password": "隐藏",
-        "action": "操作",
-        "add_user": "添加用户",
-        "add_new_user": "添加新用户",
-        "create": "创建",
-        "site_settings": "网站设置",
-        "enter_code_prompt": "输入管理员代码以修改设置：",
-        "changes_effect_warning": "更改立即生效。您可能需要刷新页面以查看本地更改。",
-        "verify": "验证",
-        "invalid_code": "代码无效",
-        "loading": "加载设置中...",
-        "critical": "关键",
-        "settings": {
-            "maintenance_mode": "全站维护模式",
-            "maintenance_message": "维护公告内容",
-            "page_cv": "简历 / 关于页面",
-            "page_game": "街机 / 游戏页面",
-            "page_messages": "留言墙",
-            "page_suggestions": "建议箱",
-            "page_calendar": "日历页面"
-        },
-        "login_required": "需要个人登录",
-        "login_audit_explanation": "出于安全和审计目的，您必须使用个人帐户登录才能修改网站设置。"
-    },
-    "maintenance": {
-        "title": "维护中",
-        "description": "网站正在进行必要的维护，我们将很快回来。"
-    },
-    "auth": {
-        "login": "登录",
-        "register": "注册",
-        "logout": "注销",
-        "username": "用户名",
-        "password": "密码",
-        "create_account": "创建账户",
-        "no_account": "没有账户？",
-        "has_account": "已有账户？",
-        "success_register": "注册成功！请登录。",
-        "failed": "认证失败",
-        "confirm_logout": "确定要注销吗？",
-        "admin_code": "管理员代码",
-        "admin_panel": "管理面板",
-        "quit_admin": "退出管理",
-        "clear_all": "全部清除",
-        "mute": "禁言",
-        "unmute": "解除禁言",
-        "muted": "管理员已开启全员禁言",
-        "super_admin_code": "超级管理员代码",
-        "super_admin_panel": "超级管理员面板",
-        "admin_access": "管理员入口",
-        "signed_in_as": "已登录为"
-    },
-    "hero": {
-        "title": "张常瑞",
-        "subtitle": "逐行构建我的未来。"
-    },
-    "story": {
-        "title": "我的哲学",
-        "description": "我将代码行转化为视觉和交互体验，融合严谨的逻辑与无限的创造力，赋予创意以生命。"
-    },
     "features": {
         "velocity": {
             "title": "严谨",
@@ -475,28 +678,6 @@
             "title": "雄心",
             "description": "不断学习和掌握未来技术的动力。"
         }
-    },
-    "signature": "张常瑞",
-    "gravity": {
-        "title": "我的实验室",
-        "instruction": "实验区 -- 我的技能展示",
-        "keywords": [
-            "Java",
-            "Spring Boot",
-            "React",
-            "Docker",
-            "Linux",
-            "SQL",
-            "TypeScript",
-            "CI/CD",
-            "创造力",
-            "Git",
-            "Redis",
-            "Jenkins",
-            "敏捷",
-            "API",
-            "云技术"
-        ]
     },
     "gallery": {
         "nebula": {
@@ -519,6 +700,37 @@
             "title": "LINUX / OS",
             "description": "系统精通"
         }
+    },
+    "gravity": {
+        "title": "我的实验室",
+        "instruction": "实验区 -- 我的技能展示",
+        "keywords": [
+            "Java",
+            "Spring Boot",
+            "React",
+            "Docker",
+            "Linux",
+            "SQL",
+            "TypeScript",
+            "CI/CD",
+            "创造力",
+            "Git",
+            "Redis",
+            "Jenkins",
+            "敏捷",
+            "API",
+            "云技术"
+        ]
+    },
+    "hero": {
+        "title": "张常瑞",
+        "subtitle": "逐行构建我的未来。",
+        "explore": "探索"
+    },
+    "signature": "张常瑞",
+    "story": {
+        "title": "我的哲学",
+        "description": "我将代码行转化为视觉和交互体验，融合严谨的逻辑与无限的创造力，赋予创意以生命。"
     },
     "footer_section": {
         "tagline": "数字解决方案架构师。",
@@ -604,104 +816,8 @@
             }
         }
     },
-    "cv": {
-        "role": "全栈开发人员",
-        "sections": {
-            "profile": "个人简介",
-            "experience": "工作经历",
-            "skills": "技能清单",
-            "education": "教育背景",
-            "soft_skills": "软技能",
-            "languages": "语言",
-            "interests": "兴趣爱好"
-        },
-        "profile_text": "后端开发人员，毕业于索邦大学（计算机科学硕士），拥有 Spring Boot 和 ReactJS 经验。严谨、自主，热衷于技术挑战，正在寻找后端/全栈开发职位。我持有居留许可，可以在法国自由工作。",
-        "exp": {
-            "espace": {
-                "title": "个人空间网站 (个人项目)",
-                "role": "全栈开发人员",
-                "desc": [
-                    "自主开发全栈个人空间 Web 应用程序。",
-                    "集成身份验证 (JWT)、深色/浅色模式和多语言支持。",
-                    "使用 ReactBit 增强 UI 以实现动态组件。",
-                    "使用 Docker 容器化项目。"
-                ]
-            },
-            "rakuten": {
-                "title": "Rakuten France",
-                "role": "全栈开发人员 (实习)",
-                "desc": [
-                    "迁移并优化过滤组件（每天 2.5 亿次导出）：配置时间从 2 分钟减少到 <30 秒。",
-                    "独立开发了两种新的产品表单导入支持（XML + JSON），促进了 250 多家合作伙伴的整合。",
-                    "在数据处理中集成 AI。",
-                    "前端从 React 15+ 迁移到 20+，JS 迁移到 TypeScript。",
-                    "独立开发自动化迁移工具（3周），确保数千条客户数据的完整性并减少人工错误。",
-                    "独立开发优惠券同步程序，确保数百万用户可见的促销活动的可靠性。",
-                    "执行单元测试和自动化测试以确保代码可靠性。",
-                    "遵循规格说明书和产品路线图，以确保交付物的合规性和按时交付。",
-                    "组织敏捷方法论中的汇报会议和每日站会。"
-                ]
-            },
-            "sorbonne": {
-                "title": "索邦大学 (电商项目)",
-                "role": "全栈开发人员",
-                "desc": [
-                    "试运行带有功能标志 (Feature Flags) 的协作网店应用程序。",
-                    "全栈开发（后端、前端、数据库）。",
-                    "自动化产品线 (Product Line) 变体生成。"
-                ]
-            },
-            "database": {
-                "title": "巴黎西岱大学 (数据库建模)",
-                "role": "数据库开发人员",
-                "desc": [
-                    "设计数据库以模拟古代船舶航行。",
-                    "使用 PostgreSQL 进行设计和数据管理，集成协作建模工具。",
-                    "技术: PostgreSQL / BOUML / StarUML"
-                ]
-            },
-            "quichefs": {
-                "title": "Quichefs 项目 (Linux 内核)",
-                "role": "系统开发人员",
-                "desc": [
-                    "为 Linux 内核开发改进的物理链接系统。",
-                    "实施 UUID、分区间链接和块迁移。"
-                ]
-            }
-        },
-        "edu": {
-            "master": "计算机硕士：分布式系统与应用",
-            "licence": "计算机学士：通用计算机科学"
-        },
-        "soft_skills_list": [
-            "自主性",
-            "严谨",
-            "良好的人际关系",
-            "综合能力",
-            "适应能力",
-            "动力",
-            "好奇心",
-            "团队精神"
-        ],
-        "languages_list": {
-            "zh": "中文 (母语)",
-            "en": "英语 (专业)",
-            "fr": "法语 (双语)"
-        },
-        "interests_list": [
-            "电子游戏",
-            "运动"
-        ]
-    },
-    "learning": {
-        "title": "语言学家",
-        "login_required": "请登录以访问此页面。",
-        "discover": "探索",
-        "review": "复习",
-        "no_favorites": "暂无收藏。",
-        "back_to_discover": "返回探索模式",
-        "load_error": "无法加载内容。",
-        "retry": "重试",
-        "new_expression": "新表达"
+    "preloader": {
+        "welcome": "欢迎",
+        "loading": "加载中"
     }
 }

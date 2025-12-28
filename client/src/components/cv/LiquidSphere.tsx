@@ -13,17 +13,17 @@ export function LiquidSphere({ isDarkMode }: LiquidSphereProps) {
     useFrame((state) => {
         if (!mesh.current) return;
         const time = state.clock.getElapsedTime();
-        mesh.current.rotation.x = Math.cos(time / 4) * 0.2;
-        mesh.current.rotation.y = Math.sin(time / 2) * 0.2;
+        mesh.current.rotation.x = Math.cos(time / 8) * 0.08;
+        mesh.current.rotation.y = Math.sin(time / 6) * 0.08;
     });
 
     return (
-        <Float speed={4} rotationIntensity={1} floatIntensity={2}>
+        <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.6}>
             <Sphere ref={mesh} args={[1, 100, 100]} scale={2.5}>
                 <MeshDistortMaterial
                     color={isDarkMode ? "#0071e3" : "#3b82f6"}
-                    speed={3}
-                    distort={0.4}
+                    speed={1.5}
+                    distort={0.18}
                     radius={1}
                 >
                     <GradientTexture

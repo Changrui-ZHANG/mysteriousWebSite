@@ -23,8 +23,18 @@ interface User {
 }
 
 function AppContent() {
-    const [isDarkMode, setIsDarkMode] = useState(true)
-    const toggleTheme = () => setIsDarkMode(!isDarkMode)
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const savedTheme = localStorage.getItem('theme');
+        return savedTheme ? savedTheme === 'dark' : true;
+    });
+
+    const toggleTheme = () => {
+        setIsDarkMode(prev => {
+            const newMode = !prev;
+            localStorage.setItem('theme', newMode ? 'dark' : 'light');
+            return newMode;
+        });
+    };
     const location = useLocation()
     const { i18n } = useTranslation()
 
@@ -165,7 +175,7 @@ function AppContent() {
 
     return (
         <div className={`relative min-h-screen transition-colors duration-500 font-body ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
-            <Preloader />
+            <Preloader isDarkMode={isDarkMode} />
             {/* Hide scroll progress on messages page as it has its own scrolling behavior */}
             {!location.pathname.startsWith('/messages') && <ScrollProgress isDarkMode={isDarkMode} />}
 

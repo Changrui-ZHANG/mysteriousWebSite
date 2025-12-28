@@ -1,134 +1,72 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaLanguage, FaSpinner } from 'react-icons/fa';
+import { AnimatePresence } from 'framer-motion';
 import UserManagement from '../admin/UserManagement';
 import { ScrollProgress } from '../../components';
-
-interface Message {
-    id: string;
-    userId: string;
-    name: string;
-    message: string;
-    timestamp: number;
-    isAnonymous: boolean;
-    isVerified: boolean;
-    quotedMessageId?: string;
-    quotedName?: string;
-    quotedMessage?: string;
-}
-
-interface User {
-    userId: string;
-    username: string;
-}
-
-interface MessageWallProps {
-    isDarkMode: boolean;
-    user?: User | null;
-    onOpenLogin?: () => void;
-    isAdmin?: boolean;
-    isSuperAdmin?: boolean;
-}
+import { MessageItem, MessageInput, MessageAdminPanel } from './components';
+import type { Message, MessageWallProps } from './types';
 
 const API_URL = '/api/messages';
-// Removed AUTH_URL since we don't auth here anymore
+const ADMIN_CODE = 'Changrui';
+const SUPER_ADMIN_CODE = 'ChangruiZ';
 
 export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, isSuperAdmin = false }: MessageWallProps) {
     const { t, i18n } = useTranslation();
     const [messages, setMessages] = useState<Message[]>([]);
-    const [newMessage, setNewMessage] = useState('');
-    const [currentUserId, setCurrentUserId] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+    const [currentUserId, setCurrentUserId] = useState('');
 
     // Translation State
     const [translations, setTranslations] = useState<Record<string, string>>({});
     const [translating, setTranslating] = useState<Set<string>>(new Set());
     const [showTranslated, setShowTranslated] = useState<Set<string>>(new Set());
 
-    const handleTranslate = async (msgId: string, text: string) => {
-        // Toggle visibility if already translated
-        if (translations[msgId]) {
-            setShowTranslated(prev => {
-                const newSet = new Set(prev);
-                if (newSet.has(msgId)) newSet.delete(msgId);
-                else newSet.add(msgId);
-                return newSet;
-            });
-            return;
-        }
-
-        // Fetch translation
-        setTranslating(prev => new Set(prev).add(msgId));
-        try {
-            // Map 'zh' to 'zh-CN' for MyMemory if necessary, otherwise use i18n.language
-            const targetLang = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
-            const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=Autodetect|${targetLang}`);
-            const data = await response.json();
-
-            if (data.responseStatus === 200 && data.responseData?.translatedText) {
-                const text = data.responseData.translatedText;
-                if (text.startsWith("MYMEMORY WARNING")) {
-                    setTranslations(prev => ({ ...prev, [msgId]: "⚠️ " + (t('messages.translation_limit') || "Daily limit reached") }));
-                } else {
-                    setTranslations(prev => ({ ...prev, [msgId]: text }));
-                }
-                setShowTranslated(prev => new Set(prev).add(msgId));
-            } else {
-                console.error("Translation API error:", data);
-                setTranslations(prev => ({ ...prev, [msgId]: "⚠️ " + (t('messages.translation_error') || "Translation failed") }));
-                setShowTranslated(prev => new Set(prev).add(msgId));
-            }
-        } catch (error) {
-            console.error("Failed to translate:", error);
-        } finally {
-            setTranslating(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(msgId);
-                return newSet;
-            });
-        }
-    };
-
-    // Removed local Auth State (authMode, authUsername, authPassword, etc.)
-
-    // const [adminCode, setAdminCode] = useState(''); // Moved to App/Navbar
-    // const [isAdmin, setIsAdmin] = useState(false); // Via props
+    // Admin State
     const [showAdminPanel, setShowAdminPanel] = useState(false);
-    const [showNameInput, setShowNameInput] = useState(false);
-    const [tempName, setTempName] = useState('');
-    const [loading, setLoading] = useState(false);
     const [isGlobalMute, setIsGlobalMute] = useState(false);
     const [onlineCount, setOnlineCount] = useState(0);
     const [showOnlineCountToAll, setShowOnlineCountToAll] = useState(false);
     const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
-
-    const ADMIN_CODE = 'Changrui'; // Kept for API calls
-    const SUPER_ADMIN_CODE = 'ChangruiZ'; // Kept for API calls
-
     const [showUserManagement, setShowUserManagement] = useState(false);
 
-    // Initialize User
-    useEffect(() => {
-        // Removed local storage user loading - relies on prop
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-        // Load or create device ID (for anonymous users)
+    // Initialize User ID
+    useEffect(() => {
         let userId = localStorage.getItem('messageWall_userId');
         if (!userId) {
-            userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            userId = `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
             localStorage.setItem('messageWall_userId', userId);
         }
         setCurrentUserId(userId);
     }, []);
 
-    // Load messages
+    // Fetch Messages
+    const fetchMessages = useCallback(async () => {
+        try {
+            const response = await fetch(API_URL);
+            const muteHeader = response.headers.get('X-System-Muted');
+            if (muteHeader !== null) {
+                setIsGlobalMute(muteHeader === 'true');
+            }
+            if (response.ok) {
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    setMessages(data);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch messages:', error);
+        }
+    }, []);
+
     useEffect(() => {
         fetchMessages();
         const interval = setInterval(fetchMessages, 3000);
         return () => clearInterval(interval);
-    }, []);
+    }, [fetchMessages]);
 
-    // Send heartbeat to track online presence
+    // Heartbeat for online presence
     useEffect(() => {
         const sendHeartbeat = async () => {
             const userId = user ? user.userId : currentUserId;
@@ -144,20 +82,16 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                 }
             }
         };
-
-        sendHeartbeat(); // Send immediately
-        const interval = setInterval(sendHeartbeat, 10000); // Every 10 seconds
+        sendHeartbeat();
+        const interval = setInterval(sendHeartbeat, 10000);
         return () => clearInterval(interval);
     }, [currentUserId, user]);
 
     // Fetch online count
-    const fetchOnlineCount = async () => {
+    const fetchOnlineCount = useCallback(async () => {
         try {
             const response = await fetch('/api/presence/count', {
-                headers: {
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                }
+                headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
             });
             const data = await response.json();
             setOnlineCount(data.count);
@@ -165,79 +99,71 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         } catch (error) {
             console.error('Failed to fetch online count:', error);
         }
-    };
-
-    // Fetch online count
-    useEffect(() => {
-        fetchOnlineCount();
-        const interval = setInterval(fetchOnlineCount, 5000); // Every 5 seconds
-        return () => clearInterval(interval);
     }, []);
 
-    const fetchMessages = async () => {
+    useEffect(() => {
+        fetchOnlineCount();
+        const interval = setInterval(fetchOnlineCount, 5000);
+        return () => clearInterval(interval);
+    }, [fetchOnlineCount]);
+
+    // Translation handler
+    const handleTranslate = async (msgId: string, text: string) => {
+        if (translations[msgId]) {
+            setShowTranslated(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(msgId)) newSet.delete(msgId);
+                else newSet.add(msgId);
+                return newSet;
+            });
+            return;
+        }
+
+        setTranslating(prev => new Set(prev).add(msgId));
         try {
-            const response = await fetch(API_URL);
+            const targetLang = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
+            const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=Autodetect|${targetLang}`);
+            const data = await response.json();
 
-            // Check mute header
-            const muteHeader = response.headers.get('X-System-Muted');
-            if (muteHeader !== null) {
-                setIsGlobalMute(muteHeader === 'true');
-            }
-
-            if (response.ok) {
-                const data = await response.json();
-                if (Array.isArray(data)) {
-                    setMessages(data);
+            if (data.responseStatus === 200 && data.responseData?.translatedText) {
+                const translatedText = data.responseData.translatedText;
+                if (translatedText.startsWith("MYMEMORY WARNING")) {
+                    setTranslations(prev => ({ ...prev, [msgId]: `⚠️ ${t('messages.translation_limit')}` }));
                 } else {
-                    console.error("Fetched data is not an array:", data);
+                    setTranslations(prev => ({ ...prev, [msgId]: translatedText }));
                 }
+                setShowTranslated(prev => new Set(prev).add(msgId));
+            } else {
+                setTranslations(prev => ({ ...prev, [msgId]: `⚠️ ${t('messages.translation_error')}` }));
+                setShowTranslated(prev => new Set(prev).add(msgId));
             }
         } catch (error) {
-            console.error('Failed to fetch messages:', error);
-        }
-    };
-
-    const toggleMute = async () => {
-        try {
-            const response = await fetch(`${API_URL}/toggle-mute?adminCode=${ADMIN_CODE}`, {
-                method: 'POST'
+            console.error("Failed to translate:", error);
+        } finally {
+            setTranslating(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(msgId);
+                return newSet;
             });
-            if (response.ok) {
-                fetchMessages();
-            } else {
-                alert('Mute toggle failed');
-            }
-        } catch (e) {
-            console.error(e);
         }
     };
 
-    // Removed handleAuth and handleLogout
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newMessage.trim() || loading) return;
-
-        setLoading(true);
-
-        // Determine sender details
+    // Submit message
+    const handleSubmit = async (messageText: string, tempName: string) => {
         const senderId = user ? user.userId : currentUserId;
-
-        let senderName = user ? user.username : tempName.trim();
+        let senderName = user ? user.username : tempName;
         if (!senderName) {
-            senderName = (isAdmin && !user) ? "Admin" : (t('messages.anonymous') || "Anonymous");
+            senderName = isAdmin && !user ? t('admin.admin') : t('messages.anonymous');
         }
-
-        const isAnon = user ? false : (!tempName.trim() && !isAdmin);
+        const isAnon = user ? false : (!tempName && !isAdmin);
 
         const message: Partial<Message> = {
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            id: Date.now().toString() + Math.random().toString(36).slice(2, 11),
             userId: senderId,
             name: senderName,
-            message: newMessage.trim(),
+            message: messageText,
             timestamp: Date.now(),
             isAnonymous: isAnon,
-            // isVerified is set by backend based on userId
             quotedMessageId: replyingTo?.id
         };
 
@@ -248,26 +174,22 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(message)
             });
-
             if (response.ok) {
-                setNewMessage('');
                 setReplyingTo(null);
                 fetchMessages();
             }
         } catch (error) {
             console.error('Failed to post message:', error);
-        } finally {
-            setLoading(false);
         }
     };
 
+    // Delete message
     const handleDelete = async (id: string) => {
         try {
             const userIdToCheck = user ? user.userId : currentUserId;
             const url = isAdmin
                 ? `${API_URL}/${id}?userId=${userIdToCheck}&adminCode=${ADMIN_CODE}`
                 : `${API_URL}/${id}?userId=${userIdToCheck}`;
-
             const response = await fetch(url, { method: 'DELETE' });
             if (response.ok) fetchMessages();
         } catch (error) {
@@ -275,12 +197,18 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         }
     };
 
-    // Admin & Helper Functions
-
-    // Removed verifyAdminCode and logoutAdmin (handled globally now)
+    // Admin actions
+    const toggleMute = async () => {
+        try {
+            const response = await fetch(`${API_URL}/toggle-mute?adminCode=${ADMIN_CODE}`, { method: 'POST' });
+            if (response.ok) fetchMessages();
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     const clearAllMessages = async () => {
-        if (confirm(t('admin.confirm_clear') || 'Delete all messages?')) {
+        if (confirm(t('admin.confirm_clear'))) {
             await fetch(`${API_URL}/clear?adminCode=${ADMIN_CODE}`, { method: 'POST' });
             fetchMessages();
         }
@@ -288,9 +216,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
     const toggleOnlineCountVisibility = async () => {
         try {
-            const response = await fetch(`/api/presence/toggle-visibility?adminCode=${ADMIN_CODE}`, {
-                method: 'POST'
-            });
+            const response = await fetch(`/api/presence/toggle-visibility?adminCode=${ADMIN_CODE}`, { method: 'POST' });
             const data = await response.json();
             setShowOnlineCountToAll(data.showToAll);
         } catch (error) {
@@ -298,30 +224,13 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         }
     };
 
+    // Helpers
     const isOwnMessage = (message: Message) => {
         const myId = user ? user.userId : currentUserId;
         return message.userId === myId;
     };
 
-    const canDeleteMessage = (message: Message) => {
-        return isOwnMessage(message) || isAdmin;
-    };
-
-    const formatTimestamp = (timestamp: number) => {
-        const now = Date.now();
-        const diff = now - timestamp;
-        if (diff < 60000) return t('messages.just_now');
-        if (diff < 3600000) return `${Math.floor(diff / 60000)}min`;
-        if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
-        return new Date(timestamp).toLocaleDateString();
-    };
-
-
-
-    const getInitials = (name: string, isAnon: boolean) => {
-        if (isAnon) return '?';
-        return name.charAt(0).toUpperCase();
-    };
+    const canDeleteMessage = (message: Message) => isOwnMessage(message) || isAdmin;
 
     const scrollToMessage = (messageId: string) => {
         const element = document.getElementById(`message-${messageId}`);
@@ -332,18 +241,16 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         }
     };
 
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-
     return (
         <div className={`fixed inset-0 overflow-hidden flex flex-col pt-24 overscroll-none ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
             <ScrollProgress isDarkMode={isDarkMode} target={scrollContainerRef} />
+
             {/* Online Count Indicator */}
             {(showOnlineCountToAll || isAdmin) && (
                 <div className="fixed top-24 right-4 z-40 transition-opacity duration-300 pointer-events-none">
-                    <span className={`text-xs px-3 py-1.5 rounded-full font-medium shadow-sm flex items-center gap-2 pointer-events-auto ${isDarkMode ? 'bg-white/10 text-cyan-300 backdrop-blur-md border border-white/5' : 'bg-white text-blue-600 shadow-md'
-                        }`}>
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        {onlineCount} online
+                    <span className={`text-xs px-3 py-1.5 rounded-full font-medium shadow-sm flex items-center gap-2 pointer-events-auto ${isDarkMode ? 'bg-white/10 text-cyan-300 backdrop-blur-md border border-white/5' : 'bg-white text-blue-600 shadow-md'}`}>
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        {onlineCount} {t('messages.online')}
                     </span>
                 </div>
             )}
@@ -355,266 +262,62 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                         {(!Array.isArray(messages) || messages.length === 0) ? (
                             <div className="text-center py-20 opacity-40 text-sm">{t('messages.empty')}</div>
                         ) : (
-                            messages.map((msg, index) => {
-                                const isOwn = isOwnMessage(msg);
-                                return (
-                                    <motion.div
-                                        key={msg.id}
-                                        id={`message-${msg.id}`}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{
-                                            opacity: 1,
-                                            y: 0,
-                                            scale: highlightedMessageId === msg.id ? 1.05 : 1,
-                                            backgroundColor: highlightedMessageId === msg.id
-                                                ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
-                                                : undefined
-                                        }}
-                                        exit={{ opacity: 0, scale: 0.9 }}
-                                        transition={{ delay: index * 0.01 }}
-                                        className={`flex gap-2 items-start p-2 rounded-lg transition-colors ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
-                                    >
-                                        <div className={`w-10 h-10 rounded-md flex items-center justify-center font-bold text-xs flex-shrink-0 ${isOwn
-                                            ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white'
-                                            : msg.isAnonymous
-                                                ? 'bg-gray-500 text-white'
-                                                : 'bg-gradient-to-br from-teal-500 to-cyan-500 text-white'
-                                            }`}>
-                                            {getInitials(msg.name, msg.isAnonymous)}
-                                        </div>
-
-                                        <div className={`flex flex-col max-w-[85%] md:max-w-[70%]`}>
-                                            <div className={`flex items-center gap-2 text-xs opacity-50 mb-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                                                <span className="flex items-center gap-1">
-                                                    {isOwn ? t('messages.you') : msg.name}
-                                                    {msg.isVerified && <FaCheckCircle className={isDarkMode ? "text-cyan-400" : "text-blue-500"} />}
-                                                </span>
-                                                <span>·</span>
-                                                <span>{formatTimestamp(msg.timestamp)}</span>
-                                            </div>
-
-                                            <div className={`px-3 py-2 rounded-lg relative group ${isOwn
-                                                ? msg.isVerified
-                                                    ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-tr-sm border-2 border-cyan-400 shadow-lg shadow-cyan-500/30'
-                                                    : 'bg-green-600 text-white rounded-tr-sm' // Solid for unverified
-                                                : msg.isVerified
-                                                    ? isDarkMode
-                                                        ? 'bg-gradient-to-br from-cyan-900/30 to-blue-900/20 rounded-tl-sm border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
-                                                        : 'bg-gradient-to-br from-blue-50 to-white rounded-tl-sm border-2 border-blue-400/60 shadow-lg shadow-blue-500/30'
-                                                    : isDarkMode
-                                                        ? 'bg-white/10 rounded-tl-sm'
-                                                        : 'bg-white rounded-tl-sm shadow-sm'
-                                                }`}>
-
-                                                {msg.quotedMessage && (
-                                                    <div
-                                                        onClick={() => msg.quotedMessageId && scrollToMessage(msg.quotedMessageId)}
-                                                        className={`mb-2 pl-2 py-1 border-l-2 text-xs opacity-75 italic overflow-hidden cursor-pointer hover:opacity-100 transition-opacity ${isDarkMode ? 'border-white/30 bg-white/5' : 'border-black/20 bg-black/5'}`}
-                                                    >
-                                                        <span className="font-bold not-italic mr-1">{msg.quotedName}:</span>
-                                                        <span className="line-clamp-2">{msg.quotedMessage}</span>
-                                                    </div>
-                                                )}
-
-                                                <p className="text-base md:text-sm whitespace-pre-wrap break-words">
-                                                    {showTranslated.has(msg.id) && translations[msg.id] ? (
-                                                        <>
-                                                            <span className="text-xs opacity-70 block mb-1 font-mono">{t('messages.translated') || 'Translated'}:</span>
-                                                            {translations[msg.id]}
-                                                        </>
-                                                    ) : (
-                                                        msg.message
-                                                    )}
-                                                </p>
-
-                                                {/* Translation Button */}
-                                                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                                                    <button
-                                                        onClick={() => handleTranslate(msg.id, msg.message)}
-                                                        className="w-5 h-5 bg-black/20 hover:bg-black/40 rounded-full text-white text-xs flex items-center justify-center p-1"
-                                                        title="Translate"
-                                                        disabled={translating.has(msg.id)}
-                                                    >
-                                                        {translating.has(msg.id) ? <FaSpinner className="animate-spin" /> : <FaLanguage />}
-                                                    </button>
-                                                    {canDeleteMessage(msg) && (
-                                                        <button onClick={() => handleDelete(msg.id)} className="w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs flex items-center justify-center">×</button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => setReplyingTo(msg)}
-                                                        className="w-5 h-5 bg-purple-500 hover:bg-purple-400 rounded-full text-white text-xs flex items-center justify-center p-1"
-                                                        title="Reply"
-                                                    >
-                                                        ↩
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                );
-                            })
+                            messages.map((msg, index) => (
+                                <MessageItem
+                                    key={msg.id}
+                                    msg={msg}
+                                    index={index}
+                                    isOwn={isOwnMessage(msg)}
+                                    isDarkMode={isDarkMode}
+                                    isHighlighted={highlightedMessageId === msg.id}
+                                    canDelete={canDeleteMessage(msg)}
+                                    translation={translations[msg.id]}
+                                    isTranslating={translating.has(msg.id)}
+                                    showTranslation={showTranslated.has(msg.id)}
+                                    onDelete={handleDelete}
+                                    onReply={setReplyingTo}
+                                    onTranslate={handleTranslate}
+                                    onScrollToMessage={scrollToMessage}
+                                />
+                            ))
                         )}
                     </AnimatePresence>
                 </div>
             </div>
 
             {/* Input Area */}
-            <div className={`border-t pb-[env(safe-area-inset-bottom)] ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
-                {isGlobalMute && !isAdmin && (
-                    <div className="bg-red-500/10 text-red-500 text-xs text-center py-1">
-                        {t('auth.muted')}
+            <MessageInput
+                isDarkMode={isDarkMode}
+                user={user ?? null}
+                isAdmin={isAdmin}
+                isGlobalMute={isGlobalMute}
+                replyingTo={replyingTo}
+                onSubmit={handleSubmit}
+                onCancelReply={() => setReplyingTo(null)}
+                onOpenLogin={onOpenLogin ?? (() => {})}
+                onOpenAdminPanel={() => setShowAdminPanel(!showAdminPanel)}
+            />
+
+            {/* Admin Panel */}
+            {showAdminPanel && (
+                <div className={`border-t ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
+                    <div className="max-w-4xl mx-auto p-3">
+                        <MessageAdminPanel
+                            isDarkMode={isDarkMode}
+                            isAdmin={isAdmin}
+                            isSuperAdmin={isSuperAdmin}
+                            isGlobalMute={isGlobalMute}
+                            onlineCount={onlineCount}
+                            showOnlineCountToAll={showOnlineCountToAll}
+                            onToggleMute={toggleMute}
+                            onClearAll={clearAllMessages}
+                            onToggleOnlineVisibility={toggleOnlineCountVisibility}
+                            onRefreshOnlineCount={fetchOnlineCount}
+                            onOpenUserManagement={() => setShowUserManagement(true)}
+                        />
                     </div>
-                )}
-                <div className={`max-w-4xl mx-auto p-3 ${isGlobalMute && !isAdmin ? 'opacity-50' : ''}`}>
-                    {replyingTo && (
-                        <div className={`mb-2 pl-3 py-1 border-l-2 text-xs opacity-80 flex justify-between items-center ${isDarkMode ? 'border-green-500/50 bg-white/5' : 'border-green-600/30 bg-black/5'}`}>
-                            <span>
-                                <span className="font-bold mr-1">{t('quote') || 'Replying to'} {replyingTo.name}:</span>
-                                <span className="italic truncate max-w-[200px] inline-block align-bottom">{replyingTo.message}</span>
-                            </span>
-                            <button onClick={() => setReplyingTo(null)} className="text-red-400 hover:text-red-300 ml-2 font-bold px-2">✕</button>
-                        </div>
-                    )}
-                    <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
-                        {/* Auth / Identity Display */}
-                        {user ? (
-                            <div className={`p-2 rounded-lg flex items-center gap-2 ring-1 transition-all ${isDarkMode ? 'bg-green-500/10 ring-green-500/30 text-green-500' : 'bg-green-50 ring-green-200 text-green-600'}`}>
-                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
-                                    {user.username.charAt(0).toUpperCase()}
-                                </div>
-                            </div>
-                        ) : null}
-
-                        {/* Manual Name Input (Only if not logged in) */}
-                        {!user && (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowNameInput(!showNameInput)}
-                                    disabled={isGlobalMute && !isAdmin}
-                                    className={`p-2 rounded-lg transition-colors ${showNameInput ? 'bg-green-500 text-white' : isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                >
-                                    Aa
-                                </button>
-                                {showNameInput && (
-                                    <motion.input
-                                        initial={{ width: 0, opacity: 0 }}
-                                        animate={{ width: 'auto', opacity: 1 }}
-                                        exit={{ width: 0, opacity: 0 }}
-                                        type="text"
-                                        value={tempName}
-                                        onChange={(e) => setTempName(e.target.value)}
-                                        placeholder={t('messages.name_placeholder')}
-                                        maxLength={20}
-                                        disabled={isGlobalMute && !isAdmin}
-                                        className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-base md:text-sm w-20 md:w-28 ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
-                                    />
-                                )}
-                            </>
-                        )}
-
-                        <div className="relative flex-1">
-                            <input
-                                type="text"
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                placeholder={
-                                    isGlobalMute && !isAdmin
-                                        ? t('auth.muted')
-                                        : !user
-                                            ? ''
-                                            : t('messages.message_placeholder')
-                                }
-                                maxLength={200}
-                                disabled={isGlobalMute && !isAdmin}
-                                className={`w-full px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isGlobalMute && !isAdmin ? 'cursor-not-allowed' : ''}`}
-                            />
-
-                            {/* Interactive Placeholder Overlay */}
-                            {!user && !newMessage && !(isGlobalMute && !isAdmin) && (
-                                <div className={`absolute inset-0 px-4 py-2 pointer-events-none flex items-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                    <span>{t('messages.guest_placeholder_text')}</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => onOpenLogin && onOpenLogin()}
-                                        className="pointer-events-auto hover:underline font-bold text-green-500 ml-1 focus:outline-none"
-                                    >
-                                        {t('messages.guest_placeholder_link')}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-
-                        <button type="submit" disabled={!newMessage.trim() || loading || (isGlobalMute && !isAdmin)} className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 disabled:opacity-30 rounded-lg text-white">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                        </button>
-
-                        {isAdmin && (
-                            <button type="button" onClick={() => setShowAdminPanel(!showAdminPanel)} className={`p-2 rounded-lg text-xs ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}>🔐</button>
-                        )}
-                    </form>
-
-                    {/* Admin Panel */}
-                    {(showAdminPanel) && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="mt-2 pt-2 border-t border-green-500/10">
-                            {!isAdmin ? (
-                                <div className="text-xs text-gray-500 text-center py-2">
-                                    {t('admin.login_hint') || 'Use the padlock in the top navbar to log in as admin.'}
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <span className={`text-xs font-bold ${isSuperAdmin ? 'text-purple-400' : 'text-green-400'}`}>
-                                        ✓ {isSuperAdmin ? 'Super Admin' : 'Admin'}
-                                    </span>
-
-                                    <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
-
-                                    <div className="flex items-center gap-1">
-                                        <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                                            👥 {onlineCount}
-                                        </span>
-                                        <button
-                                            onClick={fetchOnlineCount}
-                                            className={`px-2 py-1.5 rounded-lg text-white text-xs ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-500 hover:bg-gray-600'}`}
-                                            title="Refresh count"
-                                        >
-                                            🔄
-                                        </button>
-                                        {isSuperAdmin && (
-                                            <>
-                                                <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
-                                                <button
-                                                    onClick={() => setShowUserManagement(true)}
-                                                    className="px-2 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-600 text-white text-xs"
-                                                >
-                                                    {t('admin.manage_users')}
-                                                </button>
-                                            </>
-                                        )}
-                                        <button
-                                            onClick={toggleOnlineCountVisibility}
-                                            className={`px-3 py-1.5 rounded-lg text-white text-xs ${showOnlineCountToAll ? 'bg-blue-500' : 'bg-gray-600'}`}
-                                            title={showOnlineCountToAll ? "Hide count from users" : "Show count to users"}
-                                        >
-                                            {showOnlineCountToAll ? '👁️' : '👁️‍🗨️'}
-                                        </button>
-                                    </div>
-
-                                    <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
-
-                                    <button onClick={toggleMute} className={`px-3 py-1.5 rounded-lg text-white text-xs ${isGlobalMute ? 'bg-orange-500' : 'bg-yellow-500'}`}>
-                                        {isGlobalMute ? t('auth.unmute') : t('auth.mute')}
-                                    </button>
-
-                                    <div className="w-[1px] h-4 bg-gray-500/30 mx-1"></div>
-
-                                    <button onClick={clearAllMessages} className="ml-auto px-3 py-1.5 bg-red-500 rounded-lg text-white text-xs">{t('auth.clear_all')}</button>
-                                </div>
-                            )}
-                        </motion.div>
-                    )}
                 </div>
-            </div>
+            )}
 
             <UserManagement
                 isOpen={showUserManagement}
@@ -625,4 +328,3 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
         </div>
     );
 }
-

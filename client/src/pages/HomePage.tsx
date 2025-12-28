@@ -44,7 +44,7 @@ export function Home({ isDarkMode }: HomeProps) {
                 </div>
 
                 <MagneticButton isDarkMode={isDarkMode} onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                    Explore
+                    {t('hero.explore')}
                 </MagneticButton>
             </section>
 
@@ -147,7 +147,7 @@ export function Home({ isDarkMode }: HomeProps) {
             <footer className={`py-24 px-8 border-t ${isDarkMode ? 'bg-black border-[#222]' : 'bg-gray-100 border-[#ddd]'}`}>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 max-w-7xl mx-auto">
                     <div>
-                        <h4 className="text-2xl mb-6">Changrui.</h4>
+                        <h4 className="text-2xl mb-6">{t('signature')}.</h4>
                         <p className="opacity-60">{t('footer_section.tagline')}</p>
                     </div>
                     <div>

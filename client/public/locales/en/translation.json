@@ -1,4 +1,20 @@
 {
+    "common": {
+        "close": "Close",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "go": "Go"
+    },
+    "nav": {
+        "home": "HOME",
+        "cv": "CV",
+        "game": "ARCADE",
+        "messages": "MESSAGES",
+        "suggestions": "SUGGESTIONS",
+        "calendar": "CALENDAR",
+        "learning": "LINGUIST",
+        "more": "MORE"
+    },
     "navbar": {
         "title": "Welcome",
         "arcade_title": "Arcade Games",
@@ -16,76 +32,84 @@
             "zh": "中文"
         }
     },
-    "common": {
-        "close": "Close"
+    "admin": {
+        "admin": "Admin",
+        "super_admin": "Super Admin",
+        "manage_users": "Manage Users",
+        "user_list": "User List",
+        "username": "Username",
+        "password": "Password",
+        "edit_user": "Edit",
+        "delete_user": "Delete",
+        "save_changes": "Save",
+        "cancel": "Cancel",
+        "confirm_delete_user": "Delete this user?",
+        "show_password": "Show",
+        "hide_password": "Hide",
+        "action": "Action",
+        "add_user": "Add User",
+        "add_new_user": "Add New User",
+        "create": "Create",
+        "site_settings": "Site Settings",
+        "enter_code_prompt": "Enter Admin Code to modify settings:",
+        "changes_effect_warning": "Changes affect all users immediately. You may need to refresh to see changes locally.",
+        "verify": "Verify",
+        "invalid_code": "Invalid Code",
+        "loading": "Loading settings...",
+        "critical": "CRITICAL",
+        "settings": {
+            "maintenance_mode": "Global Maintenance Mode",
+            "maintenance_message": "Maintenance Message",
+            "page_cv": "CV / About Page",
+            "page_game": "Arcade / Games Page",
+            "page_messages": "Message Wall",
+            "page_suggestions": "Suggestions Box",
+            "page_calendar": "Calendar Page"
+        },
+        "login_required": "Personal Login Required",
+        "login_audit_explanation": "For security and audit purposes, you must be logged in with your personal account to modify site settings.",
+        "refresh_count": "Refresh count",
+        "hide_count": "Hide count from users",
+        "show_count": "Show count to users",
+        "mute": "Mute Chat",
+        "unmute": "Unmute Chat",
+        "clear_all": "Clear All",
+        "confirm_clear": "Delete all messages?",
+        "login_hint": "Use the padlock in the top navbar to log in as admin.",
+        "code_placeholder": "Admin Code",
+        "panel": "Admin Panel",
+        "error_delete_user": "Error deleting user",
+        "error_create_user": "Error creating user",
+        "error_update_user": "Error updating user"
     },
-    "nav": {
-        "home": "HOME",
-        "cv": "CV",
-        "game": "ARCADE",
-        "messages": "MESSAGES",
-        "suggestions": "SUGGESTIONS",
-        "calendar": "CALENDAR",
-        "learning": "LINGUIST",
-        "more": "MORE"
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "username": "Username",
+        "password": "Password",
+        "create_account": "Create Account",
+        "no_account": "No account?",
+        "has_account": "Already have an account?",
+        "success_register": "Registration successful! Please login.",
+        "failed": "Authentication failed",
+        "confirm_logout": "Are you sure you want to logout?",
+        "admin_code": "Admin Code",
+        "admin_panel": "Admin Panel",
+        "quit_admin": "Quit Admin",
+        "clear_all": "Clear All",
+        "mute": "Mute Chat",
+        "unmute": "Unmute Chat",
+        "muted": "Chat is muted by admin",
+        "super_admin_code": "Super Admin Code",
+        "super_admin_panel": "Super Admin Panel",
+        "admin_access": "Admin Access",
+        "signed_in_as": "Signed in as"
     },
-    "holidays": {
-        "jour_de_l_an": {
-            "title": "New Year's Day",
-            "description": "The first day of the year in the Gregorian calendar. A day of festivities marked by New Year's greetings, family meals, and fireworks."
-        },
-        "paques": {
-            "title": "Easter Monday",
-            "description": "A major Christian festival celebrating the resurrection of Jesus. Associated with egg hunts and symbols of spring renewal."
-        },
-        "fete_travail": {
-            "title": "Labor Day",
-            "description": "International Workers' Day. In France, it is traditional to offer lily of the valley as a lucky charm."
-        },
-        "victoire_1945": {
-            "title": "Victory Day (1945)",
-            "description": "Commemoration of the surrender of Nazi Germany in 1945, marking the end of World War II in Europe."
-        },
-        "ascension": {
-            "title": "Ascension Day",
-            "description": "Christian feast celebrating the ascension of Jesus into heaven, forty days after Easter."
-        },
-        "pentecote": {
-            "title": "Whit Monday",
-            "description": "Celebrates the descent of the Holy Spirit upon the Apostles, fifty days after Easter. A day of solidarity in France."
-        },
-        "fete_nationale": {
-            "title": "Bastille Day",
-            "description": "Commemorates the Storming of the Bastille on July 14, 1789, symbolizing the end of absolute monarchy and national unity."
-        },
-        "assomption": {
-            "title": "Assumption of Mary",
-            "description": "Celebrates the assumption of the Virgin Mary into heaven, body and soul, at the end of her earthly life."
-        },
-        "toussaint": {
-            "title": "All Saints' Day",
-            "description": "Catholic feast in honor of all saints. It is also a traditional moment to visit the graves of the deceased."
-        },
-        "armistice_1918": {
-            "title": "Armistice Day (1918)",
-            "description": "Commemoration of the Armistice signed in 1918, ending the fighting of World War I."
-        },
-        "noel": {
-            "title": "Christmas",
-            "description": "Celebration of the birth of Jesus for Christians, and a major cultural festival marked by Santa Claus, gifts, and festive meals."
-        },
-        "saint_etienne": {
-            "title": "St Stephen's Day",
-            "description": "Holiday specific to Alsace-Moselle, celebrating Saint Stephen, the first Christian martyr."
-        },
-        "vendredi_saint": {
-            "title": "Good Friday",
-            "description": "Day specific to Alsace-Moselle, commemorating the crucifixion and death of Jesus."
-        },
-        "default": {
-            "title": "Public Holiday",
-            "description": "An official public holiday celebrated in France."
-        }
+    "maintenance": {
+        "title": "Under Maintenance",
+        "description": "The site is currently undergoing necessary maintenance. We will be back shortly.",
+        "disabled_by": "Disabled by"
     },
     "calendar": {
         "title": "Calendar",
@@ -108,6 +132,109 @@
             "config_update_failed": "Failed to update configuration",
             "failed_to_load": "Failed to load calendar"
         }
+    },
+    "cv": {
+        "role": "Fullstack Developer",
+        "name": "Changrui ZHANG",
+        "interactive_portfolio": "Interactive Portfolio",
+        "work_history": "The Work History",
+        "experience_gallery": "Experience Gallery.",
+        "core_components": "The Core Components",
+        "specifications": "Specifications.",
+        "full_stack_architecture": "Full Stack Architecture",
+        "masters_degree": "Master's Degree",
+        "bachelors_degree": "Bachelor's Degree",
+        "initiate_connect": "Initiate Connect.",
+        "connect_description": "Engineered for high-impact software ecosystems.",
+        "direct_mail": "Direct Mail",
+        "linkedin": "LinkedIn",
+        "system_status": "SYSTEM STATUS: OPTIMAL",
+        "sections": {
+            "profile": "Profile",
+            "experience": "Exposure",
+            "skills": "Arsenal",
+            "education": "Education",
+            "soft_skills": "Soft Skills",
+            "languages": "Languages",
+            "interests": "Interests"
+        },
+        "profile_text": "Back-end developer with a Master's in Computer Science (Sorbonne University), experienced in Spring Boot and ReactJS. Rigorous, autonomous, and passionate about technical challenges, I am looking for a Back-end/Fullstack position. I hold a residency permit allowing me to work freely in France.",
+        "exp": {
+            "espace": {
+                "title": "Espace Web (Personal Project)",
+                "role": "Full Stack Developer",
+                "desc": [
+                    "Developed a full-stack personal space web application autonomously.",
+                    "Integrated authentication (JWT), Dark/Light mode, and multi-language support.",
+                    "Enhanced UI with ReactBit for dynamic components.",
+                    "Containerized the project with Docker."
+                ]
+            },
+            "rakuten": {
+                "title": "Rakuten France",
+                "role": "Fullstack Developer (Intern)",
+                "desc": [
+                    "Migrated and optimized filtering component (250M exports/day): config time reduced from 2min to <30s.",
+                    "Independently developed two new import supports (XML + JSON) for product sheets, facilitating the integration of 250+ partners.",
+                    "Integrated AI into data processing.",
+                    "Migrated frontend from React 15+ to 20+ and JavaScript to TypeScript.",
+                    "Independently developed an automated migration tool (3 weeks), ensuring integrity of thousands of customer records and reducing manual errors.",
+                    "Independently developed a discount coupon synchronization program, ensuring reliability of promotions visible to millions of users.",
+                    "Performed unit and automated tests to ensure code reliability.",
+                    "Followed specifications and product roadmap to ensure deliverable compliance and deadline adherence.",
+                    "Organized reporting meetings and daily stand-ups in Agile methodology."
+                ]
+            },
+            "sorbonne": {
+                "title": "Sorbonne Université (E-commerce)",
+                "role": "Fullstack Developer",
+                "desc": [
+                    "Piloted a collaborative e-shop app with feature flags.",
+                    "Developed full stack (Backend, Frontend, DB).",
+                    "Automated Product Line variant generation."
+                ]
+            },
+            "database": {
+                "title": "Université Paris Cité (Database Modeling)",
+                "role": "Database Developer",
+                "desc": [
+                    "Designed a database to simulate ancient ship navigation.",
+                    "Used PostgreSQL for design and data management, integrating collaborative modeling tools.",
+                    "Technologies: PostgreSQL / BOUML / StarUML"
+                ]
+            },
+            "quichefs": {
+                "title": "Projet Ouichefs (Linux Kernel)",
+                "role": "Systems Developer",
+                "desc": [
+                    "Developed an improved physical link system for Linux Kernel.",
+                    "Implemented UUIDs, inter-partition links, and block migration."
+                ]
+            }
+        },
+        "edu": {
+            "master": "Master Informatique: Systèmes et Applications Répartis",
+            "licence": "Licence Informatique: Informatique Générale"
+        },
+        "soft_skills_list": [
+            "Autonomy",
+            "Rigor",
+            "Good interpersonal skills",
+            "Synthesis spirit",
+            "Adaptability",
+            "Motivation",
+            "Curiosity",
+            "Team spirit"
+        ],
+        "languages_list": {
+            "zh": "Chinese (Native)",
+            "en": "English (Professional)",
+            "fr": "French (Bilingual)"
+        },
+        "interests_list": [
+            "Video games",
+            "Sport"
+        ]
     },
     "game": {
         "arcade_zone": "NEON ARCADE",
@@ -242,6 +369,8 @@
         "pokemon_score_desc": "Maximize your correct answers!",
         "maze_rules": "Find the exit of the maze before time runs out!",
         "maze_collect": "Collect bonuses to gain extra time.",
+        "maze_fog": "Fog",
+        "maze_tip": "Tip: The starting point is marked (S) and the exit is marked (R).",
         "game_disabled": "Game Disabled",
         "game_disabled_desc": "This game is currently disabled by the administrator.",
         "zombie": "Zombie Defense",
@@ -309,34 +438,84 @@
         },
         "fullscreen": "Fullscreen",
         "fullscreen_exit": "Exit Fullscreen",
-        "help_rules": "Help / Rules"
+        "help_rules": "Help / Rules",
+        "status_active": "ACTIVE",
+        "status_disabled": "DISABLED",
+        "action_disable": "DISABLE",
+        "action_enable": "ENABLE",
+        "confirm_reset_score": "Are you sure you want to reset the score for {{username}} to 0?",
+        "error_reset_score": "Failed to reset score",
+        "reset_score": "Reset Score"
     },
-    "pokemon": {
-        "guess_prompt": "Who's that Pokemon?",
-        "score": "Score",
-        "loading": "Loading generic data...",
-        "guess": "GUESS",
-        "next": "NEXT POKEMON",
-        "correct": "✓ CORRECT!",
-        "wrong": "✗ Try again!",
-        "hint": "Hint",
-        "letters": "letters",
-        "answer": "Answer"
+    "holidays": {
+        "jour_de_l_an": {
+            "title": "New Year's Day",
+            "description": "The first day of the year in the Gregorian calendar. A day of festivities marked by New Year's greetings, family meals, and fireworks."
+        },
+        "paques": {
+            "title": "Easter Monday",
+            "description": "A major Christian festival celebrating the resurrection of Jesus. Associated with egg hunts and symbols of spring renewal."
+        },
+        "fete_travail": {
+            "title": "Labor Day",
+            "description": "International Workers' Day. In France, it is traditional to offer lily of the valley as a lucky charm."
+        },
+        "victoire_1945": {
+            "title": "Victory Day (1945)",
+            "description": "Commemoration of the surrender of Nazi Germany in 1945, marking the end of World War II in Europe."
+        },
+        "ascension": {
+            "title": "Ascension Day",
+            "description": "Christian feast celebrating the ascension of Jesus into heaven, forty days after Easter."
+        },
+        "pentecote": {
+            "title": "Whit Monday",
+            "description": "Celebrates the descent of the Holy Spirit upon the Apostles, fifty days after Easter. A day of solidarity in France."
+        },
+        "fete_nationale": {
+            "title": "Bastille Day",
+            "description": "Commemorates the Storming of the Bastille on July 14, 1789, symbolizing the end of absolute monarchy and national unity."
+        },
+        "assomption": {
+            "title": "Assumption of Mary",
+            "description": "Celebrates the assumption of the Virgin Mary into heaven, body and soul, at the end of her earthly life."
+        },
+        "toussaint": {
+            "title": "All Saints' Day",
+            "description": "Catholic feast in honor of all saints. It is also a traditional moment to visit the graves of the deceased."
+        },
+        "armistice_1918": {
+            "title": "Armistice Day (1918)",
+            "description": "Commemoration of the Armistice signed in 1918, ending the fighting of World War I."
+        },
+        "noel": {
+            "title": "Christmas",
+            "description": "Celebration of the birth of Jesus for Christians, and a major cultural festival marked by Santa Claus, gifts, and festive meals."
+        },
+        "saint_etienne": {
+            "title": "St Stephen's Day",
+            "description": "Holiday specific to Alsace-Moselle, celebrating Saint Stephen, the first Christian martyr."
+        },
+        "vendredi_saint": {
+            "title": "Good Friday",
+            "description": "Day specific to Alsace-Moselle, commemorating the crucifixion and death of Jesus."
+        },
+        "default": {
+            "title": "Public Holiday",
+            "description": "An official public holiday celebrated in France."
+        }
     },
-    "spacetraders": {
-        "join_fleet": "Join the Space Fleet",
-        "register_desc": "Enter a callsign to register a new agent.",
-        "callsign_placeholder": "ENTER CALL SIGN",
-        "register_agent": "Register Agent",
-        "agent": "AGENT",
-        "credits": "CREDITS",
-        "headquarters": "HEADQUARTERS",
-        "logout": "Logout",
-        "command_fleet": "Command Fleet",
-        "symbol": "Symbol",
-        "location": "Location",
-        "no_ships": "No ships found. Purchase ships to begin trading.",
-        "uplinking": "Uplinking to Neural Net..."
+    "learning": {
+        "title": "The Linguist",
+        "login_required": "Please log in to access this page.",
+        "discover": "Discover",
+        "review": "Review",
+        "no_favorites": "No favorites yet.",
+        "back_to_discover": "Back to Discover mode",
+        "load_error": "Unable to load content.",
+        "retry": "Retry",
+        "new_expression": "New Expression",
+        "login_to_save": "Log in to save your favorites!"
     },
     "messages": {
         "title": "Message Wall",
@@ -354,7 +533,102 @@
         "just_now": "Just now",
         "anonymous": "Anonymous",
         "post_anonymously": "Post anonymously",
-        "you": "You"
+        "you": "You",
+        "online": "online",
+        "translate": "Translate",
+        "reply": "Reply",
+        "replying_to": "Replying to",
+        "send": "Send",
+        "set_name": "Set name"
+    },
+    "pokemon": {
+        "guess_prompt": "Who's that Pokemon?",
+        "score": "Score",
+        "loading": "Loading generic data...",
+        "guess": "GUESS",
+        "next": "NEXT POKEMON",
+        "correct": "✓ CORRECT!",
+        "wrong": "✗ Try again!",
+        "hint": "Hint",
+        "letters": "letters",
+        "answer": "Answer"
+    },
+    "zombie": {
+        "rules": {
+            "title": "ZOMBIE SHOOTER - GUIDE",
+            "objective": "Objective",
+            "objective_desc": "Survive as long as possible against infinite waves of zombies. Eliminate them and collect power-ups to upgrade your weapons.",
+            "controls": "Controls",
+            "pc": "PC",
+            "pc_desc": "Move your mouse to aim. Auto-fire enabled.",
+            "mobile": "Mobile",
+            "mobile_desc": "Use the touch pads at the bottom of the screen to move.",
+            "powerups": "Power-Ups",
+            "scatter": "Scatter (Yellow)",
+            "scatter_desc": "+1 Additional cannon",
+            "firerate": "Fire Rate (Blue)",
+            "firerate_desc": "Reduces delay between shots",
+            "crit": "Critical (Yellow)",
+            "crit_desc": "+10% Critical chance (Variable bonus)",
+            "tech": "Tech (Red)",
+            "tech_desc": "Unlocks advanced fire modes",
+            "damage": "Damage (Orange)",
+            "damage_desc": "+10 Damage per shot",
+            "bounce": "Bounce (White)",
+            "bounce_desc": "+1 Wall bounce",
+            "tech_upgrades": "Fire Modes & Super Upgrades",
+            "tech1": "TECH 1: PIERCING",
+            "tech1_desc": "Passes through enemies",
+            "tech2": "TECH 2: BOUNCE+",
+            "tech2_desc": "Increases max bounces",
+            "tech3": "TECH 3: CHAIN",
+            "tech3_desc": "Jumps to nearby target",
+            "tech4": "TECH 4: CRYO-SHOCK",
+            "tech4_desc": "Slows enemies (25%)",
+            "tech5": "TECH 5: RESONANCE",
+            "tech5_desc": "Area damage (AoE) on impact",
+            "tech6": "TECH 6: SINGULARITY",
+            "tech6_desc": "Vortex on critical hits",
+            "homing": "TACTICAL TRACKING (Super)",
+            "homing_desc": "Bullets automatically track targets",
+            "rewards": "Reward Systems",
+            "super_reward": "Super Reward",
+            "super_reward_desc": "Every 10 waves, choose from 3 massive upgrades.",
+            "desperate_defense": "DESPERATE DEFENSE: Enemy killed in RED ZONE = Guaranteed Power-Up!",
+            "elite_challenge": "ELITE CHALLENGE: 5 waves without breach = Zombie HP +50% (Bonus Score).",
+            "bestiary": "Bestiary",
+            "walker": "Walker",
+            "walker_stats": "HP 1x | Speed 1x",
+            "runner": "Runner",
+            "runner_stats": "HP 0.5x | Speed 1.6x",
+            "tank": "Tank",
+            "tank_stats": "HP 4x | Knockback 50%",
+            "boss": "BOSS",
+            "boss_stats": "HP 10x | GUARANTEED LOOT",
+            "tip": "Tip: Zombie HP increases by 20% each wave (exponential). Upgrade your damage!"
+        }
+    },
+    "spacetraders": {
+        "join_fleet": "Join the Space Fleet",
+        "register_desc": "Enter a callsign to register a new agent.",
+        "callsign_placeholder": "ENTER CALL SIGN",
+        "register_agent": "Register Agent",
+        "agent": "AGENT",
+        "credits": "CREDITS",
+        "headquarters": "HEADQUARTERS",
+        "logout": "Logout",
+        "command_fleet": "Command Fleet",
+        "symbol": "Symbol",
+        "location": "Location",
+        "no_ships": "No ships found. Purchase ships to begin trading.",
+        "uplinking": "Uplinking to Neural Net...",
+        "error": "ERROR",
+        "auto_logout": "Auto-logout in 3 seconds...",
+        "clear_restart": "Clear Token & Restart",
+        "economy": "Economy",
+        "network": "Network",
+        "network_desc": "Data is synchronized in real-time with the SpaceTraders v2 API.",
+        "tip": "Tip: Your callsign is your unique galactic identity. Keep it safe!"
     },
     "suggestions": {
         "title": "Suggestions & Ideas",
@@ -391,77 +665,6 @@
         "replying_to": "Replying to",
         "reopen": "Reopen"
     },
-    "admin": {
-        "manage_users": "Manage Users",
-        "user_list": "User List",
-        "username": "Username",
-        "password": "Password",
-        "edit_user": "Edit",
-        "delete_user": "Delete",
-        "save_changes": "Save",
-        "cancel": "Cancel",
-        "confirm_delete_user": "Delete this user?",
-        "show_password": "Show",
-        "hide_password": "Hide",
-        "action": "Action",
-        "add_user": "Add User",
-        "add_new_user": "Add New User",
-        "create": "Create",
-        "site_settings": "Site Settings",
-        "enter_code_prompt": "Enter Admin Code to modify settings:",
-        "changes_effect_warning": "Changes affect all users immediately. You may need to refresh to see changes locally.",
-        "verify": "Verify",
-        "invalid_code": "Invalid Code",
-        "loading": "Loading settings...",
-        "critical": "CRITICAL",
-        "settings": {
-            "maintenance_mode": "Global Maintenance Mode",
-            "maintenance_message": "Maintenance Message",
-            "page_cv": "CV / About Page",
-            "page_game": "Arcade / Games Page",
-            "page_messages": "Message Wall",
-            "page_suggestions": "Suggestions Box",
-            "page_calendar": "Calendar Page"
-        },
-        "login_required": "Personal Login Required",
-        "login_audit_explanation": "For security and audit purposes, you must be logged in with your personal account to modify site settings."
-    },
-    "maintenance": {
-        "title": "Under Maintenance",
-        "description": "The site is currently undergoing necessary maintenance. We will be back shortly."
-    },
-    "auth": {
-        "login": "Login",
-        "register": "Register",
-        "logout": "Logout",
-        "username": "Username",
-        "password": "Password",
-        "create_account": "Create Account",
-        "no_account": "No account?",
-        "has_account": "Already have an account?",
-        "success_register": "Registration successful! Please login.",
-        "failed": "Authentication failed",
-        "confirm_logout": "Are you sure you want to logout?",
-        "admin_code": "Admin Code",
-        "admin_panel": "Admin Panel",
-        "quit_admin": "Quit Admin",
-        "clear_all": "Clear All",
-        "mute": "Mute Chat",
-        "unmute": "Unmute Chat",
-        "muted": "Chat is muted by admin",
-        "super_admin_code": "Super Admin Code",
-        "super_admin_panel": "Super Admin Panel",
-        "admin_access": "Admin Access",
-        "signed_in_as": "Signed in as"
-    },
-    "hero": {
-        "title": "Changrui ZHANG",
-        "subtitle": "Shaping my future, line by line."
-    },
-    "story": {
-        "title": "My Philosophy",
-        "description": "I transform lines of code into visual and interactive experiences, merging rigorous logic with limitless creativity to bring ideas to life."
-    },
     "features": {
         "velocity": {
             "title": "Rigor",
@@ -475,28 +678,6 @@
             "title": "Ambition",
             "description": "A constant drive to learn and master the technologies of tomorrow."
         }
-    },
-    "signature": "Changrui ZHANG",
-    "gravity": {
-        "title": "My Lab",
-        "instruction": "EXPERIMENTAL ZONE -- MY SKILLS IN ACTION",
-        "keywords": [
-            "Java",
-            "Spring Boot",
-            "React",
-            "Docker",
-            "Linux",
-            "SQL",
-            "TypeScript",
-            "CI/CD",
-            "Creativity",
-            "Git",
-            "Redis",
-            "Jenkins",
-            "Agile",
-            "API",
-            "Cloud"
-        ]
     },
     "gallery": {
         "nebula": {
@@ -519,6 +700,37 @@
             "title": "LINUX / OS",
             "description": "System Mastery"
         }
+    },
+    "gravity": {
+        "title": "My Lab",
+        "instruction": "EXPERIMENTAL ZONE -- MY SKILLS IN ACTION",
+        "keywords": [
+            "Java",
+            "Spring Boot",
+            "React",
+            "Docker",
+            "Linux",
+            "SQL",
+            "TypeScript",
+            "CI/CD",
+            "Creativity",
+            "Git",
+            "Redis",
+            "Jenkins",
+            "Agile",
+            "API",
+            "Cloud"
+        ]
+    },
+    "hero": {
+        "title": "Changrui ZHANG",
+        "subtitle": "Shaping my future, line by line.",
+        "explore": "Explore"
+    },
+    "signature": "Changrui ZHANG",
+    "story": {
+        "title": "My Philosophy",
+        "description": "I transform lines of code into visual and interactive experiences, merging rigorous logic with limitless creativity to bring ideas to life."
     },
     "footer_section": {
         "tagline": "Architect of digital solutions.",
@@ -604,104 +816,8 @@
             }
         }
     },
-    "cv": {
-        "role": "Fullstack Developer",
-        "sections": {
-            "profile": "Profile",
-            "experience": "Exposure",
-            "skills": "Arsenal",
-            "education": "Education",
-            "soft_skills": "Soft Skills",
-            "languages": "Languages",
-            "interests": "Interests"
-        },
-        "profile_text": "Back-end developer with a Master's in Computer Science (Sorbonne University), experienced in Spring Boot and ReactJS. Rigorous, autonomous, and passionate about technical challenges, I am looking for a Back-end/Fullstack position. I hold a residency permit allowing me to work freely in France.",
-        "exp": {
-            "espace": {
-                "title": "Espace Web (Personal Project)",
-                "role": "Full Stack Developer",
-                "desc": [
-                    "Developed a full-stack personal space web application autonomously.",
-                    "Integrated authentication (JWT), Dark/Light mode, and multi-language support.",
-                    "Enhanced UI with ReactBit for dynamic components.",
-                    "Containerized the project with Docker."
-                ]
-            },
-            "rakuten": {
-                "title": "Rakuten France",
-                "role": "Fullstack Developer (Intern)",
-                "desc": [
-                    "Migrated and optimized filtering component (250M exports/day): config time reduced from 2min to <30s.",
-                    "Independently developed two new import supports (XML + JSON) for product sheets, facilitating the integration of 250+ partners.",
-                    "Integrated AI into data processing.",
-                    "Migrated frontend from React 15+ to 20+ and JavaScript to TypeScript.",
-                    "Independently developed an automated migration tool (3 weeks), ensuring integrity of thousands of customer records and reducing manual errors.",
-                    "Independently developed a discount coupon synchronization program, ensuring reliability of promotions visible to millions of users.",
-                    "Performed unit and automated tests to ensure code reliability.",
-                    "Followed specifications and product roadmap to ensure deliverable compliance and deadline adherence.",
-                    "Organized reporting meetings and daily stand-ups in Agile methodology."
-                ]
-            },
-            "sorbonne": {
-                "title": "Sorbonne Université (E-commerce)",
-                "role": "Fullstack Developer",
-                "desc": [
-                    "Piloted a collaborative e-shop app with feature flags.",
-                    "Developed full stack (Backend, Frontend, DB).",
-                    "Automated Product Line variant generation."
-                ]
-            },
-            "database": {
-                "title": "Université Paris Cité (Database Modeling)",
-                "role": "Database Developer",
-                "desc": [
-                    "Designed a database to simulate ancient ship navigation.",
-                    "Used PostgreSQL for design and data management, integrating collaborative modeling tools.",
-                    "Technologies: PostgreSQL / BOUML / StarUML"
-                ]
-            },
-            "quichefs": {
-                "title": "Projet Ouichefs (Linux Kernel)",
-                "role": "Systems Developer",
-                "desc": [
-                    "Developed an improved physical link system for Linux Kernel.",
-                    "Implemented UUIDs, inter-partition links, and block migration."
-                ]
-            }
-        },
-        "edu": {
-            "master": "Master Informatique: Systèmes et Applications Répartis",
-            "licence": "Licence Informatique: Informatique Générale"
-        },
-        "soft_skills_list": [
-            "Autonomy",
-            "Rigor",
-            "Good interpersonal skills",
-            "Synthesis spirit",
-            "Adaptability",
-            "Motivation",
-            "Curiosity",
-            "Team spirit"
-        ],
-        "languages_list": {
-            "zh": "Chinese (Native)",
-            "en": "English (Professional)",
-            "fr": "French (Bilingual)"
-        },
-        "interests_list": [
-            "Video games",
-            "Sport"
-        ]
-    },
-    "learning": {
-        "title": "The Linguist",
-        "login_required": "Please log in to access this page.",
-        "discover": "Discover",
-        "review": "Review",
-        "no_favorites": "No favorites yet.",
-        "back_to_discover": "Back to Discover mode",
-        "load_error": "Unable to load content.",
-        "retry": "Retry",
-        "new_expression": "New Expression"
+    "preloader": {
+        "welcome": "WELCOME",
+        "loading": "LOADING"
     }
 }

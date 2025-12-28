@@ -56,7 +56,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
             if (!response.ok) throw new Error('Failed to delete user');
             setUsers(users.filter(u => u.id !== id));
         } catch (err) {
-            alert('Error deleting user');
+            alert(t('admin.error_delete_user'));
         }
     };
 
@@ -78,7 +78,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
             setUsers([...users, newUser]);
             setEditingUser(null);
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Error creating user');
+            alert(err instanceof Error ? err.message : t('admin.error_create_user'));
         }
     };
 
@@ -96,7 +96,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
             setUsers(users.map(u => u.id === id ? user : u));
             setEditingUser(null);
         } catch (err) {
-            alert('Error updating user');
+            alert(t('admin.error_update_user'));
         }
     };
 
@@ -176,7 +176,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
                     )}
 
                     {isLoading ? (
-                        <div className="text-center py-10">Loading...</div>
+                        <div className="text-center py-10">{t('admin.loading')}</div>
                     ) : error ? (
                         <div className="text-red-500 text-center py-10">{error}</div>
                     ) : (

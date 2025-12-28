@@ -128,10 +128,10 @@ export function CV({ isDarkMode }: CVProps) {
                 <div className="relative z-10 text-center space-y-8">
                     <div className={`inline-block px-6 py-2 rounded-full border text-xs font-mono tracking-[0.3em] uppercase ${isDarkMode ? 'border-blue-500/30 bg-blue-500/5 text-blue-400' : 'border-blue-500/20 bg-blue-50 text-blue-600'
                         }`}>
-                        Interactive Portfolio
+                        {t('cv.interactive_portfolio')}
                     </div>
                     <h1 className="text-8xl sm:text-[160px] font-black tracking-tighter leading-none mb-4 mix-blend-difference">
-                        Changrui ZHANG
+                        {t('cv.name')}
                     </h1>
                     <p className={`text-2xl sm:text-4xl font-medium tracking-tight ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                         {t('cv.role')}
@@ -146,8 +146,8 @@ export function CV({ isDarkMode }: CVProps) {
             <section ref={horizontalSectionRef} className="py-32 bg-transparent relative overflow-hidden flex flex-col">
                 <div className="px-6 sm:px-20 z-20 mb-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
                     <div className="space-y-4">
-                        <h2 className="text-sm font-mono tracking-[0.4em] uppercase text-blue-500 font-bold">The Work History</h2>
-                        <h3 className="text-5xl sm:text-7xl font-black tracking-tighter">Experience Gallery.</h3>
+                        <h2 className="text-sm font-mono tracking-[0.4em] uppercase text-blue-500 font-bold">{t('cv.work_history')}</h2>
+                        <h3 className="text-5xl sm:text-7xl font-black tracking-tighter">{t('cv.experience_gallery')}</h3>
                     </div>
 
                     <div className="hidden md:block">
@@ -162,7 +162,7 @@ export function CV({ isDarkMode }: CVProps) {
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
                             className={`p-6 rounded-full border backdrop-blur-3xl transition-all hover:scale-110 active:scale-95 shadow-2xl ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 text-white' : 'bg-white/80 border-slate-200 hover:bg-white text-slate-800'
+                                } ${isDarkMode ? 'bg-black/40 border-white/10 hover:bg-black/60 text-white' : 'bg-white/80 border-slate-200 hover:bg-white text-slate-800'
                                 }`}
                         >
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -173,7 +173,7 @@ export function CV({ isDarkMode }: CVProps) {
                             onClick={nextExp}
                             disabled={currentExpIndex === experiences.length - 1}
                             className={`p-6 rounded-full border backdrop-blur-3xl transition-all hover:scale-110 active:scale-95 shadow-2xl ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 text-white' : 'bg-white/80 border-slate-200 hover:bg-white text-slate-800'
+                                } ${isDarkMode ? 'bg-black/40 border-white/10 hover:bg-black/60 text-white' : 'bg-white/80 border-slate-200 hover:bg-white text-slate-800'
                                 }`}
                         >
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
@@ -198,7 +198,7 @@ export function CV({ isDarkMode }: CVProps) {
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
                             className={`p-4 rounded-full border backdrop-blur-xl transition-all shadow-lg ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-100 border-slate-200'}`}
+                                } ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-slate-100 border-slate-200'}`}
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         </button>
@@ -206,7 +206,7 @@ export function CV({ isDarkMode }: CVProps) {
                             onClick={nextExp}
                             disabled={currentExpIndex === experiences.length - 1}
                             className={`p-4 rounded-full border backdrop-blur-xl transition-all shadow-lg ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-100 border-slate-200'}`}
+                                } ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-slate-100 border-slate-200'}`}
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
@@ -217,13 +217,13 @@ export function CV({ isDarkMode }: CVProps) {
             {/* 3. Bento Layer (LiquidGlass Specifications) */}
             <section className="py-40 px-6 max-w-7xl mx-auto space-y-32">
                 <div className="space-y-8">
-                    <h2 className="text-sm font-mono tracking-[0.4em] uppercase text-blue-500 font-bold">The Core Components</h2>
-                    <h3 className="text-6xl sm:text-[100px] font-black tracking-tighter leading-none mb-4">Specifications.</h3>
+                    <h2 className="text-sm font-mono tracking-[0.4em] uppercase text-blue-500 font-bold">{t('cv.core_components')}</h2>
+                    <h3 className="text-6xl sm:text-[100px] font-black tracking-tighter leading-none mb-4">{t('cv.specifications')}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[300px]">
                     <GlassPanel className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col" isDarkMode={isDarkMode}>
-                        <h3 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase mb-12 font-bold">Full Stack Architecture</h3>
+                        <h3 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                             {Object.entries(skills).map(([category, items]) => (
                                 <div key={category} className="space-y-6">
@@ -242,7 +242,7 @@ export function CV({ isDarkMode }: CVProps) {
                     </GlassPanel>
 
                     <GlassPanel className="md:col-span-4 p-12 rounded-[50px] bg-blue-600 !border-blue-500 shadow-[0_0_40px_rgba(37,99,235,0.4)] flex flex-col justify-between" isDarkMode={isDarkMode}>
-                        <h4 className="text-sm font-mono tracking-[0.2em] text-white/60 uppercase font-bold">Master's Degree</h4>
+                        <h4 className="text-sm font-mono tracking-[0.2em] text-white/60 uppercase font-bold">{t('cv.masters_degree')}</h4>
                         <div className="text-white relative z-10">
                             <div className="text-4xl mb-4 text-blue-300 opacity-50 absolute right-0 top-0">{education[0].icon}</div>
                             <h5 className="text-3xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
@@ -252,7 +252,7 @@ export function CV({ isDarkMode }: CVProps) {
 
                     <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col justify-between overflow-hidden relative" isDarkMode={isDarkMode}>
                         <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-blue-500`}></div>
-                        <h4 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase font-bold">Bachelor's Degree</h4>
+                        <h4 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
                         <div className="relative z-10">
                             <div className="text-4xl mb-4 text-blue-500 opacity-20 absolute right-0 top-0">{education[1].icon}</div>
                             <h5 className={`text-2xl font-black leading-tight mb-2 uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{education[1].school}</h5>
@@ -263,13 +263,13 @@ export function CV({ isDarkMode }: CVProps) {
                     <GlassPanel className="md:col-span-12 p-12 rounded-[60px] flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group" isDarkMode={isDarkMode}>
                         <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000"></div>
                         <div className="text-center md:text-left">
-                            <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">Initiate Connect.</h3>
-                            <p className={`text-2xl font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Engineered for high-impact software ecosystems.</p>
+                            <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
+                            <p className={`text-2xl font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{t('cv.connect_description')}</p>
                         </div>
                         <div className="flex gap-6 shrink-0 z-10">
-                            <a href="mailto:m.zhang.changrui@gmail.com" className="px-12 py-5 bg-blue-600 text-white rounded-full text-xl font-bold shadow-2xl hover:bg-blue-700 hover:scale-105 transition-all">Direct Mail</a>
+                            <a href="mailto:m.zhang.changrui@gmail.com" className="px-12 py-5 bg-blue-600 text-white rounded-full text-xl font-bold shadow-2xl hover:bg-blue-700 hover:scale-105 transition-all">{t('cv.direct_mail')}</a>
                             <a href="https://linkedin.com/in/changrui-zhang" className={`px-12 py-5 border rounded-full text-xl font-bold hover:scale-105 transition-all ${isDarkMode ? 'border-white/20 bg-white/5 hover:bg-white/10' : 'border-slate-200 bg-white hover:bg-slate-50'
-                                }`}>LinkedIn</a>
+                                }`}>{t('cv.linkedin')}</a>
                         </div>
                     </GlassPanel>
                 </div>
@@ -278,7 +278,7 @@ export function CV({ isDarkMode }: CVProps) {
             {/* Footer */}
             <footer className="py-20 text-center opacity-30">
                 <p className="text-xs font-mono uppercase tracking-[0.5em]">
-                    SYSTEM STATUS: OPTIMAL • C.ZHANG © {new Date().getFullYear()}
+                    {t('cv.system_status')} • C.ZHANG © {new Date().getFullYear()}
                 </p>
             </footer>
         </div>

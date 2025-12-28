@@ -51,7 +51,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
 
                 {activatedBy && (
                     <div className="mb-8 text-sm opacity-50 font-mono">
-                        Disabled by: <span className="font-bold">{activatedBy}</span>
+                        {t('maintenance.disabled_by')}: <span className="font-bold">{activatedBy}</span>
                     </div>
                 )}
 
@@ -80,7 +80,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                                         type="password"
                                         value={loginCode}
                                         onChange={(e) => setLoginCode(e.target.value)}
-                                        placeholder="Admin Code"
+                                        placeholder={t('admin.code_placeholder')}
                                         className={`px-4 py-2 rounded-lg border text-center font-mono ${isDarkMode ? 'bg-white/10 border-white/20 focus:border-white/50' : 'bg-black/5 border-black/10 focus:border-black/30'} outline-none transition-colors`}
                                         autoFocus
                                     />
@@ -89,7 +89,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                                         disabled={isChecking}
                                         className={`px-4 py-2 rounded-lg font-bold ${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} transition-colors disabled:opacity-50`}
                                     >
-                                        {isChecking ? '...' : 'Go'}
+                                        {isChecking ? '...' : t('common.go')}
                                     </button>
                                 </div>
                                 <button
@@ -97,7 +97,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                                     onClick={() => setShowAdminInput(false)}
                                     className="text-xs opacity-40 hover:opacity-80 hover:underline"
                                 >
-                                    Cancel
+                                    {t('common.cancel')}
                                 </button>
                             </form>
                         )}
