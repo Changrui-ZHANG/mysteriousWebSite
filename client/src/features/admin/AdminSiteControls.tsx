@@ -74,8 +74,8 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                 setSettings(data);
             } else {
                 if (res.status === 401) {
-                    alert(t('admin.invalid_code') || "Invalid Admin Code");
-                    onClose(); // Close modal if invalid
+                    alert(t('admin.invalid_code'));
+                    onClose();
                 }
                 console.error("Failed to fetch settings");
             }
@@ -131,21 +131,21 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
     const getSettingLabel = (key: string) => {
         switch (key) {
             case 'SITE_MAINTENANCE_MODE':
-                return t('admin.settings.maintenance_mode') || 'Global Maintenance Mode';
+                return t('admin.settings.maintenance_mode');
             case 'SITE_MAINTENANCE_MESSAGE':
-                return t('admin.settings.maintenance_message') || 'Maintenance Message';
+                return t('admin.settings.maintenance_message');
             case 'SITE_MAINTENANCE_BY':
-                return 'Activated By'; // Hidden from list usually, but if visible, label it
+                return t('admin.settings.activated_by');
             case 'PAGE_CV_ENABLED':
-                return t('admin.settings.page_cv') || 'CV Page';
+                return t('admin.settings.page_cv');
             case 'PAGE_GAME_ENABLED':
-                return t('admin.settings.page_game') || 'Game Page';
+                return t('admin.settings.page_game');
             case 'PAGE_MESSAGES_ENABLED':
-                return t('admin.settings.page_messages') || 'Message Wall Limit';
+                return t('admin.settings.page_messages');
             case 'PAGE_SUGGESTIONS_ENABLED':
-                return t('admin.settings.page_suggestions') || 'Suggestions Page';
+                return t('admin.settings.page_suggestions');
             case 'PAGE_CALENDAR_ENABLED':
-                return t('admin.settings.page_calendar') || 'Calendar Page';
+                return t('admin.settings.page_calendar');
             default:
                 return key;
         }
@@ -171,7 +171,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                 >
                     <div className={`p-4 border-b flex justify-between items-center ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
                         <h2 className="text-xl font-bold flex items-center gap-2">
-                            🛠️ {t('admin.site_settings') || "Site Controls"}
+                            🛠️ {t('admin.site_settings')}
                         </h2>
                         <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full transition-colors">
                             <FaTimes />
@@ -186,19 +186,19 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                         {!user || !user.username ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
                                 <div className="text-4xl mb-2">🔒</div>
-                                <h3 className="text-lg font-bold">{t('admin.login_required') || "Personal Login Required"}</h3>
+                                <h3 className="text-lg font-bold">{t('admin.login_required')}</h3>
                                 <p className="text-sm opacity-70 max-w-xs">
-                                    {t('admin.login_audit_explanation') || "For security and audit purposes, you must be logged in with your personal account to modify site settings."}
+                                    {t('admin.login_audit_explanation')}
                                 </p>
                                 <button
                                     onClick={() => onOpenLogin && onOpenLogin()}
                                     className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold shadow-lg shadow-blue-500/30"
                                 >
-                                    {t('auth.login') || "Log In"}
+                                    {t('auth.login')}
                                 </button>
                             </div>
                         ) : loading ? (
-                            <div className="text-center py-8 opacity-50">{t('admin.loading') || "Loading settings..."}</div>
+                            <div className="text-center py-8 opacity-50">{t('admin.loading')}</div>
                         ) : (
                             <div className="flex flex-col gap-4">
                                 {settings.map(setting => (
@@ -207,7 +207,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                                             <div>
                                                 <div className="font-bold flex items-center gap-2">
                                                     {getSettingLabel(setting.key)}
-                                                    {setting.key === 'SITE_MAINTENANCE_MODE' && <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">{t('admin.critical') || "CRITICAL"}</span>}
+                                                    {setting.key === 'SITE_MAINTENANCE_MODE' && <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">{t('admin.critical')}</span>}
                                                 </div>
                                                 <div className="text-sm opacity-60">{setting.description}</div>
                                             </div>
@@ -235,7 +235,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                                                     onClick={() => updateSetting(setting.key, setting.value)}
                                                     className="px-3 py-1 bg-blue-500 text-white rounded text-xs font-bold self-end"
                                                 >
-                                                    Save
+                                                    {t('admin.save_changes')}
                                                 </button>
                                             </div>
                                         )}
@@ -245,7 +245,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                         )}
 
                         <div className="mt-6 text-xs opacity-50 text-center">
-                            {(!user || !user.username) ? "" : (t('admin.changes_effect_warning') || "Changes affect all users immediately.")}
+                            {(!user || !user.username) ? "" : t('admin.changes_effect_warning')}
                         </div>
                     </div>
                 </motion.div>

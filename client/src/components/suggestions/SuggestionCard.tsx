@@ -56,19 +56,19 @@ export function SuggestionCard({
                             onClick={() => onUpdateStatus(suggestion.id, 'pending')}
                             className="px-3 py-1 bg-yellow-600 hover:bg-yellow-500 rounded text-xs font-bold transition-colors"
                         >
-                            {t('suggestions.status_pending') || 'Pending'}
+                            {t('suggestions.status_pending')}
                         </button>
                         <button
                             onClick={() => onUpdateStatus(suggestion.id, 'reviewed')}
                             className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-xs font-bold transition-colors"
                         >
-                            {t('suggestions.status_reviewed') || 'Reviewed'}
+                            {t('suggestions.status_reviewed')}
                         </button>
                         <button
                             onClick={() => onUpdateStatus(suggestion.id, 'implemented')}
                             className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded text-xs font-bold transition-colors"
                         >
-                            {t('suggestions.status_implemented') || 'Implemented'}
+                            {t('suggestions.status_implemented')}
                         </button>
                     </>
                 )}
@@ -77,7 +77,7 @@ export function SuggestionCard({
                         onClick={() => onReopen(suggestion.id)}
                         className="px-3 py-1 bg-yellow-600 hover:bg-yellow-500 rounded text-xs font-bold transition-colors"
                     >
-                        {t('suggestions.reopen') || 'Reopen'}
+                        {t('suggestions.reopen')}
                     </button>
                 )}
 

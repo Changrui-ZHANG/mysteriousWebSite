@@ -60,6 +60,7 @@
         "settings": {
             "maintenance_mode": "Global Maintenance Mode",
             "maintenance_message": "Maintenance Message",
+            "activated_by": "Activated By",
             "page_cv": "CV / About Page",
             "page_game": "Arcade / Games Page",
             "page_messages": "Message Wall",
@@ -440,6 +441,7 @@
         "fullscreen_exit": "Exit Fullscreen",
         "help_rules": "Help / Rules",
         "status_active": "ACTIVE",
+        "status_off": "OFF",
         "status_disabled": "DISABLED",
         "action_disable": "DISABLE",
         "action_enable": "ENABLE",

@@ -59,7 +59,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                 setLoginCode('');
                 setShowAdminInput(false);
             } else {
-                alert(t('admin.invalid_code') || 'Invalid admin code');
+                alert(t('admin.invalid_code'));
             }
         }
     };

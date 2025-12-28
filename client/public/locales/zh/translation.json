@@ -60,6 +60,7 @@
         "settings": {
             "maintenance_mode": "全站维护模式",
             "maintenance_message": "维护公告内容",
+            "activated_by": "激活者",
             "page_cv": "简历 / 关于页面",
             "page_game": "街机 / 游戏页面",
             "page_messages": "留言墙",
@@ -440,6 +441,7 @@
         "fullscreen_exit": "退出全屏",
         "help_rules": "帮助 / 规则",
         "status_active": "已启用",
+        "status_off": "关闭",
         "status_disabled": "已禁用",
         "action_disable": "禁用",
         "action_enable": "启用",

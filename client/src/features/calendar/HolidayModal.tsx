@@ -123,7 +123,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                                 `}
                             >
                                 <span className="relative z-10 flex items-center gap-2">
-                                    {t('common.close') || 'Fermer'}
+                                    {t('common.close')}
                                 </span>
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                             </motion.button>

@@ -58,6 +58,7 @@
         "settings": {
             "maintenance_mode": "Mode Maintenance Global",
             "maintenance_message": "Message de Maintenance",
+            "activated_by": "Activé par",
             "page_cv": "Page CV / À propos",
             "page_game": "Page Jeux (Arcade)",
             "page_messages": "Mur de Messages",
@@ -442,6 +443,7 @@
         "fullscreen_exit": "Quitter le plein écran",
         "help_rules": "Aide / Règles",
         "status_active": "ACTIF",
+        "status_off": "OFF",
         "status_disabled": "DÉSACTIVÉ",
         "action_disable": "DÉSACTIVER",
         "action_enable": "ACTIVER",

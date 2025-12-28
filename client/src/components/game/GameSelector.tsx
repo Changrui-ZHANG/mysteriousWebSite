@@ -61,7 +61,7 @@ export function GameSelector({
                                 }`}
                         >
                             {getGameLabel(gameKey)}
-                            {!isEnabled && <span className="absolute -top-2 -right-2 bg-red-600 text-[10px] px-1 rounded text-white shadow-sm font-bold tracking-widest">OFF</span>}
+                            {!isEnabled && <span className="absolute -top-2 -right-2 bg-red-600 text-[10px] px-1 rounded text-white shadow-sm font-bold tracking-widest">{t('game.status_off')}</span>}
                         </button>
 
                         {(isSuperAdmin || isAdmin) && (

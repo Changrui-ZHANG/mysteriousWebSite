@@ -69,7 +69,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
             setNewSuggestion('');
             fetchSuggestions();
         } catch (err: any) {
-            setError(err.message || t('suggestions.submit_failed') || 'Failed to submit suggestion');
+            setError(err.message || t('suggestions.submit_failed'));
             console.error(err);
         } finally {
             setLoading(false);
@@ -90,7 +90,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
     };
 
     const deleteSuggestion = async (id: string) => {
-        if (!window.confirm(t('suggestions.confirm_delete') || 'Delete this suggestion?')) return;
+        if (!window.confirm(t('suggestions.confirm_delete'))) return;
 
         try {
             await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(parseInt(id)), { method: 'DELETE' });
@@ -116,13 +116,13 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                         <GlassCard isDarkMode={isDarkMode} accentColor="purple" padding="lg" animated={false}>
                             <FaLightbulb className="w-20 h-20 mx-auto mb-6 text-purple-400" />
                             <GradientHeading gradient="purple-pink" level={1} className="mb-4">
-                                {t('suggestions.title') || 'Suggestions & Ideas'}
+                                {t('suggestions.title')}
                             </GradientHeading>
                             <p className="text-lg opacity-80 mb-8">
-                                {t('suggestions.login_to_view') || 'Please log in to view and submit suggestions'}
+                                {t('suggestions.login_to_view')}
                             </p>
                             <Button color="purple" size="lg" onClick={onOpenLogin}>
-                                {t('auth.login') || 'Log In'}
+                                {t('auth.login')}
                             </Button>
                         </GlassCard>
                     </motion.div>
@@ -137,10 +137,10 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                 {/* Header */}
                 <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
                     <GradientHeading gradient="purple-pink" level={1} className="mb-4">
-                        {t('suggestions.title') || 'Suggestions & Ideas'}
+                        {t('suggestions.title')}
                     </GradientHeading>
                     <p className="text-lg opacity-80">
-                        {t('suggestions.subtitle') || 'Share your ideas to make this website better!'}
+                        {t('suggestions.subtitle')}
                     </p>
                 </motion.div>
 
@@ -148,13 +148,13 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className={`${cardClass} mb-8`}>
                     <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                         <FaLightbulb className="text-yellow-400" />
-                        {t('suggestions.submit_new') || 'Submit a New Idea'}
+                        {t('suggestions.submit_new')}
                     </h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <textarea
                             value={newSuggestion}
                             onChange={(e) => setNewSuggestion(e.target.value)}
-                            placeholder={t('suggestions.placeholder') || 'I would like to see more arcade games...'}
+                            placeholder={t('suggestions.placeholder')}
                             className={`w-full px-4 py-3 rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDarkMode ? 'bg-black/40 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                             rows={4}
                             maxLength={1000}
@@ -167,7 +167,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                                 disabled={loading || !user || !newSuggestion.trim()}
                                 className="px-6 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-bold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? t('suggestions.submitting') || 'Submitting...' : t('suggestions.submit') || 'Submit Idea'}
+                                {loading ? t('suggestions.submitting') : t('suggestions.submit')}
                             </button>
                         </div>
                         {error && <p className="text-sm text-red-400">{error}</p>}
@@ -178,7 +178,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                 <div className="space-y-4">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-bold">
-                            {isAdmin ? (t('suggestions.all_suggestions') || 'All Suggestions') : (t('suggestions.your_suggestions') || 'Your Suggestions')}
+                            {isAdmin ? t('suggestions.all_suggestions') : t('suggestions.your_suggestions')}
                         </h2>
                         {archivedSuggestions.length > 0 && (
                             <button
@@ -186,7 +186,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                                 className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg font-bold text-white transition-colors flex items-center gap-2"
                             >
                                 <FaCheck className="w-4 h-4" />
-                                {showArchive ? (t('suggestions.hide_archive') || 'Hide Archive') : `${t('suggestions.show_archive') || 'Show Archive'} (${archivedSuggestions.length})`}
+                                {showArchive ? t('suggestions.hide_archive') : `${t('suggestions.show_archive')} (${archivedSuggestions.length})`}
                             </button>
                         )}
                     </div>
@@ -210,7 +210,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                             {activeSuggestions.length === 0 && (
                                 <div className={`${cardClass} text-center py-12 opacity-60`}>
                                     <FaLightbulb className="w-12 h-12 mx-auto mb-4 text-purple-400" />
-                                    <p>{t('suggestions.no_suggestions') || 'No suggestions yet. Be the first to share an idea!'}</p>
+                                    <p>{t('suggestions.no_suggestions')}</p>
                                 </div>
                             )}
                         </>
@@ -222,7 +222,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                     <div className="space-y-4 mt-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                             <FaCheck className="text-green-400" />
-                            {t('suggestions.archive') || 'Archive'} ({archivedSuggestions.length})
+                            {t('suggestions.archive')} ({archivedSuggestions.length})
                         </h2>
                         <AnimatePresence mode="popLayout">
                             {archivedSuggestions.map((suggestion, index) => (

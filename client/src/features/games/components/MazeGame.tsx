@@ -562,7 +562,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                             </div>
                             {personalBest && (
                                 <div className="text-xs font-mono text-yellow-500/80">
-                                    {t('game.best')}: {personalBest.score} {t('game.moves') || 'steps'}
+                                    {t('game.best')}: {personalBest.score} {t('game.moves')}
                                 </div>
                             )}
                         </div>

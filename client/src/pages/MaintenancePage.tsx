@@ -23,7 +23,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
             const success = await onAdminLogin(loginCode);
             setIsChecking(false);
             if (!success) {
-                alert(t('admin.invalid_code') || "Invalid Code");
+                alert(t('admin.invalid_code'));
             } else {
                 setLoginCode('');
             }
@@ -43,10 +43,10 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
             >
                 <div className="text-6xl mb-6">🚧</div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">
-                    {t('maintenance.title') || 'Under Maintenance'}
+                    {t('maintenance.title')}
                 </h1>
                 <p className="text-xl opacity-70 max-w-md mx-auto mb-8 font-mono whitespace-pre-wrap">
-                    {message || t('maintenance.description') || 'The site is currently undergoing necessary maintenance. We will be back shortly.'}
+                    {message || t('maintenance.description')}
                 </p>
 
                 {activatedBy && (
@@ -71,7 +71,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                                 onClick={() => setShowAdminInput(true)}
                                 className={`text-sm opacity-30 hover:opacity-100 transition-opacity flex items-center gap-2 border px-4 py-2 rounded-lg ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
                             >
-                                🔐 {t('auth.admin_access') || "Admin Access"}
+                                🔐 {t('auth.admin_access')}
                             </button>
                         ) : (
                             <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-2">

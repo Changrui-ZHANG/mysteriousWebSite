@@ -82,7 +82,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                 onClick={() => setShowComments(!showComments)}
                 className="text-sm font-bold text-purple-400 hover:text-purple-300 transition-colors mb-2 flex items-center gap-2"
             >
-                {t('suggestions.comments')} ({showComments ? t('suggestions.hide_comments') || 'Hide' : localCount > 0 ? localCount : '0'})
+                {t('suggestions.comments')} ({showComments ? t('suggestions.hide_comments') : localCount > 0 ? localCount : '0'})
             </button>
 
             <AnimatePresence>
@@ -94,7 +94,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                         className="space-y-3 overflow-hidden"
                     >
                         {loadingComments ? (
-                            <div className="text-center py-4 opacity-60">Loading...</div>
+                            <div className="text-center py-4 opacity-60">{t('game.loading')}</div>
                         ) : comments.length === 0 ? (
                             <div className="text-center py-4 opacity-60">{t('suggestions.no_comments')}</div>
                         ) : (
@@ -117,7 +117,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                                             <button
                                                 onClick={() => handleQuote(comment)}
                                                 className="text-purple-400 hover:text-purple-300 transition-colors"
-                                                title={t('suggestions.quote') || 'Quote'}
+                                                title={t('suggestions.quote')}
                                             >
                                                 <FaQuoteRight className="w-3 h-3" />
                                             </button>
@@ -125,7 +125,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                                                 <button
                                                     onClick={() => handleDeleteComment(comment.id)}
                                                     className="text-red-400 hover:text-red-300 transition-colors"
-                                                    title={t('suggestions.delete_comment') || 'Delete'}
+                                                    title={t('suggestions.delete_comment')}
                                                 >
                                                     <FaTrash className="w-3 h-3" />
                                                 </button>
@@ -141,7 +141,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                                 {replyingTo && (
                                     <div className={`mb-2 p-2 rounded ${isDarkMode ? 'bg-purple-900/30' : 'bg-purple-100/70'} text-sm flex justify-between items-center`}>
                                         <div>
-                                            <span className="opacity-70">{t('suggestions.replying_to') || 'Replying to'} </span>
+                                            <span className="opacity-70">{t('suggestions.replying_to')} </span>
                                             <span className="font-bold text-purple-400">{replyingTo.username}</span>
                                         </div>
                                         <button
@@ -149,14 +149,14 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                                             onClick={() => setReplyingTo(null)}
                                             className="text-red-400 hover:text-red-300 text-xs"
                                         >
-                                            Cancel
+                                            {t('common.cancel')}
                                         </button>
                                     </div>
                                 )}
                                 <textarea
                                     value={newComment}
                                     onChange={(e) => setNewComment(e.target.value)}
-                                    placeholder={t('suggestions.add_comment') || 'Add a comment...'}
+                                    placeholder={t('suggestions.add_comment')}
                                     className={`w-full p-3 rounded-lg border ${isDarkMode ? 'bg-black/40 border-purple-500/30 text-white' : 'bg-white border-purple-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none`}
                                     rows={2}
                                 />
@@ -165,7 +165,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                                     disabled={!newComment.trim()}
                                     className="mt-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold text-white transition-colors text-sm"
                                 >
-                                    {t('suggestions.post_comment') || 'Post Comment'}
+                                    {t('suggestions.post_comment')}
                                 </button>
                             </form>
                         )}

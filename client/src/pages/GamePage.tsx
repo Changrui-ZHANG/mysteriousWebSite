@@ -40,7 +40,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
     }, []);
 
     const toggleGameStatus = async (gameKey: string) => {
-        const code = adminCode || prompt(t('game.admin_code_prompt') || "Admin Code:");
+        const code = adminCode || prompt(t('game.admin_code_prompt'));
         if (!code) return;
 
         try {

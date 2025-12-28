@@ -51,7 +51,7 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                 await postJson(API_ENDPOINTS.CALENDAR.CONFIG, { zones: newZones, adminCode });
             } catch (err) {
                 console.error('Failed to update calendar config', err);
-                alert(t('calendar.errors.config_update_failed') || 'Failed to update configuration');
+                alert(t('calendar.errors.config_update_failed'));
                 setSelectedZones(selectedZones);
             }
         }
