@@ -527,7 +527,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                    title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}
                 >
                     {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
                 </button>

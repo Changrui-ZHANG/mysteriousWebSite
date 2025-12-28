@@ -66,7 +66,7 @@ export function Gallery({ isDarkMode }: GalleryProps) {
                 <button
                     onClick={() => scroll('left')}
                     className={`p-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 ${isDarkMode ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-black/10 text-black hover:bg-black/20'}`}
-                    aria-label="Scroll Left"
+                    aria-label={t('gallery.scroll_left')}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -78,7 +78,7 @@ export function Gallery({ isDarkMode }: GalleryProps) {
                 <button
                     onClick={() => scroll('right')}
                     className={`p-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 ${isDarkMode ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-black/10 text-black hover:bg-black/20'}`}
-                    aria-label="Scroll Right"
+                    aria-label={t('gallery.scroll_right')}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

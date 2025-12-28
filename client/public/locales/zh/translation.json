@@ -3,7 +3,8 @@
         "close": "关闭",
         "cancel": "取消",
         "delete": "删除",
-        "go": "确定"
+        "go": "确定",
+        "unknown_error": "未知错误"
     },
     "nav": {
         "home": "主页",
@@ -17,6 +18,7 @@
     },
     "navbar": {
         "title": "欢迎",
+        "cv_title": "个人简历",
         "arcade_title": "街机游戏",
         "messages_title": "留言墙",
         "suggestions_title": "建议箱",
@@ -362,6 +364,8 @@
         "brick_breaker_maps_unlocked": "{{count}} / {{total}} 张地图已解锁",
         "brick_breaker_new_map_unlocked": "新地图已解锁: {{name}}!",
         "brick_breaker_next_level": "下一关",
+        "brick_breaker_generating": "生成中...",
+        "brick_breaker_confirm_start": "确认并开始",
         "match3_rules_text": "3个方块 = 3分。4个方块 = 8分。5个方块 = 15分。",
         "match3_combos": "连击是自动产生的连锁反应。当掉落的方块产生新的消除时，分数会成倍增加 (x2, x3...)。",
         "match3_speed": "速度要快，时间不等人！",
@@ -517,7 +521,9 @@
         "load_error": "无法加载内容。",
         "retry": "重试",
         "new_expression": "新表达",
-        "login_to_save": "登录以保存您的收藏！"
+        "login_to_save": "登录以保存您的收藏！",
+        "add_favorite": "添加到收藏",
+        "remove_favorite": "从收藏中移除"
     },
     "messages": {
         "title": "留言墙",
@@ -553,7 +559,8 @@
         "wrong": "✗ 再试一次！",
         "hint": "提示",
         "letters": "个字母",
-        "answer": "答案"
+        "answer": "答案",
+        "tip": "提示：回答越快，越能证明你对宝可梦图鉴的精通！"
     },
     "zombie": {
         "rules": {
@@ -682,6 +689,8 @@
         }
     },
     "gallery": {
+        "scroll_left": "向左滚动",
+        "scroll_right": "向右滚动",
         "nebula": {
             "title": "JAVA / SPRING",
             "description": "稳健架构"
@@ -741,6 +750,7 @@
         "privacy": "隐私政策",
         "terms": "服务条款",
         "newsletter": "通讯",
+        "email_placeholder": "邮箱",
         "join": "联系我",
         "copyright": "© 2025 张常瑞。保留所有权利。"
     },

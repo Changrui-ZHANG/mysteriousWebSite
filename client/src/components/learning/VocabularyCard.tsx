@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { FaHeart, FaRegHeart, FaLightbulb, FaVolumeUp } from 'react-icons/fa';
 import type { VocabularyItem } from '../../types/learning';
@@ -25,6 +26,8 @@ export function VocabularyCard({
     onToggleFavorite,
     onSpeak
 }: VocabularyCardProps) {
+    const { t } = useTranslation();
+    
     return (
         <motion.div
             layout
@@ -44,7 +47,7 @@ export function VocabularyCard({
             <button
                 onClick={onToggleFavorite}
                 className="absolute top-6 left-6 text-2xl z-10 hover:scale-110 transition-transform"
-                title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                title={isFavorite ? t('learning.remove_favorite') : t('learning.add_favorite')}
             >
                 {isFavorite
                     ? <FaHeart className="text-red-500" />

@@ -3,7 +3,8 @@
         "close": "Fermer",
         "cancel": "Annuler",
         "delete": "Supprimer",
-        "go": "Go"
+        "go": "Go",
+        "unknown_error": "Erreur inconnue"
     },
     "nav": {
         "home": "ACCUEIL",
@@ -17,6 +18,7 @@
     },
     "navbar": {
         "title": "Bienvenue",
+        "cv_title": "Curriculum vitæ",
         "arcade_title": "Jeux d'Arcade",
         "messages_title": "Mur de Messages",
         "suggestions_title": "Boîte à Idées",
@@ -356,6 +358,8 @@
         "brick_breaker_maps_unlocked": "{{count}} / {{total}} cartes débloquées",
         "brick_breaker_new_map_unlocked": "Nouvelle carte débloquée : {{name}} !",
         "brick_breaker_next_level": "Niveau Suivant",
+        "brick_breaker_generating": "Génération...",
+        "brick_breaker_confirm_start": "Confirmer et Commencer",
         "match3_rules_text": "Alignez au moins 3 blocs de la même couleur horizontalement ou verticalement pour les faire exploser et marquer des points.",
         "match3_combos": "Créez des réactions en chaîne pour activer des multiplicateurs de score (x2, x3...). Plus vous enchaînez, plus le score explose !",
         "match3_speed": "Attention au chrono ! Chaque seconde compte pour atteindre le sommet du classement.",
@@ -519,7 +523,9 @@
         "load_error": "Impossible de charger le contenu.",
         "retry": "Réessayer",
         "new_expression": "Nouvelle Expression",
-        "login_to_save": "Connectez-vous pour sauvegarder vos favoris !"
+        "login_to_save": "Connectez-vous pour sauvegarder vos favoris !",
+        "add_favorite": "Ajouter aux favoris",
+        "remove_favorite": "Retirer des favoris"
     },
     "messages": {
         "title": "Mur de Messages",
@@ -555,7 +561,8 @@
         "wrong": "✗ Réessayez !",
         "hint": "Indice",
         "letters": "lettres",
-        "answer": "Réponse"
+        "answer": "Réponse",
+        "tip": "Astuce : Plus vous répondez vite, plus vous prouvez votre maîtrise du Pokédex !"
     },
     "zombie": {
         "rules": {
@@ -687,6 +694,8 @@
         }
     },
     "gallery": {
+        "scroll_left": "Défiler à gauche",
+        "scroll_right": "Défiler à droite",
         "nebula": {
             "title": "JAVA / SPRING",
             "description": "Architecture Robuste"
@@ -746,6 +755,7 @@
         "privacy": "Politique de Confidentialité",
         "terms": "Conditions d'Utilisation",
         "newsletter": "Newsletter",
+        "email_placeholder": "Email",
         "join": "Me Contacter",
         "copyright": "© 2025 Changrui ZHANG. Tous droits réservés."
     },

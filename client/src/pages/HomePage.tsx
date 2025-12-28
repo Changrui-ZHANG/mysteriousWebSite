@@ -183,7 +183,7 @@ export function Home({ isDarkMode }: HomeProps) {
                     <div>
                         <h4 className="font-bold mb-6">{t('footer_section.newsletter')}</h4>
                         <div className="flex">
-                            <input type="email" placeholder="Email" className="p-2 rounded-l-md border-none" />
+                            <input type="email" placeholder={t('footer_section.email_placeholder')} className="p-2 rounded-l-md border-none" />
                             <button className="p-2 px-4 bg-white text-black border-none rounded-r-md cursor-pointer font-bold">{t('footer_section.join')}</button>
                         </div>
                     </div>

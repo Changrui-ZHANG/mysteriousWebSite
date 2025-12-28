@@ -3,7 +3,8 @@
         "close": "Close",
         "cancel": "Cancel",
         "delete": "Delete",
-        "go": "Go"
+        "go": "Go",
+        "unknown_error": "Unknown error"
     },
     "nav": {
         "home": "HOME",
@@ -17,6 +18,7 @@
     },
     "navbar": {
         "title": "Welcome",
+        "cv_title": "Curriculum vitæ",
         "arcade_title": "Arcade Games",
         "messages_title": "Message Wall",
         "suggestions_title": "Suggestions Box",
@@ -362,6 +364,8 @@
         "brick_breaker_maps_unlocked": "{{count}} / {{total}} maps unlocked",
         "brick_breaker_new_map_unlocked": "New map unlocked: {{name}}!",
         "brick_breaker_next_level": "Next Level",
+        "brick_breaker_generating": "Generating...",
+        "brick_breaker_confirm_start": "Confirm and Start",
         "match3_rules_text": "3 blocks = 3 pts. 4 blocks = 8 pts. 5 blocks = 15 pts.",
         "match3_combos": "A combo is an automatic chain reaction. When blocks fall and create new matches, points are multiplied (x2, x3...).",
         "match3_speed": "Be fast, time is not on your side!",
@@ -517,7 +521,9 @@
         "load_error": "Unable to load content.",
         "retry": "Retry",
         "new_expression": "New Expression",
-        "login_to_save": "Log in to save your favorites!"
+        "login_to_save": "Log in to save your favorites!",
+        "add_favorite": "Add to favorites",
+        "remove_favorite": "Remove from favorites"
     },
     "messages": {
         "title": "Message Wall",
@@ -553,7 +559,8 @@
         "wrong": "✗ Try again!",
         "hint": "Hint",
         "letters": "letters",
-        "answer": "Answer"
+        "answer": "Answer",
+        "tip": "Tip: The faster you answer, the more you prove your Pokédex mastery!"
     },
     "zombie": {
         "rules": {
@@ -682,6 +689,8 @@
         }
     },
     "gallery": {
+        "scroll_left": "Scroll Left",
+        "scroll_right": "Scroll Right",
         "nebula": {
             "title": "JAVA / SPRING",
             "description": "Robust Architecture"
@@ -741,6 +750,7 @@
         "privacy": "Privacy Policy",
         "terms": "Terms of Service",
         "newsletter": "Newsletter",
+        "email_placeholder": "Email",
         "join": "Contact Me",
         "copyright": "© 2025 Changrui ZHANG. All rights reserved."
     },

@@ -117,7 +117,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
             <nav className={`fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-[1000] backdrop-blur-md border-b shadow-sm ${isDarkMode ? 'bg-black/60 border-white/10 text-white shadow-black/50' : 'bg-white/60 border-black/5 text-gray-900 shadow-black/5'}`}>
                 <Link to="/" className="text-xl md:text-2xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity z-50 relative">
                     {location.pathname === '/cv'
-                        ? 'Curriculum vitæ'
+                        ? t('navbar.cv_title')
                         : location.pathname === '/game'
                             ? t('navbar.arcade_title')
                             : location.pathname === '/messages'
@@ -264,7 +264,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                             type="password"
                                             value={loginCode}
                                             onChange={(e) => setLoginCode(e.target.value)}
-                                            placeholder="Code"
+                                            placeholder={t('admin.code_placeholder')}
                                             className={`w-24 px-2 py-1 text-xs rounded border ${isDarkMode ? 'bg-white/10 border-white/20' : 'bg-gray-50 border-gray-300'}`}
                                             autoFocus
                                         />
@@ -393,7 +393,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                                 value={loginCode}
                                                 onChange={(e) => setLoginCode(e.target.value)}
                                                 className="flex-1 px-3 py-2 bg-white/10 rounded border border-current/20 text-center"
-                                                placeholder="Code"
+                                                placeholder={t('admin.code_placeholder')}
                                             />
                                             <button
                                                 type="submit"

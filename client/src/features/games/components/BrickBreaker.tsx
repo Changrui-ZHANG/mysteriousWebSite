@@ -1122,7 +1122,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                    title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}
                 >
                     {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
                 </button>
@@ -1225,7 +1225,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                                 className="px-8 py-3 bg-red-500 text-white font-bold text-xl rounded-full hover:scale-110 transition-transform shadow-[0_0_20px_rgba(239,68,68,0.6)] disabled:opacity-50"
                                                 disabled={isLoadingMap}
                                             >
-                                                {isLoadingMap ? 'Génération...' : t('game.try_again')}
+                                                {isLoadingMap ? t('game.brick_breaker_generating') : t('game.try_again')}
                                             </button>
                                         </div>
                                     </>
@@ -1416,7 +1416,7 @@ export default function BrickBreaker({ isDarkMode, onSubmitScore, personalBest, 
                                         disabled={isLoadingMap}
                                         className="px-6 py-3 bg-cyan-500 text-black font-bold rounded-full hover:scale-110 transition-transform disabled:opacity-50"
                                     >
-                                        {isLoadingMap ? 'Génération...' : 'Confirmer et Commencer'}
+                                        {isLoadingMap ? t('game.brick_breaker_generating') : t('game.brick_breaker_confirm_start')}
                                     </button>
                                 </div>
                             </motion.div>

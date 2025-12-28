@@ -40,7 +40,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
             const data = await response.json();
             setUsers(data);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Unknown error');
+            setError(err instanceof Error ? err.message : t('common.unknown_error'));
         } finally {
             setIsLoading(false);
         }

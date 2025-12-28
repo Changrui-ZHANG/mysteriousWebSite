@@ -176,7 +176,7 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
                 <button
                     onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
                     className="text-purple-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={isFullScreen ? "Quitter le plein écran" : "Plein écran"}
+                    title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}
                 >
                     {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
                 </button>
@@ -356,7 +356,7 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
 
                         <div className="bg-gradient-to-r from-purple-500/10 to-transparent p-4 rounded-xl border-l-4 border-purple-400">
                             <p className="text-xs md:text-sm text-purple-200 italic">
-                                💡 Astuce : Plus vous répondez vite, plus vous prouvez votre maîtrise du Pokédex !
+                                💡 {t('pokemon.tip')}
                             </p>
                         </div>
                     </div>
