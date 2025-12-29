@@ -141,7 +141,23 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     }, [setIsDragging]);
 
     if (!maze || !playerPos) {
-        return <div className="text-center p-10 text-xl font-bold animate-pulse text-cyan-500">{t('game.loading')}...</div>;
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-sm rounded-xl border border-cyan-500/20">
+                <div className="relative w-24 h-24 mb-6">
+                    <div className="absolute inset-0 border-4 border-cyan-500/20 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-cyan-500 rounded-full border-t-transparent animate-spin"></div>
+                    <div className="absolute inset-4 bg-cyan-500/10 rounded-full flex items-center justify-center">
+                        <span className="text-2xl">🧩</span>
+                    </div>
+                </div>
+                <h2 className="text-cyan-400 font-black tracking-widest uppercase animate-pulse">
+                    {t('game.loading')}...
+                </h2>
+                <p className="text-white/40 text-xs mt-2 font-mono">
+                    GENERATING UNIQUE CHALLENGE
+                </p>
+            </div>
+        );
     }
 
     const timeElapsed = ((Date.now() - startTime) / 1000).toFixed(1);

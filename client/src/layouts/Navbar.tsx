@@ -102,6 +102,8 @@ export function Navbar({
                     onLogout={onLogout}
                     isAdmin={isAdmin}
                     isSuperAdmin={isSuperAdmin}
+                    loginCode={loginCode}
+                    setLoginCode={setLoginCode}
                     onAdminLogin={onAdminLogin}
                     onAdminLogout={onAdminLogout}
                     onShowSiteControls={() => setShowSiteControls(true)}

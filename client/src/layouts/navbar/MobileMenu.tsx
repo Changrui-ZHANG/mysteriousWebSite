@@ -100,8 +100,14 @@ export function MobileMenu({
                             <div className="flex flex-col items-center gap-2 w-full max-w-xs p-4 rounded-xl bg-current/5 border border-current/10">
                                 <span className="text-xs opacity-50 uppercase tracking-widest font-bold">{t('auth.admin_access')}</span>
                                 <form onSubmit={async (e) => { e.preventDefault(); if (onAdminLogin) { const success = await onAdminLogin(loginCode); if (success) setLoginCode(''); } }} className="flex w-full gap-2">
-                                    <input type="password" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} className="flex-1 px-3 py-2 bg-white/10 rounded border border-current/20 text-center" placeholder={t('admin.code_placeholder')} />
-                                    <button type="submit" className="px-4 py-2 bg-current/10 hover:bg-current/20 rounded font-bold transition-colors">→</button>
+                                    <input
+                                        type="password"
+                                        value={loginCode}
+                                        onChange={(e) => setLoginCode(e.target.value)}
+                                        className="flex-1 px-4 py-3 bg-black/5 dark:bg-white/5 rounded-lg border border-current/10 focus:border-cyan-500 outline-none text-center font-mono"
+                                        placeholder={t('admin.code_placeholder')}
+                                    />
+                                    <button type="submit" className="px-6 py-3 bg-cyan-500 text-white rounded-lg font-bold transition-all shadow-lg shadow-cyan-500/20 active:scale-95">→</button>
                                 </form>
                             </div>
                         )}

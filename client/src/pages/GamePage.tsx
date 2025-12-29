@@ -144,7 +144,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                 </motion.div>
 
                 <div className="mb-12">
-                    <Leaderboard gameType={activeGame} refreshTrigger={refreshLeaderboard} isSuperAdmin={isSuperAdmin} />
+                    <Leaderboard gameType={activeGame} refreshTrigger={refreshLeaderboard} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />
                 </div>
 
                 <GameSelector

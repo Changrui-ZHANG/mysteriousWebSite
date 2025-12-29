@@ -16,6 +16,8 @@ interface DesktopMenuProps {
     onLogout?: () => void;
     isAdmin: boolean;
     isSuperAdmin: boolean;
+    loginCode: string;
+    setLoginCode: (code: string) => void;
     onAdminLogin?: (code: string) => Promise<boolean>;
     onAdminLogout?: () => void;
     onShowSiteControls: () => void;
@@ -26,13 +28,12 @@ interface DesktopMenuProps {
 
 export function DesktopMenu({
     user, onOpenLogin, onLogout, isAdmin, isSuperAdmin,
-    onAdminLogin, onAdminLogout, onShowSiteControls,
+    loginCode, setLoginCode, onAdminLogin, onAdminLogout, onShowSiteControls,
     isDarkMode, toggleTheme, changeLanguage,
 }: DesktopMenuProps) {
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const [showAdminInput, setShowAdminInput] = useState(false);
-    const [loginCode, setLoginCode] = useState('');
 
     const submitAdminCode = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -116,9 +117,16 @@ export function DesktopMenu({
                     <>
                         <button onClick={() => setShowAdminInput(!showAdminInput)} className="hover:scale-110 transition-transform" title={t('auth.admin_access')}>🔐</button>
                         {showAdminInput && (
-                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 bg-[var(--color-bg-base)] border border-[var(--color-border-default)]">
-                                <input type="password" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} placeholder={t('admin.code_placeholder')} className="input w-24 px-2 py-1 text-xs" autoFocus />
-                                <button type="submit" className="px-2 py-1 bg-green-500 text-white text-xs rounded font-bold">→</button>
+                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-2xl z-50 flex gap-2 bg-[var(--color-bg-elevated)] border border-cyan-500/50 backdrop-blur-xl">
+                                <input
+                                    type="password"
+                                    value={loginCode}
+                                    onChange={(e) => setLoginCode(e.target.value)}
+                                    placeholder={t('admin.code_placeholder')}
+                                    className="w-32 px-3 py-1.5 text-xs rounded-md bg-black/5 dark:bg-white/5 border border-current/10 focus:border-cyan-500 outline-none transition-all font-mono"
+                                    autoFocus
+                                />
+                                <button type="submit" className="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-600 text-white text-xs rounded-md font-bold transition-colors shadow-lg shadow-cyan-500/20">→</button>
                             </form>
                         )}
                     </>

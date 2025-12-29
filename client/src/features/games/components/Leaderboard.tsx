@@ -15,10 +15,11 @@ interface Score {
 interface LeaderboardProps {
     gameType: string;
     refreshTrigger: number;
+    isAdmin?: boolean;
     isSuperAdmin?: boolean;
 }
 
-export default function Leaderboard({ gameType, refreshTrigger, isSuperAdmin = false }: LeaderboardProps) {
+export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false, isSuperAdmin = false }: LeaderboardProps) {
     const { t } = useTranslation();
     const [scores, setScores] = useState<Score[]>([]);
     const [refresh, setRefresh] = useState(0);
@@ -87,7 +88,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isSuperAdmin = f
                                 <span className="font-mono font-bold text-fuchsia-400">
                                     {score.score}{score.attempts ? `/${score.attempts}` : ''}
                                 </span>
-                                {isSuperAdmin && (
+                                {(isSuperAdmin || isAdmin) && (
                                     <button
                                         onClick={() => handleReset(score.id, score.username)}
                                         className="w-5 h-5 flex items-center justify-center bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded transition-colors"

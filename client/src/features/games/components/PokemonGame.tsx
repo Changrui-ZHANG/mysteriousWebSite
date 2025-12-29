@@ -102,11 +102,21 @@ export default function PokemonGame({ isDarkMode, onSubmitScore, personalBest, i
                     <div className="text-purple-400 font-bold animate-pulse text-xl">{t('game.loading')}</div>
                 ) : pokemon ? (
                     <div className="w-full max-w-lg mx-auto space-y-4">
-                        {/* Pokemon Image */}
-                        <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto">
-                            <motion.img key={pokemon.id} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                                src={pokemon.sprites.other['official-artwork'].front_default} alt={revealed ? pokemon.name : '???'}
-                                className={`w-full h-full object-contain transition-all duration-500 ${revealed ? 'blur-none brightness-100' : 'blur-sm brightness-50 contrast-200'}`} />
+                        {/* Pokemon Image Area */}
+                        <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto flex items-center justify-center">
+                            {/* Decorative background glow */}
+                            <div className={`absolute inset-0 rounded-full blur-3xl transition-all duration-1000 ${revealed ? 'bg-purple-500/5' : 'bg-purple-600/20 animate-pulse'
+                                }`} />
+
+                            <motion.img
+                                key={pokemon.id}
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={pokemon.sprites.other['official-artwork'].front_default}
+                                alt={revealed ? pokemon.name : 'Mystery Pokemon'}
+                                className={`relative z-10 w-full h-full object-contain transition-all duration-1000 ${revealed ? 'brightness-100 opacity-100' : (isDarkMode ? 'brightness-0 invert opacity-60' : 'brightness-0 opacity-60')
+                                    }`}
+                            />
                         </div>
 
                         {/* Hint */}
