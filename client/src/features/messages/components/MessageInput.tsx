@@ -21,7 +21,6 @@ interface Message {
 }
 
 interface MessageInputProps {
-    isDarkMode: boolean;
     user: User | null;
     isAdmin: boolean;
     isGlobalMute: boolean;
@@ -33,7 +32,6 @@ interface MessageInputProps {
 }
 
 export function MessageInput({
-    isDarkMode,
     user,
     isAdmin,
     isGlobalMute,
@@ -65,7 +63,7 @@ export function MessageInput({
     const isMuted = isGlobalMute && !isAdmin;
 
     return (
-        <div className={`border-t pb-[env(safe-area-inset-bottom)] ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
+        <div className="message-input-bar pb-[env(safe-area-inset-bottom)]">
             {isMuted && (
                 <div className="bg-red-500/10 text-red-500 text-xs text-center py-1">
                     {t('auth.muted')}
@@ -73,7 +71,7 @@ export function MessageInput({
             )}
             <div className={`max-w-4xl mx-auto p-3 ${isMuted ? 'opacity-50' : ''}`}>
                 {replyingTo && (
-                    <div className={`mb-2 pl-3 py-1 border-l-2 text-xs opacity-80 flex justify-between items-center ${isDarkMode ? 'border-green-500/50 bg-white/5' : 'border-green-600/30 bg-black/5'}`}>
+                    <div className="quote-block mb-2 flex justify-between items-center">
                         <span>
                             <span className="font-bold mr-1">{t('messages.replying_to')} {replyingTo.name}:</span>
                             <span className="italic truncate max-w-[200px] inline-block align-bottom">{replyingTo.message}</span>
@@ -90,7 +88,7 @@ export function MessageInput({
                 <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
                     {/* User Identity Display */}
                     {user && (
-                        <div className={`p-2 rounded-lg flex items-center gap-2 ring-1 transition-all ${isDarkMode ? 'bg-green-500/10 ring-green-500/30 text-green-500' : 'bg-green-50 ring-green-200 text-green-600'}`}>
+                        <div className="p-2 rounded-lg flex items-center gap-2 ring-1 ring-[var(--color-accent-green)]/30 bg-[var(--color-accent-green)]/10 text-[var(--color-accent-green)] transition-all">
                             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                                 {user.username.charAt(0).toUpperCase()}
                             </div>
@@ -104,7 +102,7 @@ export function MessageInput({
                                 type="button"
                                 onClick={() => setShowNameInput(!showNameInput)}
                                 disabled={isMuted}
-                                className={`p-2 rounded-lg transition-colors ${showNameInput ? 'bg-green-500 text-white' : isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'}`}
+                                className={`p-2 rounded-lg transition-colors ${showNameInput ? 'bg-green-500 text-white' : 'icon-btn-themed'}`}
                                 aria-label={t('messages.set_name')}
                             >
                                 Aa
@@ -120,7 +118,7 @@ export function MessageInput({
                                     placeholder={t('messages.name_placeholder')}
                                     maxLength={20}
                                     disabled={isMuted}
-                                    className={`px-3 py-2 rounded-lg border-0 focus:outline-none text-base md:text-sm w-20 md:w-28 ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'}`}
+                                    className="input-themed px-3 py-2 text-base md:text-sm w-20 md:w-28"
                                 />
                             )}
                         </>
@@ -134,12 +132,12 @@ export function MessageInput({
                             placeholder={isMuted ? t('auth.muted') : user ? t('messages.message_placeholder') : ''}
                             maxLength={200}
                             disabled={isMuted}
-                            className={`w-full px-4 py-2 rounded-lg border-0 focus:outline-none ${isDarkMode ? 'bg-white/10 text-white placeholder-gray-400' : 'bg-gray-100 text-black placeholder-gray-500'} ${isMuted ? 'cursor-not-allowed' : ''}`}
+                            className={`input-themed w-full px-4 py-2 ${isMuted ? 'cursor-not-allowed' : ''}`}
                         />
 
                         {/* Interactive Placeholder for Guests */}
                         {!user && !newMessage && !isMuted && (
-                            <div className={`absolute inset-0 px-4 py-2 pointer-events-none flex items-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <div className="absolute inset-0 px-4 py-2 pointer-events-none flex items-center text-[var(--color-text-muted)]">
                                 <span>{t('messages.guest_placeholder_text')}</span>
                                 <button
                                     type="button"
@@ -167,7 +165,7 @@ export function MessageInput({
                         <button
                             type="button"
                             onClick={onOpenAdminPanel}
-                            className={`p-2 rounded-lg text-xs ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
+                            className="icon-btn-themed p-2 text-xs"
                             aria-label={t('admin.panel')}
                         >
                             🔐

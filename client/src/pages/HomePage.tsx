@@ -37,7 +37,7 @@ export function Home({ isDarkMode }: HomeProps) {
             <section className="h-screen flex flex-col items-center justify-center">
                 <div className="text-center mb-8">
                     <h1 className={`text-5xl md:text-8xl m-0 font-heading font-extrabold tracking-tighter ${isDarkMode ? 'drop-shadow-[0_0_40px_rgba(0,0,0,0.5)]' : ''}`}>
-                        {t('hero.title')}
+                        {t('brand.author_name')}
                     </h1>
                     <p className="text-2xl opacity-80 font-serif italic mt-4">
                         {t('hero.subtitle')}
@@ -139,28 +139,28 @@ export function Home({ isDarkMode }: HomeProps) {
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
                     >
-                        {t('signature')}
+                        {t('brand.author_name')}
                     </motion.h2>
                 </div>
             </ScrollSection>
 
             {/* MEGA FOOTER */}
-            <footer className={`py-24 px-8 border-t ${isDarkMode ? 'bg-black border-[#222]' : 'bg-gray-100 border-[#ddd]'}`}>
+            <footer className="py-24 px-8 border-t bg-surface border-default/20">
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 max-w-7xl mx-auto">
                     <div>
-                        <h4 className="text-2xl mb-6">{t('signature')}.</h4>
-                        <p className="opacity-60">{t('footer_section.tagline')}</p>
+                        <h4 className="text-2xl mb-6">{t('brand.author_name')}.</h4>
+                        <p className="text-secondary">{t('footer_section.tagline')}</p>
                     </div>
                     <div>
                         <h4 className="font-bold mb-6">{t('footer_section.socials')}</h4>
-                        <ul className="list-none p-0 opacity-70 leading-loose">
+                        <ul className="list-none p-0 text-secondary leading-loose">
                             <li>
-                                <a href={SOCIAL_LINKS.GITHUB} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                <a href={SOCIAL_LINKS.GITHUB} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                                     GitHub
                                 </a>
                             </li>
                             <li>
-                                <a href={SOCIAL_LINKS.LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                <a href={SOCIAL_LINKS.LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                                     LinkedIn
                                 </a>
                             </li>
@@ -168,14 +168,14 @@ export function Home({ isDarkMode }: HomeProps) {
                     </div>
                     <div>
                         <h4 className="font-bold mb-6">{t('footer_section.legal')}</h4>
-                        <ul className="list-none p-0 opacity-70 leading-loose">
+                        <ul className="list-none p-0 text-secondary leading-loose">
                             <li>
-                                <Link to="/privacy" className="hover:text-white transition-colors">
+                                <Link to="/privacy" className="hover:text-primary transition-colors">
                                     {t('footer_section.privacy')}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/terms" className="hover:text-white transition-colors">
+                                <Link to="/terms" className="hover:text-primary transition-colors">
                                     {t('footer_section.terms')}
                                 </Link>
                             </li>
@@ -184,13 +184,13 @@ export function Home({ isDarkMode }: HomeProps) {
                     <div>
                         <h4 className="font-bold mb-6">{t('footer_section.newsletter')}</h4>
                         <div className="flex">
-                            <input type="email" placeholder={t('footer_section.email_placeholder')} className="p-2 rounded-l-md border-none" />
-                            <button className="p-2 px-4 bg-white text-black border-none rounded-r-md cursor-pointer font-bold">{t('footer_section.join')}</button>
+                            <input type="email" placeholder={t('footer_section.email_placeholder')} className="input rounded-r-none" />
+                            <button className="btn-primary rounded-l-none">{t('footer_section.join')}</button>
                         </div>
                     </div>
                 </div>
-                <div className="text-center opacity-40 mt-16 text-sm">
-                    <p>{t('footer_section.copyright')}</p>
+                <div className="text-center text-muted mt-16 text-sm">
+                    <p>{t('brand.copyright')}</p>
                 </div>
             </footer>
         </div>

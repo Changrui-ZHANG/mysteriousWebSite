@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
 interface MessageAdminPanelProps {
-    isDarkMode: boolean;
     isAdmin: boolean;
     isSuperAdmin: boolean;
     isGlobalMute: boolean;
@@ -16,7 +15,6 @@ interface MessageAdminPanelProps {
 }
 
 export function MessageAdminPanel({
-    isDarkMode,
     isAdmin,
     isSuperAdmin,
     isGlobalMute,
@@ -58,12 +56,12 @@ export function MessageAdminPanel({
                 <div className="w-[1px] h-4 bg-gray-500/30 mx-1" />
 
                 <div className="flex items-center gap-1">
-                    <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                    <span className="status-indicator status-indicator-info">
                         👥 {onlineCount}
                     </span>
                     <button
                         onClick={onRefreshOnlineCount}
-                        className={`px-2 py-1.5 rounded-lg text-white text-xs ${isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-500 hover:bg-gray-600'}`}
+                        className="icon-btn-themed px-2 py-1.5 text-xs"
                         title={t('admin.refresh_count')}
                         aria-label={t('admin.refresh_count')}
                     >

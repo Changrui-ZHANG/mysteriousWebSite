@@ -114,7 +114,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
 
     return (
         <>
-            <nav className={`fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-[1000] backdrop-blur-md border-b shadow-sm ${isDarkMode ? 'bg-black/60 border-white/10 text-white shadow-black/50' : 'bg-white/60 border-black/5 text-gray-900 shadow-black/5'}`}>
+            <nav className="fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-[1000] backdrop-blur-md bg-[var(--color-bg-base)]/90 text-[var(--color-text-primary)]">
                 <Link to="/" className="text-xl md:text-2xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity z-50 relative">
                     {location.pathname === '/cv'
                         ? t('navbar.cv_title')
@@ -164,7 +164,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                             <Link
                                 key={link.to}
                                 to={link.to}
-                                className={`hover:text-cyan-400 transition-colors ${location.pathname === link.to ? 'text-cyan-400 font-bold' : ''}`}
+                                className={`hover:opacity-60 transition-opacity ${location.pathname === link.to ? 'font-bold' : ''}`}
                             >
                                 {link.label}
                             </Link>
@@ -172,7 +172,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
 
                         {/* Dropdown for More Links */}
                         <div className="relative group">
-                            <button className={`flex items-center gap-1 hover:text-cyan-400 transition-colors uppercase tracking-widest ${['/suggestions', '/calendar'].includes(location.pathname) ? 'text-cyan-400 font-bold' : ''
+                            <button className={`flex items-center gap-1 hover:opacity-60 transition-opacity uppercase tracking-widest ${['/suggestions', '/calendar'].includes(location.pathname) ? 'font-bold' : ''
                                 }`}>
                                 {t('nav.more')} <FaChevronDown className="text-xs transition-transform duration-300 group-hover:rotate-180" />
                             </button>
@@ -180,10 +180,8 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                             {/* Invisible bridge to prevent hover loss */}
                             <div className="absolute top-full left-0 w-full h-4 bg-transparent z-40"></div>
 
-                            <div className={`absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 ${isDarkMode ? 'bg-[#0a0a0a]/95 border-white/10 text-white' : 'bg-white/95 border-black/5 text-gray-900'
-                                }`}>
-                                <div className={`absolute inset-0 rounded-xl pointer-events-none ${isDarkMode ? 'bg-gradient-to-b from-white/5 to-transparent' : 'bg-gradient-to-b from-black/5 to-transparent'
-                                    }`}></div>
+                            <div className="absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 bg-[var(--color-bg-base)]/95 border-[var(--color-border-default)]">
+                                <div className="absolute inset-0 rounded-xl pointer-events-none"></div>
                                 {[
                                     { to: "/suggestions", label: t('nav.suggestions') },
                                     { to: "/calendar", label: t('nav.calendar') },
@@ -192,9 +190,9 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     <Link
                                         key={link.to}
                                         to={link.to}
-                                        className={`relative block px-5 py-3 transition-colors text-sm tracking-wide uppercase ${location.pathname === link.to
-                                            ? 'text-cyan-500 font-bold bg-cyan-500/5'
-                                            : isDarkMode ? 'hover:bg-white/5' : 'hover:bg-black/5'
+                                        className={`relative block px-5 py-3 transition-all text-sm tracking-wide uppercase hover:opacity-60 ${location.pathname === link.to
+                                            ? 'font-bold'
+                                            : ''
                                             }`}
                                     >
                                         {link.label}
@@ -212,7 +210,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                             <span className="font-bold text-cyan-400">{user.username}</span>
                             <button
                                 onClick={onLogout}
-                                className="hover:text-red-400 transition-colors flex items-center gap-2"
+                                className="hover:opacity-60 transition-opacity flex items-center gap-2"
                                 title={t('auth.logout')}
                             >
                                 <FaSignOutAlt />
@@ -221,7 +219,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                     ) : (
                         <button
                             onClick={onOpenLogin}
-                            className="flex items-center gap-2 hover:text-green-400 transition-colors"
+                            className="flex items-center gap-2 hover:opacity-60 transition-opacity"
                         >
                             <FaUser />
                             <span>{t('auth.login')}</span>
@@ -243,7 +241,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                 </button>
                                 <button
                                     onClick={() => setShowSiteControls(true)}
-                                    className="text-xl text-gray-400 hover:text-cyan-400 transition-colors ml-2"
+                                    className="text-xl hover:opacity-60 transition-opacity ml-2"
                                     title={t('admin.site_settings')}
                                 >
                                     <FaCog />
@@ -259,13 +257,13 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                                     🔐
                                 </button>
                                 {showAdminInput && (
-                                    <form onSubmit={submitAdminCode} className={`absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 ${isDarkMode ? 'bg-black/90 border border-white/10' : 'bg-white border border-gray-200'}`}>
+                                    <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 bg-[var(--color-bg-base)] border border-[var(--color-border-default)]">
                                         <input
                                             type="password"
                                             value={loginCode}
                                             onChange={(e) => setLoginCode(e.target.value)}
                                             placeholder={t('admin.code_placeholder')}
-                                            className={`w-24 px-2 py-1 text-xs rounded border ${isDarkMode ? 'bg-white/10 border-white/20' : 'bg-gray-50 border-gray-300'}`}
+                                            className="input w-24 px-2 py-1 text-xs"
                                             autoFocus
                                         />
                                         <button type="submit" className="px-2 py-1 bg-green-500 text-white text-xs rounded font-bold">→</button>
@@ -288,9 +286,9 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
 
                     <button
                         onClick={toggleTheme}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-full transition-colors uppercase tracking-widest text-sm ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-black/5'}`}
+                        className="flex items-center gap-2 px-3 py-2 rounded-full transition-opacity uppercase tracking-widest text-sm hover:opacity-60"
                     >
-                        {isDarkMode ? <FaSun className="text-yellow-400 w-4 h-4" /> : <FaMoon className="text-blue-500 w-4 h-4" />}
+                        {isDarkMode ? <FaSun className="w-4 h-4" /> : <FaMoon className="w-4 h-4" />}
                         <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
                     </button>
                 </div>
@@ -305,7 +303,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: '100%' }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className={`fixed inset-0 h-[100dvh] ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} flex flex-col items-center justify-start pt-28 pb-10 gap-8 lg:hidden font-mono text-xl z-40 overflow-y-auto`}
+                            className="fixed inset-0 h-[100dvh] bg-[var(--color-bg-base)] text-[var(--color-text-primary)] flex flex-col items-center justify-start pt-28 pb-10 gap-8 lg:hidden font-mono text-xl z-40 overflow-y-auto"
                         >
                             {/* Navigation Links */}
                             <div className="flex flex-col items-center gap-6 w-full px-8">
@@ -418,9 +416,9 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
 
                                 <button
                                     onClick={toggleTheme}
-                                    className="flex items-center gap-3 px-6 py-3 rounded-full border border-current/20 hover:bg-current/5 transition-colors uppercase tracking-widest text-sm font-bold"
+                                    className="flex items-center gap-3 px-6 py-3 rounded-full border border-current/20 hover:opacity-60 transition-opacity uppercase tracking-widest text-sm font-bold"
                                 >
-                                    {isDarkMode ? <FaSun className="text-yellow-400 w-5 h-5" /> : <FaMoon className="text-blue-500 w-5 h-5" />}
+                                    {isDarkMode ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
                                     <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
                                 </button>
                             </div>
@@ -434,7 +432,7 @@ export function Navbar({ isDarkMode, toggleTheme, user, onOpenLogin, onLogout, i
                 adminCode={adminCode || ''}
                 isDarkMode={isDarkMode}
                 onSettingsChange={onRefreshSettings}
-                user={user}
+                user={user ?? undefined}
                 onOpenLogin={onOpenLogin}
             />
         </>

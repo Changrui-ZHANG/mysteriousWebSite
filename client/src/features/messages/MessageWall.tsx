@@ -242,13 +242,13 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
     };
 
     return (
-        <div className={`fixed inset-0 overflow-hidden flex flex-col pt-24 overscroll-none ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+        <div className="page-container fixed inset-0 overflow-hidden flex flex-col pt-24 overscroll-none">
             <ScrollProgress isDarkMode={isDarkMode} target={scrollContainerRef} />
 
             {/* Online Count Indicator */}
             {(showOnlineCountToAll || isAdmin) && (
                 <div className="fixed top-24 right-4 z-40 transition-opacity duration-300 pointer-events-none">
-                    <span className={`text-xs px-3 py-1.5 rounded-full font-medium shadow-sm flex items-center gap-2 pointer-events-auto ${isDarkMode ? 'bg-white/10 text-cyan-300 backdrop-blur-md border border-white/5' : 'bg-white text-blue-600 shadow-md'}`}>
+                    <span className="text-xs px-3 py-1.5 rounded-full font-medium shadow-sm flex items-center gap-2 pointer-events-auto bg-surface/80 text-cyan-400 backdrop-blur-md border border-default/20">
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         {onlineCount} {t('messages.online')}
                     </span>
@@ -268,7 +268,6 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                                     msg={msg}
                                     index={index}
                                     isOwn={isOwnMessage(msg)}
-                                    isDarkMode={isDarkMode}
                                     isHighlighted={highlightedMessageId === msg.id}
                                     canDelete={canDeleteMessage(msg)}
                                     translation={translations[msg.id]}
@@ -287,7 +286,6 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
             {/* Input Area */}
             <MessageInput
-                isDarkMode={isDarkMode}
                 user={user ?? null}
                 isAdmin={isAdmin}
                 isGlobalMute={isGlobalMute}
@@ -300,10 +298,9 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
             {/* Admin Panel */}
             {showAdminPanel && (
-                <div className={`border-t ${isDarkMode ? 'bg-black/80 border-green-500/20' : 'bg-white/80 border-green-500/10'} backdrop-blur-lg`}>
+                <div className="border-t bg-surface/80 border-green-500/20 backdrop-blur-lg">
                     <div className="max-w-4xl mx-auto p-3">
                         <MessageAdminPanel
-                            isDarkMode={isDarkMode}
                             isAdmin={isAdmin}
                             isSuperAdmin={isSuperAdmin}
                             isGlobalMute={isGlobalMute}

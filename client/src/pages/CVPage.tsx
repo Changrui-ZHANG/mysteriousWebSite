@@ -108,12 +108,12 @@ export function CV({ isDarkMode }: CVProps) {
     return (
         <div
             ref={containerRef}
-            className={`min-h-screen transition-colors duration-1000 overflow-x-hidden ${isDarkMode ? 'bg-[#0a0a0b] text-white' : 'bg-[#fcfcfd] text-[#1d1d1f]'}`}
+            className="page-container overflow-x-hidden"
         >
             {/* Background Aesthetic Layers */}
             <div className="fixed inset-0 pointer-events-none opacity-30 blur-[100px] overflow-hidden glass-blobs">
-                <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full ${isDarkMode ? 'bg-blue-900/40' : 'bg-blue-200/40'}`}></div>
-                <div className={`absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full ${isDarkMode ? 'bg-indigo-900/30' : 'bg-indigo-100/40'}`}></div>
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/20 dark:bg-blue-900/40"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/20 dark:bg-indigo-900/30"></div>
             </div>
 
             {/* 1. LiquidGlass Hero Cover */}
@@ -127,14 +127,13 @@ export function CV({ isDarkMode }: CVProps) {
                 </div>
 
                 <div className="relative z-10 text-center space-y-8">
-                    <div className={`inline-block px-6 py-2 rounded-full border text-xs font-mono tracking-[0.3em] uppercase ${isDarkMode ? 'border-blue-500/30 bg-blue-500/5 text-blue-400' : 'border-blue-500/20 bg-blue-50 text-blue-600'
-                        }`}>
+                    <div className="inline-block px-6 py-2 rounded-full border text-xs font-mono tracking-[0.3em] uppercase border-blue-500/30 bg-blue-500/10 text-blue-400">
                         {t('cv.interactive_portfolio')}
                     </div>
                     <h1 className="text-8xl sm:text-[160px] font-black tracking-tighter leading-none mb-4 mix-blend-difference">
-                        {t('cv.name')}
+                        {t('brand.author_name')}
                     </h1>
-                    <p className={`text-2xl sm:text-4xl font-medium tracking-tight ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    <p className="text-2xl sm:text-4xl font-medium tracking-tight text-secondary">
                         {t('cv.role')}
                     </p>
                     <div className="pt-12 flex justify-center gap-6">
@@ -162,9 +161,7 @@ export function CV({ isDarkMode }: CVProps) {
                         <button
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
-                            className={`p-6 rounded-full border backdrop-blur-3xl transition-all hover:scale-110 active:scale-95 shadow-2xl ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-black/40 border-white/10 hover:bg-black/60 text-white' : 'bg-white/80 border-slate-200 hover:bg-white text-slate-800'
-                                }`}
+                            className={`p-6 rounded-full border backdrop-blur-3xl transition-all hover:scale-110 active:scale-95 shadow-2xl btn-secondary ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''}`}
                         >
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         </button>
@@ -173,9 +170,7 @@ export function CV({ isDarkMode }: CVProps) {
                         <button
                             onClick={nextExp}
                             disabled={currentExpIndex === experiences.length - 1}
-                            className={`p-6 rounded-full border backdrop-blur-3xl transition-all hover:scale-110 active:scale-95 shadow-2xl ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-black/40 border-white/10 hover:bg-black/60 text-white' : 'bg-white/80 border-slate-200 hover:bg-white text-slate-800'
-                                }`}
+                            className={`p-6 rounded-full border backdrop-blur-3xl transition-all hover:scale-110 active:scale-95 shadow-2xl btn-secondary ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''}`}
                         >
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
@@ -198,16 +193,14 @@ export function CV({ isDarkMode }: CVProps) {
                         <button
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
-                            className={`p-4 rounded-full border backdrop-blur-xl transition-all shadow-lg ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-slate-100 border-slate-200'}`}
+                            className={`p-4 rounded-full border backdrop-blur-xl transition-all shadow-lg btn-secondary ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''}`}
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         </button>
                         <button
                             onClick={nextExp}
                             disabled={currentExpIndex === experiences.length - 1}
-                            className={`p-4 rounded-full border backdrop-blur-xl transition-all shadow-lg ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''
-                                } ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-slate-100 border-slate-200'}`}
+                            className={`p-4 rounded-full border backdrop-blur-xl transition-all shadow-lg btn-secondary ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''}`}
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
@@ -228,8 +221,8 @@ export function CV({ isDarkMode }: CVProps) {
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                             {Object.entries(skills).map(([category, items]) => (
                                 <div key={category} className="space-y-6">
-                                    <h4 className={`text-xs font-mono uppercase tracking-widest ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{category}</h4>
-                                    <div className={`space-y-3 ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                                    <h4 className="text-xs font-mono uppercase tracking-widest text-muted">{category}</h4>
+                                    <div className="space-y-3">
                                         {items.map((s, i) => (
                                             <div key={i} className="flex items-center gap-3">
                                                 <span className="text-xl text-blue-500">{s.icon}</span>
@@ -242,31 +235,30 @@ export function CV({ isDarkMode }: CVProps) {
                         </div>
                     </GlassPanel>
 
-                    <GlassPanel className="md:col-span-4 p-12 rounded-[50px] bg-blue-600 !border-blue-500 shadow-[0_0_40px_rgba(37,99,235,0.4)] flex flex-col justify-between" isDarkMode={isDarkMode}>
+                    <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4 overflow-hidden relative" isDarkMode={isDarkMode}>
+                        <div className="absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-green-500"></div>
                         <h4 className="text-sm font-mono tracking-[0.2em] text-white/60 uppercase font-bold">{t('cv.masters_degree')}</h4>
                         <div className="text-white relative z-10">
                             <h5 className="text-3xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
                             <p className="text-white/80 text-lg uppercase tracking-wider">{education[0].degree}</p>
                         </div>
                         {/* Stamp Logo */}
-                        <div className={`absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 ${isDarkMode ? 'invert opacity-5' : 'opacity-10'}`}>
+                        <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-20 dark:opacity-10">
                             {education[0].icon}
                         </div>
                     </GlassPanel>
 
                     <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4 overflow-hidden relative" isDarkMode={isDarkMode}>
-                        <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-blue-500`}></div>
+                        <div className="absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-blue-500"></div>
                         <h4 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
                         <div className="relative z-10">
-                            <h5 className={`text-2xl font-black leading-tight mb-2 uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{education[1].school}</h5>
-                            <p className={`text-lg font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{education[1].degree}</p>
+                            <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[1].school}</h5>
+                            <p className="text-lg font-light text-secondary">{education[1].degree}</p>
                         </div>
                         {/* Stamp Logo */}
-                        <div className={`absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 ${isDarkMode ? 'invert opacity-5' : 'opacity-10'}`}>
+                        <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-20 dark:opacity-10">
                             {education[1].icon}
                         </div>
-                        <h5 className={`text-2xl font-black leading-tight mb-2 uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{education[1].school}</h5>
-                        <p className={`text-lg font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{education[1].degree}</p>
                     </GlassPanel>
                 </div>
 
@@ -274,11 +266,11 @@ export function CV({ isDarkMode }: CVProps) {
                     <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000"></div>
                     <div className="text-center md:text-left">
                         <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
-                        <p className={`text-2xl font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{t('cv.connect_description')}</p>
+                        <p className="text-2xl font-light text-secondary">{t('cv.connect_description')}</p>
                     </div>
                     <div className="flex gap-6 shrink-0 z-10">
-                        <a href="mailto:m.zhang.changrui@gmail.com" className="px-12 py-5 bg-blue-600 text-white rounded-full text-xl font-bold shadow-2xl hover:bg-blue-700 hover:scale-105 transition-all">{t('cv.direct_mail')}</a>
-                        <a href={SOCIAL_LINKS.LINKEDIN} className={`px-12 py-5 border rounded-full text-xl font-bold hover:scale-105 transition-all ${isDarkMode ? 'border-white/20 bg-white/5 hover:bg-white/10' : 'border-slate-200 bg-white hover:bg-slate-50'}`}>{t('cv.linkedin')}</a>
+                        <a href="mailto:m.zhang.changrui@gmail.com" className="btn-primary px-12 py-5 text-xl shadow-2xl hover:scale-105 transition-all">{t('cv.direct_mail')}</a>
+                        <a href={SOCIAL_LINKS.LINKEDIN} className="btn-secondary px-12 py-5 text-xl hover:scale-105 transition-all">{t('cv.linkedin')}</a>
                     </div>
                 </GlassPanel>
             </section>

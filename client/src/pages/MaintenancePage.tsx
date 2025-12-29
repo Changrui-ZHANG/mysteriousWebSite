@@ -3,14 +3,12 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 interface MaintenancePageProps {
-    isDarkMode: boolean;
-    toggleTheme: () => void;
     message?: string;
     activatedBy?: string;
     onAdminLogin?: (code: string) => Promise<boolean>;
 }
 
-export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, toggleTheme: _toggleTheme, message, activatedBy, onAdminLogin }) => {
+export const MaintenancePage: React.FC<MaintenancePageProps> = ({ message, activatedBy, onAdminLogin }) => {
     const { t } = useTranslation();
     const [showAdminInput, setShowAdminInput] = React.useState(false);
     const [loginCode, setLoginCode] = React.useState('');
@@ -31,10 +29,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
     };
 
     return (
-        <div className={`min-h-screen flex flex-col items-center justify-center p-8 text-center relative ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
-
-
-
+        <div className="page-container flex flex-col items-center justify-center p-8 text-center relative">
             <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -45,19 +40,19 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">
                     {t('maintenance.title')}
                 </h1>
-                <p className="text-xl opacity-70 max-w-md mx-auto mb-8 font-mono whitespace-pre-wrap">
+                <p className="text-xl text-secondary max-w-md mx-auto mb-8 font-mono whitespace-pre-wrap">
                     {message || t('maintenance.description')}
                 </p>
 
                 {activatedBy && (
-                    <div className="mb-8 text-sm opacity-50 font-mono">
+                    <div className="mb-8 text-sm text-muted font-mono">
                         {t('maintenance.disabled_by')}: <span className="font-bold">{activatedBy}</span>
                     </div>
                 )}
 
-                <div className={`h-1 w-24 mx-auto rounded-full ${isDarkMode ? 'bg-white/20' : 'bg-black/10'} mb-12`}>
+                <div className="h-1 w-24 mx-auto rounded-full bg-border-default/20 mb-12">
                     <motion.div
-                        className={`h-full rounded-full ${isDarkMode ? 'bg-blue-500' : 'bg-blue-600'}`}
+                        className="h-full rounded-full bg-blue-500"
                         animate={{ width: ['0%', '100%', '0%'], x: ['0%', '100%', '0%'] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     />
@@ -69,7 +64,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                         {!showAdminInput ? (
                             <button
                                 onClick={() => setShowAdminInput(true)}
-                                className={`text-sm opacity-30 hover:opacity-100 transition-opacity flex items-center gap-2 border px-4 py-2 rounded-lg ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
+                                className="btn-secondary text-sm opacity-30 hover:opacity-100 flex items-center gap-2"
                             >
                                 🔐 {t('auth.admin_access')}
                             </button>
@@ -81,13 +76,13 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                                         value={loginCode}
                                         onChange={(e) => setLoginCode(e.target.value)}
                                         placeholder={t('admin.code_placeholder')}
-                                        className={`px-4 py-2 rounded-lg border text-center font-mono ${isDarkMode ? 'bg-white/10 border-white/20 focus:border-white/50' : 'bg-black/5 border-black/10 focus:border-black/30'} outline-none transition-colors`}
+                                        className="input text-center font-mono w-48"
                                         autoFocus
                                     />
                                     <button
                                         type="submit"
                                         disabled={isChecking}
-                                        className={`px-4 py-2 rounded-lg font-bold ${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} transition-colors disabled:opacity-50`}
+                                        className="btn-primary"
                                     >
                                         {isChecking ? '...' : t('common.go')}
                                     </button>
@@ -95,7 +90,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ isDarkMode, to
                                 <button
                                     type="button"
                                     onClick={() => setShowAdminInput(false)}
-                                    className="text-xs opacity-40 hover:opacity-80 hover:underline"
+                                    className="text-xs text-muted hover:text-secondary hover:underline"
                                 >
                                     {t('common.cancel')}
                                 </button>

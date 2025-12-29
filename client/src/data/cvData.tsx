@@ -1,4 +1,3 @@
-import React from 'react';
 import { DiRedis } from "react-icons/di";
 import { FaReact, FaJava, FaPython, FaDocker, FaLinux, FaGitAlt, FaJenkins, FaWindows, FaServer, FaDatabase } from "react-icons/fa";
 import { SiTypescript, SiTailwindcss, SiVite, SiThreedotjs, SiSpringboot, SiScala, SiCplusplus, SiPostgresql, SiMariadb, SiMysql, SiElasticsearch } from "react-icons/si";

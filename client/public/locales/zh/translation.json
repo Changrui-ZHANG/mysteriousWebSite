@@ -7,6 +7,10 @@
         "back": "返回",
         "unknown_error": "未知错误"
     },
+    "brand": {
+        "author_name": "张常瑞",
+        "copyright": "© 2025 张常瑞。保留所有权利。"
+    },
     "nav": {
         "home": "主页",
         "cv": "简历",
@@ -139,7 +143,6 @@
     },
     "cv": {
         "role": "全栈开发人员",
-        "name": "张常瑞",
         "interactive_portfolio": "互动作品集",
         "work_history": "工作经历",
         "experience_gallery": "经验画廊。",
@@ -735,11 +738,9 @@
         ]
     },
     "hero": {
-        "title": "张常瑞",
         "subtitle": "逐行构建我的未来。",
         "explore": "探索"
     },
-    "signature": "张常瑞",
     "story": {
         "title": "我的哲学",
         "description": "我将代码行转化为视觉和交互体验，融合严谨的逻辑与无限的创造力，赋予创意以生命。"
@@ -752,8 +753,7 @@
         "terms": "服务条款",
         "newsletter": "通讯",
         "email_placeholder": "邮箱",
-        "join": "联系我",
-        "copyright": "© 2025 张常瑞。保留所有权利。"
+        "join": "联系我"
     },
     "legal_page": {
         "updated": "最后更新：2025年12月",

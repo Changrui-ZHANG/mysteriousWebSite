@@ -15,6 +15,8 @@ import { PrivacyPage } from './pages/PrivacyPage'
 import { MaintenancePage } from './pages/MaintenancePage'
 import { LearningPage } from './pages/LearningPage'
 import { STORAGE_KEYS } from './constants/authStorage'
+import { useThemeManager } from './hooks/useThemeManager'
+import { postJson } from './api/httpClient'
 import './App.css'
 
 interface User {
@@ -23,18 +25,7 @@ interface User {
 }
 
 function AppContent() {
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        const savedTheme = localStorage.getItem('theme');
-        return savedTheme ? savedTheme === 'dark' : true;
-    });
-
-    const toggleTheme = () => {
-        setIsDarkMode(prev => {
-            const newMode = !prev;
-            localStorage.setItem('theme', newMode ? 'dark' : 'light');
-            return newMode;
-        });
-    };
+    const { isDarkMode, toggleTheme } = useThemeManager();
     const location = useLocation()
     const { i18n } = useTranslation()
 
@@ -85,17 +76,10 @@ function AppContent() {
             });
     }, []); // Only run once on mount
 
-    // Sync body background with theme to prevent white flashes on mobile overscroll
-    useEffect(() => {
-        const color = isDarkMode ? '#050505' : '#f5f5f7';
-        document.body.style.backgroundColor = color;
-        document.documentElement.style.backgroundColor = color;
-    }, [isDarkMode]);
-
     const handleLogin = (newUser: User) => {
         setUser(newUser);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
-        setShowAuthModal(false); // Close modal on success
+        setShowAuthModal(false);
 
         // Fetch and apply user's language preference immediately
         fetch(`/api/users/${newUser.userId}/language`)
@@ -135,8 +119,6 @@ function AppContent() {
 
     const handleAdminLogin = async (code: string) => {
         try {
-            const { postJson } = await import('./api/httpClient');
-
             const response = await postJson<{ role: string; message: string }>('/api/auth/verify-admin', { code });
 
             if (response.role === 'super_admin') {
@@ -170,16 +152,13 @@ function AppContent() {
         localStorage.removeItem(STORAGE_KEYS.ADMIN_CODE);
     };
 
-    // Helper to check boolean string
     const isEnabled = (key: string) => siteSettings[key] === 'true';
 
     return (
-        <div className={`relative min-h-screen transition-colors duration-500 font-body ${isDarkMode ? 'bg-dark text-white' : 'bg-light text-gray-900'}`}>
+        <div className="page-container relative font-[var(--font-body)]">
             <Preloader isDarkMode={isDarkMode} />
-            {/* Hide scroll progress on messages page as it has its own scrolling behavior */}
             {!location.pathname.startsWith('/messages') && <ScrollProgress isDarkMode={isDarkMode} />}
 
-            {/* Global Auth Modal */}
             <AuthModal
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
@@ -189,8 +168,6 @@ function AppContent() {
 
             {(settingsLoaded && isEnabled('SITE_MAINTENANCE_MODE') && !isAdmin) ? (
                 <MaintenancePage
-                    isDarkMode={isDarkMode}
-                    toggleTheme={toggleTheme}
                     message={siteSettings['SITE_MAINTENANCE_MESSAGE']}
                     activatedBy={siteSettings['SITE_MAINTENANCE_BY']}
                     onAdminLogin={handleAdminLogin}
@@ -216,13 +193,11 @@ function AppContent() {
                         }}
                     />
 
-                    {/* Shared Background - Only on Home */}
                     {location.pathname === '/' && (
                         <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none">
                             <VisualEffect isDarkMode={isDarkMode} />
-                            {/* Aurora Blobs */}
-                            <div className={`aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] ${isDarkMode ? 'bg-[#4a148c]' : 'bg-[#b2ebf2]'}`} style={{ animationDelay: '0s' }}></div>
-                            <div className={`aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] ${isDarkMode ? 'bg-[#1a237e]' : 'bg-[#e1bee7]'}`} style={{ animationDelay: '2s' }}></div>
+                            <div className="aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] bg-[var(--color-accent-purple)]/30" style={{ animationDelay: '0s' }}></div>
+                            <div className="aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] bg-[var(--color-accent-cyan)]/30" style={{ animationDelay: '2s' }}></div>
                             <LiquidDecoration isDarkMode={isDarkMode} className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
                         </div>
                     )}
@@ -231,14 +206,14 @@ function AppContent() {
                         <ErrorBoundary>
                             <Routes>
                                 <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
-                                <Route path="/cv" element={isEnabled('PAGE_CV_ENABLED') ? <CV isDarkMode={isDarkMode} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/game" element={isEnabled('PAGE_GAME_ENABLED') ? <Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isDarkMode={isDarkMode} isAdmin={isAdmin} /> : <MaintenancePage isDarkMode={isDarkMode} toggleTheme={toggleTheme} message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/cv" element={isEnabled('PAGE_CV_ENABLED') ? <CV isDarkMode={isDarkMode} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/game" element={isEnabled('PAGE_GAME_ENABLED') ? <Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isDarkMode={isDarkMode} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/learning" element={<LearningPage isDarkMode={isDarkMode} />} />
-                                <Route path="/terms" element={<TermsPage isDarkMode={isDarkMode} />} />
-                                <Route path="/privacy" element={<PrivacyPage isDarkMode={isDarkMode} />} />
+                                <Route path="/terms" element={<TermsPage />} />
+                                <Route path="/privacy" element={<PrivacyPage />} />
                             </Routes>
                         </ErrorBoundary>
                     </div>

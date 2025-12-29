@@ -7,6 +7,10 @@
         "back": "Retour",
         "unknown_error": "Erreur inconnue"
     },
+    "brand": {
+        "author_name": "Changrui ZHANG",
+        "copyright": "© 2025 Changrui ZHANG. Tous droits réservés."
+    },
     "nav": {
         "home": "ACCUEIL",
         "cv": "CV",
@@ -139,7 +143,6 @@
     },
     "cv": {
         "role": "Développeur Fullstack",
-        "name": "Changrui ZHANG",
         "interactive_portfolio": "Portfolio Interactif",
         "work_history": "Parcours Professionnel",
         "experience_gallery": "Galerie d'Expériences.",
@@ -740,11 +743,9 @@
         ]
     },
     "hero": {
-        "title": "Changrui ZHANG",
         "subtitle": "Façonner mon avenir, ligne par ligne.",
         "explore": "Explorer"
     },
-    "signature": "Changrui ZHANG",
     "story": {
         "title": "Ma Philosophie",
         "description": "Je transforme des lignes de code en expériences visuelles et interactives, fusionnant logique rigoureuse et créativité sans limite pour donner vie aux idées."
@@ -757,8 +758,7 @@
         "terms": "Conditions d'Utilisation",
         "newsletter": "Newsletter",
         "email_placeholder": "Email",
-        "join": "Me Contacter",
-        "copyright": "© 2025 Changrui ZHANG. Tous droits réservés."
+        "join": "Me Contacter"
     },
     "legal_page": {
         "updated": "Dernière mise à jour : Décembre 2025",

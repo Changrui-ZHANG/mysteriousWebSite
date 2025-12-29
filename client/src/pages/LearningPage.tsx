@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaSyncAlt, FaRegHeart, FaStar } from 'react-icons/fa';
 import { useSpeech } from '../hooks/useSpeech';
-import { useTheme } from '../hooks/useTheme';
 import { fetchJson, postJson } from '../api/httpClient';
 import { STORAGE_KEYS } from '../constants/authStorage';
 import AuthModal from '../features/auth/AuthModal';
@@ -16,10 +15,13 @@ interface User {
     username: string;
 }
 
-export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
+interface LearningPageProps {
+    isDarkMode: boolean;
+}
+
+export function LearningPage({ isDarkMode }: LearningPageProps) {
     const { t, i18n } = useTranslation();
     const { speak } = useSpeech({ lang: 'fr-FR' });
-    const theme = useTheme(isDarkMode);
 
     const [item, setItem] = useState<VocabularyItem | null>(null);
     const [loading, setLoading] = useState(true);
@@ -140,22 +142,22 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLogin} isDarkMode={isDarkMode} />
 
             {!user ? (
-                <div className={`min-h-screen flex items-center justify-center ${theme.textPrimary}`}>
+                <div className="page-container flex items-center justify-center">
                     <div className="text-center">
                         <GradientHeading gradient="amber-orange" level={1} className="mb-4">{t('learning.title')}</GradientHeading>
-                        <p className="text-lg opacity-70 mb-6">{t('learning.login_required')}</p>
+                        <p className="text-lg text-secondary mb-6">{t('learning.login_required')}</p>
                         <Button color="amber" size="lg" rounded="full" onClick={() => setShowAuthModal(true)}>{t('auth.login')}</Button>
                     </div>
                 </div>
             ) : (
-                <div className={`min-h-screen pt-24 pb-12 px-4 flex flex-col items-center justify-center transition-colors duration-500 ${theme.textPrimary}`}>
+                <div className="page-container pt-24 pb-12 px-4 flex flex-col items-center justify-center">
                     <div className="max-w-2xl w-full text-center mb-8">
                         <GradientHeading gradient="amber-orange" level={1} className="font-serif mb-4">{t('learning.title')}</GradientHeading>
                         <div className="flex justify-center gap-4 mt-6">
-                            <button onClick={() => switchMode('discover')} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${mode === 'discover' ? 'bg-amber-500 text-white' : 'opacity-50 hover:opacity-100 bg-current/10'}`}>
+                            <button onClick={() => switchMode('discover')} className={`btn-pill text-sm ${mode === 'discover' ? 'bg-amber-500 text-white' : 'btn-ghost'}`}>
                                 {t('learning.discover')}
                             </button>
-                            <button onClick={() => switchMode('review')} className={`px-4 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${mode === 'review' ? 'bg-red-500 text-white' : 'opacity-50 hover:opacity-100 bg-current/10'}`}>
+                            <button onClick={() => switchMode('review')} className={`btn-pill text-sm flex items-center gap-2 ${mode === 'review' ? 'bg-red-500 text-white' : 'btn-ghost'}`}>
                                 <FaStar /> {t('learning.review')} ({favorites.size})
                             </button>
                         </div>
@@ -166,7 +168,7 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
                             {loading ? (
                                 <LoadingSpinner size="lg" color="amber" className="absolute inset-0 h-64" />
                             ) : (mode === 'review' && favoriteItems.length === 0) ? (
-                                <div className="text-center py-20 opacity-50">
+                                <div className="text-center py-20 text-muted">
                                     <FaRegHeart className="text-6xl mx-auto mb-4" />
                                     <p>{t('learning.no_favorites')}</p>
                                     <button onClick={() => switchMode('discover')} className="mt-4 underline">{t('learning.back_to_discover')}</button>
@@ -185,7 +187,7 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
                                 <div className="text-center py-20 text-red-500/70">
                                     <FaSyncAlt className="text-4xl mx-auto mb-4 opacity-50" />
                                     <p className="text-lg">{t('learning.load_error')}</p>
-                                    <button onClick={fetchRandom} className="mt-4 px-6 py-2 bg-gray-200 dark:bg-gray-800 rounded-full hover:opacity-80 transition-opacity">{t('learning.retry')}</button>
+                                    <button onClick={fetchRandom} className="btn-secondary mt-4">{t('learning.retry')}</button>
                                 </div>
                             )}
                         </AnimatePresence>
@@ -193,7 +195,7 @@ export function LearningPage({ isDarkMode }: { isDarkMode: boolean }) {
 
                     {mode === 'discover' && (
                         <div className="mt-12 flex gap-4">
-                            <button onClick={fetchRandom} className={`group flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105 active:scale-95 shadow-lg ${isDarkMode ? 'bg-white text-gray-900 hover:bg-amber-400' : 'bg-gray-900 text-white hover:bg-amber-600'}`}>
+                            <button onClick={fetchRandom} className="btn-primary btn-pill group flex items-center gap-3 px-8 py-4 text-lg shadow-lg hover:scale-105 active:scale-95">
                                 <FaSyncAlt className={`transition-transform duration-500 ${loading ? 'animate-spin' : 'group-hover:rotate-180'}`} />
                                 <span>{t('learning.new_expression')}</span>
                             </button>

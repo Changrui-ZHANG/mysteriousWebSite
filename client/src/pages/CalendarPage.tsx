@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { fetchJson, postJson } from '../api/httpClient';
 import { useAdminCode } from '../hooks/useAdminCode';
-import { useTheme } from '../hooks/useTheme';
 import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../constants/calendarZones';
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { HolidayModal } from '../features/calendar/HolidayModal';
@@ -20,7 +19,6 @@ interface CalendarPageProps {
 export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
     const { t, i18n } = useTranslation();
     const adminCode = useAdminCode();
-    const theme = useTheme(isDarkMode);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [holidays, setHolidays] = useState<Holiday[]>([]);
     const [schoolHolidays, setSchoolHolidays] = useState<SchoolHoliday[]>([]);
@@ -113,17 +111,17 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
         [i18n.language]);
 
     return (
-        <div className={`min-h-screen pt-24 pb-12 px-4 ${theme.textPrimary}`}>
+        <div className="page-container pt-24 pb-12 px-4">
             <div className="max-w-7xl mx-auto">
                 <header className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <GradientHeading gradient="cyan-purple" level={1}>{t('nav.calendar')} {year}</GradientHeading>
 
                     {isAdmin && (
-                        <div className="flex flex-wrap items-center gap-2 bg-white/5 p-2 rounded-lg justify-center md:justify-start max-w-4xl">
-                            <span className="text-sm opacity-70 mr-2 w-full md:w-auto text-center md:text-left">{t('calendar.zones_admin_label')}</span>
+                        <div className="flex flex-wrap items-center gap-2 bg-muted/50 p-2 rounded-lg justify-center md:justify-start max-w-4xl">
+                            <span className="text-sm text-muted mr-2 w-full md:w-auto text-center md:text-left">{t('calendar.zones_admin_label')}</span>
                             {Object.entries(ZONE_LABELS).map(([zoneKey, label]) => (
                                 <button key={zoneKey} onClick={() => toggleZone(zoneKey)}
-                                    className={`px-3 py-1 rounded text-xs font-bold transition-colors whitespace-nowrap ${selectedZones.includes(zoneKey) ? 'bg-blue-500 text-white shadow-lg' : 'bg-white/10 hover:bg-white/20 text-gray-400'}`}>
+                                    className={`px-3 py-1 rounded text-xs font-bold transition-colors whitespace-nowrap ${selectedZones.includes(zoneKey) ? 'bg-blue-500 text-white shadow-lg' : 'btn-ghost'}`}>
                                     {label}
                                 </button>
                             ))}
@@ -131,8 +129,8 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                     )}
 
                     <div className="flex gap-2">
-                        <button onClick={() => setCurrentDate(new Date(year - 1, 0))} className="px-4 py-2 rounded bg-white/10 hover:bg-white/20">← {year - 1}</button>
-                        <button onClick={() => setCurrentDate(new Date(year + 1, 0))} className="px-4 py-2 rounded bg-white/10 hover:bg-white/20">{year + 1} →</button>
+                        <button onClick={() => setCurrentDate(new Date(year - 1, 0))} className="btn-secondary">← {year - 1}</button>
+                        <button onClick={() => setCurrentDate(new Date(year + 1, 0))} className="btn-secondary">{year + 1} →</button>
                     </div>
                 </header>
 
@@ -142,9 +140,9 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {months.map(month => (
                             <motion.div key={month} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: month * 0.05 }}
-                                className={`rounded-xl p-4 border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-md'}`}>
+                                className="card">
                                 <h3 className="text-xl font-bold mb-4 text-center capitalize">{monthNames[month]}</h3>
-                                <div className="grid grid-cols-7 mb-2 text-center text-sm opacity-50">
+                                <div className="grid grid-cols-7 mb-2 text-center text-sm text-muted">
                                     {weekDays.map(d => <div key={d} className="capitalize">{d}</div>)}
                                 </div>
                                 <div className="grid grid-cols-7 gap-1 text-sm">
@@ -164,14 +162,14 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                                         else if (schoolVar) {
                                             const isSummer = schoolVar.description.toLowerCase().includes('été') || schoolVar.description.toLowerCase().includes('ete');
                                             bgClass = isSummer ? "bg-orange-100/10 text-orange-300/60" : "bg-yellow-400/30 text-yellow-500";
-                                        } else if (isWknd) textClass = "opacity-50";
+                                        } else if (isWknd) textClass = "text-muted";
 
                                         return (
                                             <div key={day}
                                                 onClick={() => { if (holiday) { setSelectedHoliday(holiday); setIsModalOpen(true); } }}
-                                                className={`h-8 flex items-center justify-center rounded relative group ${bgClass} ${textClass} ${!bgClass && isDarkMode ? 'hover:bg-white/5' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 transition-transform' : 'cursor-default'}`}>
+                                                className={`h-8 flex items-center justify-center rounded relative group ${bgClass} ${textClass} ${!bgClass ? 'hover:bg-muted/50' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 transition-transform' : 'cursor-default'}`}>
                                                 {day}
-                                                {holiday && <div className="absolute top-0.5 right-0.5 z-10 opacity-40 hover:opacity-100 transition-opacity"><FaQuestionCircle className="text-[10px] text-blue-400 bg-white/50 dark:bg-gray-800/50 rounded-full" /></div>}
+                                                {holiday && <div className="absolute top-0.5 right-0.5 z-10 opacity-40 hover:opacity-100 transition-opacity"><FaQuestionCircle className="text-[10px] text-blue-400 bg-surface/50 rounded-full" /></div>}
                                                 {(holiday || schoolVar) && (
                                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 w-max max-w-[150px] p-2 rounded bg-black/90 text-white text-xs text-center pointer-events-none">
                                                         {holiday && (HOLIDAY_NAMES[holiday.nom_jour_ferie] || holiday.nom_jour_ferie)}

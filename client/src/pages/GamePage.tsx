@@ -9,7 +9,7 @@ import ZombieShooter from '../features/games/components/ZombieShooter';
 import Leaderboard from '../features/games/components/Leaderboard';
 import { fetchJson, postJson } from '../api/httpClient';
 import { useAdminCode } from '../hooks/useAdminCode';
-import { useTheme } from '../hooks/useTheme';
+
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { GradientHeading } from '../components';
 import { GameSelector, GuestAlertModal } from '../components/game';
@@ -18,7 +18,6 @@ import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps 
 export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
     const adminCode = useAdminCode();
-    const theme = useTheme(isDarkMode);
     const [activeGame, setActiveGame] = useState<GameKey>('brick');
 
     const [personalBest, setPersonalBest] = useState<PersonalBest | null>(null);
@@ -136,7 +135,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
     };
 
     return (
-        <div className={`min-h-screen pt-24 pb-12 px-4 ${theme.textPrimary} ${isDarkMode ? 'bg-black' : 'bg-gray-100'}`}>
+        <div className="page-container pt-24 pb-12 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center w-full mb-8">
@@ -145,7 +144,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                 </motion.div>
 
                 <div className="mb-12">
-                    <Leaderboard gameType={activeGame} refreshTrigger={refreshLeaderboard} isDarkMode={isDarkMode} isSuperAdmin={isSuperAdmin} />
+                    <Leaderboard gameType={activeGame} refreshTrigger={refreshLeaderboard} isSuperAdmin={isSuperAdmin} />
                 </div>
 
                 <GameSelector

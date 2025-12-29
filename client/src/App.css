@@ -1,47 +1,17 @@
-/* App specific styles */
+/* App specific styles - Non-Tailwind animations */
 
+/* Film grain effect */
 @keyframes grain {
-
-    0%,
-    100% {
-        transform: translate(0, 0);
-    }
-
-    10% {
-        transform: translate(-5%, -10%);
-    }
-
-    20% {
-        transform: translate(-15%, 5%);
-    }
-
-    30% {
-        transform: translate(7%, -25%);
-    }
-
-    40% {
-        transform: translate(-5%, 25%);
-    }
-
-    50% {
-        transform: translate(-15%, 10%);
-    }
-
-    60% {
-        transform: translate(15%, 0%);
-    }
-
-    70% {
-        transform: translate(0%, 15%);
-    }
-
-    80% {
-        transform: translate(3%, 35%);
-    }
-
-    90% {
-        transform: translate(-10%, 10%);
-    }
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -10%); }
+    20% { transform: translate(-15%, 5%); }
+    30% { transform: translate(7%, -25%); }
+    40% { transform: translate(-5%, 25%); }
+    50% { transform: translate(-15%, 10%); }
+    60% { transform: translate(15%, 0%); }
+    70% { transform: translate(0%, 15%); }
+    80% { transform: translate(3%, 35%); }
+    90% { transform: translate(-10%, 10%); }
 }
 
 .film-grain {
@@ -52,39 +22,27 @@
     bottom: -50%;
     width: 200%;
     height: 200%;
-    /* Using a base64 noise or a public noise asset */
     background: transparent url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAACAgIBAQEAAAAAAAD///8AAAB3Rl2sAAAACHRSTlMA/////////wDuncYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAwSURBVDjLY2AYBaNgKL2BAQcwa6CBAAcw66CBAQcw66CBAQcw66CBAQcw66CBAQcAdxj01PO6c/cAAAAASUVORK5CYII=') repeat 0 0;
     background-repeat: repeat;
     animation: grain 8s steps(10) infinite;
     opacity: 0.1;
-    /* Subtle */
     z-index: 100;
     pointer-events: none;
 }
 
+/* Aurora blob animation */
 .aurora-blob {
     position: absolute;
     filter: blur(80px);
     z-index: 0;
     opacity: 0.6;
     border-radius: 50%;
-    animation: float 10s ease-in-out infinite;
+    animation: aurora-float 10s ease-in-out infinite;
 }
 
-@keyframes float {
-    0% {
-        transform: translate(0px, 0px) scale(1);
-    }
-
-    33% {
-        transform: translate(30px, -50px) scale(1.1);
-    }
-
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-    }
-
-    100% {
-        transform: translate(0px, 0px) scale(1);
-    }
+@keyframes aurora-float {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
 }

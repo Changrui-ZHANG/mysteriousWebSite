@@ -1,4 +1,3 @@
-import React from 'react';
 import { GlassPanel } from '../../components/ui/GlassPanel';
 
 interface Experience {

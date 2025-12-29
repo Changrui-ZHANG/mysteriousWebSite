@@ -1,47 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/**
+ * Main CSS Entry Point
+ * 
+ * Imports the design system which includes:
+ * - Tailwind CSS v4
+ * - Design tokens (@theme)
+ * - Theme variants (light/dark)
+ * - Component styles
+ */
 
-:root {
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Outfit', sans-serif;
-  --font-serif: 'Playfair Display', serif;
-
-  color-scheme: light dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@keyframes bounce-fast {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10%);
-  }
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-5%);
-  }
-}
-
-.animate-bounce-fast {
-  animation: bounce-fast 0.3s infinite;
-}
-
-.animate-float {
-  animation: float 2s ease-in-out infinite;
-}
+@import './styles/design-system.css';

@@ -13,11 +13,10 @@ interface Score {
 interface LeaderboardProps {
     gameType: string;
     refreshTrigger: number;
-    isDarkMode: boolean;
     isSuperAdmin?: boolean;
 }
 
-export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSuperAdmin = false }: LeaderboardProps) {
+export default function Leaderboard({ gameType, refreshTrigger, isSuperAdmin = false }: LeaderboardProps) {
     const { t } = useTranslation();
     const [scores, setScores] = useState<Score[]>([]);
     const [refresh, setRefresh] = useState(0);
@@ -58,13 +57,13 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
     // if (scores.length === 0) return null; // Don't hide completely
 
     return (
-        <div className={`mt-8 max-w-md mx-auto p-4 rounded-xl border ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/10'} backdrop-blur-sm`}>
+        <div className="leaderboard-card mt-8 max-w-md mx-auto">
             <h3 className="text-center font-bold text-lg mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent uppercase tracking-wider">
                 🏆 {t('game.leaderboard')} 🏆
             </h3>
 
             {scores.length === 0 ? (
-                <div className={`text-center py-4 opacity-60 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <div className="text-center py-4 opacity-60 text-[var(--color-text-muted)]">
                     {t('game.no_scores_yet')}
                 </div>
             ) : (
@@ -79,7 +78,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isDarkMode, isSu
                                     index === 1 ? 'text-gray-400 text-lg' :
                                         'text-orange-600 text-base'
                                     }`}>#{index + 1}</span>
-                                <span className={`font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>{score.username}</span>
+                                <span className="font-bold text-[var(--color-text-primary)]">{score.username}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="font-mono font-bold text-fuchsia-400">

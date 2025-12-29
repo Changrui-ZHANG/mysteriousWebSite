@@ -6,6 +6,18 @@
   <link rel="icon" type="image/svg+xml" href="/code-logo.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Espace Changrui</title>
+  <!-- Theme initialization script - prevents flash of wrong theme -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('app-theme') || 'dark';
+      const resolved = theme === 'system' 
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : theme;
+      document.documentElement.setAttribute('data-theme', resolved);
+      document.documentElement.classList.add(resolved);
+      document.documentElement.style.backgroundColor = resolved === 'dark' ? '#0a0a0b' : '#fcfcfd';
+    })();
+  </script>
 </head>
 
 <body>

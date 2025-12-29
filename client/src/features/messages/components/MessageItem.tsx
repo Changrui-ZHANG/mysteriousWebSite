@@ -19,7 +19,6 @@ interface MessageItemProps {
     msg: Message;
     index: number;
     isOwn: boolean;
-    isDarkMode: boolean;
     isHighlighted: boolean;
     canDelete: boolean;
     translation?: string;
@@ -35,7 +34,6 @@ export function MessageItem({
     msg,
     index,
     isOwn,
-    isDarkMode,
     isHighlighted,
     canDelete,
     translation,
@@ -62,6 +60,13 @@ export function MessageItem({
         return name.charAt(0).toUpperCase();
     };
 
+    const getBubbleClass = () => {
+        if (isOwn) {
+            return msg.isVerified ? 'message-bubble-verified-own' : 'message-bubble-own';
+        }
+        return msg.isVerified ? 'message-bubble-verified-other' : 'message-bubble-other';
+    };
+
     return (
         <motion.div
             id={`message-${msg.id}`}
@@ -69,14 +74,11 @@ export function MessageItem({
             animate={{
                 opacity: 1,
                 y: 0,
-                scale: isHighlighted ? 1.05 : 1,
-                backgroundColor: isHighlighted
-                    ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
-                    : undefined
+                scale: isHighlighted ? 1.05 : 1
             }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ delay: index * 0.01 }}
-            className={`flex gap-2 items-start p-2 rounded-lg transition-colors ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
+            className={`flex gap-2 items-start p-2 rounded-lg transition-colors ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${isHighlighted ? 'message-highlight' : ''}`}
         >
             <div className={`w-10 h-10 rounded-md flex items-center justify-center font-bold text-xs flex-shrink-0 ${isOwn
                 ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white'
@@ -91,29 +93,18 @@ export function MessageItem({
                 <div className={`flex items-center gap-2 text-xs opacity-50 mb-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
                     <span className="flex items-center gap-1">
                         {isOwn ? t('messages.you') : msg.name}
-                        {msg.isVerified && <FaCheckCircle className={isDarkMode ? "text-cyan-400" : "text-blue-500"} />}
+                        {msg.isVerified && <FaCheckCircle className="verified-icon" />}
                     </span>
                     <span>·</span>
                     <span>{formatTimestamp(msg.timestamp)}</span>
                 </div>
 
-                <div className={`px-3 py-2 rounded-lg relative group ${isOwn
-                    ? msg.isVerified
-                        ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-tr-sm border-2 border-cyan-400 shadow-lg shadow-cyan-500/30'
-                        : 'bg-green-600 text-white rounded-tr-sm'
-                    : msg.isVerified
-                        ? isDarkMode
-                            ? 'bg-gradient-to-br from-cyan-900/30 to-blue-900/20 rounded-tl-sm border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
-                            : 'bg-gradient-to-br from-blue-50 to-white rounded-tl-sm border-2 border-blue-400/60 shadow-lg shadow-blue-500/30'
-                        : isDarkMode
-                            ? 'bg-white/10 rounded-tl-sm'
-                            : 'bg-white rounded-tl-sm shadow-sm'
-                    }`}>
+                <div className={`message-bubble px-3 py-2 relative group ${getBubbleClass()}`}>
 
                     {msg.quotedMessage && (
                         <div
                             onClick={() => msg.quotedMessageId && onScrollToMessage(msg.quotedMessageId)}
-                            className={`mb-2 pl-2 py-1 border-l-2 text-xs opacity-75 italic overflow-hidden cursor-pointer hover:opacity-100 transition-opacity ${isDarkMode ? 'border-white/30 bg-white/5' : 'border-black/20 bg-black/5'}`}
+                            className="quote-block mb-2 cursor-pointer hover:opacity-100 transition-opacity italic overflow-hidden"
                         >
                             <span className="font-bold not-italic mr-1">{msg.quotedName}:</span>
                             <span className="line-clamp-2">{msg.quotedMessage}</span>
