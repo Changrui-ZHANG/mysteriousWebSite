@@ -7,18 +7,14 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { GradientHeading } from '../../../../components';
 
 interface Match3RulesProps {
-    bgCard: string;
     onClose: () => void;
 }
 
-export function Match3Rules({ bgCard, onClose }: Match3RulesProps) {
+export function Match3Rules({ onClose }: Match3RulesProps) {
     const { t } = useTranslation();
 
     return (
-        <div
-            className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${bgCard}`}
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        >
+        <div className="w-full h-full flex flex-col p-8 bg-gradient-to-b from-pink-900/80 to-slate-900/90 overflow-hidden">
             <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
                 <GradientHeading gradient="purple-pink" level={2}>
                     {t('game.match3')} - {t('game.arcade_zone')}

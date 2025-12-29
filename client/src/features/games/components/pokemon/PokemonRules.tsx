@@ -16,8 +16,7 @@ export function PokemonRules({ bgCard, onClose }: PokemonRulesProps) {
 
     return (
         <div
-            className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden pointer-events-auto ${bgCard}`}
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', zIndex: 10 }}
+            className={`w-full h-full flex flex-col p-8 overflow-hidden pointer-events-auto ${bgCard}`}
         >
             <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
                 <GradientHeading gradient="purple-pink" level={2}>

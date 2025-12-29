@@ -7,18 +7,14 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { GradientHeading } from '../../../../components';
 
 interface BrickBreakerRulesProps {
-    bgCard: string;
     onClose: () => void;
 }
 
-export function BrickBreakerRules({ bgCard, onClose }: BrickBreakerRulesProps) {
+export function BrickBreakerRules({ onClose }: BrickBreakerRulesProps) {
     const { t } = useTranslation();
 
     return (
-        <div
-            className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${bgCard}`}
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        >
+        <div className="absolute inset-0 w-full h-full flex flex-col p-8 bg-gradient-to-br from-cyan-900/90 to-slate-900/95 overflow-hidden">
             <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
                 <GradientHeading gradient="cyan-purple" level={2}>
                     {t('game.brick_breaker')} - {t('game.arcade_zone')}

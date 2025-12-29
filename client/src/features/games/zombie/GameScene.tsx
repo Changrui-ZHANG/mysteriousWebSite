@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
-import { FIELD_DEPTH, FIELD_WIDTH, FRONT_WALL_Z, BACK_WALL_Z, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE } from './constants';
+import { FIELD_DEPTH, FIELD_WIDTH, FRONT_WALL_Z, BACK_WALL_Z, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE, WALL_Z, WALL_MAX_HP, WALL_DAMAGE, WALL_ATTACK_COOLDOWN } from './constants';
 import { Particle, PowerUp, Projectile, Zombie, FloatingText } from './types';
 import { Player } from './components/Player';
 import { useGameInput } from './hooks/useGameInput';
@@ -80,6 +80,7 @@ export function GameScene({
     const difficultyLevel = useRef(1);
     const scoreRef = useRef(1);
     const lastDangerLevel = useRef(0);
+    const wallHp = useRef(WALL_MAX_HP); // New Wall HP
 
     const { gl } = useThree();
 
@@ -326,6 +327,9 @@ export function GameScene({
             if (perfectStreak.current >= 5) baseHp *= 1.5;
             setZombieHp(Math.round(baseHp));
 
+            // Repair Wall slightly on wave clear? Or maybe just keep it as is.
+            // Let's keep it persistent damage for now.
+
             onNotification(t('game.zombie_notif.wave', { wave: difficultyLevel.current }), "#60a5fa");
 
             // Super Reward every 10 waves
@@ -407,7 +411,31 @@ export function GameScene({
                 z.color = z.baseColor;
             }
             // zombies move straight forward on the Z axis
-            z.position.z += currentSpeed;
+
+            // --- WALL COLLISION ---
+            let moveAmount = currentSpeed;
+            if (wallHp.current > 0) {
+                // Check if hitting wall
+                if (z.position.z + moveAmount >= WALL_Z - 0.5 && z.position.z < WALL_Z + 1) {
+                    // Stop at wall
+                    z.position.z = Math.min(z.position.z, WALL_Z - 0.5);
+                    moveAmount = 0;
+
+                    // Attack Wall
+                    if (widthTime(currentTime, z.lastAttackTime || 0)) {
+                        wallHp.current -= WALL_DAMAGE;
+                        z.lastAttackTime = currentTime;
+                        if (frameCount.current % 10 === 0) playSound('break'); // Thud sound
+                        if (wallHp.current <= 0) {
+                            onNotification("WALL BREACHED!", "#ef4444");
+                            playSound('gameover');
+                            // Force wall visual update immediately if possible, or wait next frame
+                        }
+                    }
+                }
+            }
+
+            z.position.z += moveAmount;
 
             if (z.position.z > playerPos.current.z) {
                 setGameState('gameover');
@@ -464,10 +492,10 @@ export function GameScene({
                             if (otherZ.id !== z.id && otherZ.hp > 0) {
                                 const dist = otherZ.position.distanceTo(z.position);
                                 if (dist < vortexRadius) {
-                                    // Pull BACKWARDS (towards spawn, away from player)
-                                    const pullDir = new THREE.Vector3(0, 0, -1); // Backward on Z
-                                    const pullResistance = KNOCKBACK_RESISTANCE[otherZ.type] || 1;
-                                    otherZ.position.add(pullDir.multiplyScalar(0.3 * pullResistance)); // Smoother, resisted pull
+                                    // GRAVITY WELL: Heavy Slow/Freeze instead of Pull
+                                    otherZ.slowedUntil = currentTime + 2.0;
+                                    // Visual shake effect without moving back
+                                    otherZ.position.x += (Math.random() - 0.5) * 0.1;
                                 }
                             }
                         });
@@ -499,11 +527,8 @@ export function GameScene({
                         });
                     }
 
-                    // --- KNOCKBACK LOGIC ---
-                    const pushDir = z.position.clone().sub(playerPos.current).normalize();
-                    pushDir.y = 0;
-                    const resistance = KNOCKBACK_RESISTANCE[z.type] || 1;
-                    z.position.z -= KNOCKBACK_FORCE * resistance;
+                    // --- NO KNOCKBACK / NO SLOW ---
+                    // Bullets just do damage.
 
                     // --- PARTICLES --- (max 300)
                     if (particles.current.length < 300) {
@@ -816,8 +841,45 @@ export function GameScene({
         }
     });
 
+    // Helper for cooldown
+    function widthTime(now: number, last: number) {
+        return now - last > WALL_ATTACK_COOLDOWN;
+    }
+
+    const wallOpacity = Math.max(0, wallHp.current / WALL_MAX_HP);
+
     return (
         <group>
+            {/* WALL RENDER */}
+            {wallHp.current > 0 && (
+                <mesh position={[0, 1.5, WALL_Z]} rotation={[0, 0, 0]}>
+                    <boxGeometry args={[FIELD_WIDTH, 3, 0.5]} />
+                    <meshStandardMaterial
+                        color="#22d3ee"
+                        transparent
+                        opacity={wallOpacity * 0.4}
+                        emissive="#22d3ee"
+                        emissiveIntensity={wallOpacity * 0.5}
+                    />
+                </mesh>
+            )}
+
+            {/* WALL HP TEXT */}
+            {wallHp.current > 0 && (
+                <Html position={[0, 3.5, WALL_Z]} center>
+                    <div className="flex flex-col items-center select-none pointer-events-none opacity-70">
+                        <div className="text-cyan-400 font-bold text-xs tracking-wider drop-shadow-md font-mono">
+                            {Math.max(0, Math.round(wallHp.current))}
+                        </div>
+                        <div className="w-20 h-1 bg-black/50 border border-cyan-500/30 rounded mt-0.5 overflow-hidden backdrop-blur-sm">
+                            <div
+                                className="h-full bg-cyan-500 transition-all duration-200"
+                                style={{ width: `${(wallHp.current / WALL_MAX_HP) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                </Html>
+            )}
             <Player positionRef={playerPos} />
             <instancedMesh ref={meshProjectiles} args={[undefined, undefined, 1000]} geometry={projectileGeometry} material={projectileMaterial} frustumCulled={false} />
             <instancedMesh ref={meshWalkers} args={[zombieGeometry, undefined, 200]} frustumCulled={false}>

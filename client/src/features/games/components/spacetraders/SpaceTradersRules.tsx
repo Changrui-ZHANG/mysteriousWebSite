@@ -14,14 +14,9 @@ export function SpaceTradersRules({ onClose }: SpaceTradersRulesProps) {
     const { t } = useTranslation();
 
     return (
-        <div
-            className="absolute inset-0 w-full h-full flex flex-col p-8 border border-[var(--color-border-default)] rounded-xl backdrop-blur-md overflow-hidden bg-[var(--color-glass-bg)]"
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        >
+        <div className="w-full h-full flex flex-col p-8 bg-gradient-to-b from-slate-900/90 to-slate-800/90 overflow-hidden">
             <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                <GradientHeading gradient="cyan-blue" level={2}>
-                    {t('spacetraders.rules_title')}
-                </GradientHeading>
+                <GradientHeading gradient="cyan-blue" level={2}>{t('spacetraders.rules_title')}</GradientHeading>
                 <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 transition-colors">
                     <FaArrowLeft className="text-white text-xl" />
                 </button>
@@ -33,9 +28,7 @@ export function SpaceTradersRules({ onClose }: SpaceTradersRulesProps) {
                         <span className="bg-cyan-500/20 p-2 rounded-lg">🚀</span>
                         {t('game.objective')}
                     </h3>
-                    <p className="text-white/80 leading-relaxed text-sm md:text-base">
-                        {t('spacetraders.rules_text')}
-                    </p>
+                    <p className="text-white/80 leading-relaxed text-sm md:text-base">{t('spacetraders.rules_text')}</p>
                 </section>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,9 +49,7 @@ export function SpaceTradersRules({ onClose }: SpaceTradersRulesProps) {
                 </div>
 
                 <div className="bg-gradient-to-r from-cyan-500/10 to-transparent p-4 rounded-xl border-l-4 border-cyan-400">
-                    <p className="text-xs md:text-sm text-cyan-200 italic">
-                        💡 {t('spacetraders.tip')}
-                    </p>
+                    <p className="text-xs md:text-sm text-cyan-200 italic">💡 {t('spacetraders.tip')}</p>
                 </div>
             </div>
         </div>

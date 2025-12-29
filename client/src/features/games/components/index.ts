@@ -10,6 +10,7 @@ export { GameSelector } from './GameSelector';
 export { GuestAlertModal } from './GuestAlertModal';
 export { GravityPlayground } from './GravityPlayground';
 export { ScoreDisplay } from './ScoreDisplay';
+export { GameWindow } from './GameWindow';
 
 // Maze sub-components
 export * from './maze';

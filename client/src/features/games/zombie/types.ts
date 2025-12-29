@@ -12,6 +12,7 @@ export interface Zombie {
     baseColor: string;
     size?: number;
     slowedUntil?: number; // timestamp or frame count
+    lastAttackTime?: number; // Last time hit wall
 }
 
 export interface Projectile {

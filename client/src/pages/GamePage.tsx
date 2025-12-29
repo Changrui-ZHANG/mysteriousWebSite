@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import BrickBreaker from '../features/games/components/BrickBreaker';
 import Match3 from '../features/games/components/Match3';
 import PokemonGame from '../features/games/components/PokemonGame';
@@ -12,7 +12,7 @@ import { useAdminCode } from '../hooks/useAdminCode';
 
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { GradientHeading } from '../components';
-import { GameSelector, GuestAlertModal } from '../features/games/components';
+import { GameSelector, GuestAlertModal } from '../features/games/components/index';
 import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps } from '../types/game';
 
 export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
@@ -126,11 +126,11 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         const commonProps = { isDarkMode, onSubmitScore: submitScore, personalBest, isAuthenticated: !!user, onGameStart: resetGuestAlert };
 
         switch (activeGame) {
-            case 'brick': return <BrickBreaker {...commonProps} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />;
-            case 'match3': return <Match3 {...commonProps} />;
-            case 'pokemon': return <PokemonGame {...commonProps} />;
-            case 'maze': return <MazeGame {...commonProps} />;
-            case 'zombie': return <ZombieShooter {...commonProps} />;
+            case 'brick': return <BrickBreaker key="brick" {...commonProps} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />;
+            case 'match3': return <Match3 key="match3" {...commonProps} />;
+            case 'pokemon': return <PokemonGame key="pokemon" {...commonProps} />;
+            case 'maze': return <MazeGame key="maze" {...commonProps} />;
+            case 'zombie': return <ZombieShooter key="zombie" {...commonProps} />;
         }
     };
 
@@ -163,12 +163,8 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
                     </motion.div>
                 )}
 
-                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'min-h-[700px] md:min-h-[800px]' : activeGame === 'maze' ? 'min-h-[600px] md:aspect-auto' : 'min-h-[500px] md:min-h-0 md:aspect-video'} grid grid-cols-1`}>
-                    <AnimatePresence mode="wait">
-                        <motion.div key={activeGame} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="w-full h-full col-start-1 row-start-1">
-                            {renderGame()}
-                        </motion.div>
-                    </AnimatePresence>
+                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'h-[600px] md:h-[700px]' : activeGame === 'maze' ? 'h-[600px] md:h-[800px]' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>
+                    {renderGame()}
                 </div>
             </div>
 

@@ -4,6 +4,10 @@ export const FIELD_WIDTH = 10;
 export const FIELD_DEPTH = 60;
 export const FRONT_WALL_Z = 15;
 export const BACK_WALL_Z = -65;
+export const WALL_Z = 5;
+export const WALL_MAX_HP = 1000;
+export const WALL_DAMAGE = 5;
+export const WALL_ATTACK_COOLDOWN = 1.0;
 
 // Player
 export const PLAYER_SPEED = 0.3;

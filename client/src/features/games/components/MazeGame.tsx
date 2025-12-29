@@ -1,24 +1,15 @@
-/**
- * MazeGame - Main maze game component
- * Refactored to use useMazeGame hook and sub-components
- */
-
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FaQuestion, FaClock, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
+import { FaClock } from 'react-icons/fa';
 import { useSound } from '../../../hooks/useSound';
-import { useBGM } from '../../../hooks/useBGM';
 import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
-import { useBGMVolume } from '../../../hooks/useBGMVolume';
-import { useFullScreen } from '../../../hooks/useFullScreen';
 import { Button } from '../../../components';
-import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { BGM_URLS } from '../../../constants/urls';
 import { useMazeGame } from '../hooks/useMazeGame';
 import { MazeGrid, MazeControls, MazeRules } from './maze';
-import { useState } from 'react';
+import { GameWindow } from './GameWindow';
 
 interface MazeGameProps {
     isDarkMode: boolean;
@@ -31,12 +22,10 @@ interface MazeGameProps {
 export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: MazeGameProps) {
     const { t } = useTranslation();
     const theme = useTheme(isDarkMode);
-    const { isMuted, toggleMute } = useMute();
+    const { isMuted } = useMute();
     const { playSound } = useSound(!isMuted);
-    const { volume, setVolume } = useBGMVolume(0.4);
     const containerRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLDivElement>(null);
-    const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
     const [isFlipped, setIsFlipped] = useState(false);
 
     const {
@@ -64,8 +53,6 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
         onGameStart,
         playSound,
     });
-
-    useBGM(BGM_URLS.MAZE_GAME, !isMuted && !isFlipped && gameState === 'playing', volume);
 
     // Keyboard controls
     useEffect(() => {
@@ -160,86 +147,59 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
     const timeElapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
     return (
-        <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullScreen ? 'bg-slate-900 overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
-            {/* Global Controls */}
-            <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
-                <div className="w-32 mr-2 flex items-center">
-                    <ElasticSlider
-                        defaultValue={volume * 100}
-                        onChange={(v) => setVolume(v / 100)}
-                        color="cyan"
-                        isMuted={isMuted}
-                        onToggleMute={toggleMute}
-                    />
-                </div>
-                <button onClick={(e) => { e.stopPropagation(); fetchMaze(); }} className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95" title={t('game.reset')}>
-                    <FaRedo size={18} />
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }} className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95" title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}>
-                    {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }} className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95" title={t('game.help_rules')}>
-                    <FaQuestion size={18} />
-                </button>
-            </div>
-
-            <motion.div
-                className="flex-1 w-full h-full relative"
-                animate={{ rotateY: isFlipped ? 180 : 0 }}
-                transition={{ duration: 0.6 }}
-                style={{ transformStyle: 'preserve-3d' }}
+        <GameWindow
+            color="cyan"
+            bgmUrl={BGM_URLS.MAZE_GAME}
+            onReset={fetchMaze}
+            isFlipped={isFlipped}
+            onFlipChange={setIsFlipped}
+            rulesContent={<MazeRules bgCard={isDarkMode ? 'bg-slate-900' : 'bg-white'} onClose={() => setIsFlipped(false)} />}
+        >
+            <div
+                className={`w-full h-full flex flex-col items-center justify-center p-4 select-none overflow-hidden`}
             >
-                {/* Front Face (Game) */}
-                <div
-                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center p-4 ${theme.bgCard} backdrop-blur-md rounded-xl border border-white/20 select-none`}
-                    style={{ backfaceVisibility: 'hidden' }}
-                >
-                    {/* Header */}
-                    <div className="flex justify-between w-full max-w-[500px] mb-4 items-end">
-                        <div className="flex flex-col gap-1">
-                            <div className="text-xl font-bold font-mono text-cyan-400">{t('game.moves')}: {moves}</div>
-                            <div className={`text-sm font-bold font-mono flex items-center gap-2 transition-colors ${shiftTimer <= 3 ? 'text-red-500 animate-pulse' : 'text-pink-400'}`}>
-                                <FaClock /> {t('game.next_shift')}: {shiftTimer}s
-                            </div>
-                            {personalBest && (
-                                <div className="text-xs font-mono text-yellow-500/80">
-                                    {t('game.best')}: {personalBest.score} {t('game.moves')}
-                                </div>
-                            )}
+                {/* Header */}
+                <div className="flex justify-between w-full max-w-[500px] mb-4 items-end">
+                    <div className="flex flex-col gap-1">
+                        <div className="text-xl font-bold font-mono text-cyan-400">{t('game.moves')}: {moves}</div>
+                        <div className={`text-sm font-bold font-mono flex items-center gap-2 transition-colors ${shiftTimer <= 3 ? 'text-red-500 animate-pulse' : 'text-pink-400'}`}>
+                            <FaClock /> {t('game.next_shift')}: {shiftTimer}s
                         </div>
-                        <Button onClick={fetchMaze} color="cyan" size="sm">
-                            {t('game.new_maze')}
-                        </Button>
+                        {personalBest && (
+                            <div className="text-xs font-mono text-yellow-500/80">
+                                {t('game.best')}: {personalBest.score} {t('game.moves')}
+                            </div>
+                        )}
                     </div>
-
-                    <MazeGrid
-                        maze={maze}
-                        playerPos={playerPos}
-                        gameState={gameState}
-                        moves={moves}
-                        timeElapsed={timeElapsed}
-                        exploredCells={exploredCells}
-                        lastFacing={lastFacing}
-                        isMoving={isMoving}
-                        holdingDirection={holdingDirection}
-                        isDragging={isDragging}
-                        gridRef={gridRef}
-                        onPointerDown={handlePointerDown}
-                        onPointerMove={handlePointerMove}
-                        onPointerUp={handlePointerUp}
-                        onPlayAgain={fetchMaze}
-                    />
-
-                    <MazeControls onStartMoving={startMoving} onStopMoving={stopMoving} />
-
-                    <div className="mt-4 text-center text-white/50 text-xs hidden md:block">
-                        {t('game.use_mouse')}
-                    </div>
+                    <Button onClick={fetchMaze} color="cyan" size="sm">
+                        {t('game.new_maze')}
+                    </Button>
                 </div>
 
-                {/* Back Face (Rules) */}
-                <MazeRules bgCard={theme.bgCard} onClose={() => setIsFlipped(false)} />
-            </motion.div>
-        </div>
+                <MazeGrid
+                    maze={maze}
+                    playerPos={playerPos}
+                    gameState={gameState}
+                    moves={moves}
+                    timeElapsed={timeElapsed}
+                    exploredCells={exploredCells}
+                    lastFacing={lastFacing}
+                    isMoving={isMoving}
+                    holdingDirection={holdingDirection}
+                    isDragging={isDragging}
+                    gridRef={gridRef}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPlayAgain={fetchMaze}
+                />
+
+                <MazeControls onStartMoving={startMoving} onStopMoving={stopMoving} />
+
+                <div className="mt-4 text-center text-white/50 text-xs hidden md:block">
+                    {t('game.use_mouse')}
+                </div>
+            </div>
+        </GameWindow>
     );
 }
