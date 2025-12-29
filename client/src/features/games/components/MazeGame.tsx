@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaClock } from 'react-icons/fa';
 import { useSound } from '../../../hooks/useSound';
-import { useTheme } from '../../../hooks/useTheme';
 import { useMute } from '../../../hooks/useMute';
 import { Button } from '../../../components';
 import { BGM_URLS } from '../../../constants/urls';
@@ -21,10 +19,8 @@ interface MazeGameProps {
 
 export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: MazeGameProps) {
     const { t } = useTranslation();
-    const theme = useTheme(isDarkMode);
     const { isMuted } = useMute();
     const { playSound } = useSound(!isMuted);
-    const containerRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLDivElement>(null);
     const [isFlipped, setIsFlipped] = useState(false);
 

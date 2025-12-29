@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
-import { FIELD_DEPTH, FIELD_WIDTH, FRONT_WALL_Z, BACK_WALL_Z, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, KNOCKBACK_FORCE, KNOCKBACK_RESISTANCE, WALL_Z, WALL_MAX_HP, WALL_DAMAGE, WALL_ATTACK_COOLDOWN } from './constants';
+import { FIELD_DEPTH, FIELD_WIDTH, FRONT_WALL_Z, BACK_WALL_Z, PLAYER_SPEED, PROJECTILE_SPEED, ZOMBIE_BASE_SPEED, TOUCH_DEADZONE, TOUCH_SENSITIVITY, WALL_Z, WALL_MAX_HP, WALL_DAMAGE, WALL_ATTACK_COOLDOWN } from './constants';
 import { Particle, PowerUp, Projectile, Zombie, FloatingText } from './types';
 import { Player } from './components/Player';
 import { useGameInput } from './hooks/useGameInput';
