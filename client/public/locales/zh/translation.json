@@ -241,7 +241,11 @@
         "interests_list": [
             "电子游戏",
             "运动"
-        ]
+        ],
+        "last_updated": "最后更新",
+        "update_date": "2024年12月",
+        "location": "法国巴黎",
+        "availability": "可立即入职"
     },
     "game": {
         "arcade_zone": "霓虹街机",

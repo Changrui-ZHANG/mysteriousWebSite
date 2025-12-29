@@ -241,7 +241,11 @@
         "interests_list": [
             "Video games",
             "Sport"
-        ]
+        ],
+        "last_updated": "Last updated",
+        "update_date": "December 2024",
+        "location": "Paris, France",
+        "availability": "Available immediately"
     },
     "game": {
         "arcade_zone": "NEON ARCADE",

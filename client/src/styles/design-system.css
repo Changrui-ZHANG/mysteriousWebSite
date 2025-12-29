@@ -247,11 +247,12 @@ a:hover {
 
 .btn-primary {
     background-color: var(--color-accent-primary);
-    color: white;
+    color: var(--color-text-inverted);
 }
 
 .btn-primary:hover:not(:disabled) {
     background-color: #2563eb;
+    color: white;
     transform: translateY(-1px);
 }
 

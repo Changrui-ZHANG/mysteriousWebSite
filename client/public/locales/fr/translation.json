@@ -241,7 +241,11 @@
         "interests_list": [
             "Jeux vidéos",
             "Sport"
-        ]
+        ],
+        "last_updated": "Dernière mise à jour",
+        "update_date": "Décembre 2024",
+        "location": "Paris, France",
+        "availability": "Disponible immédiatement"
     },
     "game": {
         "arcade_zone": "SALLE D'ARCADE",

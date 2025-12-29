@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { Canvas } from '@react-three/fiber';
 import { getCVData } from '../data/cvData';
-import { LiquidSphere, ExperienceCard } from '../features/cv/components';
-import { GlassPanel } from '../components/ui/GlassPanel';
+import { ExperienceCard } from '../features/cv/components';
+import { AuroraCard } from '../components/ui/AuroraCard';
 import { SOCIAL_LINKS } from '../constants/urls';
 
 // Register GSAP plugins
@@ -115,16 +114,8 @@ export function CV({ isDarkMode }: CVProps) {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/20 dark:bg-indigo-900/30"></div>
             </div>
 
-            {/* 1. LiquidGlass Hero Cover */}
+            {/* 1. Hero Cover */}
             <header className="h-[110vh] flex flex-col items-center justify-center relative overflow-hidden px-6">
-                <div className="absolute inset-0 z-0">
-                    <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-                        <ambientLight intensity={0.5} />
-                        <pointLight position={[10, 10, 10]} intensity={1} />
-                        <LiquidSphere isDarkMode={isDarkMode} />
-                    </Canvas>
-                </div>
-
                 <div className="relative z-10 text-center space-y-8">
                     <div className="inline-block px-6 py-2 rounded-full border text-xs font-mono tracking-[0.3em] uppercase border-blue-500/30 bg-blue-500/10 text-blue-400">
                         {t('cv.interactive_portfolio')}
@@ -215,7 +206,7 @@ export function CV({ isDarkMode }: CVProps) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[300px]">
-                    <GlassPanel className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col" isDarkMode={isDarkMode}>
+                    <AuroraCard variant="multi" className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col" isDarkMode={isDarkMode}>
                         <h3 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                             {Object.entries(skills).map(([category, items]) => (
@@ -232,53 +223,58 @@ export function CV({ isDarkMode }: CVProps) {
                                 </div>
                             ))}
                         </div>
-                    </GlassPanel>
+                    </AuroraCard>
 
-                    <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4 overflow-hidden relative" isDarkMode={isDarkMode}>
-                        <div className="absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-green-500"></div>
-                        <h4 className="text-sm font-mono tracking-[0.2em] text-white/60 uppercase font-bold">{t('cv.masters_degree')}</h4>
-                        <div className="text-white relative z-10">
-                            <h5 className="text-3xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
-                            <p className="text-white/80 text-lg uppercase tracking-wider">{education[0].degree}</p>
+                    <AuroraCard variant="green" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4" isDarkMode={isDarkMode}>
+                        <h4 className="text-sm font-mono tracking-[0.2em] text-emerald-400 uppercase font-bold">{t('cv.masters_degree')}</h4>
+                        <div className="relative z-10">
+                            <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
+                            <p className="text-secondary text-base uppercase tracking-wider">{education[0].degree}</p>
                         </div>
-                        {/* Stamp Logo */}
-                        <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-20 dark:opacity-10">
+                        <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-30 dark:opacity-10">
                             {education[0].icon}
                         </div>
-                    </GlassPanel>
+                    </AuroraCard>
 
-                    <GlassPanel className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4 overflow-hidden relative" isDarkMode={isDarkMode}>
-                        <div className="absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 bg-blue-500"></div>
-                        <h4 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
+                    <AuroraCard variant="cyan" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4" isDarkMode={isDarkMode}>
+                        <h4 className="text-sm font-mono tracking-[0.2em] text-cyan-400 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
                         <div className="relative z-10">
                             <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[1].school}</h5>
-                            <p className="text-lg font-light text-secondary">{education[1].degree}</p>
+                            <p className="text-secondary text-base uppercase tracking-wider">{education[1].degree}</p>
                         </div>
-                        {/* Stamp Logo */}
                         <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-20 dark:opacity-10">
                             {education[1].icon}
                         </div>
-                    </GlassPanel>
+                    </AuroraCard>
                 </div>
 
-                <GlassPanel className="md:col-span-12 p-12 rounded-[60px] flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group" isDarkMode={isDarkMode}>
-                    <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000"></div>
-                    <div className="text-center md:text-left">
-                        <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
-                        <p className="text-2xl font-light text-secondary">{t('cv.connect_description')}</p>
+                <AuroraCard variant="purple" className="p-12 rounded-[60px]" isDarkMode={isDarkMode}>
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+                        <div className="text-center md:text-left">
+                            <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
+                            <p className="text-2xl font-light text-secondary">{t('cv.connect_description')}</p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-4 shrink-0">
+                            <a href="mailto:m.zhang.changrui@gmail.com" className="px-10 py-4 text-lg font-medium rounded-full bg-blue-500 text-white shadow-xl hover:bg-blue-600 hover:scale-105 transition-all text-center">{t('cv.direct_mail')}</a>
+                            <a href={SOCIAL_LINKS.LINKEDIN} className="px-10 py-4 text-lg font-medium rounded-full border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:scale-105 transition-all text-center">{t('cv.linkedin')}</a>
+                        </div>
                     </div>
-                    <div className="flex gap-6 shrink-0 z-10">
-                        <a href="mailto:m.zhang.changrui@gmail.com" className="btn-primary px-12 py-5 text-xl shadow-2xl hover:scale-105 transition-all">{t('cv.direct_mail')}</a>
-                        <a href={SOCIAL_LINKS.LINKEDIN} className="btn-secondary px-12 py-5 text-xl hover:scale-105 transition-all">{t('cv.linkedin')}</a>
-                    </div>
-                </GlassPanel>
+                </AuroraCard>
             </section>
 
             {/* Footer */}
-            <footer className="py-20 text-center opacity-30">
-                <p className="text-xs font-mono uppercase tracking-[0.5em]">
-                    {t('cv.system_status')} • C.ZHANG © {new Date().getFullYear()}
-                </p>
+            <footer className="py-20 text-center opacity-50">
+                <div className="space-y-2">
+                    <p className="text-xs font-mono uppercase tracking-[0.3em]">
+                        {t('cv.last_updated')}: {t('cv.update_date')}
+                    </p>
+                    <p className="text-xs font-mono tracking-wider">
+                        {t('cv.location')}
+                    </p>
+                    <p className="text-xs opacity-60 mt-4">
+                        © {new Date().getFullYear()} {t('brand.author_name')}
+                    </p>
+                </div>
             </footer>
         </div>
     );
