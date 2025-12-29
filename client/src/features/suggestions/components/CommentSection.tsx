@@ -2,18 +2,17 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteRight, FaTrash } from 'react-icons/fa';
-import { fetchJson, postJson } from '../../api/httpClient';
-import type { SuggestionComment, SuggestionUser } from '../../types/suggestions';
+import { fetchJson, postJson } from '../../../api/httpClient';
+import type { SuggestionComment, SuggestionUser } from '../../../types/suggestions';
 
 interface CommentSectionProps {
     suggestionId: string;
     commentCount?: number;
     user: SuggestionUser | null;
-    isDarkMode: boolean;
     isAdmin: boolean;
 }
 
-export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMode, isAdmin }: CommentSectionProps) {
+export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }: CommentSectionProps) {
     const { t } = useTranslation();
     const [comments, setComments] = useState<SuggestionComment[]>([]);
     const [newComment, setNewComment] = useState('');
@@ -99,9 +98,9 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                             <div className="text-center py-4 opacity-60">{t('suggestions.no_comments')}</div>
                         ) : (
                             comments.map((comment) => (
-                                <div key={comment.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-purple-900/20' : 'bg-purple-100/50'}`}>
+                                <div key={comment.id} className="p-3 rounded-lg comment-box">
                                     {comment.quotedContent && (
-                                        <div className={`mb-2 pl-3 border-l-2 border-purple-500/50 text-sm opacity-70 italic`}>
+                                        <div className="mb-2 pl-3 border-l-2 border-purple-500/50 text-sm opacity-70 italic">
                                             <span className="font-bold">{comment.quotedUsername}:</span> {comment.quotedContent}
                                         </div>
                                     )}
@@ -139,7 +138,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                         {user && (
                             <form onSubmit={handlePostComment} className="mt-4">
                                 {replyingTo && (
-                                    <div className={`mb-2 p-2 rounded ${isDarkMode ? 'bg-purple-900/30' : 'bg-purple-100/70'} text-sm flex justify-between items-center`}>
+                                    <div className="mb-2 p-2 rounded reply-indicator text-sm flex justify-between items-center">
                                         <div>
                                             <span className="opacity-70">{t('suggestions.replying_to')} </span>
                                             <span className="font-bold text-purple-400">{replyingTo.username}</span>
@@ -157,7 +156,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isDarkMod
                                     value={newComment}
                                     onChange={(e) => setNewComment(e.target.value)}
                                     placeholder={t('suggestions.add_comment')}
-                                    className={`w-full p-3 rounded-lg border ${isDarkMode ? 'bg-black/40 border-purple-500/30 text-white' : 'bg-white border-purple-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none`}
+                                    className="w-full p-3 rounded-lg border comment-textarea focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
                                     rows={2}
                                 />
                                 <button

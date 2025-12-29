@@ -1,0 +1,146 @@
+/**
+ * DesktopMenu - Desktop navigation menu
+ */
+
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
+import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
+import { LanguageButton } from './LanguageButton';
+
+interface User { userId: string; username: string; }
+
+interface DesktopMenuProps {
+    user?: User | null;
+    onOpenLogin: () => void;
+    onLogout?: () => void;
+    isAdmin: boolean;
+    isSuperAdmin: boolean;
+    onAdminLogin?: (code: string) => Promise<boolean>;
+    onAdminLogout?: () => void;
+    onShowSiteControls: () => void;
+    isDarkMode: boolean;
+    toggleTheme: () => void;
+    changeLanguage: (lng: string) => void;
+}
+
+export function DesktopMenu({
+    user, onOpenLogin, onLogout, isAdmin, isSuperAdmin,
+    onAdminLogin, onAdminLogout, onShowSiteControls,
+    isDarkMode, toggleTheme, changeLanguage,
+}: DesktopMenuProps) {
+    const { t, i18n } = useTranslation();
+    const location = useLocation();
+    const [showAdminInput, setShowAdminInput] = useState(false);
+    const [loginCode, setLoginCode] = useState('');
+
+    const submitAdminCode = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (onAdminLogin) {
+            const success = await onAdminLogin(loginCode);
+            if (success) { setLoginCode(''); setShowAdminInput(false); }
+            else alert(t('admin.invalid_code'));
+        }
+    };
+
+    const mainLinks = [
+        { to: "/", label: t('nav.home') },
+        { to: "/cv", label: t('nav.cv') },
+        { to: "/game", label: t('nav.game') },
+        { to: "/messages", label: t('nav.messages') }
+    ];
+
+    const moreLinks = [
+        { to: "/suggestions", label: t('nav.suggestions') },
+        { to: "/calendar", label: t('nav.calendar') },
+        { to: "/learning", label: t('nav.learning') }
+    ];
+
+    return (
+        <div className="hidden lg:flex items-center gap-6 font-mono text-sm max-w-full">
+            {/* Main Navigation Links */}
+            <div className="flex items-center gap-6 mr-4">
+                {mainLinks.map(link => (
+                    <Link key={link.to} to={link.to} className={`hover:opacity-60 transition-opacity ${location.pathname === link.to ? 'font-bold' : ''}`}>
+                        {link.label}
+                    </Link>
+                ))}
+
+                {/* Dropdown for More Links */}
+                <div className="relative group">
+                    <button className={`flex items-center gap-1 hover:opacity-60 transition-opacity uppercase tracking-widest ${['/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'font-bold' : ''}`}>
+                        {t('nav.more')} <FaChevronDown className="text-xs transition-transform duration-300 group-hover:rotate-180" />
+                    </button>
+                    <div className="absolute top-full left-0 w-full h-4 bg-transparent z-40" />
+                    <div className="absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 bg-[var(--color-bg-base)]/95 border-[var(--color-border-default)]">
+                        {moreLinks.map(link => (
+                            <Link key={link.to} to={link.to} className={`relative block px-5 py-3 transition-all text-sm tracking-wide uppercase hover:opacity-60 ${location.pathname === link.to ? 'font-bold' : ''}`}>
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+
+            {/* Auth Section */}
+            {user ? (
+                <div className="flex items-center gap-4">
+                    <span className="font-bold text-cyan-400">{user.username}</span>
+                    <button onClick={onLogout} className="hover:opacity-60 transition-opacity flex items-center gap-2" title={t('auth.logout')}>
+                        <FaSignOutAlt />
+                    </button>
+                </div>
+            ) : (
+                <button onClick={onOpenLogin} className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                    <FaUser />
+                    <span>{t('auth.login')}</span>
+                </button>
+            )}
+
+            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+
+            {/* Admin Section */}
+            <div className="relative flex items-center">
+                {isAdmin ? (
+                    <>
+                        <button onClick={onAdminLogout} className={`text-xs px-2 py-1 rounded border ${isSuperAdmin ? 'border-purple-500 text-purple-400' : 'border-green-500 text-green-500'} hover:opacity-80 transition-opacity`} title={t('auth.logout')}>
+                            {isSuperAdmin ? t('admin.super_admin') : t('admin.admin')}
+                        </button>
+                        <button onClick={onShowSiteControls} className="text-xl hover:opacity-60 transition-opacity ml-2" title={t('admin.site_settings')}>
+                            <FaCog />
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button onClick={() => setShowAdminInput(!showAdminInput)} className="hover:scale-110 transition-transform" title={t('auth.admin_access')}>🔐</button>
+                        {showAdminInput && (
+                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 bg-[var(--color-bg-base)] border border-[var(--color-border-default)]">
+                                <input type="password" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} placeholder={t('admin.code_placeholder')} className="input w-24 px-2 py-1 text-xs" autoFocus />
+                                <button type="submit" className="px-2 py-1 bg-green-500 text-white text-xs rounded font-bold">→</button>
+                            </form>
+                        )}
+                    </>
+                )}
+            </div>
+
+            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+
+            {/* Language Buttons */}
+            <div className="flex gap-3">
+                <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
+                <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
+                <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
+            </div>
+
+            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+
+            {/* Theme Toggle */}
+            <button onClick={toggleTheme} className="flex items-center gap-2 px-3 py-2 rounded-full transition-opacity uppercase tracking-widest text-sm hover:opacity-60">
+                {isDarkMode ? <FaSun className="w-4 h-4" /> : <FaMoon className="w-4 h-4" />}
+                <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
+            </button>
+        </div>
+    );
+}

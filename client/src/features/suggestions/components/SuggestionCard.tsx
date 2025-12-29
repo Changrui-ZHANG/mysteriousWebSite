@@ -3,13 +3,12 @@ import { motion } from 'framer-motion';
 import { FaTrash } from 'react-icons/fa';
 import { StatusBadge } from './StatusBadge';
 import { CommentSection } from './CommentSection';
-import type { Suggestion, SuggestionUser } from '../../types/suggestions';
+import type { Suggestion, SuggestionUser } from '../../../types/suggestions';
 
 interface SuggestionCardProps {
     suggestion: Suggestion;
     index: number;
     isArchived?: boolean;
-    isDarkMode: boolean;
     user: SuggestionUser | null;
     isAdmin: boolean;
     onUpdateStatus: (id: string, status: string) => void;
@@ -21,7 +20,6 @@ export function SuggestionCard({
     suggestion,
     index,
     isArchived = false,
-    isDarkMode,
     user,
     isAdmin,
     onUpdateStatus,
@@ -37,7 +35,7 @@ export function SuggestionCard({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 20, opacity: 0 }}
             transition={{ delay: index * 0.05 }}
-            className={`p-6 rounded-xl backdrop-blur-md border ${isDarkMode ? 'bg-black/60 border-purple-500/30' : 'bg-white/80 border-purple-500/20'} ${isArchived ? 'opacity-75' : ''}`}
+            className={`suggestion-card ${isArchived ? 'opacity-75' : ''}`}
         >
             <div className="flex justify-between items-start mb-3">
                 <div>
@@ -95,7 +93,6 @@ export function SuggestionCard({
                 suggestionId={suggestion.id}
                 commentCount={suggestion.commentCount}
                 user={user}
-                isDarkMode={isDarkMode}
                 isAdmin={isAdmin}
             />
         </motion.div>

@@ -16,7 +16,8 @@ import { MaintenancePage } from './pages/MaintenancePage'
 import { LearningPage } from './pages/LearningPage'
 import { STORAGE_KEYS } from './constants/authStorage'
 import { useThemeManager } from './hooks/useThemeManager'
-import { postJson } from './api/httpClient'
+import { postJson, fetchJson } from './api/httpClient'
+import { API_ENDPOINTS } from './constants/endpoints'
 import './App.css'
 
 interface User {
@@ -64,8 +65,7 @@ function AppContent() {
         }
 
         // 2. Fetch public settings
-        fetch('/api/settings/public')
-            .then(res => res.json())
+        fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
             .then(data => {
                 setSiteSettings(data);
                 setSettingsLoaded(true);
@@ -163,7 +163,6 @@ function AppContent() {
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
                 onLoginSuccess={handleLogin}
-                isDarkMode={isDarkMode}
             />
 
             {(settingsLoaded && isEnabled('SITE_MAINTENANCE_MODE') && !isAdmin) ? (
@@ -186,8 +185,7 @@ function AppContent() {
                         onAdminLogin={handleAdminLogin}
                         onAdminLogout={handleAdminLogout}
                         onRefreshSettings={() => {
-                            fetch('/api/settings/public')
-                                .then(res => res.json())
+                            fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
                                 .then(data => setSiteSettings(data))
                                 .catch(err => console.error("Failed to refresh settings", err));
                         }}
@@ -210,8 +208,8 @@ function AppContent() {
                                 <Route path="/game" element={isEnabled('PAGE_GAME_ENABLED') ? <Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isDarkMode={isDarkMode} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/learning" element={<LearningPage isDarkMode={isDarkMode} />} />
+                                <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/learning" element={<LearningPage />} />
                                 <Route path="/terms" element={<TermsPage />} />
                                 <Route path="/privacy" element={<PrivacyPage />} />
                             </Routes>

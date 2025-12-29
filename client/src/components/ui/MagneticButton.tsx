@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import type { MagneticButtonProps } from './MagneticButtonProps'
 
-export default function MagneticButton({ children, onClick, isDarkMode }: { children: React.ReactNode, onClick?: () => void, isDarkMode?: boolean }) {
+export default function MagneticButton({ children, onClick, isDarkMode }: MagneticButtonProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [position, setPosition] = useState({ x: 0, y: 0 })
 

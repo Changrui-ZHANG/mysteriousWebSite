@@ -5,9 +5,10 @@ import { FaSyncAlt, FaRegHeart, FaStar } from 'react-icons/fa';
 import { useSpeech } from '../hooks/useSpeech';
 import { fetchJson, postJson } from '../api/httpClient';
 import { STORAGE_KEYS } from '../constants/authStorage';
+import { API_ENDPOINTS } from '../constants/endpoints';
 import AuthModal from '../features/auth/AuthModal';
 import { GradientHeading, Button, LoadingSpinner } from '../components';
-import { VocabularyCard } from '../components/learning';
+import { VocabularyCard } from '../features/learning/components';
 import type { VocabularyItem } from '../types/learning';
 
 interface User {
@@ -16,10 +17,9 @@ interface User {
 }
 
 interface LearningPageProps {
-    isDarkMode: boolean;
 }
 
-export function LearningPage({ isDarkMode }: LearningPageProps) {
+export function LearningPage({}: LearningPageProps) {
     const { t, i18n } = useTranslation();
     const { speak } = useSpeech({ lang: 'fr-FR' });
 
@@ -37,7 +37,7 @@ export function LearningPage({ isDarkMode }: LearningPageProps) {
         setLoading(true);
         setRevealed(false);
         try {
-            const data = await fetchJson<VocabularyItem>('/api/vocabulary/random');
+            const data = await fetchJson<VocabularyItem>(API_ENDPOINTS.VOCABULARY.RANDOM);
             if (data) setItem(data);
         } catch (err) {
             console.error("Error fetching random:", err);
@@ -139,7 +139,7 @@ export function LearningPage({ isDarkMode }: LearningPageProps) {
 
     return (
         <>
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLogin} isDarkMode={isDarkMode} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLogin} />
 
             {!user ? (
                 <div className="page-container flex items-center justify-center">
@@ -176,12 +176,12 @@ export function LearningPage({ isDarkMode }: LearningPageProps) {
                             ) : mode === 'review' ? (
                                 <motion.div key="grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                                     {favoriteItems.map(fav => (
-                                        <VocabularyCard key={fav.id} item={fav} isMini isDarkMode={isDarkMode} isFavorite={favorites.has(fav.id)} localizedMeaning={getLocalizedMeaning(fav)} onToggleFavorite={(e) => toggleFavorite(e, fav)} />
+                                        <VocabularyCard key={fav.id} item={fav} isMini isFavorite={favorites.has(fav.id)} localizedMeaning={getLocalizedMeaning(fav)} onToggleFavorite={(e) => toggleFavorite(e, fav)} />
                                     ))}
                                 </motion.div>
                             ) : item ? (
                                 <div className="w-full max-w-xl mx-auto">
-                                    <VocabularyCard item={item} revealed={revealed} isDarkMode={isDarkMode} isFavorite={favorites.has(item.id)} localizedMeaning={getLocalizedMeaning(item)} onReveal={() => setRevealed(true)} onToggleFavorite={(e) => toggleFavorite(e, item)} onSpeak={speak} />
+                                    <VocabularyCard item={item} revealed={revealed} isFavorite={favorites.has(item.id)} localizedMeaning={getLocalizedMeaning(item)} onReveal={() => setRevealed(true)} onToggleFavorite={(e) => toggleFavorite(e, item)} onSpeak={speak} />
                                 </div>
                             ) : (
                                 <div className="text-center py-20 text-red-500/70">

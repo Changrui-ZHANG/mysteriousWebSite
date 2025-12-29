@@ -1,6 +1,6 @@
 # Coding Standards & Architecture Guidelines
 
-> **Version**: 3.0  
+> **Version**: 3.1  
 > **Status**: Active  
 > **Scope**: Frontend — React.js, TypeScript, Tailwind CSS  
 > **Audience**: Human developers & AI coding agents
@@ -54,7 +54,72 @@ This document defines the **single source of truth** for code quality, architect
 │   ├── messages/     # Feature: messaging
 │   └── games/        # Feature: games
 ├── layouts/          # App layouts (Navbar, Footer)
-└── pages/            # Route entry points (thin wrappers)
+├── pages/            # Route entry points (thin wrappers)
+└── constants/        # Global constants (endpoints, config, storage keys)
+```
+
+---
+
+## Constants & Configuration
+
+- Constants **MUST** be placed in `constants/` directory for global values.
+- Feature-specific constants belong in the feature directory.
+- Constant names **MUST** use `UPPER_SNAKE_CASE`.
+- Constants **MUST** be typed explicitly.
+- Related constants **MUST** be grouped in objects or files.
+
+```typescript
+// ✅ Good: Global constants
+// constants/endpoints.ts
+export const API_ENDPOINTS = {
+    MESSAGES: '/api/messages',
+    AUTH: {
+        LOGIN: '/api/auth/login',
+        REGISTER: '/api/auth/register',
+    },
+} as const;
+
+// ✅ Good: Feature-specific constants
+// features/games/constants.ts
+export const GAME_CONFIG = {
+    MAX_SCORE: 1000,
+    TIME_LIMIT: 300,
+} as const;
+
+// ❌ Bad: Magic numbers/strings scattered
+if (status === 'pending') { }  // 'pending' should be a constant
+```
+
+---
+
+## React Router & Navigation
+
+- Routes **MUST** be defined in `App.tsx` or a dedicated routes file.
+- Route components are **thin wrappers** that pass props to feature components.
+- Navigation links **MUST** use `react-router-dom`'s `Link` component.
+- Protected routes **MUST** check authentication before rendering.
+- Route paths **MUST** use kebab-case: `/user-profile`, `/game-settings`.
+
+```typescript
+// ✅ Good: Route definition
+<Route 
+    path="/messages" 
+    element={
+        isEnabled('PAGE_MESSAGES_ENABLED') 
+            ? <MessageWall {...props} />
+            : <MaintenancePage />
+    } 
+/>
+
+// ✅ Good: Protected route pattern
+const ProtectedRoute = ({ children, requiresAuth }) => {
+    const { user } = useAuth();
+    if (requiresAuth && !user) return <Navigate to="/login" />;
+    return children;
+};
+
+// ❌ Bad: Direct window.location
+window.location.href = '/messages';  // Use navigate() instead
 ```
 
 ---
@@ -90,6 +155,69 @@ function Button(props: ButtonProps) {
     const size = props.size || 'md';
 }
 ```
+
+---
+
+## Form Handling
+
+- Forms **MUST** be controlled components using `useState` or form libraries.
+- Validation **MUST** be performed before submission.
+- Error states **MUST** be displayed clearly to users.
+- Loading states **MUST** prevent multiple submissions.
+- Form submission **MUST** use `e.preventDefault()`.
+
+```typescript
+// ✅ Good: Controlled form with validation
+function LoginForm({ onSubmit }: LoginFormProps) {
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!email.trim()) {
+            setError(t('form.email_required'));
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await onSubmit(email);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : t('form.submit_failed'));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            {error && <ErrorMessage message={error} />}
+            <input 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+            />
+            <button type="submit" disabled={loading}>
+                {loading ? t('common.loading') : t('form.submit')}
+            </button>
+        </form>
+    );
+}
+
+// ❌ Bad: Uncontrolled form
+<form onSubmit={() => {
+    const email = document.getElementById('email').value;
+    submit(email);
+}}>
+```
+
+**Validation Rules:**
+- Client-side validation is for **UX**, never for security.
+- Server validation errors **MUST** be displayed to users.
+- Form fields **MUST** have proper `label` and `aria-label` attributes.
 
 ---
 
@@ -131,6 +259,39 @@ function useMessages() {
 function useMessages() {
     return [messages, sendMessage];
 }
+```
+
+---
+
+## Refs (useRef, forwardRef)
+
+- Refs are used **ONLY** when direct DOM access is necessary.
+- Common use cases: focus management, imperative animations, third-party library integration, measuring DOM elements.
+- Refs **MUST NOT** be used to store mutable values that don't trigger re-renders (prefer `useState`).
+- Ref variables **MUST** use the `Ref` suffix: `inputRef`, `containerRef`.
+
+```typescript
+// ✅ Good: DOM access for focus
+function SearchInput() {
+    const inputRef = useRef<HTMLInputElement>(null);
+    
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, []);
+
+    return <input ref={inputRef} />;
+}
+
+// ✅ Good: forwardRef for reusable components
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+    ({ children, ...props }, ref) => (
+        <button ref={ref} {...props}>{children}</button>
+    )
+);
+
+// ❌ Bad: Ref used as state storage
+const countRef = useRef(0);  // Use useState instead
+countRef.current += 1;
 ```
 
 ---
@@ -212,6 +373,87 @@ useEffect(() => {
 
 ---
 
+## Error Boundaries
+
+- Error boundaries **MUST** be class components (or use a library that provides functional error boundaries).
+- Error boundaries **MUST** be placed at strategic points in the component tree.
+- Error boundaries **MUST** provide fallback UI and error reporting.
+- Error boundaries **MUST NOT** catch errors in event handlers, async code, or SSR.
+
+**Placement Guidelines:**
+- Wrap route-level components in `App.tsx`.
+- Wrap feature sections that should fail independently.
+- Wrap third-party component libraries.
+
+```typescript
+// ✅ Good: Error boundary implementation
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+    constructor(props: ErrorBoundaryProps) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error: Error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        console.error('Error caught by boundary:', error, errorInfo);
+        // Report to error tracking service
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <ErrorFallback error={this.state.error} />;
+        }
+        return this.props.children;
+    }
+}
+
+// ✅ Good: Strategic placement
+<ErrorBoundary>
+    <Routes>
+        <Route path="/messages" element={<MessageWall />} />
+    </Routes>
+</ErrorBoundary>
+```
+
+---
+
+## Loading States
+
+- Loading states **MUST** provide clear visual feedback to users.
+- Loading states **MUST** prevent user actions that would conflict (e.g., multiple submissions).
+- Skeleton screens are preferred over spinners for content loading.
+- Loading states **MUST** be accessible (use `aria-live` regions).
+
+```typescript
+// ✅ Good: Skeleton for content loading
+function MessageList({ messages, isLoading }: MessageListProps) {
+    if (isLoading) {
+        return <MessageListSkeleton count={5} />;
+    }
+    return <div>{messages.map(renderMessage)}</div>;
+}
+
+// ✅ Good: Disabled state during submission
+<button type="submit" disabled={isSubmitting}>
+    {isSubmitting ? <Spinner /> : t('form.submit')}
+</button>
+
+// ✅ Good: Inline loading indicator
+{isLoading && <div aria-live="polite" aria-label={t('common.loading')}>
+    <LoadingSpinner />
+</div>}
+
+// ❌ Bad: No loading feedback
+async function handleSubmit() {
+    await submitData();  // User doesn't know it's processing
+}
+```
+
+---
+
 ## TypeScript Rules
 
 - TypeScript **strict mode** is mandatory.
@@ -246,6 +488,56 @@ function process(data: any) { }    // any is forbidden
 - Complex UI logic uses `useReducer`.
 - Global state is introduced **ONLY** when clearly justified.
 - **Redundant state is forbidden** — derive values when possible.
+
+---
+
+## Context API
+
+- Context **MUST** be used **ONLY** for truly global state that needs to be accessed by many components.
+- Context **MUST NOT** be used as a replacement for prop drilling when props are passed through 2-3 levels.
+- Context providers **MUST** be placed as close to consumers as possible.
+- Context values **MUST** be memoized to prevent unnecessary re-renders.
+- Context files **MUST** export both the Context and a custom hook for consumption.
+
+```typescript
+// ✅ Good: Memoized context value
+interface ThemeContextValue {
+    theme: Theme;
+    setTheme: (theme: Theme) => void;
+}
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+    const [theme, setTheme] = useState<Theme>('dark');
+    
+    const value = useMemo(
+        () => ({ theme, setTheme }),
+        [theme]
+    );
+
+    return (
+        <ThemeContext.Provider value={value}>
+            {children}
+        </ThemeContext.Provider>
+    );
+}
+
+export function useTheme() {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used within ThemeProvider');
+    }
+    return context;
+}
+
+// ❌ Bad: Non-memoized context value
+const value = { theme, setTheme };  // Creates new object on every render
+```
+
+**Context Usage Guidelines:**
+- Split contexts by concern (e.g., `AuthContext`, `ThemeContext`, not `AppContext`).
+- Avoid storing frequently changing values in context (use state management libraries instead).
 
 ---
 
@@ -302,6 +594,10 @@ style={{ backgroundColor: 'blue', padding: '16px' }}
 | Hooks | `use` prefix | `useMessages`, `useAuth` |
 | Functions | Action + intent | `fetchMessages`, `validateEmail` |
 | Types/Interfaces | PascalCase | `MessageProps`, `GameStatus` |
+| Constants | UPPER_SNAKE_CASE | `API_ENDPOINTS`, `MAX_RETRIES` |
+| Refs | `Ref` suffix | `inputRef`, `containerRef` |
+| Event handlers | `on` prefix | `onClick`, `onSubmit`, `onDelete` |
+| Boolean props | `is`/`has` prefix | `isVisible`, `hasError` |
 
 - **Generic or ambiguous names are forbidden**: `data`, `info`, `handle`, `process`.
 
@@ -352,11 +648,92 @@ const RECONNECT_DELAY = 5000;
 
 ---
 
-## Performance Rules
+## Performance Optimization
 
-- Optimize **ONLY** when justified.
-- Use `useMemo`, `useCallback`, and `React.memo` appropriately.
-- Apply **code splitting** for heavy routes and assets.
+Performance optimization **MUST** be applied **ONLY** when there is a measurable performance issue. Premature optimization is forbidden.
+
+### useMemo
+
+Use `useMemo` **ONLY** when:
+- Computing expensive derived values from props/state.
+- Preventing object/array recreation in dependency arrays.
+- Memoizing values passed to context providers.
+
+```typescript
+// ✅ Good: Expensive computation
+const sortedMessages = useMemo(
+    () => messages.sort((a, b) => b.timestamp - a.timestamp),
+    [messages]
+);
+
+// ✅ Good: Preventing object recreation
+const apiOptions = useMemo(
+    () => ({ headers: { Authorization: token } }),
+    [token]
+);
+
+// ❌ Bad: Simple computation doesn't need memoization
+const doubled = useMemo(() => count * 2, [count]);  // Unnecessary
+```
+
+### useCallback
+
+Use `useCallback` **ONLY** when:
+- Passing functions as dependencies to other hooks (`useEffect`, `useMemo`).
+- Preventing re-renders of memoized child components.
+- Stabilizing function references for context values.
+
+```typescript
+// ✅ Good: Stable callback for useEffect dependency
+const handleMessageUpdate = useCallback((id: string, text: string) => {
+    updateMessage(id, text);
+}, [updateMessage]);
+
+useEffect(() => {
+    socket.on('messageUpdate', handleMessageUpdate);
+    return () => socket.off('messageUpdate', handleMessageUpdate);
+}, [handleMessageUpdate]);
+
+// ✅ Good: Memoized child component
+const MemoizedButton = React.memo(Button);
+
+function Parent() {
+    const handleClick = useCallback(() => {
+        // handler logic
+    }, []);
+    
+    return <MemoizedButton onClick={handleClick} />;
+}
+
+// ❌ Bad: Callback used only in JSX doesn't need memoization
+const handleClick = useCallback(() => setCount(c => c + 1), []);
+return <button onClick={handleClick}>Click</button>;  // Unnecessary
+```
+
+### React.memo
+
+Use `React.memo` **ONLY** when:
+- Component re-renders frequently with the same props.
+- Component is expensive to render (complex calculations, large lists).
+- Component is rendered by parent components that re-render often.
+
+```typescript
+// ✅ Good: Expensive list item component
+const MessageItem = React.memo(function MessageItem({ message, onDelete }: MessageItemProps) {
+    // Complex rendering logic
+    return <div>{/* ... */}</div>;
+});
+
+// ❌ Bad: Simple component doesn't need memoization
+const Button = React.memo(function Button({ label }: ButtonProps) {
+    return <button>{label}</button>;
+});  // Unnecessary overhead
+```
+
+**Optimization Rules:**
+- **Measure first** — use React DevTools Profiler to identify bottlenecks.
+- **Code splitting** **MUST** be applied for heavy routes: `React.lazy(() => import('./HeavyPage'))`.
+- **Never optimize** without evidence of a performance problem.
 
 ---
 
@@ -393,6 +770,45 @@ import './styles.css';
 - Secrets in `.env` only, **never committed**.
 - Run `npm audit` regularly.
 - **Sanitize all dynamic content.**
+
+---
+
+## Asset Management
+
+- Assets (images, fonts, icons) **MUST** be placed in `public/` for static assets or imported directly for processed assets.
+- Image imports **MUST** use explicit paths: `import logo from './assets/logo.png'`.
+- Large assets **MUST** be optimized before inclusion.
+- Font files **MUST** be loaded via CSS `@font-face` or in `index.css`.
+- Asset file names **MUST** use kebab-case: `hero-image.png`, `icon-check.svg`.
+
+```typescript
+// ✅ Good: Direct import (processed by Vite)
+import logo from '../assets/logo.svg';
+import heroImage from '../assets/hero-image.jpg';
+
+function Header() {
+    return <img src={logo} alt="Logo" />;
+}
+
+// ✅ Good: Static assets in public/
+<img src="/images/static-image.png" alt="Static" />
+
+// ❌ Bad: Hardcoded paths to src/
+<img src="../assets/logo.png" />  // Won't work in production
+```
+
+**Asset Organization:**
+```
+public/
+├── images/          # Static images referenced by URL
+├── fonts/           # Web fonts
+└── icons/           # Static icons
+
+src/
+└── assets/          # Processed assets (imported in code)
+    ├── images/
+    └── icons/
+```
 
 ---
 

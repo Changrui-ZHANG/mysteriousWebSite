@@ -5,7 +5,7 @@ import { FaLightbulb, FaCheck } from 'react-icons/fa';
 import { fetchJson, postJson } from '../api/httpClient';
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { GradientHeading, Button, GlassCard } from '../components';
-import { SuggestionCard } from '../components/suggestions';
+import { SuggestionCard } from '../features/suggestions/components';
 import type { Suggestion, SuggestionUser } from '../types/suggestions';
 
 interface SuggestionsPageProps {
@@ -196,7 +196,6 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                                         key={suggestion.id}
                                         suggestion={suggestion}
                                         index={index}
-                                        isDarkMode={isDarkMode}
                                         user={user}
                                         isAdmin={isAdmin}
                                         onUpdateStatus={updateStatus}
@@ -228,7 +227,6 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                                     suggestion={suggestion}
                                     index={index}
                                     isArchived={true}
-                                    isDarkMode={isDarkMode}
                                     user={user}
                                     isAdmin={isAdmin}
                                     onUpdateStatus={updateStatus}

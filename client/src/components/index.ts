@@ -22,13 +22,10 @@ export { default as ElasticSlider } from './ui/ElasticSlider/ElasticSlider';
 // Error Handling
 export { ErrorBoundary } from './ErrorBoundary';
 
-// Game Components
-export { GravityPlayground } from './game/GravityPlayground';
-export { ScoreDisplay } from './game/ScoreDisplay';
-
 // Audio Components
 export { MuteButton } from './audio/MuteButton';
 
-// CV Components
-export { LiquidSphere } from './cv/LiquidSphere';
-export { ExperienceCard } from './cv/ExperienceCard';
+// Re-exports from features (for backward compatibility during migration)
+export { GravityPlayground } from '../features/games/components/GravityPlayground';
+export { ScoreDisplay } from '../features/games/components/ScoreDisplay';
+export { LiquidSphere, ExperienceCard } from '../features/cv/components';

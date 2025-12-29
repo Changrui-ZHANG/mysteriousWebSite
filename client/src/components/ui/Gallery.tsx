@@ -2,11 +2,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaJava, FaReact, FaDocker, FaDatabase, FaLinux } from 'react-icons/fa';
 
-interface GalleryProps {
-    isDarkMode: boolean;
-}
-
-export function Gallery({ isDarkMode }: GalleryProps) {
+export function Gallery() {
     const { t } = useTranslation();
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +61,7 @@ export function Gallery({ isDarkMode }: GalleryProps) {
             <div className="absolute top-1/2 -translate-y-1/2 left-4 z-20">
                 <button
                     onClick={() => scroll('left')}
-                    className={`p-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 ${isDarkMode ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-black/10 text-black hover:bg-black/20'}`}
+                    className="gallery-scroll-btn"
                     aria-label={t('gallery.scroll_left')}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -77,7 +73,7 @@ export function Gallery({ isDarkMode }: GalleryProps) {
             <div className="absolute top-1/2 -translate-y-1/2 right-4 z-20">
                 <button
                     onClick={() => scroll('right')}
-                    className={`p-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 ${isDarkMode ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-black/10 text-black hover:bg-black/20'}`}
+                    className="gallery-scroll-btn"
                     aria-label={t('gallery.scroll_right')}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -102,7 +98,7 @@ export function Gallery({ isDarkMode }: GalleryProps) {
                     <div key={art.id} className="relative group shrink-0 snap-center first:pl-2 last:pr-2">
                         {/* Art Container */}
                         <div
-                            className={`w-[85vw] h-[50vh] md:w-[450px] md:h-[600px] rounded-2xl overflow-hidden transition-transform duration-500 group-hover:scale-[1.02] ${isDarkMode ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)]' : 'shadow-2xl'}`}
+                            className="w-[85vw] h-[50vh] md:w-[450px] md:h-[600px] rounded-2xl overflow-hidden transition-transform duration-500 group-hover:scale-[1.02] gallery-card-shadow"
                             style={{
                                 background: art.gradient,
                             }}

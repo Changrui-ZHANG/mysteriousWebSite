@@ -6,17 +6,7 @@ import { FaToggleOn, FaToggleOff, FaTimes } from 'react-icons/fa';
 interface AdminSiteControlsProps {
     isOpen: boolean;
     onClose: () => void;
-    adminCode: string; // We'll pass the code stored in Navbar/App state if available, or ask again? 
-    // Actually, Navbar usually has the code or we rely on the component to handle it?
-    // Let's assume we pass the adminCode that was already verified, 
-    // OR we use the global admin check. But PUT requests need the code.
-    // For now, let's pass it. If not available, we might need a prompt.
-    // Simplification: Assume Navbar passes the code it used for login? 
-    // Wait, Navbar state for `adminCode` is local to the input. 
-    // We might need to ask the user to re-enter it or store it in App state.
-    // For security, asking again or keeping it in memory is fine.
-    // Let's expect it as a prop.
-    isDarkMode: boolean;
+    adminCode: string;
     onSettingsChange?: () => void;
     user?: User;
     onOpenLogin?: () => void;
@@ -33,7 +23,7 @@ interface User {
     username: string;
 }
 
-export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, onClose, adminCode, isDarkMode, onSettingsChange, user, onOpenLogin }) => {
+export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, onClose, adminCode, onSettingsChange, user, onOpenLogin }) => {
     const { t } = useTranslation();
     const [settings, setSettings] = useState<SystemSetting[]>([]);
     const [loading, setLoading] = useState(false);
@@ -172,9 +162,9 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
-                    className={`relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden ${isDarkMode ? 'bg-gray-900 text-white border border-white/10' : 'bg-white text-gray-900'}`}
+                    className="admin-panel relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
                 >
-                    <div className={`p-4 border-b flex justify-between items-center ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
+                    <div className="p-4 border-b border-[var(--color-border-default)] flex justify-between items-center">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             🛠️ {t('admin.site_settings')}
                         </h2>
@@ -207,7 +197,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                         ) : (
                             <div className="flex flex-col gap-4">
                                 {settings.map(setting => (
-                                    <div key={setting.key} className={`p-4 rounded-xl flex flex-col gap-3 ${isDarkMode ? 'bg-white/5' : 'bg-gray-50'}`}>
+                                    <div key={setting.key} className="admin-panel-section flex flex-col gap-3">
                                         <div className="flex items-center justify-between">
                                             <div>
                                                 <div className="font-bold flex items-center gap-2">
@@ -231,7 +221,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                                         {setting.key === 'SITE_MAINTENANCE_MESSAGE' && (
                                             <div className="flex gap-2">
                                                 <textarea
-                                                    className={`w-full p-2 rounded text-sm ${isDarkMode ? 'bg-black/20 text-white' : 'bg-white text-black'} border border-current/10`}
+                                                    className="input-themed w-full p-2 text-sm"
                                                     value={setting.value}
                                                     onChange={(e) => setSettings(prev => prev.map(s => s.key === setting.key ? { ...s, value: e.target.value } : s))}
                                                     rows={2}

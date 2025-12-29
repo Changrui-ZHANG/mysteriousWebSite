@@ -36,7 +36,7 @@ export function Home({ isDarkMode }: HomeProps) {
             {/* HERRO SECTION */}
             <section className="h-screen flex flex-col items-center justify-center">
                 <div className="text-center mb-8">
-                    <h1 className={`text-5xl md:text-8xl m-0 font-heading font-extrabold tracking-tighter ${isDarkMode ? 'drop-shadow-[0_0_40px_rgba(0,0,0,0.5)]' : ''}`}>
+                    <h1 className="text-5xl md:text-8xl m-0 font-heading font-extrabold tracking-tighter hero-heading-shadow">
                         {t('brand.author_name')}
                     </h1>
                     <p className="text-2xl opacity-80 font-serif italic mt-4">
@@ -105,7 +105,7 @@ export function Home({ isDarkMode }: HomeProps) {
             {/* HORIZONTAL GALLERY PREVIEW */}
             <ScrollSection>
                 <div className="w-full py-16">
-                    <Gallery isDarkMode={isDarkMode} />
+                    <Gallery />
                 </div>
             </ScrollSection>
 

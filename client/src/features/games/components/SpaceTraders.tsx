@@ -1,23 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useSound } from '../../../hooks/useSound';
 import { useBGM } from '../../../hooks/useBGM';
 import { useBGMVolume } from '../../../hooks/useBGMVolume';
 import { useMute } from '../../../hooks/useMute';
-import { FaQuestion, FaArrowLeft, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
-import { registerAgent, getAgent, getMyShips, Agent, Ship } from '../../../api/spaceTraders';
-import { GradientHeading } from '../../../components';
+import { FaQuestion, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
+import { registerAgent, getAgent, getMyShips, Agent, Ship } from '../services/spaceTraders';
 import { useFullScreen } from '../../../hooks/useFullScreen';
 import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
-import { useRef } from 'react';
 import { BGM_URLS } from '../../../constants/urls';
+import { SpaceTradersRules } from './spacetraders/index';
 
 interface SpaceTradersProps {
-    isDarkMode: boolean;
+    // Props can be extended if needed
 }
 
-export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
+export default function SpaceTraders({}: SpaceTradersProps) {
     const { t } = useTranslation();
     const [token, setToken] = useState<string | null>(localStorage.getItem('spacetraders_token'));
     const [agent, setAgent] = useState<Agent | null>(null);
@@ -100,7 +99,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
         setShips([]);
     };
 
-    const cardClass = `p-6 rounded-xl backdrop-blur-md border ${isDarkMode ? 'bg-black/60 border-cyan-500/30' : 'bg-white/80 border-cyan-500/20'}`;
+    const cardClass = "game-card p-6";
 
     if (!token) {
         return (
@@ -182,7 +181,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
             >
                 {/* Front Face */}
                 <div
-                    className={`absolute inset-0 w-full h-full overflow-y-auto p-4 md:p-8 border-x border-b border-white/20 rounded-b-xl ${isDarkMode ? 'bg-black/40' : 'bg-white/40'} backdrop-blur-md ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                    className={`absolute inset-0 w-full h-full overflow-y-auto p-4 md:p-8 border-x border-b border-[var(--color-border-default)] rounded-b-xl bg-[var(--color-glass-bg)] backdrop-blur-md ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
                     style={{ backfaceVisibility: 'hidden' }}
                 >
                     {error && (
@@ -273,57 +272,7 @@ export default function SpaceTraders({ isDarkMode }: SpaceTradersProps) {
                 </div>
 
                 {/* Back Face (Rules) */}
-                <div
-                    className={`absolute inset-0 w-full h-full flex flex-col p-8 border border-white/20 rounded-xl backdrop-blur-md overflow-hidden ${isDarkMode ? 'bg-black/60' : 'bg-white/80'}`}
-                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', zIndex: isFlipped ? 10 : 0 }}
-                >
-                    <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                        <GradientHeading gradient="cyan-blue" level={2}>
-                            {t('spacetraders.rules_title')}
-                        </GradientHeading>
-                        <button
-                            onClick={() => setIsFlipped(false)}
-                            className="p-2 rounded-full hover:bg-white/10 transition-colors"
-                        >
-                            <FaArrowLeft className="text-white text-xl" />
-                        </button>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto space-y-6 text-left scrollbar-thin scrollbar-thumb-cyan-500/50 scrollbar-track-transparent pr-2">
-                        <section className="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
-                            <h3 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2">
-                                <span className="bg-cyan-500/20 p-2 rounded-lg">🚀</span>
-                                {t('game.objective')}
-                            </h3>
-                            <p className="text-white/80 leading-relaxed text-sm md:text-base">
-                                {t('spacetraders.rules_text')}
-                            </p>
-                        </section>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-cyan-500/30 transition-colors">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">💰</span>
-                                    <h4 className="font-bold text-white">{t('spacetraders.economy')}</h4>
-                                </div>
-                                <p className="text-sm text-white/60 leading-relaxed">{t('spacetraders.rules_market')}</p>
-                            </div>
-                            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 hover:border-purple-500/30 transition-colors">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <span className="text-2xl bg-white/10 p-2 rounded-xl">🛰️</span>
-                                    <h4 className="font-bold text-white">{t('spacetraders.network')}</h4>
-                                </div>
-                                <p className="text-sm text-white/60 leading-relaxed">{t('spacetraders.network_desc')}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-gradient-to-r from-cyan-500/10 to-transparent p-4 rounded-xl border-l-4 border-cyan-400">
-                            <p className="text-xs md:text-sm text-cyan-200 italic">
-                                💡 {t('spacetraders.tip')}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <SpaceTradersRules onClose={() => setIsFlipped(false)} />
             </motion.div>
         </div>
     );

@@ -1,0 +1,1 @@
+export { SpaceTradersRules } from './SpaceTradersRules';

@@ -2,7 +2,7 @@
 import type { ApiResponse } from '../types/api';
 
 export class ApiError extends Error {
-    constructor(public status: number, message: string, public data?: any) {
+    constructor(public status: number, message: string, public data?: unknown) {
         super(message);
         this.name = 'ApiError';
     }
@@ -11,9 +11,9 @@ export class ApiError extends Error {
 /**
  * Checks if response is an ApiResponse wrapper from backend
  */
-function isApiResponse<T>(response: any): response is ApiResponse<T> {
+function isApiResponse<T>(response: unknown): response is ApiResponse<T> {
     return (
-        response &&
+        response !== null &&
         typeof response === 'object' &&
         'success' in response &&
         'data' in response &&
@@ -98,7 +98,7 @@ export async function fetchJson<T>(
  */
 export async function postJson<T>(
     url: string,
-    data: any
+    data: unknown
 ): Promise<T> {
     return fetchJson<T>(url, {
         method: 'POST',
@@ -112,7 +112,7 @@ export async function postJson<T>(
  */
 export async function putJson<T>(
     url: string,
-    data: any
+    data: unknown
 ): Promise<T> {
     return fetchJson<T>(url, {
         method: 'PUT',

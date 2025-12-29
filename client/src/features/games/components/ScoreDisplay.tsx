@@ -24,10 +24,6 @@ const colorClasses: Record<ScoreColor, { primary: string; secondary: string }> =
     yellow: { primary: 'text-yellow-400', secondary: 'text-amber-400' },
 };
 
-/**
- * Reusable score display component for games.
- * Shows current score and optionally personal best comparison.
- */
 export function ScoreDisplay({
     score,
     personalBest,
@@ -39,7 +35,6 @@ export function ScoreDisplay({
     const { t } = useTranslation();
     const colors = colorClasses[color];
 
-    // Calculate best score to display
     const bestScore = personalBest?.score !== undefined
         ? Math.max(score, personalBest.score)
         : score;

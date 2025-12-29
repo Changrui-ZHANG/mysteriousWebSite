@@ -12,11 +12,10 @@ import { getDaysInMonth, getFirstDayOfMonth, isWeekend, formatDate, toLocalDateI
 import type { Holiday, SchoolHoliday, SchoolHolidayApiResponse } from '../types/calendar';
 
 interface CalendarPageProps {
-    isDarkMode: boolean;
     isAdmin: boolean;
 }
 
-export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
+export function CalendarPage({ isAdmin }: CalendarPageProps) {
     const { t, i18n } = useTranslation();
     const adminCode = useAdminCode();
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -187,9 +186,7 @@ export function CalendarPage({ isDarkMode, isAdmin }: CalendarPageProps) {
                 )}
             </div>
 
-            <div className={isDarkMode ? 'dark' : ''}>
-                <HolidayModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} holiday={selectedHoliday} />
-            </div>
+            <HolidayModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} holiday={selectedHoliday} />
         </div>
     );
 }

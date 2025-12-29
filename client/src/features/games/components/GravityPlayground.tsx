@@ -14,7 +14,6 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
     useEffect(() => {
         if (!sceneRef.current) return
 
-        // Module aliases
         const Engine = Matter.Engine,
             Render = Matter.Render,
             Runner = Matter.Runner,
@@ -23,14 +22,12 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             Mouse = Matter.Mouse,
             MouseConstraint = Matter.MouseConstraint;
 
-        // Create engine
         const engine = Engine.create();
         engineRef.current = engine;
 
         const width = sceneRef.current.clientWidth;
         const height = sceneRef.current.clientHeight;
 
-        // Create renderer
         const render = Render.create({
             element: sceneRef.current,
             engine: engine,
@@ -39,7 +36,6 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
                 height,
                 background: 'transparent',
                 wireframes: false
-                // pixelRatio removed to fix coordinate mismatch on resize
             }
         });
 
@@ -50,13 +46,10 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             }
         };
 
-        // Create boundaries
         const ground = Bodies.rectangle(width / 2, height + 30, width, 60, wallOptions);
         const leftWall = Bodies.rectangle(-30, height / 2, 60, height, wallOptions);
         const rightWall = Bodies.rectangle(width + 30, height / 2, 60, height, wallOptions);
 
-        // Keywords to fall
-        // Fetch keywords from translation, defaulting to English tech stack if fails
         const keywordsData = t('gravity.keywords', { returnObjects: true });
         const keywords: string[] = Array.isArray(keywordsData) ? (keywordsData as string[]) : ["GRAVITY", "CODE", "PHYSICS"];
 
@@ -64,11 +57,9 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             const x = Math.random() * (width - 100) + 50;
             const y = -Math.random() * 500 - 50;
 
-            // Dynamic sizing based on screen width
             const isMobile = width < 768;
             const scaleFactor = isMobile ? 0.6 : 1;
 
-            // Approximate size based on word length, scaled for mobile
             const w = (word.length * 15 + 60) * scaleFactor;
             const h = 60 * scaleFactor;
 
@@ -87,24 +78,19 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             });
         });
 
-        // Add bodies
         Composite.add(engine.world, [ground, leftWall, rightWall, ...bodies]);
 
-        // Add mouse control
         const mouse = Mouse.create(render.canvas);
         const mouseConstraint = MouseConstraint.create(engine, {
             mouse: mouse,
             constraint: {
                 stiffness: 0.2,
-                render: {
-                    visible: false
-                }
+                render: { visible: false }
             }
         });
         Composite.add(engine.world, mouseConstraint);
         render.mouse = mouse;
 
-        // Custom render loop for text
         Matter.Events.on(render, "afterRender", function () {
             const context = render.context;
             const isMobile = render.canvas.width < 768;
@@ -116,7 +102,6 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             bodies.forEach(body => {
                 const { x, y } = body.position;
                 const angle = body.angle;
-                // Extended Matter.Body definition hack or safe access
                 const content = body.render.text?.content;
                 const textColor = body.render.text?.color;
 
@@ -135,7 +120,6 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
         const runner = Runner.create();
         Runner.run(runner, engine);
 
-        // Resize handler
         const handleResize = () => {
             if (!sceneRef.current) return;
             const w = sceneRef.current.clientWidth;
@@ -157,7 +141,7 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
             Engine.clear(engine);
             render.canvas.remove();
         }
-    }, [isDarkMode, i18n.language]); // Re-run when language changes
+    }, [isDarkMode, i18n.language]);
 
     return (
         <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner touch-action-none" ref={sceneRef}>

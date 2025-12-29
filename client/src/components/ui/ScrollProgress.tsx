@@ -1,7 +1,8 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import type { ScrollProgressProps } from './ScrollProgressProps'
 
-export function ScrollProgress({ isDarkMode, target }: { isDarkMode: boolean; target?: React.RefObject<HTMLElement> }) {
+export function ScrollProgress({ isDarkMode, target }: ScrollProgressProps) {
     // Set layoutEffect: false to avoid "ref not yet hydrated" warning
     const { scrollYProgress } = useScroll({ container: target, layoutEffect: false })
     const scaleY = useSpring(scrollYProgress, {

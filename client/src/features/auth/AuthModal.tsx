@@ -3,15 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaTimes } from 'react-icons/fa';
 import { postJson } from '../../api/httpClient';
+import { API_ENDPOINTS } from '../../constants/endpoints';
 
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     onLoginSuccess: (user: { userId: string; username: string }) => void;
-    isDarkMode: boolean;
 }
 
-export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
     const { t } = useTranslation();
     const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
     const [username, setUsername] = useState('');
@@ -25,7 +25,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
         setSuccess('');
 
         try {
-            const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+            const endpoint = authMode === 'login' ? API_ENDPOINTS.AUTH.LOGIN : API_ENDPOINTS.AUTH.REGISTER;
 
             // Use postJson for auto-unwrapping
             const data = await postJson<{ userId: string; username: string; message: string }>(endpoint, { username, password });
@@ -59,14 +59,11 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.95, opacity: 0 }}
-                        className={`relative w-full max-w-md p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border backdrop-blur-md ${isDarkMode ? 'bg-white/10 border-white/20 text-white' : 'bg-white/10 border-white/30 text-gray-900'}`}
-                        style={{
-                            boxShadow: isDarkMode ? '0 8px 32px 0 rgba(0, 0, 0, 0.37)' : '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
-                        }}
+                        className="auth-modal relative w-full max-w-md p-8 shadow-xl"
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Shimmer/Reflection Effect */}
-                        <div className={`absolute inset-0 rounded-2xl pointer-events-none ${isDarkMode ? 'bg-gradient-to-br from-white/10 to-transparent opacity-50' : 'bg-gradient-to-br from-white/40 to-transparent opacity-70'}`}></div>
+                        <div className="auth-modal-shimmer absolute inset-0 rounded-2xl pointer-events-none"></div>
 
                         <div className="relative z-10">
                             <div className="flex justify-between items-center mb-8">
@@ -88,7 +85,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
                                         placeholder={t('auth.username')}
                                         value={username}
                                         onChange={e => setUsername(e.target.value)}
-                                        className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-1 focus:ring-current transition-all backdrop-blur-sm ${isDarkMode ? 'bg-black/20 border-white/10 focus:border-white/30 placeholder-white/30' : 'bg-white/40 border-white/40 focus:border-white/60 placeholder-gray-500'}`}
+                                        className="auth-input w-full"
                                         required
                                     />
                                     <input
@@ -96,14 +93,14 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, isDarkMode 
                                         placeholder={t('auth.password')}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
-                                        className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-1 focus:ring-current transition-all backdrop-blur-sm ${isDarkMode ? 'bg-black/20 border-white/10 focus:border-white/30 placeholder-white/30' : 'bg-white/40 border-white/40 focus:border-white/60 placeholder-gray-500'}`}
+                                        className="auth-input w-full"
                                         required
                                     />
                                 </div>
 
                                 <button
                                     type="submit"
-                                    className={`w-full py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-all transform active:scale-[0.98] shadow-lg ${isDarkMode ? 'bg-white/90 text-black hover:bg-white' : 'bg-black/80 text-white hover:bg-black'}`}
+                                    className="auth-button w-full"
                                 >
                                     {authMode === 'login' ? t('auth.login') : t('auth.create_account')}
                                 </button>

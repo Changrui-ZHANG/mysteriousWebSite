@@ -12,7 +12,7 @@ import { useAdminCode } from '../hooks/useAdminCode';
 
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { GradientHeading } from '../components';
-import { GameSelector, GuestAlertModal } from '../components/game';
+import { GameSelector, GuestAlertModal } from '../features/games/components';
 import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps } from '../types/game';
 
 export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
@@ -58,7 +58,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         const fetchPersonalBest = async () => {
             if (!user?.userId) { setPersonalBest(null); return; }
             try {
-                const data = await fetchJson<ScoreData>(`/api/scores/user/${user.userId}/${activeGame}`);
+                const data = await fetchJson<ScoreData>(API_ENDPOINTS.GAMES.USER_SCORE(user.userId, activeGame));
                 setPersonalBest({ score: data.score, attempts: data.attempts });
             } catch (error) {
                 console.error("Failed to fetch personal best", error);
@@ -72,7 +72,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         if (!user) {
             if (score <= 0 || hasGuestAlertShownRef.current) return;
             try {
-                const topScores = await fetchJson<TopScore[]>(`/api/scores/top/${activeGame}`);
+                const topScores = await fetchJson<TopScore[]>(API_ENDPOINTS.GAMES.TOP_SCORES(activeGame));
                 let isEligible = topScores.length < 3;
                 if (!isEligible && topScores.length >= 3) {
                     const thresholdScore = topScores[topScores.length - 1].score;
@@ -95,7 +95,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         if (!isNewBest) return;
 
         try {
-            await postJson('/api/scores', {
+            await postJson(API_ENDPOINTS.GAMES.SUBMIT_SCORE, {
                 gameType: activeGame,
                 score,
                 userId: user.userId,
@@ -158,7 +158,7 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
 
                 {!user && (
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                        className={`text-center py-2 mb-4 text-sm font-bold mx-auto max-w-3xl ${isDarkMode ? 'text-yellow-400 bg-yellow-400/10' : 'text-orange-600 bg-orange-100'} rounded-lg border border-yellow-500/30`}>
+                        className="warning-banner text-center py-2 mb-4 text-sm font-bold mx-auto max-w-3xl">
                         ⚠️ <Trans i18nKey="game.login_warning" components={[<button key="0" onClick={onOpenLogin} className="underline hover:text-pink-500 transition-colors mx-1 cursor-pointer" />]} />
                     </motion.div>
                 )}

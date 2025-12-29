@@ -651,3 +651,238 @@ a:hover {
 .message-highlight {
     background-color: var(--color-bg-muted);
 }
+
+/* ============================================
+   7. GAME & MODAL COMPONENTS
+   ============================================ */
+
+/* ----- AUTH MODAL ----- */
+.auth-modal {
+    background-color: var(--color-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-2xl);
+    color: var(--color-text-primary);
+}
+
+.auth-modal-shimmer {
+    background: linear-gradient(to bottom right, var(--color-bg-surface), transparent);
+    opacity: 0.5;
+}
+
+.auth-input {
+    background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border-default);
+    color: var(--color-text-primary);
+    border-radius: var(--radius-xl);
+    padding: 0.75rem 1rem;
+    transition: all var(--transition-fast);
+}
+
+.auth-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+}
+
+.auth-button {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-inverted);
+    border-radius: var(--radius-xl);
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all var(--transition-fast);
+}
+
+.auth-button:hover {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
+
+/* ----- GAME CARD ----- */
+.game-card {
+    background-color: var(--color-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-xl);
+}
+
+/* ----- WARNING BANNER ----- */
+.warning-banner {
+    background-color: rgba(251, 191, 36, 0.1);
+    color: var(--color-accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: var(--radius-lg);
+}
+
+/* ----- ADMIN PANEL ----- */
+.admin-panel {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-xl);
+    color: var(--color-text-primary);
+}
+
+.admin-panel-section {
+    background-color: var(--color-bg-muted);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+}
+
+/* ----- USER MANAGEMENT ----- */
+.user-management-modal {
+    background-color: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    border-radius: var(--radius-xl);
+}
+
+.user-management-input {
+    background-color: var(--color-bg-muted);
+    color: var(--color-text-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+}
+
+.user-management-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-green);
+}
+
+/* ============================================
+   8. THEME-AWARE COMPONENT UTILITIES
+   ============================================ */
+
+/* ----- HERO HEADING (theme-aware shadow) ----- */
+.hero-heading-shadow {
+    filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.3));
+}
+
+.dark .hero-heading-shadow {
+    filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.5));
+}
+
+/* ----- GALLERY SCROLL BUTTONS ----- */
+.gallery-scroll-btn {
+    padding: 1rem;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(12px);
+    transition: all var(--transition-fast);
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--color-text-primary);
+}
+
+.gallery-scroll-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.gallery-scroll-btn:active {
+    transform: scale(0.95);
+}
+
+.dark .gallery-scroll-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .gallery-scroll-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ----- GALLERY CARD SHADOW ----- */
+.gallery-card-shadow {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.dark .gallery-card-shadow {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* ----- VOCABULARY CARD ----- */
+.vocabulary-card {
+    background: linear-gradient(to bottom right, var(--color-bg-surface), var(--color-bg-elevated));
+    border: 1px solid var(--color-border-default);
+    box-shadow: var(--shadow-xl);
+}
+
+.vocabulary-card:hover {
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow: var(--shadow-xl);
+}
+
+.vocabulary-meaning {
+    color: var(--color-text-secondary);
+}
+
+.vocabulary-example-box {
+    background-color: var(--color-bg-muted);
+    color: var(--color-text-secondary);
+}
+
+.dark .vocabulary-meaning {
+    color: #fef3c7; /* amber-100 */
+}
+
+.dark .vocabulary-example-box {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #d1d5db; /* gray-300 */
+}
+
+/* ----- SUGGESTION CARD ----- */
+.suggestion-card {
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(12px);
+    background-color: var(--color-glass-bg);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.dark .suggestion-card {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-color: rgba(168, 85, 247, 0.3);
+}
+
+/* ----- COMMENT SECTION ----- */
+.comment-box {
+    background-color: rgba(168, 85, 247, 0.1);
+    border-radius: var(--radius-lg);
+}
+
+.dark .comment-box {
+    background-color: rgba(88, 28, 135, 0.2);
+}
+
+.comment-textarea {
+    background-color: var(--color-bg-surface);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: var(--color-text-primary);
+}
+
+.dark .comment-textarea {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: rgba(168, 85, 247, 0.3);
+}
+
+.reply-indicator {
+    background-color: rgba(168, 85, 247, 0.15);
+}
+
+.dark .reply-indicator {
+    background-color: rgba(88, 28, 135, 0.3);
+}
+
+/* ----- GAME CANDY SHADOW ----- */
+.candy-shadow {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.dark .candy-shadow {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}

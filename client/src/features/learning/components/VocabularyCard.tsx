@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { FaHeart, FaRegHeart, FaLightbulb, FaVolumeUp } from 'react-icons/fa';
-import type { VocabularyItem } from '../../types/learning';
+import type { VocabularyItem } from '../../../types/learning';
 
 interface VocabularyCardProps {
     item: VocabularyItem;
     isMini?: boolean;
     revealed?: boolean;
-    isDarkMode: boolean;
     isFavorite: boolean;
     localizedMeaning: string;
     onReveal?: () => void;
@@ -19,7 +18,6 @@ export function VocabularyCard({
     item,
     isMini = false,
     revealed = true,
-    isDarkMode,
     isFavorite,
     localizedMeaning,
     onReveal,
@@ -37,11 +35,7 @@ export function VocabularyCard({
             exit={{ opacity: 0, scale: 0.9 }}
             onClick={() => !isMini && !revealed && onReveal?.()}
             className={`
-                relative w-full ${isMini ? 'p-6 min-h-[250px]' : 'p-8 md:p-12 min-h-[400px]'} rounded-3xl text-center cursor-pointer transition-all duration-500 shadow-2xl
-                ${isDarkMode
-                    ? 'bg-gradient-to-br from-gray-900 to-gray-800 border border-white/10 hover:border-amber-500/30'
-                    : 'bg-white border border-gray-100 shadow-xl hover:shadow-2xl hover:border-amber-200'
-                }
+                relative w-full ${isMini ? 'p-6 min-h-[250px]' : 'p-8 md:p-12 min-h-[400px]'} rounded-3xl text-center cursor-pointer transition-all duration-500 vocabulary-card
             `}
         >
             <button
@@ -78,12 +72,12 @@ export function VocabularyCard({
                         animate={{ opacity: 1 }}
                         className="mt-4"
                     >
-                        <p className={`${isMini ? 'text-base' : 'text-xl md:text-2xl'} font-light mb-4 ${isDarkMode ? 'text-amber-100' : 'text-gray-700'}`}>
+                        <p className={`${isMini ? 'text-base' : 'text-xl md:text-2xl'} font-light mb-4 vocabulary-meaning`}>
                             {localizedMeaning}
                         </p>
 
                         {!isMini && (
-                            <div className={`text-left p-6 rounded-2xl ${isDarkMode ? 'bg-black/20 text-gray-300' : 'bg-gray-50 text-gray-600'}`}>
+                            <div className="text-left p-6 rounded-2xl vocabulary-example-box">
                                 <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-widest opacity-50">
                                     <FaLightbulb /> Exemple
                                 </div>

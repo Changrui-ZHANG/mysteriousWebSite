@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchJson, deleteJson } from '../../../api/httpClient';
+import { getAdminCode } from '../../../constants/authStorage';
+import { API_ENDPOINTS } from '../../../constants/endpoints';
 
 interface Score {
     id: string;
@@ -24,7 +26,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isSuperAdmin = f
     const fetchTopScores = async () => {
         try {
             // Using fetchJson for auto-unwrapping ApiResponse
-            const data = await fetchJson<Score[]>(`/api/scores/top/${gameType}`);
+            const data = await fetchJson<Score[]>(API_ENDPOINTS.GAMES.TOP_SCORES(gameType));
             if (Array.isArray(data)) {
                 setScores(data);
             } else {
@@ -45,8 +47,9 @@ export default function Leaderboard({ gameType, refreshTrigger, isSuperAdmin = f
         if (!confirm(t('game.confirm_reset_score', { username }))) return;
 
         try {
-            const SUPER_ADMIN_CODE = 'ChangruiZ'; // Should align with App.tsx
-            await deleteJson(`/api/scores/${id}?adminCode=${SUPER_ADMIN_CODE}`);
+            const adminCode = getAdminCode();
+            if (!adminCode) return;
+            await deleteJson(`${API_ENDPOINTS.GAMES.DELETE_SCORE(id)}?adminCode=${adminCode}`);
             setRefresh(prev => prev + 1);
         } catch (error) {
             console.error('Failed to reset score', error);

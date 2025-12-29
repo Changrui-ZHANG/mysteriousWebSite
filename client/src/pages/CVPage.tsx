@@ -5,9 +5,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { Canvas } from '@react-three/fiber';
 import { getCVData } from '../data/cvData';
-import { LiquidSphere } from '../components/cv/LiquidSphere';
+import { LiquidSphere, ExperienceCard } from '../features/cv/components';
 import { GlassPanel } from '../components/ui/GlassPanel';
-import { ExperienceCard } from '../components/cv/ExperienceCard';
 import { SOCIAL_LINKS } from '../constants/urls';
 
 // Register GSAP plugins

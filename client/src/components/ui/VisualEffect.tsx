@@ -7,7 +7,15 @@ interface VisualEffectProps {
     isDarkMode: boolean;
 }
 
-function FlowParticles({ isDarkMode }: { isDarkMode: boolean }) {
+interface FlowParticlesProps {
+    isDarkMode: boolean;
+}
+
+interface BgProps {
+    isDarkMode: boolean;
+}
+
+function FlowParticles({ isDarkMode }: FlowParticlesProps) {
     const count = 1000; // Reduced for performance optimization
     const mesh = useRef<THREE.Points>(null!);
 
@@ -89,7 +97,7 @@ function FlowParticles({ isDarkMode }: { isDarkMode: boolean }) {
     )
 }
 
-function Bg({ isDarkMode }: { isDarkMode: boolean }) {
+function Bg({ isDarkMode }: BgProps) {
     return (
         <mesh scale={100}>
             <sphereGeometry args={[1, 64, 64]} />

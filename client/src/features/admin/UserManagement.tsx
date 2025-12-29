@@ -1,7 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { API_ENDPOINTS } from '../../constants/endpoints';
+import { fetchJson, postJson, putJson, deleteJson } from '../../api/httpClient';
 
 interface User {
     id: string;
@@ -13,12 +14,9 @@ interface UserManagementProps {
     isOpen: boolean;
     onClose: () => void;
     superAdminCode: string;
-    isDarkMode: boolean;
 }
 
-const API_URL = '/api/superadmin/users';
-
-const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superAdminCode, isDarkMode }) => {
+const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superAdminCode }) => {
     const { t } = useTranslation();
     const [users, setUsers] = useState<User[]>([]);
     const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -35,9 +33,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
     const fetchUsers = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}?superAdminCode=${superAdminCode}`);
-            if (!response.ok) throw new Error('Failed to fetch users');
-            const data = await response.json();
+            const url = `${API_ENDPOINTS.SUPER_ADMIN.USERS}?superAdminCode=${superAdminCode}`;
+            const data = await fetchJson<User[]>(url);
             setUsers(data);
         } catch (err) {
             setError(err instanceof Error ? err.message : t('common.unknown_error'));
@@ -50,10 +47,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
         if (!window.confirm(t('admin.confirm_delete_user'))) return;
 
         try {
-            const response = await fetch(`${API_URL}/${id}?superAdminCode=${superAdminCode}`, {
-                method: 'DELETE'
-            });
-            if (!response.ok) throw new Error('Failed to delete user');
+            const url = `${API_ENDPOINTS.SUPER_ADMIN.USER(id)}?superAdminCode=${superAdminCode}`;
+            await deleteJson(url);
             setUsers(users.filter(u => u.id !== id));
         } catch (err) {
             alert(t('admin.error_delete_user'));
@@ -63,18 +58,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
     const handleCreate = async (user: User) => {
         try {
             const { username, plainPassword } = user;
-            const response = await fetch(`${API_URL}?superAdminCode=${superAdminCode}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password: plainPassword })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || 'Failed to create user');
-            }
-
-            const newUser = await response.json();
+            const url = `${API_ENDPOINTS.SUPER_ADMIN.USERS}?superAdminCode=${superAdminCode}`;
+            const newUser = await postJson<User>(url, { username, password: plainPassword });
             setUsers([...users, newUser]);
             setEditingUser(null);
         } catch (err) {
@@ -85,14 +70,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
     const handleSave = async (user: User) => {
         try {
             const { id, username, plainPassword } = user;
-            const response = await fetch(`${API_URL}/${id}?superAdminCode=${superAdminCode}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password: plainPassword })
-            });
-
-            if (!response.ok) throw new Error('Failed to update user');
-
+            const url = `${API_ENDPOINTS.SUPER_ADMIN.USER(id)}?superAdminCode=${superAdminCode}`;
+            await putJson(url, { username, password: plainPassword });
             setUsers(users.map(u => u.id === id ? user : u));
             setEditingUser(null);
         } catch (err) {
@@ -115,7 +94,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className={`w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}
+                className="user-management-modal w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
             >
                 <div className="p-6 border-b border-gray-700 flex justify-between items-center">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
@@ -140,7 +119,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
                         <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
-                            className={`mb-4 p-4 rounded-lg border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}
+                            className="admin-panel-section mb-4"
                         >
                             <h3 className="font-bold mb-3">{t('admin.add_new_user')}</h3>
                             <div className="flex gap-3 mb-3">
@@ -148,13 +127,13 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
                                     placeholder={t('admin.username')}
                                     value={editingUser.username}
                                     onChange={e => setEditingUser({ ...editingUser, username: e.target.value })}
-                                    className={`flex-1 px-3 py-2 rounded-lg border-0 focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white'}`}
+                                    className="user-management-input flex-1"
                                 />
                                 <input
                                     placeholder={t('admin.password')}
                                     value={editingUser.plainPassword || ''}
                                     onChange={e => setEditingUser({ ...editingUser, plainPassword: e.target.value })}
-                                    className={`flex-1 px-3 py-2 rounded-lg border-0 focus:ring-2 ring-green-500 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white'}`}
+                                    className="user-management-input flex-1"
                                 />
                             </div>
                             <div className="flex justify-end gap-2">
@@ -197,14 +176,14 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose, superA
                                                     <input
                                                         value={editingUser.username}
                                                         onChange={e => setEditingUser({ ...editingUser, username: e.target.value })}
-                                                        className={`w-full px-2 py-1 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}
+                                                        className="user-management-input w-full"
                                                     />
                                                 </td>
                                                 <td className="p-3">
                                                     <input
                                                         value={editingUser.plainPassword || ''}
                                                         onChange={e => setEditingUser({ ...editingUser, plainPassword: e.target.value })}
-                                                        className={`w-full px-2 py-1 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}
+                                                        className="user-management-input w-full"
                                                     />
                                                 </td>
                                                 <td className="p-3 text-right flex justify-end gap-2">

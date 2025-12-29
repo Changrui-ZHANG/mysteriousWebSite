@@ -1,357 +1,106 @@
 import { Canvas } from '@react-three/fiber';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Suspense, useState, useMemo } from 'react';
-import { useMute } from '../../../hooks/useMute';
-import { useSound } from '../../../hooks/useSound';
-import { useBGM } from '../../../hooks/useBGM';
+import { Suspense, useState, useRef } from 'react';
 import { useTheme } from '../../../hooks/useTheme';
+import { useFullScreen } from '../../../hooks/useFullScreen';
 import { FaQuestion, FaArrowLeft, FaArrowRight, FaExpand, FaCompress, FaRedo } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
+import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
 import { HUD } from '../zombie/components/HUD';
 import { World } from '../zombie/components/World';
 import { RulesPanel } from '../zombie/components/RulesPanel';
 import { GameScene } from '../zombie/GameScene';
 import { SuperRewardModal } from '../zombie/components/SuperRewardModal';
-import { SuperUpgrade } from '../zombie/types';
-import { ZombieShooterProps } from '../zombie/types';
-import { useBGMVolume } from '../../../hooks/useBGMVolume';
-import { useFullScreen } from '../../../hooks/useFullScreen';
-import ElasticSlider from '../../../components/ui/ElasticSlider/ElasticSlider';
-import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { BGM_URLS } from '../../../constants/urls';
-
-// ===== WEAPON INITIAL VALUES =====
-const WEAPON_DEFAULTS = {
-    /** Starting weapon count */
-    COUNT: 1,
-    /** Starting fire delay (seconds) */
-    DELAY: 0.3,
-    /** Starting tech level */
-    TECH: 0,
-    /** Starting base damage */
-    DAMAGE: 50,
-    /** Starting bounce count */
-    BOUNCE: 1,
-    /** Starting critical hit chance (%) */
-    CRIT_CHANCE: 5,
-    /** Starting critical bonus (%) */
-    CRIT_BONUS: 100,
-    /** Minimum fire delay (seconds) */
-    MIN_DELAY: 0.05,
-};
-
-// ===== ZOMBIE DEFAULTS =====
-const ZOMBIE_DEFAULTS = {
-    /** Starting zombie HP */
-    HP: 100,
-};
-
-// ===== NOTIFICATION CONFIGURATION =====
-const NOTIFICATION_CONFIG = {
-    /** Duration notifications stay on screen (ms) */
-    DURATION: 3000,
-} as const;
-
-// ===== AUDIO CONFIGURATION =====
-const AUDIO_CONFIG = {
-    /** Background music URL */
-    BGM_URL: BGM_URLS.ZOMBIE_SHOOTER,
-} as const;
-
-// ===== SUPER UPGRADES =====
-const SUPER_UPGRADES = [
-    { id: 'dmg_50', nameKey: 'game.zombie_upgrades.dmg_50_name', descKey: 'game.zombie_upgrades.dmg_50_desc', icon: '🚀', type: 'damage_mult' as const, value: 1.5 },
-    { id: 'dmg_100', nameKey: 'game.zombie_upgrades.dmg_100_name', descKey: 'game.zombie_upgrades.dmg_100_desc', icon: '⚡', type: 'damage_mult' as const, value: 2.0 },
-    { id: 'crit_b_50', nameKey: 'game.zombie_upgrades.crit_b_50_name', descKey: 'game.zombie_upgrades.crit_b_50_desc', icon: '🎯', type: 'crit_bonus' as const, value: 50 },
-    { id: 'crit_b_150', nameKey: 'game.zombie_upgrades.crit_b_150_name', descKey: 'game.zombie_upgrades.crit_b_150_desc', icon: '💀', type: 'crit_bonus' as const, value: 150 },
-    { id: 'fire_50', nameKey: 'game.zombie_upgrades.fire_50_name', descKey: 'game.zombie_upgrades.fire_50_desc', icon: '🔥', type: 'fire_rate' as const, value: 0.5 },
-    { id: 'homing_shot', nameKey: 'game.zombie_upgrades.homing_shot_name', descKey: 'game.zombie_upgrades.homing_shot_desc', icon: '🎯', type: 'homing' as const, value: 1 },
-] as const;
-
-// ===== UPGRADE SELECTION =====
-const UPGRADE_CONFIG = {
-    /** Number of upgrade choices presented */
-    CHOICES_COUNT: 3,
-} as const;
+import { useZombieShooter } from '../zombie/hooks/useZombieShooter';
+import type { ZombieShooterProps } from '../zombie/types';
 
 export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest, onGameStart }: ZombieShooterProps) {
     const { t } = useTranslation();
     const theme = useTheme(isDarkMode);
-    const { isMuted, toggleMute } = useMute();
-    const { playSound } = useSound(!isMuted);
-    const { volume, setVolume } = useBGMVolume(0.4);
     const containerRef = useRef<HTMLDivElement>(null);
     const { isFullScreen, toggleFullScreen } = useFullScreen(containerRef);
-
-    // Flip state
     const [isFlipped, setIsFlipped] = useState(false);
 
-    const [gameState, setGameState] = useState<'intro' | 'playing' | 'gameover'>('intro');
-    const [score, setScore] = useState(0);
-    const [weaponCount, setWeaponCount] = useState<number>(WEAPON_DEFAULTS.COUNT);
-    const [weaponDelay, setWeaponDelay] = useState<number>(WEAPON_DEFAULTS.DELAY);
-    const [weaponTech, setWeaponTech] = useState<number>(WEAPON_DEFAULTS.TECH);
-    const [weaponDamage, setWeaponDamage] = useState<number>(WEAPON_DEFAULTS.DAMAGE);
-    const [weaponBounce, setWeaponBounce] = useState<number>(WEAPON_DEFAULTS.BOUNCE);
-    const [isHoming, setIsHoming] = useState(false);
-    const [critChance, setCritChance] = useState<number>(WEAPON_DEFAULTS.CRIT_CHANCE);
-    const [dangerLevel, setDangerLevel] = useState(0);
-    const [wave, setWave] = useState(1);
-    const [kills, setKills] = useState(0);
-    const [zombieHp, setZombieHp] = useState<number>(ZOMBIE_DEFAULTS.HP);
-    const [gameId, setGameId] = useState(0);
-
-    useBGM(AUDIO_CONFIG.BGM_URL, !isMuted && gameState === 'playing' && !isFlipped, volume);
-    const [critBonus, setCritBonus] = useState<number>(WEAPON_DEFAULTS.CRIT_BONUS);
-    const [isPickingUpgrade, setIsPickingUpgrade] = useState(false);
-    const [upgradeChoices, setUpgradeChoices] = useState<SuperUpgrade[]>([]);
-    const [notifications, setNotifications] = useState<{ id: number; text: string; color: string }[]>([]);
-    const [mobileMoveHandlers, setMobileMoveHandlers] = useState<{ moveLeft: (on: boolean) => void, moveRight: (on: boolean) => void } | null>(null);
-
-    const superUpgrades = useMemo(() => SUPER_UPGRADES.map(u => ({
-        ...u,
-        name: t(u.nameKey),
-        description: t(u.descKey),
-    })), [t]);
-
-    const addNotification = (text: string, color: string) => {
-        const id = Date.now();
-        setNotifications(prev => [...prev, { id, text, color }]);
-        setTimeout(() => {
-            setNotifications(prev => prev.filter(n => n.id !== id));
-        }, NOTIFICATION_CONFIG.DURATION);
-    };
-
-    const handleStart = () => {
-        onGameStart?.();
-        setScore(1);
-        setWeaponCount(WEAPON_DEFAULTS.COUNT);
-        setWeaponDelay(WEAPON_DEFAULTS.DELAY);
-        setWeaponTech(WEAPON_DEFAULTS.TECH);
-        setWeaponDamage(WEAPON_DEFAULTS.DAMAGE);
-        setWeaponBounce(WEAPON_DEFAULTS.BOUNCE);
-        setIsHoming(false);
-        setCritChance(WEAPON_DEFAULTS.CRIT_CHANCE);
-        setCritBonus(WEAPON_DEFAULTS.CRIT_BONUS);
-        setIsPickingUpgrade(false);
-        setDangerLevel(0);
-        setWave(1);
-        setKills(0);
-        setZombieHp(ZOMBIE_DEFAULTS.HP);
-        setNotifications([]);
-        setGameState('playing');
-        setGameId(prev => prev + 1);
-        playSound('click');
-    };
-
-    const handleGameOver = () => {
-        if (score > 0) onSubmitScore(score);
-    };
-
-    const handleShowSuperRewards = () => {
-        const availableUpgrades = superUpgrades.filter(u => {
-            if (u.type === 'homing' && isHoming) return false;
-            return true;
-        });
-        const shuffled = [...availableUpgrades].sort(() => Math.random() - 0.5);
-        setUpgradeChoices(shuffled.slice(0, UPGRADE_CONFIG.CHOICES_COUNT));
-        setIsPickingUpgrade(true);
-    };
-
-    const handleUpgradeSelect = (upgrade: SuperUpgrade) => {
-        switch (upgrade.type) {
-            case 'damage_mult':
-                setWeaponDamage(prev => Math.round(prev * upgrade.value));
-                break;
-            case 'crit_bonus':
-                setCritBonus(prev => prev + upgrade.value);
-                break;
-            case 'fire_rate':
-                setWeaponDelay(prev => Math.max(WEAPON_DEFAULTS.MIN_DELAY, prev * upgrade.value));
-                break;
-            case 'tech':
-                setWeaponTech(prev => prev + upgrade.value);
-                break;
-            case 'homing':
-                setIsHoming(true);
-                break;
-        }
-        addNotification(`${t('game.zombie_hud.installed')} : ${upgrade.name}`, "#22d3ee");
-        setIsPickingUpgrade(false);
-    };
+    const {
+        isMuted, toggleMute, playSound, volume, setVolume,
+        gameState, setGameState, score, setScore, gameId,
+        weaponCount, setWeaponCount, weaponDelay, setWeaponDelay,
+        weaponTech, setWeaponTech, weaponDamage, setWeaponDamage,
+        weaponBounce, setWeaponBounce, isHoming, critChance, setCritChance, critBonus,
+        dangerLevel, setDangerLevel, wave, setWave, kills, setKills, zombieHp, setZombieHp,
+        isPickingUpgrade, upgradeChoices, handleShowSuperRewards, handleUpgradeSelect,
+        notifications, addNotification, mobileMoveHandlers, setMobileMoveHandlers,
+        handleStart, handleGameOver,
+    } = useZombieShooter({ onSubmitScore, onGameStart, isFlipped });
 
     return (
         <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullScreen ? 'bg-black overflow-auto py-8' : ''}`} style={{ perspective: '1000px' }}>
-            {/* EXTERNAL GLOBAL CONTROLS */}
+            {/* Global Controls */}
             <div className="flex justify-end items-center gap-2 p-2 bg-black/40 backdrop-blur-md border-b border-white/10 z-[100] rounded-t-xl mx-4 mt-4">
                 <div className="w-32 mr-2 flex items-center">
-                    <ElasticSlider
-                        defaultValue={volume * 100}
-                        onChange={(v) => setVolume(v / 100)}
-                        color="cyan"
-                        isMuted={isMuted}
-                        onToggleMute={toggleMute}
-                    />
+                    <ElasticSlider defaultValue={volume * 100} onChange={(v) => setVolume(v / 100)} color="cyan" isMuted={isMuted} onToggleMute={toggleMute} />
                 </div>
-                <button
-                    onClick={(e) => { e.stopPropagation(); handleStart(); }}
-                    className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={t('game.zombie_hud.restart')}
-                >
-                    <FaRedo size={18} />
-                </button>
-                <button
-                    onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }}
-                    className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}
-                >
-                    {isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
-                </button>
-                <button
-                    onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }}
-                    className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
-                    title={t('game.help_rules')}
-                >
-                    <FaQuestion size={18} />
-                </button>
+                <button onClick={(e) => { e.stopPropagation(); handleStart(); }} className="text-yellow-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95" title={t('game.zombie_hud.restart')}><FaRedo size={18} /></button>
+                <button onClick={(e) => { e.stopPropagation(); toggleFullScreen(); }} className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95" title={isFullScreen ? t('game.fullscreen_exit') : t('game.fullscreen')}>{isFullScreen ? <FaCompress size={18} /> : <FaExpand size={18} />}</button>
+                <button onClick={(e) => { e.stopPropagation(); setIsFlipped(prev => !prev); }} className="text-cyan-400 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-95" title={t('game.help_rules')}><FaQuestion size={18} /></button>
             </div>
 
-            <motion.div
-                className="flex-1 h-full relative mx-4 mb-4"
-                animate={{ rotateY: isFlipped ? 180 : 0 }}
-                transition={{ duration: 0.6 }}
-                style={{ transformStyle: 'preserve-3d' }}
-            >
-                {/* FRONT FACE: GAME + HUD */}
-                <div
-                    className={`absolute inset-0 w-full h-full bg-black overflow-hidden border border-white/20 rounded-b-xl ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
-                    style={{
-                        backfaceVisibility: 'hidden',
-                        zIndex: isFlipped ? 0 : 10
-                    }}
-                >
+            <motion.div className="flex-1 h-full relative mx-4 mb-4" animate={{ rotateY: isFlipped ? 180 : 0 }} transition={{ duration: 0.6 }} style={{ transformStyle: 'preserve-3d' }}>
+                {/* Front Face: Game */}
+                <div className={`absolute inset-0 w-full h-full bg-black overflow-hidden border border-white/20 rounded-b-xl ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`} style={{ backfaceVisibility: 'hidden', zIndex: isFlipped ? 0 : 10 }}>
                     <div className="absolute inset-0 w-full h-full cursor-none">
                         <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 10, 15], fov: 45 }}>
                             <Suspense fallback={null}>
                                 <World />
                                 {gameState !== 'intro' && (
-                                    <GameScene
-                                        key={gameId}
-                                        gameState={gameState}
-                                        setGameState={setGameState}
-                                        setScore={setScore}
-                                        setWeaponCount={setWeaponCount}
-                                        setWeaponDelay={setWeaponDelay}
-                                        setWeaponTech={setWeaponTech}
-                                        setWeaponDamage={setWeaponDamage}
-                                        weaponBounce={weaponBounce}
-                                        isHoming={isHoming}
-                                        setWeaponBounce={setWeaponBounce}
-                                        setCritChance={setCritChance}
-                                        setDangerLevel={setDangerLevel}
-                                        setWave={setWave}
-                                        setKills={setKills}
-                                        setZombieHp={setZombieHp}
-                                        playSound={playSound}
-                                        onGameOver={handleGameOver}
-                                        isPaused={isFlipped || isPickingUpgrade}
-                                        onNotification={addNotification}
-                                        critBonus={critBonus}
-                                        onShowSuperRewards={handleShowSuperRewards}
-                                        onMobileButtons={setMobileMoveHandlers}
-                                    />
+                                    <GameScene key={gameId} gameState={gameState} setGameState={setGameState} setScore={setScore}
+                                        setWeaponCount={setWeaponCount} setWeaponDelay={setWeaponDelay} setWeaponTech={setWeaponTech}
+                                        setWeaponDamage={setWeaponDamage} weaponBounce={weaponBounce} isHoming={isHoming}
+                                        setWeaponBounce={setWeaponBounce} setCritChance={setCritChance} setDangerLevel={setDangerLevel}
+                                        setWave={setWave} setKills={setKills} setZombieHp={setZombieHp} playSound={playSound}
+                                        onGameOver={handleGameOver} isPaused={isFlipped || isPickingUpgrade}
+                                        onNotification={addNotification} critBonus={critBonus}
+                                        onShowSuperRewards={handleShowSuperRewards} onMobileButtons={setMobileMoveHandlers} />
                                 )}
                             </Suspense>
                         </Canvas>
                     </div>
-
-                    <SuperRewardModal
-                        isOpen={isPickingUpgrade}
-                        upgrades={upgradeChoices}
-                        onSelect={handleUpgradeSelect}
-                    />
-
-                    {/* NOTIFICATIONS LAYER */}
+                    <SuperRewardModal isOpen={isPickingUpgrade} upgrades={upgradeChoices} onSelect={handleUpgradeSelect} />
+                    {/* Notifications */}
                     <div className="absolute bottom-[40%] md:bottom-44 left-8 z-[70] pointer-events-none flex flex-col gap-2">
                         <AnimatePresence>
                             {notifications.map((n, i) => (
-                                <motion.div
-                                    key={n.id}
-                                    initial={{ x: -100, opacity: 0 }}
-                                    animate={{
-                                        x: 0,
-                                        opacity: i === notifications.length - 1 ? 1 : 0.4
-                                    }}
-                                    exit={{ x: 50, opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
+                                <motion.div key={n.id} initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: i === notifications.length - 1 ? 1 : 0.4 }} exit={{ x: 50, opacity: 0 }} transition={{ duration: 0.3 }}
                                     className="px-1.5 md:px-4 py-1 md:py-2 rounded-r-lg border-l-4 font-black italic tracking-tighter text-xs md:text-lg bg-black/60 backdrop-blur-sm"
-                                    style={{
-                                        color: n.color,
-                                        borderColor: n.color,
-                                        textShadow: i === notifications.length - 1 ? `0 0 10px ${n.color}88` : 'none'
-                                    }}
-                                >
+                                    style={{ color: n.color, borderColor: n.color, textShadow: i === notifications.length - 1 ? `0 0 10px ${n.color}88` : 'none' }}>
                                     {n.text}
                                 </motion.div>
                             ))}
                         </AnimatePresence>
                     </div>
-
-                    {/* UI LAYER */}
-                    <HUD
-                        gameState={gameState}
-                        score={score}
-                        personalBest={personalBest}
-                        weaponCount={weaponCount}
-                        weaponDelay={weaponDelay}
-                        weaponTech={weaponTech}
-                        weaponDamage={weaponDamage}
-                        weaponBounce={weaponBounce}
-                        isHoming={isHoming}
-                        critChance={critChance}
-                        critBonus={critBonus}
-                        dangerLevel={dangerLevel}
-                        wave={wave}
-                        kills={kills}
-                        zombieHp={zombieHp}
-                        onStart={handleStart}
-                    />
-
-
+                    <HUD gameState={gameState} score={score} personalBest={personalBest} weaponCount={weaponCount} weaponDelay={weaponDelay}
+                        weaponTech={weaponTech} weaponDamage={weaponDamage} weaponBounce={weaponBounce} isHoming={isHoming}
+                        critChance={critChance} critBonus={critBonus} dangerLevel={dangerLevel} wave={wave} kills={kills} zombieHp={zombieHp} onStart={handleStart} />
                 </div>
 
-                {/* BACK FACE: RULES */}
-                <div
-                    className={`absolute inset-0 w-full h-full border border-white/20 rounded-xl overflow-hidden ${theme.bgCard} ${isFlipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
-                    style={{
-                        backfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)',
-                        zIndex: isFlipped ? 10 : 0
-                    }}
-                >
+                {/* Back Face: Rules */}
+                <div className={`absolute inset-0 w-full h-full border border-white/20 rounded-xl overflow-hidden ${theme.bgCard} ${isFlipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', zIndex: isFlipped ? 10 : 0 }}>
                     <RulesPanel onBack={() => setIsFlipped(false)} />
                 </div>
             </motion.div>
 
-            {/* MOBILE NAVIGATION CONTROLS - External to game screen */}
+            {/* Mobile Controls */}
             {gameState === 'playing' && !isPickingUpgrade && !isFlipped && (
                 <div className="flex justify-center gap-12 pb-6 md:hidden mx-4">
-                    <button
-                        className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-                        onTouchStart={() => { mobileMoveHandlers?.moveLeft(true); playSound('click'); }}
-                        onTouchEnd={() => mobileMoveHandlers?.moveLeft(false)}
-                        onMouseDown={() => mobileMoveHandlers?.moveLeft(true)}
-                        onMouseUp={() => mobileMoveHandlers?.moveLeft(false)}
-                    >
+                    <button className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                        onTouchStart={() => { mobileMoveHandlers?.moveLeft(true); playSound('click'); }} onTouchEnd={() => mobileMoveHandlers?.moveLeft(false)}
+                        onMouseDown={() => mobileMoveHandlers?.moveLeft(true)} onMouseUp={() => mobileMoveHandlers?.moveLeft(false)}>
                         <FaArrowLeft size={28} />
                     </button>
-                    <button
-                        className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-                        onTouchStart={() => { mobileMoveHandlers?.moveRight(true); playSound('click'); }}
-                        onTouchEnd={() => mobileMoveHandlers?.moveRight(false)}
-                        onMouseDown={() => mobileMoveHandlers?.moveRight(true)}
-                        onMouseUp={() => mobileMoveHandlers?.moveRight(false)}
-                    >
+                    <button className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                        onTouchStart={() => { mobileMoveHandlers?.moveRight(true); playSound('click'); }} onTouchEnd={() => mobileMoveHandlers?.moveRight(false)}
+                        onMouseDown={() => mobileMoveHandlers?.moveRight(true)} onMouseUp={() => mobileMoveHandlers?.moveRight(false)}>
                         <FaArrowRight size={28} />
                     </button>
                 </div>
@@ -360,5 +109,4 @@ export default function ZombieShooter({ isDarkMode, onSubmitScore, personalBest,
     );
 }
 
-// Re-export type if needed for consumers, though usually they import component
 export type { ZombieShooterProps };

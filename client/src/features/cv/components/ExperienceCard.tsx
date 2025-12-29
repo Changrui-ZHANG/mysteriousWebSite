@@ -1,4 +1,4 @@
-import { GlassPanel } from '../../components/ui/GlassPanel';
+import { GlassPanel } from '../../../components/ui/GlassPanel';
 
 interface Experience {
     title: string;
