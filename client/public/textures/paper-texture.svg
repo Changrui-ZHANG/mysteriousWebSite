@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+  <defs>
+    <!-- Base paper texture -->
+    <filter id="paper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="5" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="#f7e5a0" surfaceScale="1.8" result="light">
+        <feDistantLight azimuth="45" elevation="55"/>
+      </feDiffuseLighting>
+      <feBlend in="SourceGraphic" in2="light" mode="multiply"/>
+    </filter>
+    
+    <!-- Fine grain -->
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="4" result="grain"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.15"/>
+      </feComponentTransfer>
+    </filter>
+    
+    <!-- Cracks/fissures -->
+    <filter id="cracks">
+      <feTurbulence type="turbulence" baseFrequency="0.006" numOctaves="4" result="crack"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.45
+                                            0 0 0 0 0.32
+                                            0 0 0 0 0.15
+                                            0 0 0 1 0" result="brown"/>
+      <feComponentTransfer>
+        <feFuncA type="discrete" tableValues="0 0 0 0.3 0.5 0.4 0.2 0"/>
+      </feComponentTransfer>
+    </filter>
+    
+    <!-- Age stains -->
+    <filter id="stains">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" result="stain"/>
+      <feColorMatrix type="matrix" values="0.6 0 0 0 0.5
+                                            0.45 0 0 0 0.35
+                                            0.2 0 0 0 0.1
+                                            0 0 0 0.2 0"/>
+    </filter>
+  </defs>
+  
+  <!-- Base bright parchment - matching treasure map -->
+  <rect width="100%" height="100%" fill="#f5dfa0"/>
+  <rect width="100%" height="100%" fill="#f9e8b0" filter="url(#paper)"/>
+  
+  <!-- Age stains layer -->
+  <rect width="100%" height="100%" filter="url(#stains)" opacity="0.4"/>
+  
+  <!-- Cracks/fissures layer -->
+  <rect width="100%" height="100%" filter="url(#cracks)" opacity="0.6"/>
+  
+  <!-- Fine grain overlay -->
+  <rect width="100%" height="100%" filter="url(#grain)" opacity="0.2"/>
+</svg>
