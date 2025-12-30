@@ -3,11 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { useTranslation } from 'react-i18next';
 
-interface PreloaderProps {
-    isDarkMode?: boolean;
-}
+interface PreloaderProps { }
 
-export function Preloader({ isDarkMode = true }: PreloaderProps) {
+export function Preloader({ }: PreloaderProps) {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -76,14 +74,14 @@ export function Preloader({ isDarkMode = true }: PreloaderProps) {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className={`fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden font-outfit ${isDarkMode ? 'bg-[#050505]' : 'bg-[#f5f5f7]'}`}
+                    className={`fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden font-outfit bg-[--color-bg-base]`}
                 >
-                    {/* Ambient Liquid Background */}
+                    {/* Ambient Liquid Background - using accent vars */}
                     <div ref={containerRef} className="preloader-bg absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className={`liquid-blob absolute top-[10%] left-[20%] w-[60vw] h-[60vw] blur-[120px] rounded-full ${isDarkMode ? 'bg-blue-600/20' : 'bg-blue-300/40'}`} />
-                        <div className={`liquid-blob absolute bottom-[10%] right-[20%] w-[50vw] h-[50vw] blur-[100px] rounded-full ${isDarkMode ? 'bg-cyan-500/15' : 'bg-cyan-200/40'}`} />
-                        <div className={`liquid-blob absolute top-[40%] right-[10%] w-[40vw] h-[40vw] blur-[130px] rounded-full ${isDarkMode ? 'bg-indigo-600/10' : 'bg-indigo-300/30'}`} />
-                        <div className={`liquid-blob absolute bottom-[30%] left-[5%] w-[45vw] h-[45vw] blur-[110px] rounded-full ${isDarkMode ? 'bg-blue-400/10' : 'bg-blue-200/30'}`} />
+                        <div className={`liquid-blob absolute top-[10%] left-[20%] w-[60vw] h-[60vw] blur-[120px] rounded-full bg-[--color-accent-primary] opacity-20`} />
+                        <div className={`liquid-blob absolute bottom-[10%] right-[20%] w-[50vw] h-[50vw] blur-[100px] rounded-full bg-[--color-accent-cyan] opacity-20`} />
+                        <div className={`liquid-blob absolute top-[40%] right-[10%] w-[40vw] h-[40vw] blur-[130px] rounded-full bg-[--color-accent-purple] opacity-15`} />
+                        <div className={`liquid-blob absolute bottom-[30%] left-[5%] w-[45vw] h-[45vw] blur-[110px] rounded-full bg-[--color-accent-pink] opacity-15`} />
                     </div>
 
                     {/* Subtle Noise Texture */}
@@ -96,7 +94,7 @@ export function Preloader({ isDarkMode = true }: PreloaderProps) {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 0.15, y: 0 }}
                             transition={{ duration: 1.5, ease: "easeOut" }}
-                            className={`text-6xl font-black tracking-tighter mb-4 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}
+                            className={`text-6xl font-black tracking-tighter mb-4 text-[--color-text-primary]`}
                         >
                             {t('preloader.welcome')}
                         </motion.span>
@@ -104,16 +102,10 @@ export function Preloader({ isDarkMode = true }: PreloaderProps) {
                         {/* LOADING text with Shimmer */}
                         <h2
                             ref={textRef}
-                            className={`text-sm tracking-[1em] font-light uppercase select-none p-4 ${isDarkMode ? 'text-white/80' : 'text-black/80'}`}
-                            style={{
-                                background: isDarkMode
-                                    ? "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)"
-                                    : "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0) 100%)",
-                                backgroundSize: "200% auto",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                                backdropFilter: "blur(2px)",
-                            }}
+                            className={`text-sm tracking-[1em] font-light uppercase select-none p-4 backdrop-blur-[2px]
+                                bg-gradient-to-r from-transparent via-[--color-text-primary] to-transparent 
+                                bg-[length:200%_auto] bg-clip-text text-transparent opacity-80
+                            `}
                         >
                             {t('preloader.loading')}
                         </h2>
@@ -122,15 +114,14 @@ export function Preloader({ isDarkMode = true }: PreloaderProps) {
                         <motion.div
                             animate={{ scaleX: [0.8, 1.2, 0.8], opacity: [0.2, 0.4, 0.2] }}
                             transition={{ duration: 4, repeat: -1, ease: "easeInOut" }}
-                            className={`mt-6 w-32 h-[1px] bg-gradient-to-r from-transparent to-transparent ${isDarkMode ? 'via-white/30' : 'via-black/30'}`}
+                            className={`mt-6 w-32 h-[1px] bg-gradient-to-r from-transparent to-transparent via-[--color-text-primary]`}
                         />
                     </div>
 
                     {/* Final Vignette Layer */}
-                    <div className={`absolute inset-0 pointer-events-none ${isDarkMode
-                        ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_80%,black_100%)]'
-                        : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.5)_80%,white_100%)]'}`}
-                    />
+                    <div className={`absolute inset-0 pointer-events-none 
+                        bg-[radial-gradient(circle_at_center,transparent_0%,var(--color-bg-base)_100%)]
+                    `} />
                 </motion.div>
             )}
         </AnimatePresence>

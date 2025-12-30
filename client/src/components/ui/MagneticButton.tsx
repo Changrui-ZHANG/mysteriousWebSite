@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import type { MagneticButtonProps } from './MagneticButtonProps'
 
-export default function MagneticButton({ children, onClick, isDarkMode }: MagneticButtonProps) {
+export default function MagneticButton({ children, onClick }: MagneticButtonProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [position, setPosition] = useState({ x: 0, y: 0 })
 
@@ -32,10 +32,10 @@ export default function MagneticButton({ children, onClick, isDarkMode }: Magnet
                 onClick={onClick}
                 animate={{ x: position.x * 0.8, y: position.y * 0.8 }} // Move button slightly more/less
                 transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-                className={`py-6 px-12 text-xl rounded-full border-none cursor-pointer font-semibold uppercase tracking-widest relative z-10 overflow-hidden transition-colors duration-300 ${isDarkMode
-                        ? 'bg-white text-black hover:bg-gray-200'
-                        : 'bg-black text-white hover:bg-gray-800'
-                    }`}
+                className={`py-6 px-12 text-xl rounded-full border-none cursor-pointer font-semibold uppercase tracking-widest relative z-10 overflow-hidden transition-colors duration-300 
+                    bg-[--color-accent-primary] text-[--color-text-inverted]
+                    hover:opacity-90
+                `}
             >
                 {children}
             </motion.button>

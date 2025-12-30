@@ -10,15 +10,14 @@ interface Experience {
 
 interface ExperienceCardProps {
     exp: Experience;
-    isDarkMode: boolean;
     isPaperTheme?: boolean;
 }
 
-export function ExperienceCard({ exp, isDarkMode, isPaperTheme = false }: ExperienceCardProps) {
+export function ExperienceCard({ exp, isPaperTheme = false }: ExperienceCardProps) {
     // Paper theme: transparent card with leather-style border
     if (isPaperTheme) {
         return (
-            <div 
+            <div
                 className="w-full p-8 sm:p-10 rounded-[40px] flex flex-col h-[550px] sm:h-[500px] relative"
                 style={{
                     border: '3px solid #8b6f47',
@@ -49,8 +48,8 @@ export function ExperienceCard({ exp, isDarkMode, isPaperTheme = false }: Experi
                 <div className="flex-shrink-0 pt-6 mt-2 border-t border-amber-800/30">
                     <div className="flex flex-wrap gap-2">
                         {exp.tech.map((tech, i) => (
-                            <span 
-                                key={i} 
+                            <span
+                                key={i}
                                 className="px-3 py-1 text-[10px] font-mono tracking-widest uppercase text-letterpress"
                                 style={{ border: '1px solid rgba(139, 111, 71, 0.3)' }}
                             >
@@ -82,23 +81,23 @@ export function ExperienceCard({ exp, isDarkMode, isPaperTheme = false }: Experi
 
     return (
         <GlassPanel
-            isDarkMode={isDarkMode}
             className="w-full p-8 sm:p-10 rounded-[40px] flex flex-col h-[550px] sm:h-[500px] relative overflow-hidden"
         >
             {/* Fixed Header */}
             <div className="flex-shrink-0 mb-6 space-y-2">
                 <div className="flex justify-between items-start">
                     <div className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">{exp.title}</div>
-                    <span className={`text-[10px] sm:text-xs font-mono uppercase tracking-widest whitespace-nowrap ml-4 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{exp.period}</span>
+                    <span className="text-[10px] sm:text-xs font-mono uppercase tracking-widest whitespace-nowrap ml-4 text-[--color-text-muted]">{exp.period}</span>
                 </div>
-                <p className="text-[#0071e3] font-bold text-base sm:text-lg uppercase tracking-wide">{exp.role}</p>
+                <p className="text-[--color-accent-primary] font-bold text-base sm:text-lg uppercase tracking-wide">{exp.role}</p>
             </div>
 
             {/* Scrollable Content */}
-            <div className={`flex-1 overflow-y-auto overscroll-y-contain pr-2 space-y-4 custom-scrollbar ${isDarkMode ? 'scrollbar-dark' : 'scrollbar-light'}`}>
+            <div className="flex-1 overflow-y-auto overscroll-y-contain pr-2 space-y-4 custom-scrollbar
+            ">
                 <ul className="space-y-3">
                     {exp.description.map((desc, i) => (
-                        <li key={i} className={`text-sm sm:text-base leading-relaxed font-light ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                        <li key={i} className="text-sm sm:text-base leading-relaxed font-light text-[--color-text-secondary]">
                             {desc}
                         </li>
                     ))}
@@ -106,33 +105,17 @@ export function ExperienceCard({ exp, isDarkMode, isPaperTheme = false }: Experi
             </div>
 
             {/* Fixed Footer (Tech Stack) */}
-            <div className="flex-shrink-0 pt-6 mt-2 border-t border-white/5">
+            <div className="flex-shrink-0 pt-6 mt-2 border-t border-[--color-border-muted]">
                 <div className="flex flex-wrap gap-2">
                     {exp.tech.map((tech, i) => (
-                        <span key={i} className={`px-3 py-1 text-[10px] font-mono tracking-widest uppercase rounded-full border ${isDarkMode ? 'bg-white/5 border-white/5 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'
-                            }`}>
+                        <span key={i} className="px-3 py-1 text-[10px] font-mono tracking-widest uppercase rounded-full border 
+                            bg-[--color-bg-muted] border-[--color-border-muted] text-[--color-text-secondary]">
                             {tech}
                         </span>
                     ))}
                 </div>
             </div>
-
-            {/* Scrollbar Styles */}
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.1)'};
-                    border-radius: 20px;
-                }
-                .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-                    background: ${isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'};
-                }
-            `}</style>
         </GlassPanel>
     );
+
 }

@@ -3,6 +3,5 @@
 export interface MagneticButtonProps {
     children: React.ReactNode;
     onClick?: () => void;
-    isDarkMode?: boolean;
 }
 

@@ -145,7 +145,7 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
 
     return (
         <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner touch-action-none" ref={sceneRef}>
-            <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono text-[--color-text-primary]`}>
                 {t('gravity.instruction')}
             </div>
         </div>

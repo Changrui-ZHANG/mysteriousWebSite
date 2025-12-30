@@ -6,7 +6,6 @@ interface AuroraCardProps {
     children: React.ReactNode;
     className?: string;
     variant?: AuroraVariant;
-    isDarkMode: boolean;
 }
 
 const auroraGradients: Record<AuroraVariant, string> = {
@@ -36,23 +35,21 @@ const borderColors: Record<AuroraVariant, string> = {
     multi: 'hover:border-violet-500/50',
 };
 
-export function AuroraCard({ children, className = "", variant = 'blue', isDarkMode }: AuroraCardProps) {
+export function AuroraCard({ children, className = "", variant = 'blue' }: AuroraCardProps) {
     return (
-        <div className={`relative overflow-hidden backdrop-blur-xl border transition-all duration-500 group
-            ${isDarkMode 
-                ? `bg-black/40 border-white/10 ${borderColors[variant]} ${glowColors[variant]}` 
-                : `bg-white/60 border-white/40 shadow-lg ${borderColors[variant]}`
-            } ${className}`}
+        <div className={`relative overflow-hidden backdrop-blur-[--glass-blur] border transition-all duration-500 group
+             bg-[--color-glass-bg] border-[--color-border-default] shadow-lg ${borderColors[variant]} ${glowColors[variant]}
+             ${className}`}
         >
             {/* Aurora gradient overlay */}
             <div className={`absolute inset-0 bg-gradient-to-br ${auroraGradients[variant]} opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`} />
-            
+
             {/* Animated aurora effect on hover */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
                 <div className={`absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br ${auroraGradients[variant]} blur-3xl animate-pulse`} />
                 <div className={`absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl ${auroraGradients[variant]} blur-3xl animate-pulse`} style={{ animationDelay: '1s' }} />
             </div>
-            
+
             {/* Content - relative z-10 applied directly, no wrapper div */}
             {children}
         </div>

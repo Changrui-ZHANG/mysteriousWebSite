@@ -123,14 +123,15 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
             );
         }
 
-        const commonProps = { isDarkMode, onSubmitScore: submitScore, personalBest, isAuthenticated: !!user, onGameStart: resetGuestAlert };
+        const baseProps = { onSubmitScore: submitScore, personalBest, isAuthenticated: !!user, onGameStart: resetGuestAlert };
+        const legacyProps = { ...baseProps, isDarkMode };
 
         switch (activeGame) {
-            case 'brick': return <BrickBreaker key="brick" {...commonProps} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />;
-            case 'match3': return <Match3 key="match3" {...commonProps} />;
-            case 'pokemon': return <PokemonGame key="pokemon" {...commonProps} />;
-            case 'maze': return <MazeGame key="maze" {...commonProps} />;
-            case 'zombie': return <ZombieShooter key="zombie" {...commonProps} />;
+            case 'brick': return <BrickBreaker key="brick" {...legacyProps} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />;
+            case 'match3': return <Match3 key="match3" {...legacyProps} />;
+            case 'pokemon': return <PokemonGame key="pokemon" {...baseProps} />;
+            case 'maze': return <MazeGame key="maze" {...legacyProps} />;
+            case 'zombie': return <ZombieShooter key="zombie" {...legacyProps} />;
         }
     };
 

@@ -44,7 +44,7 @@ export function Home({ isDarkMode }: HomeProps) {
                     </p>
                 </div>
 
-                <MagneticButton isDarkMode={isDarkMode} onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                <MagneticButton onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
                     {t('hero.explore')}
                 </MagneticButton>
             </section>
@@ -67,7 +67,7 @@ export function Home({ isDarkMode }: HomeProps) {
             <ScrollSection>
                 <div className="flex gap-12 items-center flex-wrap justify-center px-4">
                     <div className="w-full max-w-[320px] h-[420px]">
-                        <TiltCard isDarkMode={isDarkMode} style={{ height: '100%' }}>
+                        <TiltCard style={{ height: '100%' }}>
                             <h3 className="text-4xl mb-4 font-heading">{t('features.velocity.title')}</h3>
                             <div className="w-[50px] h-[5px] bg-cyan-400 mb-6"></div>
                             <p className="text-lg leading-relaxed opacity-80">{t('features.velocity.description')}</p>
@@ -75,7 +75,7 @@ export function Home({ isDarkMode }: HomeProps) {
                     </div>
 
                     <div className="w-full max-w-[320px] h-[420px] mt-8 md:mt-16">
-                        <TiltCard isDarkMode={isDarkMode} style={{ height: '100%' }}>
+                        <TiltCard style={{ height: '100%' }}>
                             <h3 className="text-4xl mb-4 font-heading">{t('features.depth.title')}</h3>
                             <div className="w-[50px] h-[5px] bg-fuchsia-500 mb-6"></div>
                             <p className="text-lg leading-relaxed opacity-80">{t('features.depth.description')}</p>
@@ -83,7 +83,7 @@ export function Home({ isDarkMode }: HomeProps) {
                     </div>
 
                     <div className="w-full max-w-[320px] h-[420px]">
-                        <TiltCard isDarkMode={isDarkMode} style={{ height: '100%' }}>
+                        <TiltCard style={{ height: '100%' }}>
                             <h3 className="text-4xl mb-4 font-heading">{t('features.light.title')}</h3>
                             <div className="w-[50px] h-[5px] bg-yellow-400 mb-6"></div>
                             <p className="text-lg leading-relaxed opacity-80">{t('features.light.description')}</p>

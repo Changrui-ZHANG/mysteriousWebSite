@@ -11,11 +11,9 @@ import { SOCIAL_LINKS } from '../constants/urls';
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
-interface CVProps {
-    isDarkMode: boolean;
-}
+interface CVProps { }
 
-export function CV({ isDarkMode }: CVProps) {
+export function CV({ }: CVProps) {
     const { t } = useTranslation();
     const [currentExpIndex, setCurrentExpIndex] = useState(0);
     const [isPaperTheme, setIsPaperTheme] = useState(() => {
@@ -133,9 +131,9 @@ export function CV({ isDarkMode }: CVProps) {
             {/* Leather/Parchment Texture Background - only when paper theme is active */}
             {isPaperTheme && (
                 <>
-                    <div 
+                    <div
                         className="absolute inset-0 pointer-events-none z-0"
-                        style={{ 
+                        style={{
                             backgroundColor: '#dfc49a',
                             minHeight: '100%'
                         }}
@@ -145,39 +143,39 @@ export function CV({ isDarkMode }: CVProps) {
                         <defs>
                             {/* Main leather bumps */}
                             <filter id="leather3D" x="0%" y="0%" width="100%" height="100%">
-                                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="5" seed="10" result="bump"/>
+                                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="5" seed="10" result="bump" />
                                 <feDiffuseLighting in="bump" lightingColor="#e5d4b8" surfaceScale="8" result="light">
-                                    <feDistantLight azimuth="135" elevation="45"/>
+                                    <feDistantLight azimuth="135" elevation="45" />
                                 </feDiffuseLighting>
                             </filter>
                             {/* Fine grain detail */}
                             <filter id="fineDetail">
-                                <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" stitchTiles="stitch"/>
-                                <feColorMatrix type="saturate" values="0"/>
+                                <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" stitchTiles="stitch" />
+                                <feColorMatrix type="saturate" values="0" />
                             </filter>
                             {/* Leather texture for text - matches background texture with enhanced depth */}
                             <filter id="leatherTextTexture" x="-20%" y="-20%" width="140%" height="140%">
                                 {/* Same noise as background leather */}
-                                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="5" seed="10" result="noise"/>
+                                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="5" seed="10" result="noise" />
                                 {/* Enhanced 3D lighting with more depth */}
                                 <feDiffuseLighting in="noise" lightingColor="#e5d4b8" surfaceScale="12" diffuseConstant="1.5" result="lighting">
-                                    <feDistantLight azimuth="135" elevation="45"/>
+                                    <feDistantLight azimuth="135" elevation="45" />
                                 </feDiffuseLighting>
                                 {/* Clip to text shape */}
-                                <feComposite in="lighting" in2="SourceAlpha" operator="in" result="litTexture"/>
+                                <feComposite in="lighting" in2="SourceAlpha" operator="in" result="litTexture" />
                                 {/* Blend with text color */}
-                                <feBlend in="litTexture" in2="SourceGraphic" mode="multiply"/>
+                                <feBlend in="litTexture" in2="SourceGraphic" mode="multiply" />
                             </filter>
                         </defs>
                         {/* Main leather texture */}
-                        <rect width="100%" height="100%" filter="url(#leather3D)" opacity="0.6"/>
+                        <rect width="100%" height="100%" filter="url(#leather3D)" opacity="0.6" />
                         {/* Fine grain for detail */}
-                        <rect width="100%" height="100%" filter="url(#fineDetail)" opacity="0.12"/>
+                        <rect width="100%" height="100%" filter="url(#fineDetail)" opacity="0.12" />
                     </svg>
                     {/* Vignette overlay - oxidized/aged edges on all borders */}
-                    <div 
+                    <div
                         className="absolute inset-0 pointer-events-none z-0"
-                        style={{ 
+                        style={{
                             background: `
                                 linear-gradient(to right, rgba(20,10,0,0.6) 0%, rgba(80,50,10,0.4) 2%, rgba(160,100,30,0.2) 5%, rgba(180,130,50,0.1) 8%, transparent 12%),
                                 linear-gradient(to left, rgba(20,10,0,0.6) 0%, rgba(80,50,10,0.4) 2%, rgba(160,100,30,0.2) 5%, rgba(180,130,50,0.1) 8%, transparent 12%),
@@ -201,13 +199,13 @@ export function CV({ isDarkMode }: CVProps) {
             {/* 1. Hero Cover */}
             <header className="h-[110vh] flex flex-col items-center justify-center relative overflow-hidden px-6 z-10">
                 <div className="relative z-10 text-center space-y-8">
-                    <div 
+                    <div
                         className={`inline-block px-6 py-2 rounded-full text-xs font-mono tracking-[0.3em] uppercase ${isPaperTheme ? 'text-letterpress' : 'border border-amber-800/30 bg-amber-900/10'}`}
                         style={isPaperTheme ? { border: '2px solid #8b6f47' } : undefined}
                     >
                         {t('cv.interactive_portfolio')}
                     </div>
-                    
+
                     <h1 className={`text-8xl sm:text-[160px] font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>
                         {t('brand.author_name')}
                     </h1>
@@ -215,7 +213,7 @@ export function CV({ isDarkMode }: CVProps) {
                     <p className={`text-2xl sm:text-4xl font-medium tracking-tight ${isPaperTheme ? 'text-letterpress' : ''}`}>
                         {t('cv.role')}
                     </p>
-                    
+
                     <div className="pt-12 flex justify-center gap-6">
                         <div className="w-px h-24 bg-gradient-to-b from-amber-700 to-transparent"></div>
                     </div>
@@ -265,7 +263,7 @@ export function CV({ isDarkMode }: CVProps) {
                     >
                         {experiences.map((exp, index) => (
                             <div key={index} className="exp-card-wrapper flex-shrink-0 w-[85vw] sm:w-[500px] transition-all duration-700 flex">
-                                <ExperienceCard exp={exp} isDarkMode={isDarkMode} isPaperTheme={isPaperTheme} />
+                                <ExperienceCard exp={exp} isPaperTheme={isPaperTheme} />
                             </div>
                         ))}
                     </div>
@@ -303,9 +301,9 @@ export function CV({ isDarkMode }: CVProps) {
                     {isPaperTheme ? (
                         /* Paper Theme: Transparent cards with leather-style borders */
                         <>
-                            <div 
+                            <div
                                 className="md:col-span-8 md:row-span-2 p-12 flex flex-col"
-                                style={{ 
+                                style={{
                                     border: '3px solid #8b6f47',
                                     borderRadius: '50px',
                                     boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
@@ -329,9 +327,9 @@ export function CV({ isDarkMode }: CVProps) {
                                 </div>
                             </div>
 
-                            <div 
+                            <div
                                 className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden"
-                                style={{ 
+                                style={{
                                     border: '3px solid #8b6f47',
                                     borderRadius: '50px',
                                     boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
@@ -342,7 +340,7 @@ export function CV({ isDarkMode }: CVProps) {
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[0].school}</h5>
                                     <p className="text-base uppercase tracking-wider text-letterpress">{education[0].degree}</p>
                                 </div>
-                                <div 
+                                <div
                                     className="absolute -right-2 -bottom-12 w-64 h-64 rotate-[-12deg] pointer-events-none z-0"
                                     style={{ opacity: 0.25, filter: 'sepia(100%) saturate(50%) brightness(70%)' }}
                                 >
@@ -350,9 +348,9 @@ export function CV({ isDarkMode }: CVProps) {
                                 </div>
                             </div>
 
-                            <div 
+                            <div
                                 className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden"
-                                style={{ 
+                                style={{
                                     border: '3px solid #8b6f47',
                                     borderRadius: '50px',
                                     boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
@@ -363,7 +361,7 @@ export function CV({ isDarkMode }: CVProps) {
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[1].school}</h5>
                                     <p className="text-base uppercase tracking-wider text-letterpress">{education[1].degree}</p>
                                 </div>
-                                <div 
+                                <div
                                     className="absolute -right-6 -bottom-12 w-64 h-64 rotate-[-12deg] pointer-events-none z-0"
                                     style={{ opacity: 0.2, filter: 'sepia(100%) saturate(50%) brightness(70%)' }}
                                 >
@@ -374,7 +372,7 @@ export function CV({ isDarkMode }: CVProps) {
                     ) : (
                         /* Modern Theme: AuroraCards */
                         <>
-                            <AuroraCard variant="multi" className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col" isDarkMode={isDarkMode}>
+                            <AuroraCard variant="multi" className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col">
                                 <h3 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                                     {Object.entries(skills).map(([category, items]) => (
@@ -393,7 +391,7 @@ export function CV({ isDarkMode }: CVProps) {
                                 </div>
                             </AuroraCard>
 
-                            <AuroraCard variant="green" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4" isDarkMode={isDarkMode}>
+                            <AuroraCard variant="green" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
                                 <h4 className="text-sm font-mono tracking-[0.2em] text-emerald-400 uppercase font-bold">{t('cv.masters_degree')}</h4>
                                 <div className="relative z-10">
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
@@ -404,7 +402,7 @@ export function CV({ isDarkMode }: CVProps) {
                                 </div>
                             </AuroraCard>
 
-                            <AuroraCard variant="cyan" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4" isDarkMode={isDarkMode}>
+                            <AuroraCard variant="cyan" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
                                 <h4 className="text-sm font-mono tracking-[0.2em] text-cyan-400 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
                                 <div className="relative z-10">
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[1].school}</h5>
@@ -420,7 +418,7 @@ export function CV({ isDarkMode }: CVProps) {
 
                 {isPaperTheme ? (
                     /* Paper Theme Contact: Transparent card with leather-style border */
-                    <div 
+                    <div
                         className="p-12 rounded-[60px]"
                         style={{
                             border: '3px solid #8b6f47',
@@ -433,15 +431,15 @@ export function CV({ isDarkMode }: CVProps) {
                                 <p className="text-2xl font-light text-letterpress">{t('cv.connect_description')}</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                                <a 
-                                    href="mailto:m.zhang.changrui@gmail.com" 
+                                <a
+                                    href="mailto:m.zhang.changrui@gmail.com"
                                     className="px-10 py-4 text-lg font-medium rounded-full text-center text-letterpress transition-all hover:opacity-80"
                                     style={{ border: '2px solid rgba(139, 111, 71, 0.4)' }}
                                 >
                                     {t('cv.direct_mail')}
                                 </a>
-                                <a 
-                                    href={SOCIAL_LINKS.LINKEDIN} 
+                                <a
+                                    href={SOCIAL_LINKS.LINKEDIN}
                                     className="px-10 py-4 text-lg font-medium rounded-full text-center text-letterpress transition-all hover:opacity-80"
                                     style={{ border: '2px solid rgba(139, 111, 71, 0.3)' }}
                                 >
@@ -452,7 +450,7 @@ export function CV({ isDarkMode }: CVProps) {
                     </div>
                 ) : (
                     /* Modern Theme Contact Card */
-                    <AuroraCard variant="purple" className="p-12 rounded-[60px]" isDarkMode={isDarkMode}>
+                    <AuroraCard variant="purple" className="p-12 rounded-[60px]">
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                             <div className="text-center md:text-left">
                                 <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>

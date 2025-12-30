@@ -4,10 +4,10 @@ import React from "react";
 interface TiltCardProps {
     children: React.ReactNode;
     style?: React.CSSProperties;
-    isDarkMode: boolean;
+    className?: string;
 }
 
-export function TiltCard({ children, style, isDarkMode }: TiltCardProps) {
+export function TiltCard({ children, style, className = "" }: TiltCardProps) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
@@ -52,10 +52,10 @@ export function TiltCard({ children, style, isDarkMode }: TiltCardProps) {
             className="tilt-card"
         >
             <div
-                className={`h-full p-8 rounded-3xl backdrop-blur-md border shadow-2xl transition-colors duration-300 ${isDarkMode
-                        ? 'bg-white/5 border-white/10 shadow-black/50'
-                        : 'bg-black/5 border-black/10 shadow-black/10'
-                    }`}
+                className={`h-full p-8 rounded-3xl backdrop-blur-md border shadow-2xl transition-colors duration-300 
+                    bg-[--color-bg-muted] border-[--color-border-default]
+                    ${className}
+                `}
                 style={{
                     transform: "translateZ(50px)",
                     transformStyle: "preserve-3d",

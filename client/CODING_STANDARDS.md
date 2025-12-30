@@ -540,41 +540,123 @@ const value = { theme, setTheme };  // Creates new object on every render
 - Avoid storing frequently changing values in context (use state management libraries instead).
 
 ---
+## Tailwind CSS Usage (v4)
 
-## Tailwind CSS Usage
+- **Tailwind CSS v4** is the standard styling system.
+- Styling must be **token-driven, theme-compatible, and predictable**.
 
-- Tailwind CSS is used in a **controlled manner**.
-- Inline utilities are allowed **ONLY** for layout and simple structure.
-- Recurring UI patterns **MUST** be extracted using `@apply`.
-- `@apply` **MUST NOT** recreate a traditional CSS system.
-- Component variants **MUST** be handled using `cva` or equivalent.
-- **Manual complex class concatenation is forbidden.**
-- **Inline style attributes are forbidden** except for truly dynamic values.
+### Inline Styles
+- Inline `style={}` **SHOULD NOT** be used for static design values.
+- Inline styles are **ALLOWED ONLY** for:
+  - runtime-calculated values (positions, transforms, measurements),
+  - user-provided values that cannot be expressed via tokens.
+- Inline styles must **NEVER** contain hard-coded design system values (colors, spacing, radii).
+
+### Static Styling Rules
+- All static styles **MUST** be implemented using:
+  - Tailwind utility classes,
+  - or CSS custom properties consumed by Tailwind.
+- Design-related values **MUST NOT** be hard-coded in JSX.
+
+### Arbitrary Values
+- Arbitrary values are **ALLOWED**, not encouraged.
+- Use them only when:
+  - the value is truly unique or experimental,
+  - the value does not belong to the design system,
+  - or no semantic token exists yet.
+- Arbitrary values **MUST NOT** replace design tokens.
+
+### CSS Variables (Preferred for Theming)
+- Theme-dependent values **MUST** be expressed as CSS variables.
+- Tailwind utilities should consume variables using:
+  - `bg-[var(--bg-surface)]`
+  - `text-[var(--text-primary)]`
+- Components must remain **theme-agnostic**.
+
+### Theme-Agnostic Components (CRITICAL)
+- Components **MUST NOT** branch on theme names (`isPaperTheme`, `isDarkMode`, `cvTheme === 'paper'`, etc.).
+- Components **MUST NOT** use conditional classes based on theme: `${isPaperTheme ? 'class-a' : 'class-b'}`.
+- Components must rely **EXCLUSIVELY** on semantic CSS tokens for styling.
+- Theme checks in JavaScript are allowed **ONLY** for non-CSS logic (loading different assets, canvas rendering, WebGL shaders).
+- The theme is applied via `data-theme` attribute on `<html>` or a container element.
+- CSS handles all visual differences through token overrides per theme.
+
+```css
+/* ✅ Good: Theme tokens in CSS */
+[data-theme="paper"] {
+    --bg-surface: #dfc49a;
+    --text-primary: #3d2815;
+    --border-default: #8b6f47;
+}
+
+[data-theme="dark"] {
+    --bg-surface: #171717;
+    --text-primary: #ffffff;
+    --border-default: rgba(255, 255, 255, 0.1);
+}
+```
 
 ```typescript
-// ✅ Good: Using cva for variants
-const buttonVariants = cva("btn", {
-    variants: {
-        intent: { primary: "btn-primary", secondary: "btn-secondary" },
-        size: { sm: "text-sm px-2", lg: "text-lg px-4" }
-    }
-});
+// ✅ Good: Component uses only tokens
+<div className="bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-default)]">
+    Content
+</div>
 
-// ❌ Bad: Manual concatenation
-className={`btn ${isPrimary ? 'btn-primary' : ''} ${isLarge ? 'px-4' : 'px-2'}`}
+// ❌ Bad: Component branches on theme
+<div className={isPaperTheme ? 'bg-amber-100 text-amber-900' : 'bg-white text-black'}>
+    Content
+</div>
 
-// ❌ Bad: Inline styles for static values
-style={{ backgroundColor: 'blue', padding: '16px' }}
+// ❌ Bad: Conditional classes based on theme name
+className={`${cvTheme === 'paper' ? 'paper-card' : 'glass-card'}`}
 ```
+
+### Reusable UI Patterns
+- Recurring UI patterns **SHOULD** be abstracted using:
+  - `cva` (preferred),
+  - or dedicated components.
+- Use `@apply` **sparingly**, limited to:
+  - low-level primitives,
+  - shared utility abstractions,
+  - legacy CSS interoperability.
+
+### Variants & Conditionals
+- Component variants **MUST** be handled using `cva`.
+- Conditional class application **MUST** use `clsx` or `cn`.
+- Manual class string concatenation is **DISCOURAGED**.
+
+### Migration Rule
+- When encountering `style={}` with static values:
+  - migrate to Tailwind utilities,
+  - or migrate to semantic CSS variables,
+  - **do not default to raw arbitrary values**.
 
 ---
 
 ## CSS Variables
 
-- Variable names **MUST** reflect purpose, not value.
-- ✅ `--color-accent-primary` (adapts to theme)
-- ✅ `--color-accent-cyan` (always cyan)
-- ❌ `--color-accent-blue: black` (misleading)
+- CSS variable names **MUST** describe semantic intent, not visual value.
+- Variables may be:
+  - **semantic** (theme-dependent),
+  - or **literal** (explicit and intentionally fixed).
+
+### Semantic Variables (Preferred)
+- `--bg-surface`
+- `--text-primary`
+- `--border-subtle`
+
+These variables **MUST** adapt per theme.
+
+### Literal Variables (Allowed, Explicit)
+- `--color-accent-cyan`
+- `--shadow-hard-black`
+
+These variables **DO NOT** change across themes.
+
+### Forbidden
+- ❌ `--color-accent-blue: black;`
+- ❌ `--primary-color-darkish`
+
 
 ---
 
