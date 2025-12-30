@@ -18,13 +18,21 @@ interface CVProps {
 export function CV({ isDarkMode }: CVProps) {
     const { t } = useTranslation();
     const [currentExpIndex, setCurrentExpIndex] = useState(0);
-    const [isPaperTheme, setIsPaperTheme] = useState(false);
+    const [isPaperTheme, setIsPaperTheme] = useState(() => {
+        const saved = localStorage.getItem('cv-paper-theme');
+        return saved === 'true';
+    });
     const containerRef = useRef<HTMLDivElement>(null);
     const horizontalSectionRef = useRef<HTMLElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     // Get Data
     const { skills, experiences, education } = useMemo(() => getCVData(t), [t]);
+
+    // Save paper theme preference to localStorage
+    useEffect(() => {
+        localStorage.setItem('cv-paper-theme', String(isPaperTheme));
+    }, [isPaperTheme]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -193,7 +201,10 @@ export function CV({ isDarkMode }: CVProps) {
             {/* 1. Hero Cover */}
             <header className="h-[110vh] flex flex-col items-center justify-center relative overflow-hidden px-6 z-10">
                 <div className="relative z-10 text-center space-y-8">
-                    <div className={`inline-block px-6 py-2 rounded-full border text-xs font-mono tracking-[0.3em] uppercase border-amber-800/30 bg-amber-900/10 ${isPaperTheme ? 'text-letterpress' : ''}`}>
+                    <div 
+                        className={`inline-block px-6 py-2 rounded-full text-xs font-mono tracking-[0.3em] uppercase ${isPaperTheme ? 'text-letterpress' : 'border border-amber-800/30 bg-amber-900/10'}`}
+                        style={isPaperTheme ? { border: '2px solid #8b6f47' } : undefined}
+                    >
                         {t('cv.interactive_portfolio')}
                     </div>
                     
@@ -331,7 +342,10 @@ export function CV({ isDarkMode }: CVProps) {
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[0].school}</h5>
                                     <p className="text-base uppercase tracking-wider text-letterpress">{education[0].degree}</p>
                                 </div>
-                                <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 opacity-20 sepia">
+                                <div 
+                                    className="absolute -right-2 -bottom-12 w-64 h-64 rotate-[-12deg] pointer-events-none z-0"
+                                    style={{ opacity: 0.25, filter: 'sepia(100%) saturate(50%) brightness(70%)' }}
+                                >
                                     {education[0].icon}
                                 </div>
                             </div>
@@ -349,7 +363,10 @@ export function CV({ isDarkMode }: CVProps) {
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[1].school}</h5>
                                     <p className="text-base uppercase tracking-wider text-letterpress">{education[1].degree}</p>
                                 </div>
-                                <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 opacity-15 sepia">
+                                <div 
+                                    className="absolute -right-6 -bottom-12 w-64 h-64 rotate-[-12deg] pointer-events-none z-0"
+                                    style={{ opacity: 0.2, filter: 'sepia(100%) saturate(50%) brightness(70%)' }}
+                                >
                                     {education[1].icon}
                                 </div>
                             </div>
