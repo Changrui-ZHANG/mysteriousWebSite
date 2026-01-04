@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react'
 import Matter from 'matter-js'
 import { useTranslation } from 'react-i18next'
+import { useThemeManager } from '../../../hooks/useThemeManager'
 
 interface GravityPlaygroundProps {
-    isDarkMode: boolean;
+    // isDarkMode prop removed
 }
 
-export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
+export function GravityPlayground({ }: GravityPlaygroundProps) {
     const { t, i18n } = useTranslation();
+    const { isDarkMode } = useThemeManager();
     const sceneRef = useRef<HTMLDivElement>(null)
     const engineRef = useRef<Matter.Engine | null>(null)
 
@@ -144,8 +146,8 @@ export function GravityPlayground({ isDarkMode }: GravityPlaygroundProps) {
     }, [isDarkMode, i18n.language]);
 
     return (
-        <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-black/5 backdrop-blur-sm shadow-inner touch-action-none" ref={sceneRef}>
-            <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono text-[--color-text-primary]`}>
+        <div className="w-full h-[80vh] min-h-[600px] relative overflow-hidden rounded-3xl border border-white/10 my-16 bg-inset backdrop-blur-sm shadow-inner touch-action-none" ref={sceneRef}>
+            <div className={`absolute top-4 left-0 w-full text-center text-sm tracking-widest opacity-50 pointer-events-none font-mono text-primary`}>
                 {t('gravity.instruction')}
             </div>
         </div>

@@ -7,16 +7,15 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { GradientHeading } from '../../../../components';
 
 interface MazeRulesProps {
-    bgCard: string;
     onClose: () => void;
 }
 
-export function MazeRules({ bgCard, onClose }: MazeRulesProps) {
+export function MazeRules({ onClose }: MazeRulesProps) {
     const { t } = useTranslation();
 
     return (
         <div
-            className={`w-full h-full flex flex-col p-8 overflow-hidden pointer-events-auto ${bgCard}`}
+            className={`w-full h-full flex flex-col p-8 overflow-hidden pointer-events-auto bg-surface`}
         >
             <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
                 <GradientHeading gradient="cyan-blue" level={2}>

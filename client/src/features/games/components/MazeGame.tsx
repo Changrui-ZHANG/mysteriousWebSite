@@ -10,14 +10,13 @@ import { MazeGrid, MazeControls, MazeRules } from './maze';
 import { GameWindow } from './GameWindow';
 
 interface MazeGameProps {
-    isDarkMode: boolean;
     onSubmitScore: (score: number) => void;
     personalBest: { score: number; attempts?: number } | null;
     isAuthenticated: boolean;
     onGameStart?: () => void;
 }
 
-export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAuthenticated, onGameStart }: MazeGameProps) {
+export default function MazeGame({ onSubmitScore, personalBest, isAuthenticated, onGameStart }: MazeGameProps) {
     const { t } = useTranslation();
     const { isMuted } = useMute();
     const { playSound } = useSound(!isMuted);
@@ -165,7 +164,7 @@ export default function MazeGame({ isDarkMode, onSubmitScore, personalBest, isAu
             onReset={fetchMaze}
             isFlipped={isFlipped}
             onFlipChange={setIsFlipped}
-            rulesContent={<MazeRules bgCard={isDarkMode ? 'bg-slate-900' : 'bg-white'} onClose={() => setIsFlipped(false)} />}
+            rulesContent={<MazeRules onClose={() => setIsFlipped(false)} />}
         >
             <div
                 className={`w-full h-full flex flex-col items-center justify-center p-4 select-none overflow-hidden`}

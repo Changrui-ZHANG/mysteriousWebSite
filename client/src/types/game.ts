@@ -24,7 +24,6 @@ export interface TopScore {
 }
 
 export interface GameProps {
-    isDarkMode: boolean;
     user?: { userId: string; username: string } | null;
     onOpenLogin: () => void;
     isSuperAdmin?: boolean;

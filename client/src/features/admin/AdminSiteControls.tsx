@@ -164,7 +164,7 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({ isOpen, on
                     exit={{ scale: 0.9, opacity: 0 }}
                     className="admin-panel relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
                 >
-                    <div className="p-4 border-b border-[var(--color-border-default)] flex justify-between items-center">
+                    <div className="p-4 border-b border-default flex justify-between items-center">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             🛠️ {t('admin.site_settings')}
                         </h2>

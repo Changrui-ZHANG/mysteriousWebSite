@@ -1,8 +1,7 @@
 import React from 'react';
-import { useTheme } from '../../hooks/useTheme';
+
 
 interface PageContainerProps {
-    isDarkMode: boolean;
     children: React.ReactNode;
     className?: string;
     centered?: boolean;
@@ -24,16 +23,16 @@ const maxWidthClasses = {
  * Provides consistent page structure with theme-aware styling
  */
 export function PageContainer({
-    isDarkMode,
     children,
     className = '',
     centered = false,
     maxWidth = 'full',
 }: PageContainerProps) {
-    const theme = useTheme(isDarkMode);
-
     const containerClasses = `
-        ${theme.pageContainer}
+        min-h-screen
+        w-full
+        transition-colors duration-300
+        bg-page text-primary
         ${centered ? 'flex flex-col items-center justify-center' : ''}
         ${className}
     `;

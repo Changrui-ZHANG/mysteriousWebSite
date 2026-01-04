@@ -15,7 +15,7 @@ import { SuperRewardModal } from '../zombie/components/SuperRewardModal';
 import { useZombieShooter } from '../zombie/hooks/useZombieShooter';
 import type { ZombieShooterProps } from '../zombie/types';
 
-export default function ZombieShooter({ isDarkMode: _isDarkMode, onSubmitScore, personalBest, onGameStart }: ZombieShooterProps) {
+export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart }: ZombieShooterProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFlipped, setIsFlipped] = useState(false);
 

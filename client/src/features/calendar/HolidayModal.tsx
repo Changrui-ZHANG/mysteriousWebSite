@@ -38,7 +38,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm cursor-pointer transition-colors duration-300"
+                        className="absolute inset-0 bg-overlay backdrop-blur-sm cursor-pointer transition-colors duration-300"
                     />
 
                     {/* Modal Content */}
@@ -48,16 +48,16 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className={`
                             relative w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl 
-                            bg-white dark:bg-gray-900
-                            border border-gray-100 dark:border-gray-800
+                            bg-surface
+                            border border-default
                             transition-all duration-300
                         `}
                     >
                         {/* Thematic Header Gradient */}
-                        <div className={`absolute top-0 left-0 w-full h-32 bg-gradient-to-br ${theme.gradient} opacity-20 dark:opacity-30`} />
+                        <div className={`absolute top-0 left-0 w-full h-32 bg-gradient-to-br ${theme.gradient} opacity-20`} />
 
                         {/* Decorative glow in background */}
-                        <div className={`absolute top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-gradient-to-r ${theme.gradient} rounded-full blur-[80px] opacity-20 dark:opacity-20`} />
+                        <div className={`absolute top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-gradient-to-r ${theme.gradient} rounded-full blur-[80px] opacity-20`} />
 
                         {/* Content Container */}
                         <div className="relative p-8 flex flex-col items-center text-center z-10">
@@ -69,9 +69,9 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                                 transition={{ delay: 0.1 }}
                                 className={`
                                     w-24 h-24 rounded-2xl rotate-3 flex items-center justify-center mb-6 
-                                    shadow-lg bg-white dark:bg-gray-800
-                                    border border-gray-100 dark:border-gray-700
-                                    ring-1 ring-black/5 dark:ring-white/5
+                                    shadow-lg bg-surface
+                                    border border-default
+                                    ring-1 ring-black/5
                                 `}
                             >
                                 <ThemeIcon className={`text-5xl ${theme.color} drop-shadow-sm`} />
@@ -82,9 +82,9 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                                 initial={{ y: 10, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.2 }}
-                                className={`text-3xl font-bold font-heading mb-3 text-gray-900 dark:text-white`}
+                                className={`text-3xl font-bold font-heading mb-3 text-primary`}
                             >
-                                <span className={`bg-clip-text text-transparent bg-gradient-to-r ${theme.gradient} dark:text-white dark:bg-none filter brightness-110`}>
+                                <span className={`bg-clip-text text-transparent bg-gradient-to-r ${theme.gradient} filter brightness-110`}>
                                     {title}
                                 </span>
                             </motion.h2>
@@ -94,7 +94,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                                 initial={{ y: 10, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="inline-block px-4 py-1.5 mb-8 rounded-full text-sm font-mono font-medium tracking-wide bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+                                className="inline-block px-4 py-1.5 mb-8 rounded-full text-sm font-mono font-medium tracking-wide bg-inset text-secondary border border-default"
                             >
                                 {dateFormatted}
                             </motion.div>
@@ -104,7 +104,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({ isOpen, onClose, hol
                                 initial={{ y: 10, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.4 }}
-                                className="text-lg leading-relaxed text-gray-600 dark:text-gray-100 font-medium max-w-md mx-auto"
+                                className="text-lg leading-relaxed text-secondary font-medium max-w-md mx-auto"
                             >
                                 {description}
                             </motion.p>

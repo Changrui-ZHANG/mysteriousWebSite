@@ -88,7 +88,7 @@ export function MessageInput({
                 <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
                     {/* User Identity Display */}
                     {user && (
-                        <div className="p-2 rounded-lg flex items-center gap-2 ring-1 ring-[var(--color-accent-green)]/30 bg-[var(--color-accent-green)]/10 text-[var(--color-accent-green)] transition-all">
+                        <div className="p-2 rounded-lg flex items-center gap-2 ring-1 ring-accent-success/30 bg-accent-success/10 text-accent-success transition-all">
                             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                                 {user.username.charAt(0).toUpperCase()}
                             </div>
@@ -137,7 +137,7 @@ export function MessageInput({
 
                         {/* Interactive Placeholder for Guests */}
                         {!user && !newMessage && !isMuted && (
-                            <div className="absolute inset-0 px-4 py-2 pointer-events-none flex items-center text-[var(--color-text-muted)]">
+                            <div className="absolute inset-0 px-4 py-2 pointer-events-none flex items-center text-muted">
                                 <span>{t('messages.guest_placeholder_text')}</span>
                                 <button
                                     type="button"

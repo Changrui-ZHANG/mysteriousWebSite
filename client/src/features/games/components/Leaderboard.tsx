@@ -67,7 +67,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
             </h3>
 
             {scores.length === 0 ? (
-                <div className="text-center py-4 opacity-60 text-[var(--color-text-muted)]">
+                <div className="text-center py-4 opacity-60 text-muted">
                     {t('game.no_scores_yet')}
                 </div>
             ) : (
@@ -82,7 +82,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                     index === 1 ? 'text-gray-400 text-lg' :
                                         'text-orange-600 text-base'
                                     }`}>#{index + 1}</span>
-                                <span className="font-bold text-[var(--color-text-primary)]">{score.username}</span>
+                                <span className="font-bold text-primary">{score.username}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="font-mono font-bold text-fuchsia-400">

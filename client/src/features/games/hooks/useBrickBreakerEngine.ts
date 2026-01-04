@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useRef, MutableRefObject } from 'react';
+import { useThemeManager } from '../../../hooks/useThemeManager';
 import {
     BALL_CONFIG,
     PADDLE_CONFIG,
@@ -28,14 +29,14 @@ interface UseBrickBreakerEngineProps {
     setPoints: React.Dispatch<React.SetStateAction<number>>;
     selectedMap: number;
     randomMapData: number[][] | null;
-    isDarkMode: boolean;
     playSound: (sound: SoundType) => void;
 }
 
 export function useBrickBreakerEngine({
     canvasRef, containerRef, paddleWidthRef, paddleWidthTimeoutRef,
-    gameState, setGameState, setPoints, selectedMap, randomMapData, isDarkMode, playSound,
+    gameState, setGameState, setPoints, selectedMap, randomMapData, playSound,
 }: UseBrickBreakerEngineProps) {
+    const { isDarkMode } = useThemeManager();
     const animationFrameRef = useRef<number>(0);
 
     useEffect(() => {

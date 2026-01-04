@@ -13,8 +13,6 @@ import { DesktopMenu, MobileMenu } from './navbar/index';
 interface User { userId: string; username: string; }
 
 interface NavbarProps {
-    isDarkMode: boolean;
-    toggleTheme: () => void;
     user?: User | null;
     onOpenLogin: () => void;
     onLogout?: () => void;
@@ -27,7 +25,7 @@ interface NavbarProps {
 }
 
 export function Navbar({
-    isDarkMode, toggleTheme, user, onOpenLogin, onLogout,
+    user, onOpenLogin, onLogout,
     isAdmin = false, isSuperAdmin = false, adminCode = '',
     onAdminLogin, onAdminLogout, onRefreshSettings
 }: NavbarProps) {
@@ -84,7 +82,7 @@ export function Navbar({
 
     return (
         <>
-            <nav className="fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-[1000] backdrop-blur-md bg-[var(--color-bg-base)]/90 text-[var(--color-text-primary)]">
+            <nav className="fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-[1000] backdrop-blur-md bg-page/90 text-primary">
                 <Link to="/" className="text-xl md:text-2xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity z-50 relative">
                     {getPageTitle()}
                 </Link>
@@ -107,8 +105,6 @@ export function Navbar({
                     onAdminLogin={onAdminLogin}
                     onAdminLogout={onAdminLogout}
                     onShowSiteControls={() => setShowSiteControls(true)}
-                    isDarkMode={isDarkMode}
-                    toggleTheme={toggleTheme}
                     changeLanguage={changeLanguage}
                 />
             </nav>
@@ -126,8 +122,6 @@ export function Navbar({
                 onAdminLogin={onAdminLogin}
                 onAdminLogout={onAdminLogout}
                 onShowSiteControls={() => setShowSiteControls(true)}
-                isDarkMode={isDarkMode}
-                toggleTheme={toggleTheme}
                 changeLanguage={changeLanguage}
             />
 

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog } from 'react-icons/fa';
+import { useThemeManager } from '../../hooks/useThemeManager';
 import { LanguageButton } from './LanguageButton';
 
 interface User { userId: string; username: string; }
@@ -23,17 +24,16 @@ interface MobileMenuProps {
     onAdminLogin?: (code: string) => Promise<boolean>;
     onAdminLogout?: () => void;
     onShowSiteControls: () => void;
-    isDarkMode: boolean;
-    toggleTheme: () => void;
     changeLanguage: (lng: string) => void;
 }
 
 export function MobileMenu({
     isOpen, onClose, user, onOpenLogin, onLogout, isAdmin, isSuperAdmin,
     loginCode, setLoginCode, onAdminLogin, onAdminLogout, onShowSiteControls,
-    isDarkMode, toggleTheme, changeLanguage,
+    changeLanguage,
 }: MobileMenuProps) {
     const { t, i18n } = useTranslation();
+    const { isDarkMode, toggleTheme } = useThemeManager();
 
     const navLinks = [
         { to: "/", label: t('nav.home') },
@@ -53,7 +53,7 @@ export function MobileMenu({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: '100%' }}
                     transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    className="fixed inset-0 h-[100dvh] bg-[var(--color-bg-base)] text-[var(--color-text-primary)] flex flex-col items-center justify-start pt-28 pb-10 gap-8 lg:hidden font-mono text-xl z-40 overflow-y-auto"
+                    className="fixed inset-0 h-[100dvh] bg-page text-primary flex flex-col items-center justify-start pt-28 pb-10 gap-8 lg:hidden font-mono text-xl z-40 overflow-y-auto"
                 >
                     {/* Navigation Links */}
                     <div className="flex flex-col items-center gap-6 w-full px-8">
@@ -104,7 +104,7 @@ export function MobileMenu({
                                         type="password"
                                         value={loginCode}
                                         onChange={(e) => setLoginCode(e.target.value)}
-                                        className="flex-1 px-4 py-3 bg-black/5 dark:bg-white/5 rounded-lg border border-current/10 focus:border-cyan-500 outline-none text-center font-mono"
+                                        className="flex-1 px-4 py-3 bg-inset rounded-lg border border-current/10 focus:border-accent-info outline-none text-center font-mono"
                                         placeholder={t('admin.code_placeholder')}
                                     />
                                     <button type="submit" className="px-6 py-3 bg-cyan-500 text-white rounded-lg font-bold transition-all shadow-lg shadow-cyan-500/20 active:scale-95">→</button>

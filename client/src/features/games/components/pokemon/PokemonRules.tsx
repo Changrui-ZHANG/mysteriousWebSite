@@ -7,16 +7,15 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { GradientHeading } from '../../../../components';
 
 interface PokemonRulesProps {
-    bgCard: string;
     onClose: () => void;
 }
 
-export function PokemonRules({ bgCard, onClose }: PokemonRulesProps) {
+export function PokemonRules({ onClose }: PokemonRulesProps) {
     const { t } = useTranslation();
 
     return (
         <div
-            className={`w-full h-full flex flex-col p-8 overflow-hidden pointer-events-auto ${bgCard}`}
+            className={`w-full h-full flex flex-col p-8 overflow-hidden pointer-events-auto bg-surface`}
         >
             <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
                 <GradientHeading gradient="purple-pink" level={2}>

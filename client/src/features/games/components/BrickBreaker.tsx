@@ -19,7 +19,6 @@ import {
 import type { BrickBreakerProps } from './BrickBreakerProps';
 
 export default function BrickBreaker({
-    isDarkMode,
     onSubmitScore,
     personalBest,
     isAuthenticated,
@@ -43,7 +42,6 @@ export default function BrickBreaker({
         setPoints: game.setPoints,
         selectedMap: game.selectedMap,
         randomMapData: game.randomMapData,
-        isDarkMode,
         playSound,
     });
 

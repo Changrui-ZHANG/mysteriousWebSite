@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
+import { useThemeManager } from '../../hooks/useThemeManager';
 import { LanguageButton } from './LanguageButton';
 
 interface User { userId: string; username: string; }
@@ -21,17 +22,16 @@ interface DesktopMenuProps {
     onAdminLogin?: (code: string) => Promise<boolean>;
     onAdminLogout?: () => void;
     onShowSiteControls: () => void;
-    isDarkMode: boolean;
-    toggleTheme: () => void;
     changeLanguage: (lng: string) => void;
 }
 
 export function DesktopMenu({
     user, onOpenLogin, onLogout, isAdmin, isSuperAdmin,
     loginCode, setLoginCode, onAdminLogin, onAdminLogout, onShowSiteControls,
-    isDarkMode, toggleTheme, changeLanguage,
+    changeLanguage,
 }: DesktopMenuProps) {
     const { t, i18n } = useTranslation();
+    const { isDarkMode, toggleTheme } = useThemeManager();
     const location = useLocation();
     const [showAdminInput, setShowAdminInput] = useState(false);
 
@@ -60,22 +60,30 @@ export function DesktopMenu({
     return (
         <div className="hidden lg:flex items-center gap-6 font-mono text-sm max-w-full">
             {/* Main Navigation Links */}
-            <div className="flex items-center gap-6 mr-4">
+            <div className="flex items-center gap-2 mr-4">
                 {mainLinks.map(link => (
-                    <Link key={link.to} to={link.to} className={`hover:opacity-60 transition-opacity ${location.pathname === link.to ? 'font-bold' : ''}`}>
+                    <Link
+                        key={link.to}
+                        to={link.to}
+                        className={`nav-link ${location.pathname === link.to ? 'nav-link-active' : ''}`}
+                    >
                         {link.label}
                     </Link>
                 ))}
 
                 {/* Dropdown for More Links */}
                 <div className="relative group">
-                    <button className={`flex items-center gap-1 hover:opacity-60 transition-opacity uppercase tracking-widest ${['/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'font-bold' : ''}`}>
+                    <button className={`nav-link flex items-center gap-1 uppercase tracking-widest ${['/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'nav-link-active' : ''}`}>
                         {t('nav.more')} <FaChevronDown className="text-xs transition-transform duration-300 group-hover:rotate-180" />
                     </button>
                     <div className="absolute top-full left-0 w-full h-4 bg-transparent z-40" />
-                    <div className="absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 bg-[var(--color-bg-base)]/95 border-[var(--color-border-default)]">
+                    <div className="absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-md border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 bg-surface/95 border-default">
                         {moreLinks.map(link => (
-                            <Link key={link.to} to={link.to} className={`relative block px-5 py-3 transition-all text-sm tracking-wide uppercase hover:opacity-60 ${location.pathname === link.to ? 'font-bold' : ''}`}>
+                            <Link
+                                key={link.to}
+                                to={link.to}
+                                className={`relative block px-5 py-3 transition-all text-sm tracking-wide uppercase hover:bg-inset ${location.pathname === link.to ? 'text-primary font-bold' : 'text-secondary'}`}
+                            >
                                 {link.label}
                             </Link>
                         ))}
@@ -117,13 +125,13 @@ export function DesktopMenu({
                     <>
                         <button onClick={() => setShowAdminInput(!showAdminInput)} className="hover:scale-110 transition-transform" title={t('auth.admin_access')}>🔐</button>
                         {showAdminInput && (
-                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-2xl z-50 flex gap-2 bg-[var(--color-bg-elevated)] border border-cyan-500/50 backdrop-blur-xl">
+                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 bg-elevated border border-accent-info/50 backdrop-blur-xl">
                                 <input
                                     type="password"
                                     value={loginCode}
                                     onChange={(e) => setLoginCode(e.target.value)}
                                     placeholder={t('admin.code_placeholder')}
-                                    className="w-32 px-3 py-1.5 text-xs rounded-md bg-black/5 dark:bg-white/5 border border-current/10 focus:border-cyan-500 outline-none transition-all font-mono"
+                                    className="w-32 px-3 py-1.5 text-xs rounded-md bg-inset border border-current/10 focus:border-accent-info outline-none transition-all font-mono"
                                     autoFocus
                                 />
                                 <button type="submit" className="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-600 text-white text-xs rounded-md font-bold transition-colors shadow-lg shadow-cyan-500/20">→</button>

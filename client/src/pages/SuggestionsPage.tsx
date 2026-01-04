@@ -9,13 +9,12 @@ import { SuggestionCard } from '../features/suggestions/components';
 import type { Suggestion, SuggestionUser } from '../types/suggestions';
 
 interface SuggestionsPageProps {
-    isDarkMode: boolean;
     user?: SuggestionUser | null;
     onOpenLogin: () => void;
     isAdmin?: boolean;
 }
 
-export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false }: SuggestionsPageProps) {
+export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: SuggestionsPageProps) {
     const { t } = useTranslation();
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [newSuggestion, setNewSuggestion] = useState('');
@@ -110,7 +109,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
             <div className="page-container pt-24 pb-12 px-4 md:px-8">
                 <div className="max-w-4xl mx-auto">
                     <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center">
-                        <GlassCard isDarkMode={isDarkMode} accentColor="purple" padding="lg" animated={false}>
+                        <GlassCard accentColor="purple" padding="lg" animated={false}>
                             <FaLightbulb className="w-20 h-20 mx-auto mb-6 text-purple-400" />
                             <GradientHeading gradient="purple-pink" level={1} className="mb-4">
                                 {t('suggestions.title')}
@@ -142,7 +141,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                 </motion.div>
 
                 {/* Submission Form */}
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-card-purple mb-8">
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-card--secondary mb-8 p-12 rounded-3xl border">
                     <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                         <FaLightbulb className="text-yellow-400" />
                         {t('suggestions.submit_new')}
@@ -162,7 +161,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                             <button
                                 type="submit"
                                 disabled={loading || !user || !newSuggestion.trim()}
-                                className="btn-primary bg-purple-600 hover:bg-purple-500"
+                                className="btn-primary"
                             >
                                 {loading ? t('suggestions.submitting') : t('suggestions.submit')}
                             </button>
@@ -180,7 +179,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                         {archivedSuggestions.length > 0 && (
                             <button
                                 onClick={() => setShowArchive(!showArchive)}
-                                className="btn-primary bg-green-600 hover:bg-green-500 flex items-center gap-2"
+                                className="btn-primary bg-accent-success hover:bg-accent-success/80 flex items-center gap-2"
                             >
                                 <FaCheck className="w-4 h-4" />
                                 {showArchive ? t('suggestions.hide_archive') : `${t('suggestions.show_archive')} (${archivedSuggestions.length})`}
@@ -204,7 +203,7 @@ export function SuggestionsPage({ isDarkMode, user, onOpenLogin, isAdmin = false
                                 ))}
                             </AnimatePresence>
                             {activeSuggestions.length === 0 && (
-                                <div className="glass-card-purple text-center py-12 text-muted">
+                                <div className="glass-card--secondary text-center py-12 text-muted rounded-3xl border">
                                     <FaLightbulb className="w-12 h-12 mx-auto mb-4 text-purple-400" />
                                     <p>{t('suggestions.no_suggestions')}</p>
                                 </div>

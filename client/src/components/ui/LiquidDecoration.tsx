@@ -1,14 +1,15 @@
 import { motion } from 'framer-motion'
+import { useThemeManager } from '../../hooks/useThemeManager'
 
 interface LiquidDecorationProps {
     className?: string; // For positioning (top, left, etc.)
     size?: string; // e.g. "w-64 h-64"
     color?: string; // Optional overlay color
     delay?: number;
-    isDarkMode: boolean;
 }
 
-export function LiquidDecoration({ className = "", size = "w-96 h-96", delay = 0, isDarkMode }: LiquidDecorationProps) {
+export function LiquidDecoration({ className = "", size = "w-96 h-96", delay = 0 }: LiquidDecorationProps) {
+    const { isDarkMode } = useThemeManager();
     return (
         <motion.div
             className={`absolute ${size} rounded-[40%] ${className} pointer-events-none z-0`}

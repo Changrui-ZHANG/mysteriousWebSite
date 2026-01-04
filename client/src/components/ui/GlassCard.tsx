@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion, MotionProps } from 'framer-motion';
-import { useTheme } from '../../hooks/useTheme';
+
 
 type AccentColor = 'purple' | 'cyan' | 'amber' | 'blue' | 'green';
 
 interface GlassCardProps extends MotionProps {
-    isDarkMode: boolean;
     children: React.ReactNode;
     accentColor?: AccentColor;
     className?: string;
@@ -21,12 +20,19 @@ const paddingClasses = {
     lg: 'p-8',
 };
 
+const accentColorMap: Record<AccentColor, string> = {
+    purple: 'glass-card--secondary',
+    cyan: 'glass-card--info',
+    amber: 'glass-card--warning',
+    blue: 'glass-card--primary',
+    green: 'glass-card--success',
+};
+
 /**
  * Glass-effect card component (glassmorphism)
  * Reusable card with backdrop blur, configurable accent colors
  */
 export function GlassCard({
-    isDarkMode,
     children,
     accentColor = 'purple',
     className = '',
@@ -35,10 +41,9 @@ export function GlassCard({
     onClick,
     ...motionProps
 }: GlassCardProps) {
-    const theme = useTheme(isDarkMode);
-
     const cardClasses = `
-        ${theme.glassCard(accentColor)}
+        glass-panel
+        ${accentColorMap[accentColor]}
         ${paddingClasses[padding]}
         ${onClick ? 'cursor-pointer' : ''}
         ${className}

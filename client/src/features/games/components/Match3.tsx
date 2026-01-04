@@ -11,7 +11,6 @@ import { GameWindow } from './GameWindow';
 import { Match3Rules, AUDIO_CONFIG } from './match3/index';
 
 interface Match3Props {
-    isDarkMode: boolean;
     onSubmitScore: (score: number) => void;
     personalBest?: { score: number } | null;
     isAuthenticated: boolean;
@@ -42,7 +41,7 @@ export default function Match3({ onSubmitScore, personalBest, isAuthenticated, o
                 personalBest,
                 customInfo: comboInfo,
             }}
-            rulesContent={<Match3Rules onClose={() => {}} />}
+            rulesContent={<Match3Rules onClose={() => { }} />}
         >
             <div className="w-full h-full flex flex-col items-center justify-center p-4">
                 <div className="w-full max-w-[400px] grid grid-cols-8 gap-0.5 md:gap-1 p-2 md:p-4 bg-black/40 rounded-lg mx-auto">

@@ -3,11 +3,12 @@ import { useFrame } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Sphere, GradientTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
-interface LiquidSphereProps {
-    isDarkMode: boolean;
-}
+import { useThemeManager } from '../../../hooks/useThemeManager';
 
-export function LiquidSphere({ isDarkMode }: LiquidSphereProps) {
+interface LiquidSphereProps { }
+
+export function LiquidSphere({ }: LiquidSphereProps) {
+    const { isDarkMode } = useThemeManager();
     const mesh = useRef<THREE.Mesh>(null);
 
     useFrame((state) => {

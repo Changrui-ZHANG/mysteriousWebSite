@@ -17,7 +17,6 @@ export interface User {
 }
 
 export interface MessageWallProps {
-    isDarkMode: boolean;
     user?: User | null;
     onOpenLogin?: () => void;
     isAdmin?: boolean;

@@ -94,17 +94,17 @@ export default function PokemonGame({ onSubmitScore, personalBest, isAuthenticat
             onReset={() => { setScore(0); setAttempts(0); loadNewPokemon(); }}
             isFlipped={isFlipped}
             onFlipChange={setIsFlipped}
-            rulesContent={<PokemonRules bgCard="bg-[--color-bg-surface]" onClose={() => setIsFlipped(false)} />}
+            rulesContent={<PokemonRules onClose={() => setIsFlipped(false)} />}
         >
             <div className="flex-1 flex items-center justify-center p-4 overflow-y-auto w-full h-full">
                 {loading ? (
-                    <div className="text-[--color-accent-purple] font-bold animate-pulse text-xl">{t('game.loading')}</div>
+                    <div className="text-accent-secondary font-bold animate-pulse text-xl">{t('game.loading')}</div>
                 ) : pokemon ? (
                     <div className="w-full max-w-lg mx-auto space-y-4">
                         {/* Pokemon Image Area */}
                         <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto flex items-center justify-center">
                             {/* Decorative background glow */}
-                            <div className={`absolute inset-0 rounded-full blur-3xl transition-all duration-1000 ${revealed ? 'bg-[--color-accent-purple]/5' : 'bg-[--color-accent-purple]/20 animate-pulse'
+                            <div className={`absolute inset-0 rounded-full blur-3xl transition-all duration-1000 ${revealed ? 'bg-accent-secondary/5' : 'bg-accent-secondary/20 animate-pulse'
                                 }`} />
 
                             <motion.img

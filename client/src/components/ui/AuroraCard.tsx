@@ -9,38 +9,26 @@ interface AuroraCardProps {
 }
 
 const auroraGradients: Record<AuroraVariant, string> = {
-    blue: 'from-blue-500/20 via-cyan-500/10 to-blue-600/20',
-    purple: 'from-violet-500/20 via-purple-500/10 to-fuchsia-500/20',
-    cyan: 'from-cyan-400/20 via-teal-500/10 to-emerald-500/20',
-    pink: 'from-pink-500/20 via-rose-500/10 to-red-500/20',
-    green: 'from-emerald-500/20 via-green-500/10 to-teal-500/20',
-    multi: 'from-blue-500/20 via-purple-500/15 to-pink-500/20',
+    blue: 'from-accent-primary/20 via-accent-info/10 to-accent-primary/20',
+    purple: 'from-accent-secondary/20 via-accent-secondary/10 to-accent-primary/20',
+    cyan: 'from-accent-info/20 via-accent-info/10 to-accent-success/20',
+    pink: 'from-accent-danger/20 via-accent-danger/10 to-accent-warning/20',
+    green: 'from-accent-success/20 via-accent-success/10 to-accent-info/20',
+    multi: 'from-accent-primary/20 via-accent-secondary/15 to-accent-danger/20',
 };
 
-const glowColors: Record<AuroraVariant, string> = {
-    blue: 'hover:shadow-[0_0_40px_rgba(59,130,246,0.3),inset_0_0_60px_rgba(59,130,246,0.1)]',
-    purple: 'hover:shadow-[0_0_40px_rgba(139,92,246,0.3),inset_0_0_60px_rgba(139,92,246,0.1)]',
-    cyan: 'hover:shadow-[0_0_40px_rgba(34,211,238,0.3),inset_0_0_60px_rgba(34,211,238,0.1)]',
-    pink: 'hover:shadow-[0_0_40px_rgba(236,72,153,0.3),inset_0_0_60px_rgba(236,72,153,0.1)]',
-    green: 'hover:shadow-[0_0_40px_rgba(16,185,129,0.3),inset_0_0_60px_rgba(16,185,129,0.1)]',
-    multi: 'hover:shadow-[0_0_40px_rgba(139,92,246,0.3),inset_0_0_60px_rgba(59,130,246,0.1)]',
-};
-
-const borderColors: Record<AuroraVariant, string> = {
-    blue: 'hover:border-blue-500/50',
-    purple: 'hover:border-violet-500/50',
-    cyan: 'hover:border-cyan-400/50',
-    pink: 'hover:border-pink-500/50',
-    green: 'hover:border-emerald-500/50',
-    multi: 'hover:border-violet-500/50',
+const auroraVariantClasses: Record<AuroraVariant, string> = {
+    blue: 'aurora-card--primary',
+    purple: 'aurora-card--secondary',
+    cyan: 'aurora-card--info',
+    pink: 'aurora-card--danger',
+    green: 'aurora-card--success',
+    multi: 'aurora-card--multi',
 };
 
 export function AuroraCard({ children, className = "", variant = 'blue' }: AuroraCardProps) {
     return (
-        <div className={`relative overflow-hidden backdrop-blur-[--glass-blur] border transition-all duration-500 group
-             bg-[--color-glass-bg] border-[--color-border-default] shadow-lg ${borderColors[variant]} ${glowColors[variant]}
-             ${className}`}
-        >
+        <div className={`aurora-card group ${auroraVariantClasses[variant]} ${className}`}>
             {/* Aurora gradient overlay */}
             <div className={`absolute inset-0 bg-gradient-to-br ${auroraGradients[variant]} opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`} />
 

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useTranslation } from 'react-i18next'
 import { Navbar } from './layouts/Navbar'
 import AuthModal from './features/auth/AuthModal'
-import { Preloader, VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary } from './components'
+import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary } from './components'
 import { Home } from './pages/HomePage'
 import { CV } from './pages/CVPage'
 import { Game } from './pages/GamePage'
@@ -15,7 +15,6 @@ import { PrivacyPage } from './pages/PrivacyPage'
 import { MaintenancePage } from './pages/MaintenancePage'
 import { LearningPage } from './pages/LearningPage'
 import { STORAGE_KEYS } from './constants/authStorage'
-import { useThemeManager } from './hooks/useThemeManager'
 import { postJson, fetchJson } from './api/httpClient'
 import { API_ENDPOINTS } from './constants/endpoints'
 import './App.css'
@@ -26,7 +25,6 @@ interface User {
 }
 
 function AppContent() {
-    const { isDarkMode, toggleTheme } = useThemeManager();
     const location = useLocation()
     const { i18n } = useTranslation()
 
@@ -155,9 +153,8 @@ function AppContent() {
     const isEnabled = (key: string) => siteSettings[key] === 'true';
 
     return (
-        <div className="page-container relative font-[var(--font-body)]">
-            <Preloader isDarkMode={isDarkMode} />
-            {!location.pathname.startsWith('/messages') && <ScrollProgress isDarkMode={isDarkMode} />}
+        <div className="page-container relative font-sans">
+            {!location.pathname.startsWith('/messages') && <ScrollProgress />}
 
             <AuthModal
                 isOpen={showAuthModal}
@@ -174,8 +171,6 @@ function AppContent() {
             ) : (
                 <>
                     <Navbar
-                        isDarkMode={isDarkMode}
-                        toggleTheme={toggleTheme}
                         user={user}
                         onOpenLogin={() => setShowAuthModal(true)}
                         onLogout={handleLogout}
@@ -193,21 +188,21 @@ function AppContent() {
 
                     {location.pathname === '/' && (
                         <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none">
-                            <VisualEffect isDarkMode={isDarkMode} />
-                            <div className="aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] bg-[var(--color-accent-purple)]/30" style={{ animationDelay: '0s' }}></div>
-                            <div className="aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] bg-[var(--color-accent-cyan)]/30" style={{ animationDelay: '2s' }}></div>
-                            <LiquidDecoration isDarkMode={isDarkMode} className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
+                            <VisualEffect />
+                            <div className="aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] bg-accent-secondary/30" style={{ animationDelay: '0s' }}></div>
+                            <div className="aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] bg-accent-info/30" style={{ animationDelay: '2s' }}></div>
+                            <LiquidDecoration className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
                         </div>
                     )}
 
                     <div className="relative z-10">
                         <ErrorBoundary>
                             <Routes>
-                                <Route path="/" element={<Home isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
+                                <Route path="/" element={<Home />} />
                                 <Route path="/cv" element={isEnabled('PAGE_CV_ENABLED') ? <CV /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/game" element={isEnabled('PAGE_GAME_ENABLED') ? <Game isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage isDarkMode={isDarkMode} user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/game" element={isEnabled('PAGE_GAME_ENABLED') ? <Game user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
+                                <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/learning" element={<LearningPage />} />
                                 <Route path="/terms" element={<TermsPage />} />

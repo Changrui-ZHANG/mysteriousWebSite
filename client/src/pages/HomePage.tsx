@@ -8,11 +8,9 @@ import MagneticButton from '../components/ui/MagneticButton'
 import { SOCIAL_LINKS } from '../constants/urls'
 
 interface HomeProps {
-    isDarkMode: boolean;
-    toggleTheme: () => void;
 }
 
-export function Home({ isDarkMode }: HomeProps) {
+export function Home({ }: HomeProps) {
     const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
 
@@ -98,7 +96,7 @@ export function Home({ isDarkMode }: HomeProps) {
                     <h2 className="text-4xl md:text-8xl text-center mb-12 font-heading font-bold bg-gradient-to-b from-current to-transparent bg-clip-text text-transparent opacity-80">
                         {t('gravity.title')}
                     </h2>
-                    <GravityPlayground isDarkMode={isDarkMode} />
+                    <GravityPlayground />
                 </div>
             </ScrollSection>
 

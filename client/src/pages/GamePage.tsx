@@ -15,7 +15,7 @@ import { GradientHeading } from '../components';
 import { GameSelector, GuestAlertModal } from '../features/games/components/index';
 import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps } from '../types/game';
 
-export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
+export function Game({ user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
     const adminCode = useAdminCode();
     const [activeGame, setActiveGame] = useState<GameKey>('brick');
@@ -124,14 +124,13 @@ export function Game({ isDarkMode, user, onOpenLogin, isSuperAdmin = false, isAd
         }
 
         const baseProps = { onSubmitScore: submitScore, personalBest, isAuthenticated: !!user, onGameStart: resetGuestAlert };
-        const legacyProps = { ...baseProps, isDarkMode };
 
         switch (activeGame) {
-            case 'brick': return <BrickBreaker key="brick" {...legacyProps} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />;
-            case 'match3': return <Match3 key="match3" {...legacyProps} />;
+            case 'brick': return <BrickBreaker key="brick" {...baseProps} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} />;
+            case 'match3': return <Match3 key="match3" {...baseProps} />;
             case 'pokemon': return <PokemonGame key="pokemon" {...baseProps} />;
-            case 'maze': return <MazeGame key="maze" {...legacyProps} />;
-            case 'zombie': return <ZombieShooter key="zombie" {...legacyProps} />;
+            case 'maze': return <MazeGame key="maze" {...baseProps} />;
+            case 'zombie': return <ZombieShooter key="zombie" {...baseProps} />;
         }
     };
 

@@ -53,7 +53,7 @@ export function TiltCard({ children, style, className = "" }: TiltCardProps) {
         >
             <div
                 className={`h-full p-8 rounded-3xl backdrop-blur-md border shadow-2xl transition-colors duration-300 
-                    bg-[--color-bg-muted] border-[--color-border-default]
+                    bg-inset border-default
                     ${className}
                 `}
                 style={{

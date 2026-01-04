@@ -2,20 +2,9 @@ import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Points, PointMaterial } from '@react-three/drei'
 import * as THREE from 'three'
+import { useThemeManager } from '../../hooks/useThemeManager'
 
-interface VisualEffectProps {
-    isDarkMode: boolean;
-}
-
-interface FlowParticlesProps {
-    isDarkMode: boolean;
-}
-
-interface BgProps {
-    isDarkMode: boolean;
-}
-
-function FlowParticles({ isDarkMode }: FlowParticlesProps) {
+function FlowParticles({ isDarkMode }: { isDarkMode: boolean }) {
     const count = 1000; // Reduced for performance optimization
     const mesh = useRef<THREE.Points>(null!);
 
@@ -97,7 +86,7 @@ function FlowParticles({ isDarkMode }: FlowParticlesProps) {
     )
 }
 
-function Bg({ isDarkMode }: BgProps) {
+function Bg({ isDarkMode }: { isDarkMode: boolean }) {
     return (
         <mesh scale={100}>
             <sphereGeometry args={[1, 64, 64]} />
@@ -109,7 +98,8 @@ function Bg({ isDarkMode }: BgProps) {
     )
 }
 
-export function VisualEffect({ isDarkMode }: VisualEffectProps) {
+export function VisualEffect() {
+    const { isDarkMode } = useThemeManager();
     return (
         <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}>
             {/* Background color for the container as a seamless transition */}

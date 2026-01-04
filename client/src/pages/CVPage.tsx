@@ -113,17 +113,12 @@ export function CV({ }: CVProps) {
     return (
         <div
             ref={containerRef}
-            className="page-container overflow-x-hidden"
+            className={`page-container overflow-x-hidden ${isPaperTheme ? 'paper-theme' : ''}`}
         >
             {/* Paper Theme Toggle Button */}
             <button
                 onClick={() => setIsPaperTheme(!isPaperTheme)}
-                className="fixed top-24 right-6 z-50 px-6 py-3 rounded-full border-2 backdrop-blur-xl transition-all hover:scale-105 shadow-xl"
-                style={{
-                    borderColor: isPaperTheme ? '#8b6f47' : 'rgba(255,255,255,0.2)',
-                    backgroundColor: isPaperTheme ? '#dfc49a' : 'rgba(255,255,255,0.1)',
-                    color: isPaperTheme ? '#3d2815' : 'inherit'
-                }}
+                className={`fixed top-24 right-6 z-50 px-6 py-3 rounded-full border-2 backdrop-blur-xl transition-all hover:scale-105 shadow-xl ${isPaperTheme ? 'paper-border-sm paper-bg paper-text' : 'border-white/20 bg-white/10'}`}
             >
                 📜 {isPaperTheme ? 'Modern' : 'Paper'}
             </button>
@@ -132,11 +127,8 @@ export function CV({ }: CVProps) {
             {isPaperTheme && (
                 <>
                     <div
-                        className="absolute inset-0 pointer-events-none z-0"
-                        style={{
-                            backgroundColor: '#dfc49a',
-                            minHeight: '100%'
-                        }}
+                        className="absolute inset-0 pointer-events-none z-0 paper-bg"
+                        style={{ minHeight: '100%' }}
                     />
                     {/* 3D Leather texture with lighting */}
                     <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ minHeight: '100%' }}>
@@ -191,8 +183,8 @@ export function CV({ }: CVProps) {
             {/* Background Aesthetic Layers - hidden in paper theme */}
             {!isPaperTheme && (
                 <div className="fixed inset-0 pointer-events-none opacity-30 blur-[100px] overflow-hidden glass-blobs">
-                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/20 dark:bg-blue-900/40"></div>
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/20 dark:bg-indigo-900/30"></div>
+                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-accent-info opacity-20"></div>
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-accent-secondary opacity-20"></div>
                 </div>
             )}
 
@@ -200,22 +192,21 @@ export function CV({ }: CVProps) {
             <header className="h-[110vh] flex flex-col items-center justify-center relative overflow-hidden px-6 z-10">
                 <div className="relative z-10 text-center space-y-8">
                     <div
-                        className={`inline-block px-6 py-2 rounded-full text-xs font-mono tracking-[0.3em] uppercase ${isPaperTheme ? 'text-letterpress' : 'border border-amber-800/30 bg-amber-900/10'}`}
-                        style={isPaperTheme ? { border: '2px solid #8b6f47' } : undefined}
+                        className={`inline-block px-6 py-2 rounded-full text-xs font-mono tracking-[0.3em] uppercase ${isPaperTheme ? 'text-letterpress-strong paper-border-sm' : 'border border-amber-800 bg-amber-900/10'}`}
                     >
                         {t('cv.interactive_portfolio')}
                     </div>
 
-                    <h1 className={`text-8xl sm:text-[160px] font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>
+                    <h1 className={`text-8xl sm:text-[160px] font-black font-heading tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-title' : 'text-primary'}`}>
                         {t('brand.author_name')}
                     </h1>
 
-                    <p className={`text-2xl sm:text-4xl font-medium tracking-tight ${isPaperTheme ? 'text-letterpress' : ''}`}>
+                    <p className={`text-2xl sm:text-4xl font-medium tracking-tight ${isPaperTheme ? 'text-letterpress-subtle' : 'text-secondary'}`}>
                         {t('cv.role')}
                     </p>
 
                     <div className="pt-12 flex justify-center gap-6">
-                        <div className="w-px h-24 bg-gradient-to-b from-amber-700 to-transparent"></div>
+                        <div className="w-px h-24 bg-linear-to-b from-amber-700 to-transparent"></div>
                     </div>
                 </div>
             </header>
@@ -239,30 +230,27 @@ export function CV({ }: CVProps) {
                         <button
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
-                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? '' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
-                            style={isPaperTheme ? { border: '3px solid #8b6f47' } : undefined}
+                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
                         >
-                            <svg className="w-8 h-8" fill="none" stroke={isPaperTheme ? '#8b6f47' : 'currentColor'} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            <svg className={`w-8 h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         </button>
                     </div>
                     <div className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-30 hidden md:block">
                         <button
                             onClick={nextExp}
                             disabled={currentExpIndex === experiences.length - 1}
-                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? '' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
-                            style={isPaperTheme ? { border: '3px solid #8b6f47' } : undefined}
+                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
                         >
-                            <svg className="w-8 h-8" fill="none" stroke={isPaperTheme ? '#8b6f47' : 'currentColor'} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            <svg className={`w-8 h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
 
                     <div
                         ref={scrollContainerRef}
-                        className="flex gap-12 px-6 sm:px-20 items-stretch"
-                        style={{ width: 'fit-content' }}
+                        className="flex gap-12 px-6 sm:px-20 items-stretch w-fit"
                     >
                         {experiences.map((exp, index) => (
-                            <div key={index} className="exp-card-wrapper flex-shrink-0 w-[85vw] sm:w-[500px] transition-all duration-700 flex">
+                            <div key={index} className="exp-card-wrapper shrink-0 w-[85vw] sm:w-[500px] transition-all duration-700 flex">
                                 <ExperienceCard exp={exp} isPaperTheme={isPaperTheme} />
                             </div>
                         ))}
@@ -273,18 +261,16 @@ export function CV({ }: CVProps) {
                         <button
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
-                            className={`p-4 rounded-full transition-all ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? '' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
-                            style={isPaperTheme ? { border: '3px solid #8b6f47' } : undefined}
+                            className={`p-4 rounded-full transition-all ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
                         >
-                            <svg className="w-6 h-6" fill="none" stroke={isPaperTheme ? '#8b6f47' : 'currentColor'} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            <svg className={`w-6 h-6 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         </button>
                         <button
                             onClick={nextExp}
                             disabled={currentExpIndex === experiences.length - 1}
-                            className={`p-4 rounded-full transition-all ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? '' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
-                            style={isPaperTheme ? { border: '3px solid #8b6f47' } : undefined}
+                            className={`p-4 rounded-full transition-all ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
                         >
-                            <svg className="w-6 h-6" fill="none" stroke={isPaperTheme ? '#8b6f47' : 'currentColor'} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            <svg className={`w-6 h-6 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
                 </div>
@@ -301,14 +287,7 @@ export function CV({ }: CVProps) {
                     {isPaperTheme ? (
                         /* Paper Theme: Transparent cards with leather-style borders */
                         <>
-                            <div
-                                className="md:col-span-8 md:row-span-2 p-12 flex flex-col"
-                                style={{
-                                    border: '3px solid #8b6f47',
-                                    borderRadius: '50px',
-                                    boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
-                                }}
-                            >
+                            <div className="md:col-span-8 md:row-span-2 p-12 flex flex-col rounded-[50px] paper-card">
                                 <h3 className="text-sm font-mono tracking-[0.2em] uppercase mb-12 font-bold text-letterpress">{t('cv.full_stack_architecture')}</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                                     {Object.entries(skills).map(([category, items]) => (
@@ -327,44 +306,24 @@ export function CV({ }: CVProps) {
                                 </div>
                             </div>
 
-                            <div
-                                className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden"
-                                style={{
-                                    border: '3px solid #8b6f47',
-                                    borderRadius: '50px',
-                                    boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
-                                }}
-                            >
+                            <div className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
                                 <h4 className="text-sm font-mono tracking-[0.2em] uppercase font-bold text-letterpress">{t('cv.masters_degree')}</h4>
                                 <div className="relative z-10">
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[0].school}</h5>
                                     <p className="text-base uppercase tracking-wider text-letterpress">{education[0].degree}</p>
                                 </div>
-                                <div
-                                    className="absolute -right-2 -bottom-12 w-64 h-64 rotate-[-12deg] pointer-events-none z-0"
-                                    style={{ opacity: 0.25, filter: 'sepia(100%) saturate(50%) brightness(70%)' }}
-                                >
+                                <div className="absolute -right-2 -bottom-12 w-64 h-64 -rotate-12 pointer-events-none z-0 opacity-25 paper-icon-filter">
                                     {education[0].icon}
                                 </div>
                             </div>
 
-                            <div
-                                className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden"
-                                style={{
-                                    border: '3px solid #8b6f47',
-                                    borderRadius: '50px',
-                                    boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
-                                }}
-                            >
+                            <div className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
                                 <h4 className="text-sm font-mono tracking-[0.2em] uppercase font-bold text-letterpress">{t('cv.bachelors_degree')}</h4>
                                 <div className="relative z-10">
                                     <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[1].school}</h5>
                                     <p className="text-base uppercase tracking-wider text-letterpress">{education[1].degree}</p>
                                 </div>
-                                <div
-                                    className="absolute -right-6 -bottom-12 w-64 h-64 rotate-[-12deg] pointer-events-none z-0"
-                                    style={{ opacity: 0.2, filter: 'sepia(100%) saturate(50%) brightness(70%)' }}
-                                >
+                                <div className="absolute -right-6 -bottom-12 w-64 h-64 -rotate-12 pointer-events-none z-0 opacity-20 paper-icon-filter">
                                     {education[1].icon}
                                 </div>
                             </div>
@@ -373,7 +332,7 @@ export function CV({ }: CVProps) {
                         /* Modern Theme: AuroraCards */
                         <>
                             <AuroraCard variant="multi" className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col">
-                                <h3 className="text-sm font-mono tracking-[0.2em] text-blue-500 uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
+                                <h3 className="text-sm font-mono tracking-[0.2em] text-accent-primary uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                                     {Object.entries(skills).map(([category, items]) => (
                                         <div key={category} className="space-y-6">
@@ -381,8 +340,8 @@ export function CV({ }: CVProps) {
                                             <div className="space-y-3">
                                                 {items.map((s, i) => (
                                                     <div key={i} className="flex items-center gap-3">
-                                                        <span className="text-xl text-blue-500">{s.icon}</span>
-                                                        <p className="text-lg font-light">{s.name}</p>
+                                                        <span className="text-xl text-accent-primary">{s.icon}</span>
+                                                        <p className="text-lg font-light text-primary">{s.name}</p>
                                                     </div>
                                                 ))}
                                             </div>
@@ -392,23 +351,23 @@ export function CV({ }: CVProps) {
                             </AuroraCard>
 
                             <AuroraCard variant="green" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
-                                <h4 className="text-sm font-mono tracking-[0.2em] text-emerald-400 uppercase font-bold">{t('cv.masters_degree')}</h4>
+                                <h4 className="text-sm font-mono tracking-[0.2em] text-accent-success uppercase font-bold">{t('cv.masters_degree')}</h4>
                                 <div className="relative z-10">
-                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[0].school}</h5>
+                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-primary">{education[0].school}</h5>
                                     <p className="text-secondary text-base uppercase tracking-wider">{education[0].degree}</p>
                                 </div>
-                                <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-30 dark:opacity-10">
+                                <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale -rotate-12 pointer-events-none z-0 invert-[--value-invert] opacity-30">
                                     {education[0].icon}
                                 </div>
                             </AuroraCard>
 
                             <AuroraCard variant="cyan" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
-                                <h4 className="text-sm font-mono tracking-[0.2em] text-cyan-400 uppercase font-bold">{t('cv.bachelors_degree')}</h4>
+                                <h4 className="text-sm font-mono tracking-[0.2em] text-accent-info uppercase font-bold">{t('cv.bachelors_degree')}</h4>
                                 <div className="relative z-10">
-                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase">{education[1].school}</h5>
+                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-primary">{education[1].school}</h5>
                                     <p className="text-secondary text-base uppercase tracking-wider">{education[1].degree}</p>
                                 </div>
-                                <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale rotate-[-12deg] pointer-events-none z-0 dark:invert opacity-20 dark:opacity-10">
+                                <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale -rotate-12 pointer-events-none z-0 invert-[--value-invert] opacity-20">
                                     {education[1].icon}
                                 </div>
                             </AuroraCard>
@@ -418,13 +377,7 @@ export function CV({ }: CVProps) {
 
                 {isPaperTheme ? (
                     /* Paper Theme Contact: Transparent card with leather-style border */
-                    <div
-                        className="p-12 rounded-[60px]"
-                        style={{
-                            border: '3px solid #8b6f47',
-                            boxShadow: 'inset 0 2px 0 rgba(255,240,210,0.3), 0 6px 20px rgba(80,50,20,0.2)'
-                        }}
-                    >
+                    <div className="p-12 rounded-[60px] paper-card">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                             <div className="text-center md:text-left">
                                 <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4 text-letterpress-strong">{t('cv.initiate_connect')}</h3>
@@ -433,15 +386,13 @@ export function CV({ }: CVProps) {
                             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
                                 <a
                                     href="mailto:m.zhang.changrui@gmail.com"
-                                    className="px-10 py-4 text-lg font-medium rounded-full text-center text-letterpress transition-all hover:opacity-80"
-                                    style={{ border: '2px solid rgba(139, 111, 71, 0.4)' }}
+                                    className="px-10 py-4 text-lg font-medium rounded-full text-center text-letterpress transition-all hover:opacity-80 paper-btn"
                                 >
                                     {t('cv.direct_mail')}
                                 </a>
                                 <a
                                     href={SOCIAL_LINKS.LINKEDIN}
-                                    className="px-10 py-4 text-lg font-medium rounded-full text-center text-letterpress transition-all hover:opacity-80"
-                                    style={{ border: '2px solid rgba(139, 111, 71, 0.3)' }}
+                                    className="px-10 py-4 text-lg font-medium rounded-full text-center text-letterpress transition-all hover:opacity-80 paper-border-subtle"
                                 >
                                     {t('cv.linkedin')}
                                 </a>
@@ -453,12 +404,12 @@ export function CV({ }: CVProps) {
                     <AuroraCard variant="purple" className="p-12 rounded-[60px]">
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                             <div className="text-center md:text-left">
-                                <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4">{t('cv.initiate_connect')}</h3>
+                                <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4 text-primary">{t('cv.initiate_connect')}</h3>
                                 <p className="text-2xl font-light text-secondary">{t('cv.connect_description')}</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                                <a href="mailto:m.zhang.changrui@gmail.com" className="px-10 py-4 text-lg font-medium rounded-full bg-blue-500 text-white shadow-xl hover:bg-blue-600 hover:scale-105 transition-all text-center">{t('cv.direct_mail')}</a>
-                                <a href={SOCIAL_LINKS.LINKEDIN} className="px-10 py-4 text-lg font-medium rounded-full border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:scale-105 transition-all text-center">{t('cv.linkedin')}</a>
+                                <a href="mailto:m.zhang.changrui@gmail.com" className="px-10 py-4 text-lg font-medium rounded-full bg-accent-primary text-text-inverse shadow-xl hover:bg-accent-secondary hover:scale-105 transition-all text-center">{t('cv.direct_mail')}</a>
+                                <a href={SOCIAL_LINKS.LINKEDIN} className="px-10 py-4 text-lg font-medium rounded-full border border-subtle bg-surface-alt/5 backdrop-blur-sm hover:bg-inset hover:scale-105 transition-all text-center text-primary">{t('cv.linkedin')}</a>
                             </div>
                         </div>
                     </AuroraCard>

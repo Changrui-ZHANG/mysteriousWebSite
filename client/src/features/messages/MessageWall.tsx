@@ -8,7 +8,7 @@ import { useMessageWall } from './hooks/useMessageWall';
 import { getAdminCode } from '../../constants/authStorage';
 import type { MessageWallProps } from './types';
 
-export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, isSuperAdmin = false }: MessageWallProps) {
+export function MessageWall({ user, onOpenLogin, isAdmin = false, isSuperAdmin = false }: MessageWallProps) {
     const { t } = useTranslation();
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [showUserManagement, setShowUserManagement] = useState(false);
@@ -24,7 +24,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
 
     return (
         <div className="page-container fixed inset-0 overflow-hidden flex flex-col pt-24 overscroll-none">
-            <ScrollProgress isDarkMode={isDarkMode} target={scrollContainerRef} />
+            <ScrollProgress target={scrollContainerRef} />
 
             {/* Online Count Indicator */}
             {(showOnlineCountToAll || isAdmin) && (
@@ -73,7 +73,7 @@ export function MessageWall({ isDarkMode, user, onOpenLogin, isAdmin = false, is
                 replyingTo={replyingTo}
                 onSubmit={handleSubmit}
                 onCancelReply={() => setReplyingTo(null)}
-                onOpenLogin={onOpenLogin ?? (() => {})}
+                onOpenLogin={onOpenLogin ?? (() => { })}
                 onOpenAdminPanel={() => setShowAdminPanel(!showAdminPanel)}
             />
 
