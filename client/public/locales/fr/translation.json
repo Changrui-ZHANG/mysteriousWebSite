@@ -31,7 +31,9 @@
         "linguist_title": "Le Linguiste",
         "theme": {
             "light": "Mode Clair",
-            "dark": "Mode Sombre"
+            "dark": "Mode Sombre",
+            "paper": "Thème Paper",
+            "modern": "Thème Moderne"
         },
         "lang": {
             "en": "English",
@@ -220,6 +222,7 @@
             }
         },
         "edu": {
+            "esgi": "Mastère informatique: Ingénierie du Web",
             "master": "Master Informatique: Systèmes et Applications Répartis",
             "licence": "Licence Informatique: Informatique Générale"
         },
@@ -243,7 +246,7 @@
             "Sport"
         ],
         "last_updated": "Dernière mise à jour",
-        "update_date": "Décembre 2025",
+        "update_date": "Janvier 2026",
         "location": "Paris, France",
         "availability": "Disponible immédiatement"
     },
@@ -765,7 +768,7 @@
         "join": "Me Contacter"
     },
     "legal_page": {
-        "updated": "Dernière mise à jour : Décembre 2025",
+        "updated": "Dernière mise à jour : Janvier 2026",
         "terms": {
             "title": "Conditions d'Utilisation",
             "sections": {

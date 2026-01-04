@@ -58,21 +58,21 @@ export const getCVData = (t: TranslationFunction) => {
             role: t('cv.exp.espace.role'),
             period: "2024 - Present",
             description: getArray('cv.exp.espace.desc'),
-            tech: ["Java", "Spring Boot", "ReactJS", "Vite", "Tailwind", "Docker"]
+            tech: ["Java EE", "Spring Boot", "ReactJs", "Vite", "TailwindCss", "Docker", "PostgreSQL", "Git", "Maven", "LLMs"]
         },
         {
             title: t('cv.exp.rakuten.title'),
             role: t('cv.exp.rakuten.role'),
             period: "02/2024 - 09/2024",
             description: getArray('cv.exp.rakuten.desc'),
-            tech: ["Java", "Spring Boot", "Elasticsearch", "Redis", "MariaDB", "CI/CD"]
+            tech: ["Java EE", "Spring Boot", "ReactJS", "TypeScript", "Docker", "Elasticsearch", "Jenkins", "Liquibase", "Grafana", "Git", "MariaDB", "CI/CD"]
         },
         {
             title: t('cv.exp.sorbonne.title'),
             role: t('cv.exp.sorbonne.role'),
             period: "09/2023 - 03/2024",
             description: getArray('cv.exp.sorbonne.desc'),
-            tech: ["Java", "Spring Boot", "ReactJS", "MySQL", "Microservices"]
+            tech: ["Java EE", "Spring Boot", "ReactJS", "MySQL", "JavaScript", "Microservices", "Git", "Maven", "Flagsmith", "Moobios Forge", "JWT"]
         },
         {
             title: t('cv.exp.quichefs.title'),
@@ -85,16 +85,25 @@ export const getCVData = (t: TranslationFunction) => {
 
     const education = [
         {
+            degree: t('cv.edu.esgi'),
+            school: "ESGI",
+            period: "2024 - 2026",
+            icon: <img src="/logos/esgi.png" alt="ESGI" className="w-full h-full object-contain" />,
+            level: t('cv.masters_degree')
+        },
+        {
             degree: t('cv.edu.master'),
             school: "Sorbonne Université",
             period: "2022 - 2024",
-            icon: <img src="/logos/sorbonne.png" alt="Sorbonne" className="w-full h-full object-contain" />
+            icon: <img src="/logos/sorbonne.png" alt="Sorbonne" className="w-full h-full object-contain" />,
+            level: t('cv.masters_degree')
         },
         {
             degree: t('cv.edu.licence'),
             school: "Université Paris Cité",
             period: "2019 - 2022",
-            icon: <img src="/logos/paris-cite.png" alt="Paris Cité" className="w-full h-full object-contain" />
+            icon: <img src="/logos/paris-cite.png" alt="Paris Cité" className="w-full h-full object-contain" />,
+            level: t('cv.bachelors_degree')
         }
     ];
 

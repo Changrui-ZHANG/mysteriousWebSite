@@ -240,7 +240,8 @@
 }
 
 .paper-border-subtle {
-    border: 1px solid var(--paper-border-subtle);
+    border: 2px solid var(--paper-border-medium);
+    border-radius: 10px;
 }
 
 .paper-border-medium {
@@ -252,25 +253,9 @@
     background-color: var(--paper-bg-primary);
 }
 
-/* Text Colors */
+/* Text Colors - Simple color utility for non-letterpress text */
 .paper-text {
     color: var(--paper-text-primary);
-}
-
-.paper-text-primary {
-    color: var(--paper-text-primary);
-}
-
-.paper-text-secondary {
-    color: var(--paper-text-secondary);
-}
-
-.paper-text-accent {
-    color: var(--paper-text-accent);
-}
-
-.paper-text-muted {
-    color: var(--paper-text-muted);
 }
 
 /* SVG/Icon Utilities */

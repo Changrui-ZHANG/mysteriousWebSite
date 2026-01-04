@@ -22,7 +22,7 @@ export function ExperienceCard({ exp, isPaperTheme = false }: ExperienceCardProp
                 <div className="shrink-0 mb-6 space-y-2">
                     <div className="flex justify-between items-start">
                         <div className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-letterpress-strong">{exp.title}</div>
-                        <span className="text-[10px] sm:text-xs font-mono uppercase tracking-widest whitespace-nowrap ml-4 text-letterpress">{exp.period}</span>
+                        <span className="text-[12px] sm:text-xs font-mono uppercase tracking-widest whitespace-nowrap ml-4 text-letterpress">{exp.period}</span>
                     </div>
                     <p className="text-base sm:text-lg text-letterpress-subtle">
                         {exp.role}

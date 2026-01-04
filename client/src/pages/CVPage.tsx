@@ -118,9 +118,13 @@ export function CV({ }: CVProps) {
             {/* Paper Theme Toggle Button */}
             <button
                 onClick={() => setIsPaperTheme(!isPaperTheme)}
-                className={`fixed top-24 right-6 z-50 px-6 py-3 rounded-full border-2 backdrop-blur-xl transition-all hover:scale-105 shadow-xl ${isPaperTheme ? 'paper-border-sm paper-bg paper-text' : 'border-white/20 bg-white/10'}`}
+                className={`fixed top-24 right-6 z-50 px-6 py-3 rounded-full border-2 backdrop-blur-xl transition-all hover:scale-105 shadow-xl font-medium ${isPaperTheme ? 'paper-border-sm paper-bg paper-text text-letterpress' : 'border-white/20 bg-white/10'}`}
+                style={isPaperTheme ? {
+                    boxShadow: 'inset 0 1px 0 rgba(255, 240, 210, 0.4), 0 4px 12px rgba(80, 50, 20, 0.25)',
+                    filter: 'url(#leatherTextTexture)'
+                } : undefined}
             >
-                📜 {isPaperTheme ? 'Modern' : 'Paper'}
+                📜 {isPaperTheme ? t('navbar.theme.modern') : t('navbar.theme.paper')}
             </button>
 
             {/* Leather/Parchment Texture Background - only when paper theme is active */}
@@ -283,11 +287,11 @@ export function CV({ }: CVProps) {
                     <h3 className={`text-6xl sm:text-[100px] font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.specifications')}</h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[300px]">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[minmax(300px,auto)]">
                     {isPaperTheme ? (
                         /* Paper Theme: Transparent cards with leather-style borders */
                         <>
-                            <div className="md:col-span-8 md:row-span-2 p-12 flex flex-col rounded-[50px] paper-card">
+                            <div className="md:col-span-12 p-12 flex flex-col rounded-[50px] paper-card">
                                 <h3 className="text-sm font-mono tracking-[0.2em] uppercase mb-12 font-bold text-letterpress">{t('cv.full_stack_architecture')}</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                                     {Object.entries(skills).map(([category, items]) => (
@@ -306,32 +310,23 @@ export function CV({ }: CVProps) {
                                 </div>
                             </div>
 
-                            <div className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
-                                <h4 className="text-sm font-mono tracking-[0.2em] uppercase font-bold text-letterpress">{t('cv.masters_degree')}</h4>
-                                <div className="relative z-10">
-                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[0].school}</h5>
-                                    <p className="text-base uppercase tracking-wider text-letterpress">{education[0].degree}</p>
+                            {education.map((edu, index) => (
+                                <div key={index} className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
+                                    <h4 className="text-sm font-mono tracking-[0.2em] uppercase font-bold text-letterpress">{edu.level}</h4>
+                                    <div className="relative z-10">
+                                        <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{edu.school}</h5>
+                                        <p className="text-base uppercase tracking-wider text-letterpress">{edu.degree}</p>
+                                    </div>
+                                    <div className="absolute -right-6 -bottom-12 w-64 h-64 -rotate-12 pointer-events-none z-0 opacity-20 paper-icon-filter">
+                                        {edu.icon}
+                                    </div>
                                 </div>
-                                <div className="absolute -right-2 -bottom-12 w-64 h-64 -rotate-12 pointer-events-none z-0 opacity-25 paper-icon-filter">
-                                    {education[0].icon}
-                                </div>
-                            </div>
-
-                            <div className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
-                                <h4 className="text-sm font-mono tracking-[0.2em] uppercase font-bold text-letterpress">{t('cv.bachelors_degree')}</h4>
-                                <div className="relative z-10">
-                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{education[1].school}</h5>
-                                    <p className="text-base uppercase tracking-wider text-letterpress">{education[1].degree}</p>
-                                </div>
-                                <div className="absolute -right-6 -bottom-12 w-64 h-64 -rotate-12 pointer-events-none z-0 opacity-20 paper-icon-filter">
-                                    {education[1].icon}
-                                </div>
-                            </div>
+                            ))}
                         </>
                     ) : (
                         /* Modern Theme: AuroraCards */
                         <>
-                            <AuroraCard variant="multi" className="md:col-span-8 md:row-span-2 p-12 rounded-[50px] flex flex-col">
+                            <AuroraCard variant="multi" className="md:col-span-12 p-12 rounded-[50px] flex flex-col">
                                 <h3 className="text-sm font-mono tracking-[0.2em] text-accent-primary uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
                                     {Object.entries(skills).map(([category, items]) => (
@@ -350,27 +345,25 @@ export function CV({ }: CVProps) {
                                 </div>
                             </AuroraCard>
 
-                            <AuroraCard variant="green" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
-                                <h4 className="text-sm font-mono tracking-[0.2em] text-accent-success uppercase font-bold">{t('cv.masters_degree')}</h4>
-                                <div className="relative z-10">
-                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-primary">{education[0].school}</h5>
-                                    <p className="text-secondary text-base uppercase tracking-wider">{education[0].degree}</p>
-                                </div>
-                                <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale -rotate-12 pointer-events-none z-0 invert-[--value-invert] opacity-30">
-                                    {education[0].icon}
-                                </div>
-                            </AuroraCard>
+                            {education.map((edu, index) => {
+                                const variants = ["purple", "cyan", "green"] as const;
+                                const textColors = ["text-accent-primary", "text-accent-info", "text-accent-success"];
+                                const variant = variants[index % variants.length];
+                                const textColor = textColors[index % textColors.length];
 
-                            <AuroraCard variant="cyan" className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
-                                <h4 className="text-sm font-mono tracking-[0.2em] text-accent-info uppercase font-bold">{t('cv.bachelors_degree')}</h4>
-                                <div className="relative z-10">
-                                    <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-primary">{education[1].school}</h5>
-                                    <p className="text-secondary text-base uppercase tracking-wider">{education[1].degree}</p>
-                                </div>
-                                <div className="absolute -right-6 -bottom-12 w-64 h-64 grayscale -rotate-12 pointer-events-none z-0 invert-[--value-invert] opacity-20">
-                                    {education[1].icon}
-                                </div>
-                            </AuroraCard>
+                                return (
+                                    <AuroraCard key={index} variant={variant} className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
+                                        <h4 className={`text-sm font-mono tracking-[0.2em] uppercase font-bold ${textColor}`}>{edu.level}</h4>
+                                        <div className="relative z-10">
+                                            <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-primary">{edu.school}</h5>
+                                            <p className="text-secondary text-base uppercase tracking-wider">{edu.degree}</p>
+                                        </div>
+                                        <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale -rotate-12 pointer-events-none z-0 invert-[--value-invert] opacity-30">
+                                            {edu.icon}
+                                        </div>
+                                    </AuroraCard>
+                                );
+                            })}
                         </>
                     )}
                 </div>
