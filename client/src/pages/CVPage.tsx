@@ -16,6 +16,7 @@ interface CVProps { }
 export function CV({ }: CVProps) {
     const { t } = useTranslation();
     const [currentExpIndex, setCurrentExpIndex] = useState(0);
+    const [maxIndex, setMaxIndex] = useState(0); // Maximum valid index based on viewport
     const [isPaperTheme, setIsPaperTheme] = useState(() => {
         const saved = localStorage.getItem('cv-paper-theme');
         return saved === 'true';
@@ -82,6 +83,16 @@ export function CV({ }: CVProps) {
             // hits the right edge of the viewport.
             const maxScroll = Math.max(0, totalWidth - viewportWidth);
 
+            // Calculate max index based on visible width
+            // We want the last possible index where the scroll position doesn't exceed visual bounds
+            const calculatedMaxIndex = cardWidth > 0 ? Math.ceil(maxScroll / cardWidth) : experiences.length - 1;
+            const safeMaxIndex = Math.max(0, Math.min(calculatedMaxIndex, experiences.length - 1));
+
+            // Update maxIndex state only if changed to avoid loops
+            if (maxIndex !== safeMaxIndex) {
+                setMaxIndex(safeMaxIndex);
+            }
+
             let xPos = -currentExpIndex * cardWidth;
 
             // Clamp: If moving to the next item would cause us to show empty space at the end,
@@ -100,14 +111,16 @@ export function CV({ }: CVProps) {
                 overwrite: true
             });
         }
-    }, [currentExpIndex, windowWidth, experiences.length]);
+    }, [currentExpIndex, windowWidth, experiences.length, maxIndex]);
 
     const nextExp = () => {
-        setCurrentExpIndex((prev: number) => Math.min(prev + 1, experiences.length - 1));
+        if (experiences.length === 0) return;
+        setCurrentExpIndex((prev) => Math.min(prev + 1, maxIndex));
     };
 
     const prevExp = () => {
-        setCurrentExpIndex((prev: number) => Math.max(prev - 1, 0));
+        if (experiences.length === 0) return;
+        setCurrentExpIndex((prev) => Math.max(prev - 1, 0));
     };
 
     return (
@@ -242,8 +255,8 @@ export function CV({ }: CVProps) {
                     <div className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-30 hidden md:block">
                         <button
                             onClick={nextExp}
-                            disabled={currentExpIndex === experiences.length - 1}
-                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
+                            disabled={currentExpIndex >= maxIndex}
+                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex >= maxIndex ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
                         >
                             <svg className={`w-8 h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
@@ -271,8 +284,8 @@ export function CV({ }: CVProps) {
                         </button>
                         <button
                             onClick={nextExp}
-                            disabled={currentExpIndex === experiences.length - 1}
-                            className={`p-4 rounded-full transition-all ${currentExpIndex === experiences.length - 1 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
+                            disabled={currentExpIndex >= maxIndex}
+                            className={`p-4 rounded-full transition-all ${currentExpIndex >= maxIndex ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
                         >
                             <svg className={`w-6 h-6 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
