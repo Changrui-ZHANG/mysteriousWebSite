@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaPaperPlane, FaTimes, FaCog } from 'react-icons/fa';
 
 interface User {
     userId: string;
@@ -29,6 +30,8 @@ interface MessageInputProps {
     onCancelReply: () => void;
     onOpenLogin: () => void;
     onOpenAdminPanel: () => void;
+    showAdminPanel?: boolean;
+    adminPanelContent?: ReactNode;
 }
 
 export function MessageInput({
@@ -39,7 +42,9 @@ export function MessageInput({
     onSubmit,
     onCancelReply,
     onOpenLogin,
-    onOpenAdminPanel
+    onOpenAdminPanel,
+    showAdminPanel = false,
+    adminPanelContent
 }: MessageInputProps) {
     const { t } = useTranslation();
     const [newMessage, setNewMessage] = useState('');
@@ -63,115 +68,147 @@ export function MessageInput({
     const isMuted = isGlobalMute && !isAdmin;
 
     return (
-        <div className="message-input-bar pb-[env(safe-area-inset-bottom)]">
-            {isMuted && (
-                <div className="bg-red-500/10 text-red-500 text-xs text-center py-1">
-                    {t('auth.muted')}
-                </div>
-            )}
-            <div className={`max-w-4xl mx-auto p-3 ${isMuted ? 'opacity-50' : ''}`}>
-                {replyingTo && (
-                    <div className="quote-block mb-2 flex justify-between items-center">
-                        <span>
-                            <span className="font-bold mr-1">{t('messages.replying_to')} {replyingTo.name}:</span>
-                            <span className="italic truncate max-w-[200px] inline-block align-bottom">{replyingTo.message}</span>
-                        </span>
-                        <button
-                            onClick={onCancelReply}
-                            className="text-red-400 hover:text-red-300 ml-2 font-bold px-2"
-                            aria-label={t('common.cancel')}
+        <div className="fixed bottom-0 left-0 w-full z-50 px-4 pb-6 pointer-events-none">
+            <div className="max-w-3xl mx-auto pointer-events-auto">
+
+                {/* Admin Panel - Slides Above Input */}
+                <AnimatePresence>
+                    {showAdminPanel && adminPanelContent && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20, height: 0 }}
+                            animate={{ opacity: 1, y: 0, height: 'auto' }}
+                            exit={{ opacity: 0, y: 20, height: 0 }}
+                            className="mb-3 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-2xl p-4 shadow-2xl"
                         >
-                            ✕
-                        </button>
-                    </div>
-                )}
-                <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-wrap">
-                    {/* User Identity Display */}
-                    {user && (
-                        <div className="p-2 rounded-lg flex items-center gap-2 ring-1 ring-accent-success/30 bg-accent-success/10 text-accent-success transition-all">
-                            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
-                                {user.username.charAt(0).toUpperCase()}
-                            </div>
+                            {adminPanelContent}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Main Input Container */}
+                <div className={`
+                    rounded-[1.75rem] bg-white/[0.03] border border-white/10 backdrop-blur-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] 
+                    relative after:absolute after:inset-0 after:rounded-[1.75rem] after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none
+                    transition-all duration-300 hover:bg-white/[0.05] hover:border-white/15
+                    ${isMuted ? 'opacity-50' : ''}
+                `}>
+
+                    {/* Muted Banner */}
+                    {isMuted && (
+                        <div className="text-center py-2 text-[10px] font-black uppercase tracking-widest text-accent-danger/80 border-b border-white/5">
+                            {t('auth.muted')}
                         </div>
                     )}
 
-                    {/* Manual Name Input (Only if not logged in) */}
-                    {!user && (
-                        <>
-                            <button
-                                type="button"
-                                onClick={() => setShowNameInput(!showNameInput)}
-                                disabled={isMuted}
-                                className={`p-2 rounded-lg transition-colors ${showNameInput ? 'bg-green-500 text-white' : 'icon-btn-themed'}`}
-                                aria-label={t('messages.set_name')}
+                    {/* Replying To Banner */}
+                    <AnimatePresence>
+                        {replyingTo && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="flex items-center justify-between px-5 py-2.5 border-b border-white/5 text-xs"
                             >
-                                Aa
-                            </button>
-                            {showNameInput && (
-                                <motion.input
-                                    initial={{ width: 0, opacity: 0 }}
-                                    animate={{ width: 'auto', opacity: 1 }}
-                                    exit={{ width: 0, opacity: 0 }}
-                                    type="text"
-                                    value={tempName}
-                                    onChange={(e) => setTempName(e.target.value)}
-                                    placeholder={t('messages.name_placeholder')}
-                                    maxLength={20}
-                                    disabled={isMuted}
-                                    className="input-themed px-3 py-2 text-base md:text-sm w-20 md:w-28"
-                                />
-                            )}
-                        </>
-                    )}
+                                <span className="flex items-center gap-2 opacity-70 truncate">
+                                    <span className="font-black uppercase tracking-wider opacity-50">{t('messages.replying_to')}</span>
+                                    <span className="font-bold text-accent-primary">{replyingTo.name}</span>
+                                    <span className="italic truncate max-w-[150px]">"{replyingTo.message}"</span>
+                                </span>
+                                <button
+                                    onClick={onCancelReply}
+                                    className="w-6 h-6 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all flex items-center justify-center"
+                                >
+                                    <FaTimes className="text-[10px]" />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                    <div className="relative flex-1">
-                        <input
-                            type="text"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder={isMuted ? t('auth.muted') : user ? t('messages.message_placeholder') : ''}
-                            maxLength={200}
-                            disabled={isMuted}
-                            className={`input-themed w-full px-4 py-2 ${isMuted ? 'cursor-not-allowed' : ''}`}
-                        />
+                    {/* Input Row */}
+                    <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3">
 
-                        {/* Interactive Placeholder for Guests */}
-                        {!user && !newMessage && !isMuted && (
-                            <div className="absolute inset-0 px-4 py-2 pointer-events-none flex items-center text-muted">
-                                <span>{t('messages.guest_placeholder_text')}</span>
+                        {/* User Avatar or Name Toggle */}
+                        {user ? (
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-info flex items-center justify-center text-white font-black text-sm shadow-lg">
+                                {user.username.charAt(0).toUpperCase()}
+                            </div>
+                        ) : (
+                            <>
                                 <button
                                     type="button"
-                                    onClick={onOpenLogin}
-                                    className="pointer-events-auto hover:underline font-bold text-green-500 ml-1 focus:outline-none"
+                                    onClick={() => setShowNameInput(!showNameInput)}
+                                    disabled={isMuted}
+                                    className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center font-black text-xs ${showNameInput ? 'bg-accent-primary text-white shadow-lg scale-95' : 'bg-white/5 hover:bg-white/10 text-white/50 border border-white/5'}`}
                                 >
-                                    {t('messages.guest_placeholder_link')}
+                                    Aa
                                 </button>
-                            </div>
+                                <AnimatePresence>
+                                    {showNameInput && (
+                                        <motion.input
+                                            initial={{ width: 0, opacity: 0 }}
+                                            animate={{ width: 100, opacity: 1 }}
+                                            exit={{ width: 0, opacity: 0 }}
+                                            type="text"
+                                            value={tempName}
+                                            onChange={(e) => setTempName(e.target.value)}
+                                            placeholder={t('messages.name_placeholder')}
+                                            maxLength={20}
+                                            disabled={isMuted}
+                                            className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-accent-primary/30 placeholder:text-white/20"
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            </>
                         )}
-                    </div>
 
-                    <button
-                        type="submit"
-                        disabled={!newMessage.trim() || loading || isMuted}
-                        className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 disabled:opacity-30 rounded-lg text-white"
-                        aria-label={t('messages.send')}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                    </button>
+                        {/* Main Input */}
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                placeholder={isMuted ? t('auth.muted') : user ? t('messages.message_placeholder') : ''}
+                                maxLength={200}
+                                disabled={isMuted}
+                                className={`w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-primary/20 placeholder:text-white/20 transition-all ${isMuted ? 'cursor-not-allowed' : 'hover:bg-white/[0.07]'}`}
+                            />
 
-                    {isAdmin && (
+                            {/* Guest Login Prompt */}
+                            {!user && !newMessage && !isMuted && (
+                                <div className="absolute inset-0 px-5 py-3 pointer-events-none flex items-center text-white/30 text-sm">
+                                    <span>{t('messages.guest_placeholder_text')}</span>
+                                    <button
+                                        type="button"
+                                        onClick={onOpenLogin}
+                                        className="pointer-events-auto font-black text-accent-primary ml-1.5 hover:text-white transition-colors"
+                                    >
+                                        {t('messages.guest_placeholder_link')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Send Button */}
                         <button
-                            type="button"
-                            onClick={onOpenAdminPanel}
-                            className="icon-btn-themed p-2 text-xs"
-                            aria-label={t('admin.panel')}
+                            type="submit"
+                            disabled={!newMessage.trim() || loading || isMuted}
+                            className="w-11 h-11 flex items-center justify-center bg-gradient-to-br from-accent-primary to-accent-info hover:scale-105 active:scale-95 disabled:opacity-20 disabled:scale-100 rounded-xl text-white transition-all shadow-lg shadow-accent-primary/20"
                         >
-                            🔐
+                            <FaPaperPlane className="text-sm" />
                         </button>
-                    )}
-                </form>
+
+                        {/* Admin Toggle */}
+                        {isAdmin && (
+                            <button
+                                type="button"
+                                onClick={onOpenAdminPanel}
+                                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-all ${showAdminPanel ? 'bg-accent-secondary text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-white/50 border border-white/5'}`}
+                            >
+                                <FaCog className={`text-sm ${showAdminPanel ? 'animate-spin' : ''}`} />
+                            </button>
+                        )}
+                    </form>
+                </div>
             </div>
         </div>
     );

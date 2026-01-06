@@ -5,7 +5,11 @@
         "delete": "删除",
         "go": "确定",
         "back": "返回",
-        "unknown_error": "未知错误"
+        "unknown_error": "未知错误",
+        "good_morning": "晨安",
+        "good_afternoon": "午后安康",
+        "good_evening": "晚安",
+        "guest": "访客"
     },
     "brand": {
         "author_name": "张常瑞",
@@ -31,13 +35,31 @@
         "linguist_title": "语言学家",
         "theme": {
             "light": "亮色模式",
-            "dark": "暗色模式"
+            "dark": "暗色模式",
+            "paper": "羊皮纸主题"
         },
         "lang": {
             "en": "English",
             "fr": "Français",
             "zh": "中文"
         }
+    },
+    "dashboard": {
+        "welcome_subtitle": "数字体验设计师与技术探索者。欢迎来到我的领域。",
+        "cv_desc": "探索我的职业生涯，职业技能和个人经验。",
+        "messages_desc": "加入社区讨论。",
+        "suggestions_desc": "有想法？告诉我。",
+        "game_desc": "休息一下，玩个游戏。",
+        "calendar_desc": "查看我的日程安排。"
+    },
+    "soul": {
+        "taglines": [
+            "代码与创意相遇的地方。",
+            "用热情打造数字体验。",
+            "今天构建明天的网络。",
+            "每一个像素都有意义。",
+            "好奇心驱动，代码赋能。"
+        ]
     },
     "admin": {
         "admin": "管理员",
@@ -175,6 +197,18 @@
                     "集成身份验证 (JWT)、深色/浅色模式和多语言支持。",
                     "使用 ReactBit 增强 UI 以实现动态组件。",
                     "使用 Docker 容器化项目。"
+                ],
+                "tech": [
+                    "Java EE",
+                    "Spring Boot",
+                    "ReactJs",
+                    "Vite",
+                    "TailwindCss",
+                    "Docker",
+                    "PostgreSQL",
+                    "Git",
+                    "Maven",
+                    "LLMs"
                 ]
             },
             "rakuten": {
@@ -190,6 +224,21 @@
                     "执行单元测试和自动化测试以确保代码可靠性。",
                     "遵循规格说明书和产品路线图，以确保交付物的合规性和按时交付。",
                     "组织敏捷方法论中的汇报会议和每日站会。"
+                ],
+                "tech": [
+                    "Java EE",
+                    "Spring Boot",
+                    "ReactJS",
+                    "TypeScript",
+                    "Docker",
+                    "Jenkins",
+                    "Hibernate",
+                    "Elasticsearch",
+                    "MariaDB",
+                    "Liquibase",
+                    "Git",
+                    "CI/CD",
+                    "Jira"
                 ]
             },
             "sorbonne": {
@@ -199,6 +248,21 @@
                     "试运行带有功能标志 (Feature Flags) 的协作网店应用程序。",
                     "全栈开发（后端、前端、数据库）。",
                     "自动化产品线 (Product Line) 变体生成。"
+                ],
+                "tech": [
+                    "Spring Boot",
+                    "REST API",
+                    "ReactJS",
+                    "JavaScript",
+                    "MySQL",
+                    "Hibernate",
+                    "Git",
+                    "Maven",
+                    "JUnit",
+                    "Flagsmith",
+                    "Microservices",
+                    "JWT",
+                    "Moobios Forge"
                 ]
             },
             "database": {
@@ -208,14 +272,25 @@
                     "设计数据库以模拟古代船舶航行。",
                     "使用 PostgreSQL 进行设计和数据管理，集成协作建模工具。",
                     "技术: PostgreSQL / BOUML / StarUML"
+                ],
+                "tech": [
+                    "PostgreSQL",
+                    "BOUML",
+                    "StarUML"
                 ]
             },
-            "quichefs": {
+            "ouichefs": {
                 "title": "Quichefs 项目 (Linux 内核)",
                 "role": "系统开发人员",
                 "desc": [
                     "为 Linux 内核开发改进的物理链接系统。",
                     "实施 UUID、分区间链接和块迁移。"
+                ],
+                "tech": [
+                    "C",
+                    "Linux Kernel",
+                    "File Systems",
+                    "ioctl"
                 ]
             }
         },

@@ -156,13 +156,13 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
                                     value={newComment}
                                     onChange={(e) => setNewComment(e.target.value)}
                                     placeholder={t('suggestions.add_comment')}
-                                    className="w-full p-3 rounded-lg border comment-textarea focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                                    className="input w-full p-3 resize-none"
                                     rows={2}
                                 />
                                 <button
                                     type="submit"
                                     disabled={!newComment.trim()}
-                                    className="mt-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold text-white transition-colors text-sm"
+                                    className="btn btn-primary mt-2 text-sm"
                                 >
                                     {t('suggestions.post_comment')}
                                 </button>

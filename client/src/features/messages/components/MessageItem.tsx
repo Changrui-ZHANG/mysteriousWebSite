@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { FaCheckCircle, FaLanguage, FaSpinner } from 'react-icons/fa';
+import { FaCheckCircle, FaLanguage, FaSpinner, FaReply, FaTrash } from 'react-icons/fa';
 
 interface Message {
     id: string;
@@ -60,61 +60,70 @@ export function MessageItem({
         return name.charAt(0).toUpperCase();
     };
 
-    const getBubbleClass = () => {
-        if (isOwn) {
-            return msg.isVerified ? 'message-bubble-verified-own' : 'message-bubble-own';
-        }
-        return msg.isVerified ? 'message-bubble-verified-other' : 'message-bubble-other';
-    };
-
     return (
         <motion.div
             id={`message-${msg.id}`}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15, scale: 0.98 }}
             animate={{
                 opacity: 1,
                 y: 0,
-                scale: isHighlighted ? 1.05 : 1
+                scale: isHighlighted ? 1.02 : 1
             }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ delay: index * 0.01 }}
-            className={`flex gap-2 items-start p-2 rounded-lg transition-colors ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${isHighlighted ? 'message-highlight' : ''}`}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ delay: index * 0.02, type: 'spring', damping: 20 }}
+            className={`flex gap-3 items-end ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${isHighlighted ? 'ring-2 ring-accent-primary/30 rounded-2xl' : ''}`}
         >
-            <div className={`w-10 h-10 rounded-md flex items-center justify-center font-bold text-xs flex-shrink-0 ${isOwn
-                ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white'
+            {/* Avatar */}
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs flex-shrink-0 shadow-lg ${isOwn
+                ? 'bg-gradient-to-br from-accent-primary to-accent-info text-white'
                 : msg.isAnonymous
-                    ? 'bg-gray-500 text-white'
-                    : 'bg-gradient-to-br from-teal-500 to-cyan-500 text-white'
+                    ? 'bg-white/10 text-white/50 border border-white/10'
+                    : 'bg-gradient-to-br from-accent-secondary to-accent-primary text-white'
                 }`}>
                 {getInitials(msg.name, msg.isAnonymous)}
             </div>
 
-            <div className="flex flex-col max-w-[85%] md:max-w-[70%]">
-                <div className={`flex items-center gap-2 text-xs opacity-50 mb-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="flex items-center gap-1">
+            {/* Message Content */}
+            <div className={`flex flex-col max-w-[75%] ${isOwn ? 'items-end' : 'items-start'}`}>
+                {/* Meta Info */}
+                <div className={`flex items-center gap-2 text-[10px] opacity-50 mb-1.5 px-1 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <span className="flex items-center gap-1 font-bold uppercase tracking-wider">
                         {isOwn ? t('messages.you') : msg.name}
-                        {msg.isVerified && <FaCheckCircle className="verified-icon" />}
+                        {msg.isVerified && <FaCheckCircle className="text-accent-success text-[8px]" />}
                     </span>
-                    <span>·</span>
-                    <span>{formatTimestamp(msg.timestamp)}</span>
+                    <span className="opacity-50">•</span>
+                    <span className="font-mono">{formatTimestamp(msg.timestamp)}</span>
                 </div>
 
-                <div className={`message-bubble px-3 py-2 relative group ${getBubbleClass()}`}>
+                {/* Bubble */}
+                <div className={`
+                    relative px-4 py-3 rounded-2xl backdrop-blur-xl transition-all duration-300 group shadow-lg
+                    ${isOwn
+                        ? 'bg-accent-primary/20 border border-accent-primary/30 text-white rounded-br-md'
+                        : 'bg-white/[0.04] border border-white/10 text-white/90 rounded-bl-md'
+                    }
+                    after:absolute after:inset-0 after:rounded-2xl ${isOwn ? 'after:rounded-br-md' : 'after:rounded-bl-md'} after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none
+                `}>
 
+                    {/* Quoted Message */}
                     {msg.quotedMessage && (
                         <div
                             onClick={() => msg.quotedMessageId && onScrollToMessage(msg.quotedMessageId)}
-                            className="quote-block mb-2 cursor-pointer hover:opacity-100 transition-opacity italic overflow-hidden"
+                            className="mb-2.5 cursor-pointer rounded-xl px-3 py-2 text-xs border-l-4 transition-all hover:brightness-125 bg-white/5 border-white/20 text-white/60"
                         >
-                            <span className="font-bold not-italic mr-1">{msg.quotedName}:</span>
-                            <span className="line-clamp-2">{msg.quotedMessage}</span>
+                            <div className="flex items-center gap-1.5 mb-1">
+                                <FaReply className="text-[8px] opacity-50" />
+                                <span className="font-black text-[10px] uppercase tracking-wider">{msg.quotedName}</span>
+                            </div>
+                            <span className="line-clamp-2 italic opacity-80">{msg.quotedMessage}</span>
                         </div>
                     )}
 
-                    <p className="text-base md:text-sm whitespace-pre-wrap break-words">
+                    {/* Message Text */}
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">
                         {showTranslation && translation ? (
                             <>
-                                <span className="text-xs opacity-70 block mb-1 font-mono">{t('messages.translated')}:</span>
+                                <span className="text-[9px] opacity-40 block mb-1 font-black uppercase tracking-widest">{t('messages.translated')}</span>
                                 {translation}
                             </>
                         ) : (
@@ -122,34 +131,32 @@ export function MessageItem({
                         )}
                     </p>
 
-                    {/* Action Buttons */}
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                    {/* Action Buttons - Inside Bubble on Hover */}
+                    <div className={`absolute ${isOwn ? 'left-0 -translate-x-full pl-2' : 'right-0 translate-x-full pr-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all flex gap-1`}>
                         <button
                             onClick={() => onTranslate(msg.id, msg.message)}
-                            className="w-5 h-5 bg-black/20 hover:bg-black/40 rounded-full text-white text-xs flex items-center justify-center p-1"
+                            className="w-7 h-7 bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-lg rounded-lg text-white/70 hover:text-white text-[10px] flex items-center justify-center transition-all"
                             title={t('messages.translate')}
-                            aria-label={t('messages.translate')}
                             disabled={isTranslating}
                         >
                             {isTranslating ? <FaSpinner className="animate-spin" /> : <FaLanguage />}
                         </button>
+                        <button
+                            onClick={() => onReply(msg)}
+                            className="w-7 h-7 bg-white/10 hover:bg-accent-primary/30 border border-white/10 backdrop-blur-lg rounded-lg text-white/70 hover:text-white text-[10px] flex items-center justify-center transition-all"
+                            title={t('messages.reply')}
+                        >
+                            <FaReply />
+                        </button>
                         {canDelete && (
                             <button
                                 onClick={() => onDelete(msg.id)}
-                                className="w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs flex items-center justify-center"
-                                aria-label={t('messages.delete')}
+                                className="w-7 h-7 bg-accent-danger/20 hover:bg-accent-danger/40 border border-accent-danger/30 backdrop-blur-lg rounded-lg text-accent-danger text-[10px] flex items-center justify-center transition-all"
+                                title={t('messages.delete')}
                             >
-                                ×
+                                <FaTrash />
                             </button>
                         )}
-                        <button
-                            onClick={() => onReply(msg)}
-                            className="w-5 h-5 bg-purple-500 hover:bg-purple-400 rounded-full text-white text-xs flex items-center justify-center p-1"
-                            title={t('messages.reply')}
-                            aria-label={t('messages.reply')}
-                        >
-                            ↩
-                        </button>
                     </div>
                 </div>
             </div>

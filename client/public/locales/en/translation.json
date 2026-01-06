@@ -5,7 +5,11 @@
         "delete": "Delete",
         "go": "Go",
         "back": "Back",
-        "unknown_error": "Unknown error"
+        "unknown_error": "Unknown error",
+        "good_morning": "Beautiful Morning",
+        "good_afternoon": "Productive Afternoon",
+        "good_evening": "Wonderful Evening",
+        "guest": "Guest"
     },
     "brand": {
         "author_name": "Changrui ZHANG",
@@ -31,13 +35,31 @@
         "linguist_title": "The Linguist",
         "theme": {
             "light": "Light Mode",
-            "dark": "Dark Mode"
+            "dark": "Dark Mode",
+            "paper": "Paper Theme"
         },
         "lang": {
             "en": "English",
             "fr": "Français",
             "zh": "中文"
         }
+    },
+    "dashboard": {
+        "welcome_subtitle": "Digital Experience Designer & Tech Explorer. Welcome to my universe.",
+        "cv_desc": "Explore my professional journey, skills, and experiences.",
+        "messages_desc": "Join the community discussion.",
+        "suggestions_desc": "Have an idea? Let me know.",
+        "game_desc": "Take a break and play.",
+        "calendar_desc": "Check my availability."
+    },
+    "soul": {
+        "taglines": [
+            "Where code meets creativity.",
+            "Crafting digital experiences with passion.",
+            "Building tomorrow's web, today.",
+            "Every pixel has a purpose.",
+            "Driven by curiosity, powered by code."
+        ]
     },
     "admin": {
         "admin": "Admin",
@@ -175,6 +197,18 @@
                     "Integrated authentication (JWT), Dark/Light mode, and multi-language support.",
                     "Enhanced UI with ReactBit for dynamic components.",
                     "Containerized the project with Docker."
+                ],
+                "tech": [
+                    "Java EE",
+                    "Spring Boot",
+                    "ReactJs",
+                    "Vite",
+                    "TailwindCss",
+                    "Docker",
+                    "PostgreSQL",
+                    "Git",
+                    "Maven",
+                    "LLMs"
                 ]
             },
             "rakuten": {
@@ -190,6 +224,21 @@
                     "Performed unit and automated tests to ensure code reliability.",
                     "Followed specifications and product roadmap to ensure deliverable compliance and deadline adherence.",
                     "Organized reporting meetings and daily stand-ups in Agile methodology."
+                ],
+                "tech": [
+                    "Java EE",
+                    "Spring Boot",
+                    "ReactJS",
+                    "TypeScript",
+                    "Docker",
+                    "Jenkins",
+                    "Hibernate",
+                    "Elasticsearch",
+                    "MariaDB",
+                    "Liquibase",
+                    "Git",
+                    "CI/CD",
+                    "Jira"
                 ]
             },
             "sorbonne": {
@@ -199,6 +248,21 @@
                     "Piloted a collaborative e-shop app with feature flags.",
                     "Developed full stack (Backend, Frontend, DB).",
                     "Automated Product Line variant generation."
+                ],
+                "tech": [
+                    "Spring Boot",
+                    "REST API",
+                    "ReactJS",
+                    "JavaScript",
+                    "MySQL",
+                    "Hibernate",
+                    "Git",
+                    "Maven",
+                    "JUnit",
+                    "Flagsmith",
+                    "Microservices",
+                    "JWT",
+                    "Moobios Forge"
                 ]
             },
             "database": {
@@ -208,14 +272,25 @@
                     "Designed a database to simulate ancient ship navigation.",
                     "Used PostgreSQL for design and data management, integrating collaborative modeling tools.",
                     "Technologies: PostgreSQL / BOUML / StarUML"
+                ],
+                "tech": [
+                    "PostgreSQL",
+                    "BOUML",
+                    "StarUML"
                 ]
             },
-            "quichefs": {
+            "ouichefs": {
                 "title": "Projet Ouichefs (Linux Kernel)",
                 "role": "Systems Developer",
                 "desc": [
                     "Developed an improved physical link system for Linux Kernel.",
                     "Implemented UUIDs, inter-partition links, and block migration."
+                ],
+                "tech": [
+                    "C",
+                    "Linux Kernel",
+                    "File Systems",
+                    "ioctl"
                 ]
             }
         },
@@ -538,7 +613,7 @@
         "subtitle": "Leave your mark",
         "name_placeholder": "Your name",
         "message_placeholder": "Your message...",
-        "guest_placeholder_text": "Message... or ",
+        "not_connected_placeholder": "Message... or ",
         "guest_placeholder_link": "Log in",
         "translated": "Translated",
         "translation_limit": "Daily translation limit reached",
