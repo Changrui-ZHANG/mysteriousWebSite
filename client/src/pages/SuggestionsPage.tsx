@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaLightbulb, FaCheck } from 'react-icons/fa';
+import { FaLightbulb, FaCheck, FaPaperPlane } from 'react-icons/fa';
 import { fetchJson, postJson } from '../api/httpClient';
 import { API_ENDPOINTS } from '../constants/endpoints';
-import { GradientHeading, Button, GlassCard } from '../components';
 import { SuggestionCard } from '../features/suggestions/components';
 import type { Suggestion, SuggestionUser } from '../types/suggestions';
 
@@ -103,122 +102,153 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
         setShowArchive(false);
     };
 
-    // Authentication gate
+    // Authentication gate - Liquid Glass style
     if (!user) {
         return (
-            <div className="page-container pt-24 pb-12 px-4 md:px-8">
-                <div className="max-w-4xl mx-auto">
-                    <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center">
-                        <GlassCard accentColor="purple" padding="lg" animated={false}>
-                            <FaLightbulb className="w-20 h-20 mx-auto mb-6 text-purple-400" />
-                            <GradientHeading gradient="purple-pink" level={1} className="mb-4">
-                                {t('suggestions.title')}
-                            </GradientHeading>
-                            <p className="text-lg text-secondary mb-8">
-                                {t('suggestions.login_to_view')}
-                            </p>
-                            <Button color="purple" size="lg" onClick={onOpenLogin}>
-                                {t('auth.login')}
-                            </Button>
-                        </GlassCard>
-                    </motion.div>
-                </div>
+            <div className="page-container min-h-screen pt-24 pb-12 px-4 md:px-8 flex items-center justify-center">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="max-w-md w-full"
+                >
+                    <div className="relative rounded-[2rem] bg-white/[0.02] border border-white/10 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)] p-10 text-center after:absolute after:inset-0 after:rounded-[2rem] after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none">
+                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent-secondary to-accent-primary mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-accent-secondary/30">
+                            <FaLightbulb className="text-4xl text-white" />
+                        </div>
+                        <h1 className="text-3xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-accent-secondary to-accent-primary">
+                            {t('suggestions.title')}
+                        </h1>
+                        <p className="text-white/60 mb-8">
+                            {t('suggestions.login_to_view')}
+                        </p>
+                        <button
+                            onClick={onOpenLogin}
+                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-accent-secondary to-accent-primary text-white font-bold shadow-lg shadow-accent-secondary/30 hover:scale-105 active:scale-95 transition-transform"
+                        >
+                            {t('auth.login')}
+                        </button>
+                    </div>
+                </motion.div>
             </div>
         );
     }
 
     return (
-        <div className="page-container pt-24 pb-12 px-4 md:px-8">
+        <div className="page-container min-h-screen pt-24 pb-12 px-4 md:px-8">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-8">
-                    <GradientHeading gradient="purple-pink" level={1} className="mb-4">
+                <motion.div
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-center mb-10"
+                >
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-secondary to-accent-primary mx-auto mb-4 flex items-center justify-center shadow-2xl shadow-accent-secondary/30">
+                        <FaLightbulb className="text-2xl text-white" />
+                    </div>
+                    <h1 className="text-4xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-accent-secondary to-accent-primary">
                         {t('suggestions.title')}
-                    </GradientHeading>
-                    <p className="text-lg text-secondary">
+                    </h1>
+                    <p className="text-white/50">
                         {t('suggestions.subtitle')}
                     </p>
                 </motion.div>
 
-                {/* Submission Form */}
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-card--secondary mb-8 p-12 rounded-3xl border">
-                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                        <FaLightbulb className="text-yellow-400" />
-                        {t('suggestions.submit_new')}
-                    </h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <textarea
-                            value={newSuggestion}
-                            onChange={(e) => setNewSuggestion(e.target.value)}
-                            placeholder={t('suggestions.placeholder')}
-                            className="textarea"
-                            rows={4}
-                            maxLength={1000}
-                            disabled={!user}
-                        />
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm text-muted">{newSuggestion.length}/1000</span>
-                            <button
-                                type="submit"
-                                disabled={loading || !user || !newSuggestion.trim()}
-                                className="btn-primary"
-                            >
-                                {loading ? t('suggestions.submitting') : t('suggestions.submit')}
-                            </button>
-                        </div>
-                        {error && <p className="text-sm text-red-400">{error}</p>}
-                    </form>
+                {/* Submission Form - Liquid Glass Card */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="relative rounded-[1.5rem] bg-white/[0.02] border border-white/10 backdrop-blur-2xl shadow-[0_16px_48px_-12px_rgba(0,0,0,0.3)] mb-10 overflow-hidden after:absolute after:inset-0 after:rounded-[1.5rem] after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.08)] after:pointer-events-none"
+                >
+                    <div className="p-8">
+                        <h2 className="text-xl font-black mb-6 flex items-center gap-3">
+                            <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                                <FaLightbulb className="text-white" />
+                            </span>
+                            {t('suggestions.submit_new')}
+                        </h2>
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <textarea
+                                value={newSuggestion}
+                                onChange={(e) => setNewSuggestion(e.target.value)}
+                                placeholder={t('suggestions.placeholder')}
+                                className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-secondary/30 resize-none transition-all"
+                                rows={4}
+                                maxLength={1000}
+                                disabled={!user}
+                            />
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-white/30 font-mono">{newSuggestion.length}/1000</span>
+                                <button
+                                    type="submit"
+                                    disabled={loading || !user || !newSuggestion.trim()}
+                                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-secondary to-accent-primary text-white font-bold text-sm disabled:opacity-30 disabled:scale-100 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-accent-secondary/20"
+                                >
+                                    <FaPaperPlane className="text-xs" />
+                                    {loading ? t('suggestions.submitting') : t('suggestions.submit')}
+                                </button>
+                            </div>
+                            {error && <p className="text-sm text-accent-danger">{error}</p>}
+                        </form>
+                    </div>
                 </motion.div>
 
-                {/* Suggestions List */}
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-bold">
-                            {isAdmin ? t('suggestions.all_suggestions') : t('suggestions.your_suggestions')}
-                        </h2>
-                        {archivedSuggestions.length > 0 && (
-                            <button
-                                onClick={() => setShowArchive(!showArchive)}
-                                className="btn-primary bg-accent-success hover:bg-accent-success/80 flex items-center gap-2"
-                            >
-                                <FaCheck className="w-4 h-4" />
-                                {showArchive ? t('suggestions.hide_archive') : `${t('suggestions.show_archive')} (${archivedSuggestions.length})`}
-                            </button>
-                        )}
-                    </div>
-
-                    {!showArchive && (
-                        <>
-                            <AnimatePresence mode="popLayout">
-                                {activeSuggestions.map((suggestion, index) => (
-                                    <SuggestionCard
-                                        key={suggestion.id}
-                                        suggestion={suggestion}
-                                        index={index}
-                                        user={user}
-                                        isAdmin={isAdmin}
-                                        onUpdateStatus={updateStatus}
-                                        onDelete={deleteSuggestion}
-                                    />
-                                ))}
-                            </AnimatePresence>
-                            {activeSuggestions.length === 0 && (
-                                <div className="glass-card--secondary text-center py-12 text-muted rounded-3xl border">
-                                    <FaLightbulb className="w-12 h-12 mx-auto mb-4 text-purple-400" />
-                                    <p>{t('suggestions.no_suggestions')}</p>
-                                </div>
-                            )}
-                        </>
+                {/* Suggestions List Header */}
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-black">
+                        {isAdmin ? t('suggestions.all_suggestions') : t('suggestions.your_suggestions')}
+                    </h2>
+                    {archivedSuggestions.length > 0 && (
+                        <button
+                            onClick={() => setShowArchive(!showArchive)}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all border ${showArchive ? 'bg-accent-success/20 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'}`}
+                        >
+                            <FaCheck className="text-[10px]" />
+                            {showArchive ? t('suggestions.hide_archive') : `${t('suggestions.show_archive')} (${archivedSuggestions.length})`}
+                        </button>
                     )}
                 </div>
 
+                {/* Active Suggestions */}
+                {!showArchive && (
+                    <div className="space-y-4">
+                        <AnimatePresence mode="popLayout">
+                            {activeSuggestions.map((suggestion, index) => (
+                                <SuggestionCard
+                                    key={suggestion.id}
+                                    suggestion={suggestion}
+                                    index={index}
+                                    user={user}
+                                    isAdmin={isAdmin}
+                                    onUpdateStatus={updateStatus}
+                                    onDelete={deleteSuggestion}
+                                />
+                            ))}
+                        </AnimatePresence>
+                        {activeSuggestions.length === 0 && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-center py-16 text-white/30"
+                            >
+                                <FaLightbulb className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                                <p>{t('suggestions.no_suggestions')}</p>
+                            </motion.div>
+                        )}
+                    </div>
+                )}
+
                 {/* Archive Section */}
                 {showArchive && archivedSuggestions.length > 0 && (
-                    <div className="space-y-4 mt-8">
-                        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                            <FaCheck className="text-green-400" />
-                            {t('suggestions.archive')} ({archivedSuggestions.length})
-                        </h2>
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="w-8 h-8 rounded-lg bg-accent-success/20 flex items-center justify-center">
+                                <FaCheck className="text-accent-success text-sm" />
+                            </span>
+                            <h3 className="text-lg font-bold text-accent-success">
+                                {t('suggestions.archive')} ({archivedSuggestions.length})
+                            </h3>
+                        </div>
                         <AnimatePresence mode="popLayout">
                             {archivedSuggestions.map((suggestion, index) => (
                                 <SuggestionCard

@@ -116,11 +116,11 @@ export function CalendarPage({ isAdmin }: CalendarPageProps) {
                     <GradientHeading gradient="cyan-purple" level={1}>{t('nav.calendar')} {year}</GradientHeading>
 
                     {isAdmin && (
-                        <div className="flex flex-wrap items-center gap-2 bg-muted/50 p-2 rounded-lg justify-center md:justify-start max-w-4xl">
-                            <span className="text-sm text-muted mr-2 w-full md:w-auto text-center md:text-left">{t('calendar.zones_admin_label')}</span>
+                        <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl justify-center md:justify-start max-w-4xl border border-default bg-surface/30 backdrop-blur-md">
+                            <span className="text-sm text-secondary mr-2 w-full md:w-auto text-center md:text-left px-2">{t('calendar.zones_admin_label')}</span>
                             {Object.entries(ZONE_LABELS).map(([zoneKey, label]) => (
                                 <button key={zoneKey} onClick={() => toggleZone(zoneKey)}
-                                    className={`px-3 py-1 rounded text-xs font-bold transition-colors whitespace-nowrap ${selectedZones.includes(zoneKey) ? 'bg-blue-500 text-white shadow-lg' : 'btn-ghost'}`}>
+                                    className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap active:scale-95 ${selectedZones.includes(zoneKey) ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/25' : 'hover:bg-surface-alt text-secondary border border-transparent hover:border-default'}`}>
                                     {label}
                                 </button>
                             ))}
@@ -134,12 +134,22 @@ export function CalendarPage({ isAdmin }: CalendarPageProps) {
                 </header>
 
                 {loading ? (
-                    <LoadingSpinner size="lg" color="blue" className="py-20" />
+                    <div className="flex justify-center items-center py-40">
+                        <LoadingSpinner size="lg" color="blue" />
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {months.map(month => (
-                            <motion.div key={month} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: month * 0.05 }}
-                                className="card">
+                            <motion.div
+                                key={month}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: month * 0.05 }}
+                                className={`
+                                    relative p-6 transition-all duration-700
+                                    bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-xl rounded-3xl hover:bg-white/[0.08] hover:border-white/20 after:absolute after:inset-0 after:rounded-3xl after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none
+                                `}
+                            >
                                 <h3 className="text-xl font-bold mb-4 text-center capitalize">{monthNames[month]}</h3>
                                 <div className="grid grid-cols-7 mb-2 text-center text-sm text-muted">
                                     {weekDays.map(d => <div key={d} className="capitalize">{d}</div>)}
@@ -156,24 +166,41 @@ export function CalendarPage({ isAdmin }: CalendarPageProps) {
                                         let bgClass = "";
                                         let textClass = "";
 
-                                        if (isToday) bgClass = "bg-blue-500 text-white font-bold ring-2 ring-blue-300";
-                                        else if (holiday) bgClass = "bg-red-500/20 text-red-500 font-bold border border-red-500/30";
-                                        else if (schoolVar) {
+                                        if (isToday) {
+                                            bgClass = "bg-accent-primary text-white font-bold shadow-lg shadow-accent-primary/40 scale-105 z-10 ring-1 ring-white/30";
+                                        } else if (holiday) {
+                                            bgClass = "bg-accent-danger/10 text-accent-danger border border-accent-danger/20";
+                                        } else if (schoolVar) {
                                             const isSummer = schoolVar.description.toLowerCase().includes('été') || schoolVar.description.toLowerCase().includes('ete');
-                                            bgClass = isSummer ? "bg-orange-100/10 text-orange-300/60" : "bg-yellow-400/30 text-yellow-500";
-                                        } else if (isWknd) textClass = "text-muted";
+                                            bgClass = isSummer
+                                                ? "bg-accent-warning/10 text-accent-warning/80"
+                                                : "bg-accent-info/20 text-accent-info";
+                                        } else if (isWknd) {
+                                            textClass = "text-muted";
+                                        }
 
                                         return (
                                             <div key={day}
                                                 onClick={() => { if (holiday) { setSelectedHoliday(holiday); setIsModalOpen(true); } }}
-                                                className={`h-8 flex items-center justify-center rounded relative group ${bgClass} ${textClass} ${!bgClass ? 'hover:bg-muted/50' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 transition-transform' : 'cursor-default'}`}>
+                                                className={`h-8 flex items-center justify-center rounded-lg relative group transition-all duration-200 hover:z-50 ${bgClass} ${textClass} ${!bgClass ? 'hover:bg-muted/10' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 shadow-sm' : 'cursor-default'}`}>
                                                 {day}
-                                                {holiday && <div className="absolute top-0.5 right-0.5 z-10 opacity-40 hover:opacity-100 transition-opacity"><FaQuestionCircle className="text-[10px] text-blue-400 bg-surface/50 rounded-full" /></div>}
+                                                {holiday && (
+                                                    <div className="absolute top-0.5 right-0.5 z-10 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                        <FaQuestionCircle className="text-[10px] text-accent-info" />
+                                                    </div>
+                                                )}
                                                 {(holiday || schoolVar) && (
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 w-max max-w-[150px] p-2 rounded bg-black/90 text-white text-xs text-center pointer-events-none">
-                                                        {holiday && (HOLIDAY_NAMES[holiday.nom_jour_ferie] || holiday.nom_jour_ferie)}
-                                                        {holiday && schoolVar && <br />}
-                                                        {schoolVar?.description && t('calendar.tooltip.vacation', { zone: ZONE_LABELS[schoolVar.zones] || schoolVar.zones, defaultValue: `Vacances (${ZONE_LABELS[schoolVar.zones] || schoolVar.zones})` })}
+                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-30 w-max max-w-[200px] p-2.5 rounded-xl bg-surface border border-default shadow-xl text-primary text-xs text-center pointer-events-none backdrop-blur-md">
+                                                        <div className="font-bold mb-1">
+                                                            {holiday && (HOLIDAY_NAMES[holiday.nom_jour_ferie] || holiday.nom_jour_ferie)}
+                                                        </div>
+                                                        <div className="opacity-80">
+                                                            {schoolVar?.description && t('calendar.tooltip.vacation', {
+                                                                zone: ZONE_LABELS[schoolVar.zones] || schoolVar.zones,
+                                                                defaultValue: `Vacances (${ZONE_LABELS[schoolVar.zones] || schoolVar.zones})`
+                                                            })}
+                                                        </div>
+                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-default" />
                                                     </div>
                                                 )}
                                             </div>

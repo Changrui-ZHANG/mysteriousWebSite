@@ -1,196 +1,195 @@
-import { useEffect, useState } from 'react'
-import Lenis from '@studio-freight/lenis'
-import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { ScrollSection, GravityPlayground, Gallery, TextReveal, TiltCard } from '../components'
-import MagneticButton from '../components/ui/MagneticButton'
-import { SOCIAL_LINKS } from '../constants/urls'
+/**
+ * HomePage - Main dashboard hub with Bento Grid navigation
+ * Serves as the central navigation point for all site features
+ */
 
-interface HomeProps {
-}
+import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUserAstronaut, FaComments, FaLightbulb, FaGamepad, FaCalendarAlt, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { SOCIAL_LINKS } from '../constants/urls';
+import {
+    BentoCard,
+    DashboardGrid,
+    FloatingParticles,
+    AnimatedBlobs,
+    HomeFooter,
+    CvMockup,
+    MessagesMockup,
+    SuggestionsMockup,
+    GameMockup,
+    CalendarMockup
+} from '../features/dashboard/components';
 
-export function Home({ }: HomeProps) {
+// Constants
+const TAGLINE_ROTATION_INTERVAL = 5000;
+
+export function Home() {
     const { t } = useTranslation();
-    const [isHovered, setIsHovered] = useState(false);
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
 
-    // Smooth Scrolling Setup inside Home
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return t('common.good_morning');
+        if (hour < 18) return t('common.good_afternoon');
+        return t('common.good_evening');
+    };
+
+    // Rotating taglines from translations
+    const taglines = t('soul.taglines', { returnObjects: true }) as string[];
+    const [currentTagline, setCurrentTagline] = useState(0);
+
     useEffect(() => {
-        const lenis = new Lenis()
-
-        function raf(time: number) {
-            lenis.raf(time)
-            requestAnimationFrame(raf)
-        }
-        requestAnimationFrame(raf)
-
-        return () => {
-            lenis.destroy()
-        }
-    }, [])
+        const interval = setInterval(() => {
+            setCurrentTagline((prev) => (prev + 1) % taglines.length);
+        }, TAGLINE_ROTATION_INTERVAL);
+        return () => clearInterval(interval);
+    }, [taglines.length]);
 
     return (
-        <div>
-            {/* HERRO SECTION */}
-            <section className="h-screen flex flex-col items-center justify-center">
-                <div className="text-center mb-8">
-                    <h1 className="text-5xl md:text-8xl m-0 font-heading font-extrabold tracking-tighter hero-heading-shadow">
-                        {t('brand.author_name')}
+        <div className="page-container min-h-screen pt-28 pb-0 flex flex-col relative overflow-hidden">
+            {/* Film Grain Overlay */}
+            <div className="film-grain opacity-[0.03] dark:opacity-[0.05]" />
+
+            {/* Background Atmosphere */}
+            <AnimatedBlobs />
+            <FloatingParticles />
+
+            <div className="flex-grow relative z-10">
+                {/* WELCOME HEADER */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center md:text-left"
+                >
+                    <h1 className="text-5xl md:text-7xl font-black font-heading tracking-tighter mb-4 leading-none">
+                        <span className="opacity-70 font-medium block md:inline text-3xl md:text-5xl mb-2 md:mb-0">
+                            {getGreeting()},
+                        </span>
+                        <span className="block md:ml-4 bg-gradient-to-r from-primary via-accent-primary to-secondary bg-clip-text text-transparent drop-shadow-sm">
+                            {user?.username || t('common.guest')}
+                        </span>
+                        <motion.span
+                            animate={{ rotate: [0, 14, -8, 14, 0] }}
+                            transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1 }}
+                            className="ml-4 text-4xl md:text-6xl inline-block"
+                        >
+                            👋
+                        </motion.span>
                     </h1>
-                    <p className="text-2xl opacity-80 font-serif italic mt-4">
-                        {t('hero.subtitle')}
-                    </p>
-                </div>
-
-                <MagneticButton onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                    {t('hero.explore')}
-                </MagneticButton>
-            </section>
-
-            {/* MANIFESTO SECTION - STAGGERED REVEAL */}
-            <ScrollSection>
-                <h2 className="text-4xl md:text-6xl max-w-4xl text-center font-bold font-heading mx-auto">
-                    {t('story.title')}
-                </h2>
-                <div className="max-w-2xl mx-auto mt-8 text-center">
-                    <TextReveal
-                        className="flex flex-wrap justify-center text-xl md:text-3xl leading-relaxed opacity-90 font-serif"
+                    <motion.p
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="text-xl md:text-2xl text-secondary max-w-2xl leading-relaxed border-l-2 border-accent-primary/30 pl-6"
                     >
-                        {t('story.description')}
-                    </TextReveal>
-                </div>
-            </ScrollSection>
+                        {t('dashboard.welcome_subtitle')}
+                    </motion.p>
 
-            {/* FEATURES SECTION - 3D TILT CARDS */}
-            <ScrollSection>
-                <div className="flex gap-12 items-center flex-wrap justify-center px-4">
-                    <div className="w-full max-w-[320px] h-[420px]">
-                        <TiltCard style={{ height: '100%' }}>
-                            <h3 className="text-4xl mb-4 font-heading">{t('features.velocity.title')}</h3>
-                            <div className="w-[50px] h-[5px] bg-cyan-400 mb-6"></div>
-                            <p className="text-lg leading-relaxed opacity-80">{t('features.velocity.description')}</p>
-                        </TiltCard>
-                    </div>
+                    {/* Rotating Tagline */}
+                    <AnimatePresence mode="wait">
+                        <motion.p
+                            key={currentTagline}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.5 }}
+                            className="mt-6 text-sm md:text-base font-mono text-accent-primary/70 italic tracking-wide"
+                        >
+                            "{taglines[currentTagline]}"
+                            <span className="animate-blink ml-1">|</span>
+                        </motion.p>
+                    </AnimatePresence>
+                </motion.div>
 
-                    <div className="w-full max-w-[320px] h-[420px] mt-8 md:mt-16">
-                        <TiltCard style={{ height: '100%' }}>
-                            <h3 className="text-4xl mb-4 font-heading">{t('features.depth.title')}</h3>
-                            <div className="w-[50px] h-[5px] bg-fuchsia-500 mb-6"></div>
-                            <p className="text-lg leading-relaxed opacity-80">{t('features.depth.description')}</p>
-                        </TiltCard>
-                    </div>
-
-                    <div className="w-full max-w-[320px] h-[420px]">
-                        <TiltCard style={{ height: '100%' }}>
-                            <h3 className="text-4xl mb-4 font-heading">{t('features.light.title')}</h3>
-                            <div className="w-[50px] h-[5px] bg-yellow-400 mb-6"></div>
-                            <p className="text-lg leading-relaxed opacity-80">{t('features.light.description')}</p>
-                        </TiltCard>
-                    </div>
-                </div>
-            </ScrollSection>
-
-            {/* GRAVITY PLAYGROUND MINI-GAME */}
-            <ScrollSection>
-                <div className="w-full h-screen flex flex-col justify-center px-4">
-                    <h2 className="text-4xl md:text-8xl text-center mb-12 font-heading font-bold bg-gradient-to-b from-current to-transparent bg-clip-text text-transparent opacity-80">
-                        {t('gravity.title')}
-                    </h2>
-                    <GravityPlayground />
-                </div>
-            </ScrollSection>
-
-            {/* HORIZONTAL GALLERY PREVIEW */}
-            <ScrollSection>
-                <div className="w-full py-16">
-                    <Gallery />
-                </div>
-            </ScrollSection>
-
-            {/* SIGNATURE SECTION */}
-            <ScrollSection>
-                <div className="relative">
-                    <svg className="absolute w-0 h-0">
-                        <filter id="liquid-flow">
-                            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="warp">
-                                <animate attributeName="baseFrequency" dur="10s" values="0.01;0.005;0.01" repeatCount="indefinite" />
-                            </feTurbulence>
-                            <feDisplacementMap
-                                xChannelSelector="R"
-                                yChannelSelector="G"
-                                scale={isHovered ? 35 : 0}
-                                in="SourceGraphic"
-                                in2="warp"
-                            />
-                        </filter>
-                    </svg>
-
-                    <motion.h2
-                        className="text-5xl md:text-9xl font-black font-heading bg-gradient-to-r from-white/30 via-white/80 to-white/30 bg-clip-text text-transparent text-center p-4 bg-[length:200%_auto] transition-all duration-700"
-                        style={{
-                            filter: 'url(#liquid-flow) blur(0.5px)',
-                            WebkitTextStroke: '1px rgba(255,255,255,0.5)',
-                            textShadow: '0 0 15px rgba(255,255,255,0.3)'
-                        }}
-                        animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                {/* BENTO GRID DASHBOARD */}
+                <DashboardGrid>
+                    {/* 1. CV CARD */}
+                    <BentoCard
+                        to="/cv"
+                        title={t('nav.cv')}
+                        description={t('dashboard.cv_desc')}
+                        icon={<FaUserAstronaut className="w-6 h-6" />}
+                        className="md:col-span-2 md:row-span-2 bg-gradient-to-br from-indigo-500/10 to-purple-500/10"
                     >
-                        {t('brand.author_name')}
-                    </motion.h2>
-                </div>
-            </ScrollSection>
+                        <CvMockup />
+                    </BentoCard>
 
-            {/* MEGA FOOTER */}
-            <footer className="py-24 px-8 border-t bg-surface border-default/20">
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 max-w-7xl mx-auto">
-                    <div>
-                        <h4 className="text-2xl mb-6">{t('brand.author_name')}.</h4>
-                        <p className="text-secondary">{t('footer_section.tagline')}</p>
-                    </div>
-                    <div>
-                        <h4 className="font-bold mb-6">{t('footer_section.socials')}</h4>
-                        <ul className="list-none p-0 text-secondary leading-loose">
-                            <li>
-                                <a href={SOCIAL_LINKS.GITHUB} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                                    GitHub
-                                </a>
-                            </li>
-                            <li>
-                                <a href={SOCIAL_LINKS.LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                                    LinkedIn
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="font-bold mb-6">{t('footer_section.legal')}</h4>
-                        <ul className="list-none p-0 text-secondary leading-loose">
-                            <li>
-                                <Link to="/privacy" className="hover:text-primary transition-colors">
-                                    {t('footer_section.privacy')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/terms" className="hover:text-primary transition-colors">
-                                    {t('footer_section.terms')}
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="font-bold mb-6">{t('footer_section.newsletter')}</h4>
-                        <div className="flex">
-                            <input type="email" placeholder={t('footer_section.email_placeholder')} className="input rounded-r-none" />
-                            <button className="btn-primary rounded-l-none">{t('footer_section.join')}</button>
+                    {/* 2. MESSAGE WALL */}
+                    <BentoCard
+                        to="/messages"
+                        title={t('nav.messages')}
+                        description={t('dashboard.messages_desc')}
+                        icon={<FaComments className="w-6 h-6" />}
+                        className="md:col-span-1 md:row-span-1 bg-gradient-to-br from-green-500/10 to-emerald-500/10"
+                    >
+                        <MessagesMockup />
+                    </BentoCard>
+
+                    {/* 3. SUGGESTIONS */}
+                    <BentoCard
+                        to="/suggestions"
+                        title={t('nav.suggestions')}
+                        description={t('dashboard.suggestions_desc')}
+                        icon={<FaLightbulb className="w-6 h-6" />}
+                        className="md:col-span-1 md:row-span-1 bg-gradient-to-br from-yellow-500/10 to-amber-500/10"
+                    >
+                        <SuggestionsMockup />
+                    </BentoCard>
+
+                    {/* 4. GAME HUB */}
+                    <BentoCard
+                        to="/game"
+                        title={t('nav.game')}
+                        description={t('dashboard.game_desc')}
+                        icon={<FaGamepad className="w-6 h-6" />}
+                        className="md:col-span-2 md:row-span-1 bg-gradient-to-br from-red-500/10 to-orange-500/10"
+                    >
+                        <GameMockup />
+                    </BentoCard>
+
+                    {/* 5. CALENDAR */}
+                    <BentoCard
+                        to="/calendar"
+                        title={t('nav.calendar')}
+                        description={t('dashboard.calendar_desc')}
+                        icon={<FaCalendarAlt className="w-6 h-6" />}
+                        className="md:col-span-1 md:row-span-1 bg-gradient-to-br from-blue-500/10 to-cyan-500/10"
+                    >
+                        <CalendarMockup />
+                    </BentoCard>
+
+                    {/* 6. SOCIAL GITHUB */}
+                    <a
+                        href={SOCIAL_LINKS.GITHUB}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-xl hover:bg-white/[0.08] hover:border-white/20 hover:shadow-2xl transition-all duration-700 md:col-span-1 md:row-span-1 flex items-center justify-center p-8"
+                    >
+                        <div className="text-center relative z-10 transition-transform duration-500 group-hover:scale-110">
+                            <FaGithub className="w-12 h-12 mx-auto mb-2 opacity-80" />
+                            <span className="font-bold">GitHub</span>
                         </div>
-                    </div>
-                </div>
-                <div className="text-center text-muted mt-16 text-sm">
-                    <p>{t('brand.copyright')}</p>
-                </div>
-            </footer>
+                    </a>
+
+                    {/* 7. SOCIAL LINKEDIN */}
+                    <a
+                        href={SOCIAL_LINKS.LINKEDIN}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-xl hover:bg-white/[0.08] hover:border-white/20 hover:shadow-2xl transition-all duration-700 md:col-span-1 md:row-span-1 flex items-center justify-center p-8"
+                    >
+                        <div className="text-center relative z-10 transition-transform duration-500 group-hover:scale-110">
+                            <FaLinkedin className="w-12 h-12 mx-auto mb-2 opacity-80 text-[#0077b5]" />
+                            <span className="font-bold">LinkedIn</span>
+                        </div>
+                    </a>
+                </DashboardGrid>
+            </div>
+
+            <HomeFooter />
         </div>
-    )
+    );
 }

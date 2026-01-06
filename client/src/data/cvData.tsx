@@ -58,28 +58,28 @@ export const getCVData = (t: TranslationFunction) => {
             role: t('cv.exp.espace.role'),
             period: "2024 - Present",
             description: getArray('cv.exp.espace.desc'),
-            tech: ["Java EE", "Spring Boot", "ReactJs", "Vite", "TailwindCss", "Docker", "PostgreSQL", "Git", "Maven", "LLMs"]
+            tech: getArray('cv.exp.espace.tech')
         },
         {
             title: t('cv.exp.rakuten.title'),
             role: t('cv.exp.rakuten.role'),
             period: "02/2024 - 09/2024",
             description: getArray('cv.exp.rakuten.desc'),
-            tech: ["Java EE", "Spring Boot", "ReactJS", "TypeScript", "Docker", "Elasticsearch", "Jenkins", "Liquibase", "Grafana", "Git", "MariaDB", "CI/CD"]
+            tech: getArray('cv.exp.rakuten.tech')
         },
         {
             title: t('cv.exp.sorbonne.title'),
             role: t('cv.exp.sorbonne.role'),
             period: "09/2023 - 03/2024",
             description: getArray('cv.exp.sorbonne.desc'),
-            tech: ["Java EE", "Spring Boot", "ReactJS", "MySQL", "JavaScript", "Microservices", "Git", "Maven", "Flagsmith", "Moobios Forge", "JWT"]
+            tech: getArray('cv.exp.sorbonne.tech')
         },
         {
-            title: t('cv.exp.quichefs.title'),
-            role: t('cv.exp.quichefs.role'),
+            title: t('cv.exp.ouichefs.title'),
+            role: t('cv.exp.ouichefs.role'),
             period: "09/2023 - 03/2024",
-            description: getArray('cv.exp.quichefs.desc'),
-            tech: ["C", "Linux Kernel", "File Systems", "ioctl"]
+            description: getArray('cv.exp.ouichefs.desc'),
+            tech: getArray('cv.exp.ouichefs.tech')
         }
     ];
 

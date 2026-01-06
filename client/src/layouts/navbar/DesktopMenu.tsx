@@ -31,7 +31,7 @@ export function DesktopMenu({
     changeLanguage,
 }: DesktopMenuProps) {
     const { t, i18n } = useTranslation();
-    const { isDarkMode, toggleTheme } = useThemeManager();
+    const { resolvedTheme, toggleTheme } = useThemeManager();
     const location = useLocation();
     const [showAdminInput, setShowAdminInput] = useState(false);
 
@@ -58,14 +58,14 @@ export function DesktopMenu({
     ];
 
     return (
-        <div className="hidden lg:flex items-center gap-6 font-mono text-sm max-w-full">
+        <div className="hidden lg:flex items-center gap-4 font-heading text-sm max-w-full">
             {/* Main Navigation Links */}
-            <div className="flex items-center gap-2 mr-4">
+            <div className="flex items-center gap-1">
                 {mainLinks.map(link => (
                     <Link
                         key={link.to}
                         to={link.to}
-                        className={`nav-link ${location.pathname === link.to ? 'nav-link-active' : ''}`}
+                        className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
                     >
                         {link.label}
                     </Link>
@@ -73,10 +73,10 @@ export function DesktopMenu({
 
                 {/* Dropdown for More Links */}
                 <div className="relative group">
-                    <button className={`nav-link flex items-center gap-1 uppercase tracking-widest ${['/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'nav-link-active' : ''}`}>
-                        {t('nav.more')} <FaChevronDown className="text-xs transition-transform duration-300 group-hover:rotate-180" />
+                    <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
+                        {t('nav.more')} <FaChevronDown className="text-[10px] transition-transform duration-300 group-hover:rotate-180" />
                     </button>
-                    <div className="absolute top-full left-0 w-full h-4 bg-transparent z-40" />
+                    <div className="absolute top-full left-0 w-full h-2 bg-transparent z-40" />
                     <div className="absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-md border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 bg-surface/95 border-default">
                         {moreLinks.map(link => (
                             <Link
@@ -91,24 +91,24 @@ export function DesktopMenu({
                 </div>
             </div>
 
-            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+            <div className="w-px h-4 bg-white/10" />
 
             {/* Auth Section */}
             {user ? (
-                <div className="flex items-center gap-4">
-                    <span className="font-bold text-cyan-400">{user.username}</span>
-                    <button onClick={onLogout} className="hover:opacity-60 transition-opacity flex items-center gap-2" title={t('auth.logout')}>
-                        <FaSignOutAlt />
+                <div className="flex items-center gap-3">
+                    <span className="font-bold text-accent-primary text-xs truncate max-w-[100px]">{user.username}</span>
+                    <button onClick={onLogout} className="hover:text-red-400 transition-colors" title={t('auth.logout')}>
+                        <FaSignOutAlt className="w-3.5 h-3.5" />
                     </button>
                 </div>
             ) : (
-                <button onClick={onOpenLogin} className="flex items-center gap-2 hover:opacity-60 transition-opacity">
-                    <FaUser />
+                <button onClick={onOpenLogin} className="flex items-center gap-2 hover:text-accent-primary transition-colors text-xs uppercase tracking-wider font-bold">
+                    <FaUser className="w-3 h-3" />
                     <span>{t('auth.login')}</span>
                 </button>
             )}
 
-            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+            <div className="w-px h-4 bg-white/10" />
 
             {/* Admin Section */}
             <div className="relative flex items-center">
@@ -153,9 +153,8 @@ export function DesktopMenu({
             <div className="w-[1px] h-[20px] bg-current opacity-20" />
 
             {/* Theme Toggle */}
-            <button onClick={toggleTheme} className="flex items-center gap-2 px-3 py-2 rounded-full transition-opacity uppercase tracking-widest text-sm hover:opacity-60">
-                {isDarkMode ? <FaSun className="w-4 h-4" /> : <FaMoon className="w-4 h-4" />}
-                <span>{isDarkMode ? t('navbar.theme.light') : t('navbar.theme.dark')}</span>
+            <button onClick={toggleTheme} className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/10 transition-all text-secondary hover:text-primary" title={resolvedTheme === 'dark' ? t('navbar.theme.light') : resolvedTheme === 'light' ? t('navbar.theme.paper') : t('navbar.theme.dark')}>
+                {resolvedTheme === 'dark' ? <FaSun className="w-4 h-4" /> : resolvedTheme === 'light' ? <FaMoon className="w-4 h-4" /> : <FaCog className="w-4 h-4" />}
             </button>
         </div>
     );

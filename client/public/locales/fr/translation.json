@@ -5,7 +5,11 @@
         "delete": "Supprimer",
         "go": "Go",
         "back": "Retour",
-        "unknown_error": "Erreur inconnue"
+        "unknown_error": "Erreur inconnue",
+        "good_morning": "Excellente matinée",
+        "good_afternoon": "Bel après-midi",
+        "good_evening": "Douce soirée",
+        "guest": "Invité"
     },
     "brand": {
         "author_name": "Changrui ZHANG",
@@ -40,6 +44,23 @@
             "fr": "Français",
             "zh": "中文"
         }
+    },
+    "dashboard": {
+        "welcome_subtitle": "Concepteur d'expériences numériques & Explorateur de technologies. Bienvenue dans mon univers.",
+        "cv_desc": "Explorez mon parcours professionnel, mes compétences et mes expériences.",
+        "messages_desc": "Rejoignez la discussion de la communauté.",
+        "suggestions_desc": "Une idée ? Faites-m'en part.",
+        "game_desc": "Faites une pause et jouez.",
+        "calendar_desc": "Vérifiez mes disponibilités."
+    },
+    "soul": {
+        "taglines": [
+            "Là où le code rencontre la créativité.",
+            "Créer des expériences numériques avec passion.",
+            "Construire le web de demain, aujourd'hui.",
+            "Chaque pixel a un but.",
+            "Animé par la curiosité, propulsé par le code."
+        ]
     },
     "admin": {
         "manage_users": "Gérer les utilisateurs",
@@ -173,10 +194,21 @@
                 "title": "Espace Web (Projet Personnel)",
                 "role": "Développeur Full Stack",
                 "desc": [
-                    "Développement autonome d'une application web personnelle full-stack.",
-                    "Intégration de l'authentification (JWT), des modes Sombre/Clair et du support multilingue.",
-                    "Amélioration de l'interface utilisateur avec ReactBit pour des composants dynamiques.",
-                    "Conteneurisation du projet avec Docker."
+                    "Développement d’une application web full-stack (Java/Spring Boot + React).",
+                    "Optimisation UX avec composants dynamiques (ReactBit + Tailwind).",
+                    "Conteneurisation complète (Docker)."
+                ],
+                "tech": [
+                    "Java EE",
+                    "Spring Boot",
+                    "ReactJs",
+                    "Vite",
+                    "TailwindCss",
+                    "Docker",
+                    "PostgreSQL",
+                    "Git",
+                    "Maven",
+                    "LLMs"
                 ]
             },
             "rakuten": {
@@ -192,15 +224,46 @@
                     "Réaliser des tests unitaires et automatisés pour garantir la fiabilité du code.",
                     "Suivre les cahiers des charges et la roadmap produit afin de garantir la conformité des livrables et le respect des délais.",
                     "Organiser des réunions de reporting et des meetings quotidiens en méthodologie Agile."
+                ],
+                "tech": [
+                    "Java EE",
+                    "Spring Boot",
+                    "ReactJS",
+                    "TypeScript",
+                    "Docker",
+                    "Jenkins",
+                    "Hibernate",
+                    "Elasticsearch",
+                    "MariaDB",
+                    "Liquibase",
+                    "Git",
+                    "CI/CD",
+                    "Jira"
                 ]
             },
             "sorbonne": {
                 "title": "Sorbonne Université (E-commerce)",
                 "role": "Développeur Fullstack",
                 "desc": [
-                    "Pilotage d'une application e-shop collaborative avec feature flags.",
-                    "Développement full stack (Backend, Frontend, BD).",
-                    "Automatisation de la génération des variantes de gammes de produits."
+                    "Pilotage d’une application e-shop collaborative avec feature flags.",
+                    "Développement full-stack (backend, frontend, base de données).",
+                    "Mise en place d’une authentification complète + gestion des utilisateurs.",
+                    "Automatisation de la génération de variantes produits (Product Line)."
+                ],
+                "tech": [
+                    "Spring Boot",
+                    "REST API",
+                    "ReactJS",
+                    "JavaScript",
+                    "MySQL",
+                    "Hibernate",
+                    "Git",
+                    "Maven",
+                    "JUnit",
+                    "Flagsmith",
+                    "Microservices",
+                    "JWT",
+                    "Moobios Forge"
                 ]
             },
             "database": {
@@ -210,14 +273,25 @@
                     "Concevoir une base de données pour simuler les navigations de bateaux antiques.",
                     "Utiliser PostgreSQL pour la conception et la gestion des données, en intégrant des outils de modélisation collaboratifs.",
                     "Technologies: PostgreSQL / BOUML / StarUML"
+                ],
+                "tech": [
+                    "PostgreSQL",
+                    "BOUML",
+                    "StarUML"
                 ]
             },
-            "quichefs": {
+            "ouichefs": {
                 "title": "Projet Ouichefs (Noyau Linux)",
                 "role": "Développeur Système",
                 "desc": [
                     "Développement d'un système de liens physiques amélioré pour le noyau Linux.",
                     "Implémentation des UUIDs, des liens inter-partitions et de la migration de blocs."
+                ],
+                "tech": [
+                    "C",
+                    "Linux Kernel",
+                    "File Systems",
+                    "ioctl"
                 ]
             }
         },
