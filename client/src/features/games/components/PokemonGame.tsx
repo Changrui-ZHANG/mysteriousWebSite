@@ -96,13 +96,13 @@ export default function PokemonGame({ onSubmitScore, personalBest, isAuthenticat
             onFlipChange={setIsFlipped}
             rulesContent={<PokemonRules onClose={() => setIsFlipped(false)} />}
         >
-            <div className="flex-1 flex items-center justify-center p-4 overflow-y-auto w-full h-full">
+            <div className="flex-1 flex items-center justify-center p-2 md:p-4 overflow-y-auto w-full h-full">
                 {loading ? (
                     <div className="text-accent-secondary font-bold animate-pulse text-xl">{t('game.loading')}</div>
                 ) : pokemon ? (
-                    <div className="w-full max-w-lg mx-auto space-y-4">
+                    <div className="w-full max-w-lg mx-auto space-y-2 md:space-y-4">
                         {/* Pokemon Image Area */}
-                        <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto flex items-center justify-center">
+                        <div className="relative w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 mx-auto flex items-center justify-center">
                             {/* Decorative background glow */}
                             <div className={`absolute inset-0 rounded-full blur-3xl transition-all duration-1000 ${revealed ? 'bg-accent-secondary/5' : 'bg-accent-secondary/20 animate-pulse'
                                 }`} />
@@ -113,7 +113,7 @@ export default function PokemonGame({ onSubmitScore, personalBest, isAuthenticat
                                 animate={{ scale: 1, opacity: 1 }}
                                 src={pokemon.sprites.other['official-artwork'].front_default}
                                 alt={revealed ? pokemon.name : 'Mystery Pokemon'}
-                                className={`relative z-10 w-full h-full object-contain transition-all duration-1000 ${revealed ? 'brightness-100 opacity-100' : 'brightness-0 opacity-60 invert-[--value-invert]'
+                                className={`relative z-10 w-full h-full object-contain transition-all duration-1000 ${revealed ? 'brightness-100 opacity-100' : 'brightness-0 opacity-100'
                                     }`}
                             />
                         </div>
@@ -127,10 +127,10 @@ export default function PokemonGame({ onSubmitScore, personalBest, isAuthenticat
                         )}
 
                         {/* Options */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-2 md:gap-4">
                             {options.map((option, i) => (
                                 <motion.button key={i} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: i * 0.1 }}
-                                    onClick={() => handleAnswer(option)} disabled={revealed} className={getButtonClass(option)}>
+                                    onClick={() => handleAnswer(option)} disabled={revealed} className={getButtonClass(option).replace('px-4 py-3', 'px-3 py-2 md:px-4 md:py-3')}>
                                     {option.charAt(0).toUpperCase() + option.slice(1)}
                                 </motion.button>
                             ))}

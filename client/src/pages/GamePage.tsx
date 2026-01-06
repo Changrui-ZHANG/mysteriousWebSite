@@ -163,7 +163,7 @@ export function Game({ user, onOpenLogin, isSuperAdmin = false, isAdmin = false 
                     </motion.div>
                 )}
 
-                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'h-[600px] md:h-[700px]' : activeGame === 'maze' ? 'h-[600px] md:h-[800px]' : 'min-h-[500px] md:min-h-0 md:aspect-video'}`}>
+                <div className={`relative w-full max-w-5xl mx-auto ${activeGame === 'pokemon' ? 'h-[600px] md:h-[700px]' : activeGame === 'maze' ? 'h-[600px] md:h-[800px]' : 'h-[600px] md:h-auto md:aspect-video'}`}>
                     {renderGame()}
                 </div>
             </div>
