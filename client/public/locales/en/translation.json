@@ -23,12 +23,14 @@
         "suggestions": "SUGGESTIONS",
         "calendar": "CALENDAR",
         "learning": "LINGUIST",
+        "notes": "NOTES",
         "more": "MORE"
     },
     "navbar": {
         "title": "Welcome",
         "cv_title": "Curriculum vitæ",
         "arcade_title": "Arcade Games",
+        "notes_title": "Notes",
         "messages_title": "Message Wall",
         "suggestions_title": "Suggestions Box",
         "calendar_title": "Calendar",

@@ -22,13 +22,15 @@
         "messages": "留言",
         "suggestions": "建议",
         "calendar": "日历",
-        "learning": "语言学家",
+        "linguist": "语言学家",
+        "notes": "便签",
         "more": "更多"
     },
     "navbar": {
         "title": "欢迎",
         "cv_title": "个人简历",
         "arcade_title": "街机游戏",
+        "notes_title": "便签本",
         "messages_title": "留言墙",
         "suggestions_title": "建议箱",
         "calendar_title": "日历",

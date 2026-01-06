@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog,
-    FaHome, FaUserAstronaut, FaGamepad, FaComments,
+    FaHome, FaUserAstronaut, FaGamepad, FaComments, FaStickyNote,
     FaLightbulb, FaCalendarAlt, FaGraduationCap, FaTimes
 } from 'react-icons/fa';
 import { useThemeManager } from '../../hooks/useThemeManager';
@@ -36,6 +36,7 @@ const navLinks = [
     { to: "/", icon: FaHome, labelKey: 'nav.home' },
     { to: "/cv", icon: FaUserAstronaut, labelKey: 'nav.cv' },
     { to: "/game", icon: FaGamepad, labelKey: 'nav.game' },
+    { to: "/notes", icon: FaStickyNote, labelKey: 'nav.notes' },
     { to: "/messages", icon: FaComments, labelKey: 'nav.messages' },
     { to: "/suggestions", icon: FaLightbulb, labelKey: 'nav.suggestions' },
     { to: "/calendar", icon: FaCalendarAlt, labelKey: 'nav.calendar' },

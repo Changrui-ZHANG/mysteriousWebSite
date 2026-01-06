@@ -76,6 +76,7 @@ export function Navbar({
             '/suggestions': t('navbar.suggestions_title'),
             '/calendar': t('navbar.calendar_title'),
             '/learning': t('navbar.linguist_title'),
+            '/notes': t('navbar.notes_title'),
         };
         return titles[location.pathname] || t('navbar.title');
     };

@@ -22,13 +22,15 @@
         "messages": "MESSAGES",
         "suggestions": "SUGGESTIONS",
         "calendar": "CALENDRIER",
-        "learning": "LINGUISTE",
+        "linguist": "LINGUISTE",
+        "notes": "NOTES",
         "more": "PLUS"
     },
     "navbar": {
         "title": "Bienvenue",
         "cv_title": "Curriculum vitæ",
         "arcade_title": "Jeux d'Arcade",
+        "notes_title": "Notes",
         "messages_title": "Mur de Messages",
         "suggestions_title": "Boîte à Idées",
         "calendar_title": "Calendrier",

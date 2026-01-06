@@ -48,6 +48,7 @@ export function DesktopMenu({
         { to: "/", label: t('nav.home') },
         { to: "/cv", label: t('nav.cv') },
         { to: "/game", label: t('nav.game') },
+        { to: "/notes", label: t('nav.notes') },
         { to: "/messages", label: t('nav.messages') }
     ];
 

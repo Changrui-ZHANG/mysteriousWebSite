@@ -14,6 +14,7 @@ import { TermsPage } from './pages/TermsPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { MaintenancePage } from './pages/MaintenancePage'
 import { LearningPage } from './pages/LearningPage'
+import { NotesPage } from './pages/NotesPage'
 import { STORAGE_KEYS } from './constants/authStorage'
 import { postJson, fetchJson } from './api/httpClient'
 import { API_ENDPOINTS } from './constants/endpoints'
@@ -205,6 +206,7 @@ function AppContent() {
                                 <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
                                 <Route path="/learning" element={<LearningPage />} />
+                                <Route path="/notes" element={<NotesPage />} />
                                 <Route path="/terms" element={<TermsPage />} />
                                 <Route path="/privacy" element={<PrivacyPage />} />
                             </Routes>
