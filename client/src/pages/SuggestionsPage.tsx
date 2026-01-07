@@ -90,7 +90,7 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
         if (!window.confirm(t('suggestions.confirm_delete'))) return;
 
         try {
-            await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(parseInt(id)), { method: 'DELETE' });
+            await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(id), { method: 'DELETE' });
             fetchSuggestions();
         } catch (err) {
             console.error('Failed to delete suggestion:', err);
