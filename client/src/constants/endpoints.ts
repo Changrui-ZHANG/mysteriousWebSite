@@ -64,6 +64,15 @@ export const API_ENDPOINTS = {
         DELETE: (id: number) => `${API_BASE}/suggestions/${id}`
     },
 
+    // Notes
+    NOTES: {
+        LIST: (userId: string) => `${API_BASE}/notes?userId=${userId}`,
+        LIST_ALL: (adminCode: string) => `${API_BASE}/notes/all?adminCode=${adminCode}`,
+        CREATE: `${API_BASE}/notes`,
+        UPDATE: (id: string, userId: string) => `${API_BASE}/notes/${id}?userId=${userId}`,
+        DELETE: (id: string, userId: string) => `${API_BASE}/notes/${id}?userId=${userId}`
+    },
+
     // External APIs
     EXTERNAL: {
         PUBLIC_HOLIDAYS: (year: number) =>

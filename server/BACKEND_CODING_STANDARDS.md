@@ -32,6 +32,7 @@ com.changrui.mysterious/
 | `onlinecount` | Compteur utilisateurs en ligne |
 | `calendar` | Configuration calendrier scolaire |
 | `settings` | Paramètres système et status API |
+| `note` | Notes personnelles des utilisateurs |
 
 ### Structure d'un domaine
 
