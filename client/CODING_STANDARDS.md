@@ -32,31 +32,62 @@ This document defines the **single source of truth** for code quality, architect
 
 ## Architecture Rules
 
-- The project is organized **by feature**, not by technical type.
-- Each feature owns its components, hooks, services, and types.
-- Global directories are allowed **ONLY** for truly cross-feature logic.
-- Global folders (`api`, `hooks`, `utils`, `types`) must contain **exclusively transversal code**.
-- Feature-specific logic **MUST** remain inside the feature directory.
+- The project is organized **by domain**, aligned with the backend structure.
+- Each domain owns its pages, components, hooks, services, and types.
+- Global directories are allowed **ONLY** for truly cross-domain logic.
+- Global folders (`api`, `hooks`, `utils`, `types`, `pages`) must contain **exclusively transversal code**.
+- Domain-specific logic **MUST** remain inside the domain directory.
 
 ```
 /src
-├── api/              # Global API client, HTTP utilities
-├── components/ui/    # Global reusable UI components
-├── hooks/            # Global cross-feature hooks
-├── types/            # Global shared types
-├── utils/            # Global pure utility functions
-├── features/
-│   ├── auth/         # Feature: authentication
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   └── types/
-│   ├── messages/     # Feature: messaging
-│   └── games/        # Feature: games
+├── domain/           # Domain-driven organization (aligned with backend)
+│   ├── calendar/     # Domain: calendar & holidays
+│   ├── cv/           # Domain: CV/portfolio (frontend-only)
+│   ├── dashboard/    # Domain: home dashboard (frontend-only)
+│   ├── game/         # Domain: games & scores
+│   ├── messagewall/  # Domain: messages & suggestions
+│   ├── note/         # Domain: user notes
+│   ├── user/         # Domain: authentication & user management
+│   └── vocabulary/   # Domain: vocabulary learning
+├── shared/           # Cross-domain shared code
+│   ├── api/          # HTTP client, API utilities
+│   ├── components/   # Reusable UI components
+│   ├── constants/    # Global constants (endpoints, config)
+│   ├── hooks/        # Cross-domain hooks
+│   ├── layouts/      # App layouts (Navbar)
+│   ├── pages/        # Utility pages (Maintenance, Terms, Privacy)
+│   ├── types/        # Global shared types
+│   └── utils/        # Pure utility functions
 ├── layouts/          # App layouts (Navbar, Footer)
-├── pages/            # Route entry points (thin wrappers)
-└── constants/        # Global constants (endpoints, config, storage keys)
+└── styles/           # Global styles & design system
 ```
+
+### Domain Structure
+
+Each domain follows a consistent internal structure:
+```
+domain/[name]/
+├── [Name]Page.tsx    # Main page component
+├── components/       # Domain-specific UI components
+├── hooks/            # Domain-specific hooks
+├── services/         # Domain-specific API services
+├── types.ts          # Domain-specific types
+└── index.ts          # Barrel export
+```
+
+### Backend Alignment
+
+Frontend domains are aligned with backend domains for consistency:
+| Frontend Domain | Backend Domain | Description |
+|-----------------|----------------|-------------|
+| `calendar/` | `calendar/` | Calendar & holidays |
+| `game/` | `game/` | Games & scores |
+| `messagewall/` | `messagewall/` | Messages & suggestions |
+| `note/` | `note/` | User notes |
+| `user/` | `user/` | Auth & user management |
+| `vocabulary/` | `vocabulary/` | Vocabulary learning |
+| `cv/` | — | Frontend-only |
+| `dashboard/` | — | Frontend-only |
 
 ---
 
