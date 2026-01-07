@@ -1,0 +1,58 @@
+package com.changrui.mysterious.domain.messagewall.controller;
+
+import com.changrui.mysterious.domain.messagewall.model.Message;
+import com.changrui.mysterious.domain.messagewall.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
+/**
+ * WebSocket controller for real-time message broadcasting.
+ * Handles broadcasting events to all connected clients.
+ */
+@Controller
+public class MessageWebSocketController {
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    private MessageService messageService;
+
+    /**
+     * Broadcast a new message to all subscribers.
+     */
+    public void broadcastNewMessage(Message message) {
+        messagingTemplate.convertAndSend("/topic/messages", 
+            new WebSocketEvent("NEW_MESSAGE", message));
+    }
+
+    /**
+     * Broadcast a message deletion event.
+     */
+    public void broadcastDelete(String messageId) {
+        messagingTemplate.convertAndSend("/topic/messages", 
+            new WebSocketEvent("DELETE_MESSAGE", messageId));
+    }
+
+    /**
+     * Broadcast mute status change.
+     */
+    public void broadcastMuteStatus(boolean isMuted) {
+        messagingTemplate.convertAndSend("/topic/messages", 
+            new WebSocketEvent("MUTE_STATUS", isMuted));
+    }
+
+    /**
+     * Broadcast clear all messages event.
+     */
+    public void broadcastClearAll() {
+        messagingTemplate.convertAndSend("/topic/messages", 
+            new WebSocketEvent("CLEAR_ALL", null));
+    }
+
+    /**
+     * WebSocket event wrapper for type-safe messaging.
+     */
+    public record WebSocketEvent(String type, Object payload) {}
+}

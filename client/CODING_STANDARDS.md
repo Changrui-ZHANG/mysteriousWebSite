@@ -57,8 +57,8 @@ This document defines the **single source of truth** for code quality, architect
 │   ├── layouts/      # App layouts (Navbar)
 │   ├── pages/        # Utility pages (Maintenance, Terms, Privacy)
 │   ├── types/        # Global shared types
-│   └── utils/        # Pure utility functions
-├── layouts/          # App layouts (Navbar, Footer)
+│   ├── utils/        # Pure utility functions
+│   └── layouts/      # App layouts (Navbar, Footer)
 └── styles/           # Global styles & design system
 ```
 

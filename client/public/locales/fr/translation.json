@@ -53,7 +53,7 @@
         "messages_desc": "Rejoignez la discussion de la communauté.",
         "suggestions_desc": "Une idée ? Faites-m'en part.",
         "game_desc": "Faites une pause et jouez.",
-        "calendar_desc": "Vérifiez mes disponibilités."
+        "calendar_desc": "Consultez les jours fériés et vacances scolaires."
     },
     "soul": {
         "taglines": [
@@ -95,7 +95,9 @@
             "page_game": "Page Jeux (Arcade)",
             "page_messages": "Mur de Messages",
             "page_suggestions": "Boîte à Idées",
-            "page_calendar": "Calendrier"
+            "page_calendar": "Calendrier",
+            "page_learning": "Apprentissage",
+            "page_notes": "Notes"
         },
         "login_required": "Connexion personnelle requise",
         "login_audit_explanation": "Pour des raisons de sécurité et d'audit, vous devez être connecté avec votre compte personnel pour modifier les paramètres du site.",
@@ -142,7 +144,12 @@
     "maintenance": {
         "title": "En Maintenance",
         "description": "Le site est actuellement en maintenance. Nous serons de retour très bientôt.",
+        "backend_unavailable": "Le serveur est temporairement indisponible. Veuillez réessayer plus tard.",
         "disabled_by": "Désactivé par"
+    },
+    "notes": {
+        "login_required": "Connectez-vous pour accéder à vos notes",
+        "login_hint": "Vos notes seront sauvegardées et synchronisées."
     },
     "calendar": {
         "title": "Calendrier",

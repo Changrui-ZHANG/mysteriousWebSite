@@ -1,5 +1,6 @@
 /**
  * useMessageWall - Hook for message wall logic
+ * Uses WebSocket for real-time updates (messages + presence).
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -8,6 +9,7 @@ import { MESSAGE_CONSTANTS } from '../../../shared/constants/messages';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { getAdminCode } from '../../../shared/constants/authStorage';
 import { postJson, deleteJson } from '../../../shared/api/httpClient';
+import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import type { Message } from '../types';
 
 interface User { userId: string; username: string; }
@@ -40,7 +42,39 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         setCurrentUserId(userId);
     }, []);
 
-    // Fetch Messages
+    // Handle WebSocket message events
+    const handleWebSocketMessage = useCallback((event: { type: string; payload: unknown }) => {
+        switch (event.type) {
+            case 'NEW_MESSAGE':
+                setMessages(prev => [...prev, event.payload as Message]);
+                break;
+            case 'DELETE_MESSAGE':
+                setMessages(prev => prev.filter(m => m.id !== event.payload));
+                break;
+            case 'MUTE_STATUS':
+                setIsGlobalMute(event.payload as boolean);
+                break;
+            case 'CLEAR_ALL':
+                setMessages([]);
+                break;
+        }
+    }, []);
+
+    // Handle WebSocket presence updates
+    const handlePresenceUpdate = useCallback((update: { count: number; showToAll: boolean }) => {
+        setOnlineCount(update.count);
+        setShowOnlineCountToAll(update.showToAll);
+    }, []);
+
+    // Connect to WebSocket
+    const { isConnected } = useWebSocket({
+        onMessage: handleWebSocketMessage,
+        onPresenceUpdate: handlePresenceUpdate,
+        onConnect: () => console.log('WebSocket connected'),
+        onDisconnect: () => console.log('WebSocket disconnected')
+    });
+
+    // Fetch Messages (initial load only)
     const fetchMessages = useCallback(async () => {
         try {
             const response = await fetch(API_ENDPOINTS.MESSAGES.LIST);
@@ -55,52 +89,27 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         }
     }, []);
 
-    useEffect(() => {
-        fetchMessages();
-        const interval = setInterval(fetchMessages, MESSAGE_CONSTANTS.POLL_INTERVAL_MS);
-        return () => clearInterval(interval);
-    }, [fetchMessages]);
-
-    // Heartbeat for online presence
-    useEffect(() => {
-        const sendHeartbeat = async () => {
-            const userId = user ? user.userId : currentUserId;
-            if (userId) {
-                try {
-                    await fetch(API_ENDPOINTS.PRESENCE.HEARTBEAT, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId })
-                    });
-                } catch (error) {
-                    console.error('Failed to send heartbeat:', error);
-                }
-            }
-        };
-        sendHeartbeat();
-        const interval = setInterval(sendHeartbeat, MESSAGE_CONSTANTS.HEARTBEAT_INTERVAL_MS);
-        return () => clearInterval(interval);
-    }, [currentUserId, user]);
-
-    // Fetch online count
+    // Fetch initial online count (WebSocket will handle updates)
     const fetchOnlineCount = useCallback(async () => {
         try {
             const response = await fetch(API_ENDPOINTS.PRESENCE.COUNT, {
                 headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
             });
             const data = await response.json();
-            setOnlineCount(data.count);
-            setShowOnlineCountToAll(data.showToAll);
+            if (data.data) {
+                setOnlineCount(data.data.count);
+                setShowOnlineCountToAll(data.data.showToAll);
+            }
         } catch (error) {
             console.error('Failed to fetch online count:', error);
         }
     }, []);
 
+    // Initial fetch only (no polling - WebSocket handles updates)
     useEffect(() => {
+        fetchMessages();
         fetchOnlineCount();
-        const interval = setInterval(fetchOnlineCount, MESSAGE_CONSTANTS.ONLINE_COUNT_INTERVAL_MS);
-        return () => clearInterval(interval);
-    }, [fetchOnlineCount]);
+    }, [fetchMessages, fetchOnlineCount]);
 
     // Translation handler
     const handleTranslate = useCallback(async (msgId: string, text: string) => {
@@ -136,7 +145,7 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         }
     }, [translations, i18n.language, t]);
 
-    // Submit message
+    // Submit message (via REST API - server broadcasts via WebSocket)
     const handleSubmit = useCallback(async (messageText: string, tempName: string) => {
         const senderId = user ? user.userId : currentUserId;
         let senderName = user ? user.username : tempName;
@@ -158,11 +167,10 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
             const url = adminCode ? `${API_ENDPOINTS.MESSAGES.ADD}?adminCode=${adminCode}` : API_ENDPOINTS.MESSAGES.ADD;
             await postJson(url, message);
             setReplyingTo(null);
-            fetchMessages();
         } catch (error) {
             console.error('Failed to post message:', error);
         }
-    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages]);
+    }, [user, currentUserId, isAdmin, t, replyingTo]);
 
     // Delete message
     const handleDelete = useCallback(async (id: string) => {
@@ -173,11 +181,10 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
                 ? `${API_ENDPOINTS.MESSAGES.DELETE(id)}?userId=${userIdToCheck}&adminCode=${adminCode}`
                 : `${API_ENDPOINTS.MESSAGES.DELETE(id)}?userId=${userIdToCheck}`;
             await deleteJson(url);
-            fetchMessages();
         } catch (error) {
             console.error('Failed to delete message:', error);
         }
-    }, [user, currentUserId, isAdmin, fetchMessages]);
+    }, [user, currentUserId, isAdmin]);
 
     // Admin actions
     const toggleMute = useCallback(async () => {
@@ -185,11 +192,10 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         if (!adminCode) return;
         try {
             await postJson(`${API_ENDPOINTS.MESSAGES.TOGGLE_MUTE}?adminCode=${adminCode}`, {});
-            fetchMessages();
         } catch (error) {
             console.error('Failed to toggle mute:', error);
         }
-    }, [fetchMessages]);
+    }, []);
 
     const clearAllMessages = useCallback(async () => {
         if (!confirm(t('admin.confirm_clear'))) return;
@@ -197,18 +203,17 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         if (!adminCode) return;
         try {
             await postJson(`${API_ENDPOINTS.MESSAGES.CLEAR}?adminCode=${adminCode}`, {});
-            fetchMessages();
         } catch (error) {
             console.error('Failed to clear messages:', error);
         }
-    }, [t, fetchMessages]);
+    }, [t]);
 
     const toggleOnlineCountVisibility = useCallback(async () => {
         const adminCode = getAdminCode();
         if (!adminCode) return;
         try {
-            const data = await postJson<{ showToAll: boolean }>(`${API_ENDPOINTS.PRESENCE.TOGGLE_VISIBILITY}?adminCode=${adminCode}`, {});
-            setShowOnlineCountToAll(data.showToAll);
+            await postJson<{ showToAll: boolean }>(`${API_ENDPOINTS.PRESENCE.TOGGLE_VISIBILITY}?adminCode=${adminCode}`, {});
+            // WebSocket will broadcast the update
         } catch (error) {
             console.error('Failed to toggle visibility:', error);
         }
@@ -234,6 +239,7 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
     return {
         messages, replyingTo, setReplyingTo, translations, translating, showTranslated,
         isGlobalMute, onlineCount, showOnlineCountToAll, highlightedMessageId,
+        isWebSocketConnected: isConnected,
         handleTranslate, handleSubmit, handleDelete,
         toggleMute, clearAllMessages, toggleOnlineCountVisibility, fetchOnlineCount,
         isOwnMessage, canDeleteMessage, scrollToMessage

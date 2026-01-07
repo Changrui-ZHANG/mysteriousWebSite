@@ -20,15 +20,22 @@ public class SystemSettingService {
     @Autowired
     private SystemSettingRepository systemSettingRepository;
 
-    private static final Map<String, String> DEFAULTS = Map.of(
-            "SITE_MAINTENANCE_MODE", "false",
-            "PAGE_CV_ENABLED", "true",
-            "PAGE_GAME_ENABLED", "true",
-            "PAGE_MESSAGES_ENABLED", "true",
-            "PAGE_SUGGESTIONS_ENABLED", "true",
-            "PAGE_CALENDAR_ENABLED", "true",
-            "SITE_MAINTENANCE_MESSAGE", "The site is currently under maintenance. We will be back shortly.",
-            "SITE_MAINTENANCE_BY", "");
+    private static final Map<String, String> DEFAULTS;
+    
+    static {
+        Map<String, String> defaults = new java.util.HashMap<>();
+        defaults.put("SITE_MAINTENANCE_MODE", "false");
+        defaults.put("PAGE_CV_ENABLED", "true");
+        defaults.put("PAGE_GAME_ENABLED", "true");
+        defaults.put("PAGE_MESSAGES_ENABLED", "true");
+        defaults.put("PAGE_SUGGESTIONS_ENABLED", "true");
+        defaults.put("PAGE_CALENDAR_ENABLED", "true");
+        defaults.put("PAGE_LEARNING_ENABLED", "true");
+        defaults.put("PAGE_NOTES_ENABLED", "true");
+        defaults.put("SITE_MAINTENANCE_MESSAGE", "The site is currently under maintenance. We will be back shortly.");
+        defaults.put("SITE_MAINTENANCE_BY", "");
+        DEFAULTS = java.util.Collections.unmodifiableMap(defaults);
+    }
 
     @PostConstruct
     public void init() {

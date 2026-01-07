@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  * Controller for chat messages.
+ * REST endpoints for initial load and admin actions.
+ * Real-time updates are handled via WebSocket.
  */
 @RestController
 @RequestMapping("/api/messages")
@@ -27,6 +29,9 @@ public class MessageController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private MessageWebSocketController webSocketController;
 
     @GetMapping
     public ResponseEntity<List<Message>> getAllMessages() {
@@ -61,6 +66,10 @@ public class MessageController {
         }
 
         Message saved = messageService.addMessage(message);
+        
+        // Broadcast to WebSocket subscribers
+        webSocketController.broadcastNewMessage(saved);
+        
         return ResponseEntity.ok(ApiResponse.success(saved));
     }
 
@@ -72,6 +81,9 @@ public class MessageController {
 
         boolean newState = !messageService.isMuted();
         messageService.setMuted(newState);
+        
+        // Broadcast mute status to all clients
+        webSocketController.broadcastMuteStatus(newState);
 
         return ResponseEntity.ok(ApiResponse.success("Mute toggled", newState));
     }
@@ -84,6 +96,7 @@ public class MessageController {
 
         if (adminService.isValidAdminCode(adminCode)) {
             messageService.deleteMessageById(id);
+            webSocketController.broadcastDelete(id);
             return ResponseEntity.ok(ApiResponse.successMessage("Message deleted"));
         }
 
@@ -91,6 +104,9 @@ public class MessageController {
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
+        
+        // Broadcast deletion to all clients
+        webSocketController.broadcastDelete(id);
 
         return ResponseEntity.ok(ApiResponse.successMessage("Message deleted"));
     }
@@ -102,6 +118,10 @@ public class MessageController {
         }
 
         messageService.clearAllMessages();
+        
+        // Broadcast clear to all clients
+        webSocketController.broadcastClearAll();
+        
         return ResponseEntity.ok(ApiResponse.successMessage("All messages cleared"));
     }
 }

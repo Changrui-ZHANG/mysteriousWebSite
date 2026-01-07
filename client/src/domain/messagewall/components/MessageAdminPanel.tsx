@@ -30,7 +30,7 @@ export function MessageAdminPanel({
 
     if (!isAdmin) {
         return (
-            <div className="text-center py-3 text-xs text-white/30">
+            <div className="text-center py-3 text-xs text-muted">
                 {t('admin.login_hint')}
             </div>
         );
@@ -44,23 +44,23 @@ export function MessageAdminPanel({
             </span>
 
             {/* Divider */}
-            <div className="w-px h-5 bg-white/10" />
+            <div className="w-px h-5 bg-default" />
 
             {/* Online Count + Refresh */}
-            <div className="flex items-center gap-1.5 bg-white/5 rounded-xl p-1 border border-white/5">
-                <span className="text-[10px] font-bold px-2 text-white/50 flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 bg-inset rounded-xl p-1 border border-default">
+                <span className="text-[10px] font-bold px-2 text-secondary flex items-center gap-1.5">
                     <FaUsers className="text-[9px]" /> {onlineCount}
                 </span>
                 <button
                     onClick={onRefreshOnlineCount}
-                    className="w-7 h-7 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-lg transition-all text-white/50 hover:text-white"
+                    className="w-7 h-7 flex items-center justify-center bg-inset hover:bg-surface-alt rounded-lg transition-all text-secondary hover:text-primary"
                     title={t('admin.refresh_count')}
                 >
                     <FaSync className="text-[10px]" />
                 </button>
                 <button
                     onClick={onToggleOnlineVisibility}
-                    className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${showOnlineCountToAll ? 'bg-accent-primary/20 text-accent-primary' : 'bg-white/5 text-white/30'}`}
+                    className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${showOnlineCountToAll ? 'bg-accent-primary/20 text-accent-primary' : 'bg-inset text-muted'}`}
                     title={showOnlineCountToAll ? t('admin.hide_count') : t('admin.show_count')}
                 >
                     {showOnlineCountToAll ? <FaEye className="text-[10px]" /> : <FaEyeSlash className="text-[10px]" />}
@@ -84,7 +84,7 @@ export function MessageAdminPanel({
             {/* Mute Toggle */}
             <button
                 onClick={onToggleMute}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 ${isGlobalMute ? 'bg-accent-warning/20 border-accent-warning/40 text-accent-warning' : 'bg-white/5 border-white/10 text-white/50 hover:bg-accent-warning/10 hover:text-accent-warning'}`}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 ${isGlobalMute ? 'bg-accent-warning/20 border-accent-warning/40 text-accent-warning' : 'bg-inset border-default text-secondary hover:bg-accent-warning/10 hover:text-accent-warning'}`}
             >
                 {isGlobalMute ? <FaVolumeUp className="text-[9px]" /> : <FaVolumeMute className="text-[9px]" />}
                 {isGlobalMute ? t('admin.unmute') : t('admin.mute')}

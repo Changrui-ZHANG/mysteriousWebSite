@@ -78,7 +78,7 @@ export function MessageInput({
                             initial={{ opacity: 0, y: 20, height: 0 }}
                             animate={{ opacity: 1, y: 0, height: 'auto' }}
                             exit={{ opacity: 0, y: 20, height: 0 }}
-                            className="mb-3 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-2xl p-4 shadow-2xl"
+                            className="mb-3 rounded-2xl bg-surface-translucent border border-default backdrop-blur-2xl p-4 shadow-2xl"
                         >
                             {adminPanelContent}
                         </motion.div>
@@ -87,15 +87,15 @@ export function MessageInput({
 
                 {/* Main Input Container */}
                 <div className={`
-                    rounded-[1.75rem] bg-white/[0.03] border border-white/10 backdrop-blur-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] 
+                    rounded-[1.75rem] bg-surface-translucent border border-default backdrop-blur-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] 
                     relative after:absolute after:inset-0 after:rounded-[1.75rem] after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none
-                    transition-all duration-300 hover:bg-white/[0.05] hover:border-white/15
+                    transition-all duration-300 hover:border-strong
                     ${isMuted ? 'opacity-50' : ''}
                 `}>
 
                     {/* Muted Banner */}
                     {isMuted && (
-                        <div className="text-center py-2 text-[10px] font-black uppercase tracking-widest text-accent-danger/80 border-b border-white/5">
+                        <div className="text-center py-2 text-[10px] font-black uppercase tracking-widest text-accent-danger/80 border-b border-default">
                             {t('auth.muted')}
                         </div>
                     )}
@@ -107,7 +107,7 @@ export function MessageInput({
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="flex items-center justify-between px-5 py-2.5 border-b border-white/5 text-xs"
+                                className="flex items-center justify-between px-5 py-2.5 border-b border-default text-xs text-primary"
                             >
                                 <span className="flex items-center gap-2 opacity-70 truncate">
                                     <span className="font-black uppercase tracking-wider opacity-50">{t('messages.replying_to')}</span>
@@ -116,7 +116,7 @@ export function MessageInput({
                                 </span>
                                 <button
                                     onClick={onCancelReply}
-                                    className="w-6 h-6 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all flex items-center justify-center"
+                                    className="w-6 h-6 rounded-lg bg-inset hover:bg-surface-alt text-secondary hover:text-primary transition-all flex items-center justify-center"
                                 >
                                     <FaTimes className="text-[10px]" />
                                 </button>
@@ -129,7 +129,7 @@ export function MessageInput({
 
                         {/* User Avatar or Name Toggle */}
                         {user ? (
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-info flex items-center justify-center text-white font-black text-sm shadow-lg">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-info flex items-center justify-center text-inverse font-black text-sm shadow-lg">
                                 {user.username.charAt(0).toUpperCase()}
                             </div>
                         ) : (
@@ -138,7 +138,7 @@ export function MessageInput({
                                     type="button"
                                     onClick={() => setShowNameInput(!showNameInput)}
                                     disabled={isMuted}
-                                    className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center font-black text-xs ${showNameInput ? 'bg-accent-primary text-white shadow-lg scale-95' : 'bg-white/5 hover:bg-white/10 text-white/50 border border-white/5'}`}
+                                    className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center font-black text-xs ${showNameInput ? 'bg-accent-primary text-inverse shadow-lg scale-95' : 'bg-inset hover:bg-surface-alt text-secondary border border-default'}`}
                                 >
                                     Aa
                                 </button>
@@ -154,7 +154,7 @@ export function MessageInput({
                                             placeholder={t('messages.name_placeholder')}
                                             maxLength={20}
                                             disabled={isMuted}
-                                            className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-accent-primary/30 placeholder:text-white/20"
+                                            className="bg-inset border border-default rounded-xl px-3 py-2 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary/30 placeholder:text-muted"
                                         />
                                     )}
                                 </AnimatePresence>
@@ -170,17 +170,17 @@ export function MessageInput({
                                 placeholder={isMuted ? t('auth.muted') : user ? t('messages.message_placeholder') : ''}
                                 maxLength={200}
                                 disabled={isMuted}
-                                className={`w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-primary/20 placeholder:text-white/20 transition-all ${isMuted ? 'cursor-not-allowed' : 'hover:bg-white/[0.07]'}`}
+                                className={`w-full bg-inset border border-default rounded-2xl px-5 py-3 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-primary/20 placeholder:text-muted transition-all ${isMuted ? 'cursor-not-allowed' : 'hover:bg-surface-alt'}`}
                             />
 
                             {/* Guest Login Prompt */}
                             {!user && !newMessage && !isMuted && (
-                                <div className="absolute inset-0 px-5 py-3 pointer-events-none flex items-center text-white/30 text-sm">
+                                <div className="absolute inset-0 px-5 py-3 pointer-events-none flex items-center text-muted text-sm">
                                     <span>{t('messages.guest_placeholder_text')}</span>
                                     <button
                                         type="button"
                                         onClick={onOpenLogin}
-                                        className="pointer-events-auto font-black text-accent-primary ml-1.5 hover:text-white transition-colors"
+                                        className="pointer-events-auto font-black text-accent-primary ml-1.5 hover:text-accent-secondary transition-colors"
                                     >
                                         {t('messages.guest_placeholder_link')}
                                     </button>
@@ -192,7 +192,7 @@ export function MessageInput({
                         <button
                             type="submit"
                             disabled={!newMessage.trim() || loading || isMuted}
-                            className="w-11 h-11 flex items-center justify-center bg-gradient-to-br from-accent-primary to-accent-info hover:scale-105 active:scale-95 disabled:opacity-20 disabled:scale-100 rounded-xl text-white transition-all shadow-lg shadow-accent-primary/20"
+                            className="w-11 h-11 flex items-center justify-center bg-gradient-to-br from-accent-primary to-accent-info hover:scale-105 active:scale-95 disabled:opacity-20 disabled:scale-100 rounded-xl text-inverse transition-all shadow-lg shadow-accent-primary/20"
                         >
                             <FaPaperPlane className="text-sm" />
                         </button>
@@ -202,7 +202,7 @@ export function MessageInput({
                             <button
                                 type="button"
                                 onClick={onOpenAdminPanel}
-                                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-all ${showAdminPanel ? 'bg-accent-secondary text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-white/50 border border-white/5'}`}
+                                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-all ${showAdminPanel ? 'bg-accent-secondary text-inverse shadow-lg' : 'bg-inset hover:bg-surface-alt text-secondary border border-default'}`}
                             >
                                 <FaCog className={`text-sm ${showAdminPanel ? 'animate-spin' : ''}`} />
                             </button>

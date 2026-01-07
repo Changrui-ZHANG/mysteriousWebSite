@@ -113,6 +113,8 @@ export const AdminSiteControls: React.FC<AdminSiteControlsProps> = ({
             'PAGE_MESSAGES_ENABLED': t('admin.settings.page_messages'),
             'PAGE_SUGGESTIONS_ENABLED': t('admin.settings.page_suggestions'),
             'PAGE_CALENDAR_ENABLED': t('admin.settings.page_calendar'),
+            'PAGE_LEARNING_ENABLED': t('admin.settings.page_learning'),
+            'PAGE_NOTES_ENABLED': t('admin.settings.page_notes'),
         };
         return labels[key] || key;
     };

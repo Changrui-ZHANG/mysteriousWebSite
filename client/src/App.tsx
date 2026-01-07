@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, ReactNode } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Navbar } from './shared/layouts/Navbar'
 import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary } from './shared/components'
 import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
 import { STORAGE_KEYS } from './shared/constants/authStorage'
-import { postJson, fetchJson } from './shared/api/httpClient'
+import { fetchJson } from './shared/api/httpClient'
 import { API_ENDPOINTS } from './shared/constants/endpoints'
+import { useAdmin } from './shared/hooks/useAdmin'
 
 // Domain imports
 import { AuthModal } from './domain/user'
@@ -25,9 +26,18 @@ interface User {
     username: string;
 }
 
+interface RouteConfig {
+    path: string;
+    element: ReactNode;
+    settingKey?: string;
+}
+
 function AppContent() {
     const location = useLocation()
     const { i18n } = useTranslation()
+
+    // Centralized Admin State
+    const admin = useAdmin();
 
     // Global Auth State
     const [user, setUser] = useState<User | null>(null);
@@ -37,15 +47,13 @@ function AppContent() {
     const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
     const [settingsLoaded, setSettingsLoaded] = useState(false);
 
-    // Initial Load: Auth, Language, and Settings
+    // Initial Load: Auth and Settings
     useEffect(() => {
-        // 1. Load Auth
         const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
 
-            // Fetch user's language preference from database ONLY ONCE on mount
             fetch(`/api/users/${parsedUser.userId}/language`)
                 .then(res => res.json())
                 .then(data => {
@@ -56,14 +64,12 @@ function AppContent() {
                 })
                 .catch(err => console.error('Failed to load language preference:', err));
         } else {
-            // Load language from localStorage if not logged in
             const savedLanguage = localStorage.getItem('preferredLanguage');
             if (savedLanguage && i18n.language !== savedLanguage) {
                 i18n.changeLanguage(savedLanguage);
             }
         }
 
-        // 2. Fetch public settings
         fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
             .then(data => {
                 setSiteSettings(data);
@@ -73,14 +79,13 @@ function AppContent() {
                 console.error("Failed to load settings", err);
                 setSettingsLoaded(true);
             });
-    }, []); // Only run once on mount
+    }, []);
 
     const handleLogin = (newUser: User) => {
         setUser(newUser);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
         setShowAuthModal(false);
 
-        // Fetch and apply user's language preference immediately
         fetch(`/api/users/${newUser.userId}/language`)
             .then(res => res.json())
             .then(data => {
@@ -97,61 +102,45 @@ function AppContent() {
         localStorage.removeItem(STORAGE_KEYS.USER);
     };
 
-    // Global Admin State
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-    const [adminCode, setAdminCode] = useState('');
-
-    useEffect(() => {
-        const storedAdmin = localStorage.getItem(STORAGE_KEYS.IS_ADMIN);
-        if (storedAdmin === 'true') setIsAdmin(true);
-
-        const storedSuperAdmin = localStorage.getItem(STORAGE_KEYS.IS_SUPER_ADMIN);
-        if (storedSuperAdmin === 'true') {
-            setIsSuperAdmin(true);
-            setIsAdmin(true);
-        }
-
-        const storedCode = localStorage.getItem(STORAGE_KEYS.ADMIN_CODE);
-        if (storedCode) setAdminCode(storedCode);
-    }, []);
-
-    const handleAdminLogin = async (code: string) => {
-        try {
-            const response = await postJson<{ role: string; message: string }>('/api/auth/verify-admin', { code });
-
-            if (response.role === 'super_admin') {
-                setIsSuperAdmin(true);
-                setIsAdmin(true);
-                setAdminCode(code);
-                localStorage.setItem(STORAGE_KEYS.IS_SUPER_ADMIN, 'true');
-                localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
-                localStorage.setItem(STORAGE_KEYS.ADMIN_CODE, code);
-                return true;
-            } else if (response.role === 'admin') {
-                setIsAdmin(true);
-                setAdminCode(code);
-                localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
-                localStorage.setItem(STORAGE_KEYS.ADMIN_CODE, code);
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error("Admin login failed", error);
-            return false;
-        }
-    };
-
-    const handleAdminLogout = () => {
-        setIsAdmin(false);
-        setIsSuperAdmin(false);
-        setAdminCode('');
-        localStorage.removeItem(STORAGE_KEYS.IS_ADMIN);
-        localStorage.removeItem(STORAGE_KEYS.IS_SUPER_ADMIN);
-        localStorage.removeItem(STORAGE_KEYS.ADMIN_CODE);
+    const refreshSettings = () => {
+        fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
+            .then(data => setSiteSettings(data))
+            .catch(err => console.error("Failed to refresh settings", err));
     };
 
     const isEnabled = (key: string) => siteSettings[key] === 'true';
+    const openLogin = () => setShowAuthModal(true);
+
+    // Centralized route configuration
+    const routes: RouteConfig[] = useMemo(() => [
+        { path: '/', element: <Home /> },
+        { path: '/cv', element: <CV />, settingKey: 'PAGE_CV_ENABLED' },
+        { path: '/game', element: <Game user={user} onOpenLogin={openLogin} isSuperAdmin={admin.isSuperAdmin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_GAME_ENABLED' },
+        { path: '/messages', element: <MessageWall user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} isSuperAdmin={admin.isSuperAdmin} />, settingKey: 'PAGE_MESSAGES_ENABLED' },
+        { path: '/suggestions', element: <SuggestionsPage user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_SUGGESTIONS_ENABLED' },
+        { path: '/calendar', element: <CalendarPage isAdmin={admin.isAdmin} />, settingKey: 'PAGE_CALENDAR_ENABLED' },
+        { path: '/learning', element: <LearningPage />, settingKey: 'PAGE_LEARNING_ENABLED' },
+        { path: '/notes', element: <NotesPage />, settingKey: 'PAGE_NOTES_ENABLED' },
+        { path: '/terms', element: <TermsPage /> },
+        { path: '/privacy', element: <PrivacyPage /> },
+    ], [user, admin.isAdmin, admin.isSuperAdmin]);
+
+    const maintenanceElement = (
+        <MaintenancePage
+            message={siteSettings['SITE_MAINTENANCE_MESSAGE']}
+            activatedBy={siteSettings['SITE_MAINTENANCE_BY']}
+            onAdminLogin={admin.login}
+        />
+    );
+
+    const renderRoute = (route: RouteConfig) => {
+        // No settingKey = always enabled (Home, Terms, Privacy)
+        if (!route.settingKey) {
+            return route.element;
+        }
+        // Check if page is enabled
+        return isEnabled(route.settingKey) ? route.element : maintenanceElement;
+    };
 
     return (
         <div className="page-container relative font-sans">
@@ -163,28 +152,20 @@ function AppContent() {
                 onLoginSuccess={handleLogin}
             />
 
-            {(settingsLoaded && isEnabled('SITE_MAINTENANCE_MODE') && !isAdmin) ? (
-                <MaintenancePage
-                    message={siteSettings['SITE_MAINTENANCE_MESSAGE']}
-                    activatedBy={siteSettings['SITE_MAINTENANCE_BY']}
-                    onAdminLogin={handleAdminLogin}
-                />
+            {(settingsLoaded && isEnabled('SITE_MAINTENANCE_MODE') && !admin.isAdmin) ? (
+                maintenanceElement
             ) : (
                 <>
                     <Navbar
                         user={user}
-                        onOpenLogin={() => setShowAuthModal(true)}
+                        onOpenLogin={openLogin}
                         onLogout={handleLogout}
-                        isAdmin={isAdmin}
-                        isSuperAdmin={isSuperAdmin}
-                        adminCode={adminCode}
-                        onAdminLogin={handleAdminLogin}
-                        onAdminLogout={handleAdminLogout}
-                        onRefreshSettings={() => {
-                            fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
-                                .then(data => setSiteSettings(data))
-                                .catch(err => console.error("Failed to refresh settings", err));
-                        }}
+                        isAdmin={admin.isAdmin}
+                        isSuperAdmin={admin.isSuperAdmin}
+                        adminCode={admin.adminCode}
+                        onAdminLogin={admin.login}
+                        onAdminLogout={admin.logout}
+                        onRefreshSettings={refreshSettings}
                     />
 
                     {location.pathname === '/' && (
@@ -199,16 +180,13 @@ function AppContent() {
                     <div className="relative z-10">
                         <ErrorBoundary>
                             <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/cv" element={isEnabled('PAGE_CV_ENABLED') ? <CV /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/game" element={isEnabled('PAGE_GAME_ENABLED') ? <Game user={user} onOpenLogin={() => setShowAuthModal(true)} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/messages" element={isEnabled('PAGE_MESSAGES_ENABLED') ? <MessageWall user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/suggestions" element={isEnabled('PAGE_SUGGESTIONS_ENABLED') ? <SuggestionsPage user={user} onOpenLogin={() => setShowAuthModal(true)} isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/calendar" element={isEnabled('PAGE_CALENDAR_ENABLED') ? <CalendarPage isAdmin={isAdmin} /> : <MaintenancePage message={siteSettings['SITE_MAINTENANCE_MESSAGE']} activatedBy={siteSettings['SITE_MAINTENANCE_BY']} onAdminLogin={handleAdminLogin} />} />
-                                <Route path="/learning" element={<LearningPage />} />
-                                <Route path="/notes" element={<NotesPage />} />
-                                <Route path="/terms" element={<TermsPage />} />
-                                <Route path="/privacy" element={<PrivacyPage />} />
+                                {routes.map(route => (
+                                    <Route
+                                        key={route.path}
+                                        path={route.path}
+                                        element={renderRoute(route)}
+                                    />
+                                ))}
                             </Routes>
                         </ErrorBoundary>
                     </div>

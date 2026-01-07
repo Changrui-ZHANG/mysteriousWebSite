@@ -75,10 +75,10 @@ export function MessageItem({
         >
             {/* Avatar */}
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs flex-shrink-0 shadow-lg ${isOwn
-                ? 'bg-gradient-to-br from-accent-primary to-accent-info text-white'
+                ? 'bg-gradient-to-br from-accent-primary to-accent-info text-inverse'
                 : msg.isAnonymous
-                    ? 'bg-white/10 text-white/50 border border-white/10'
-                    : 'bg-gradient-to-br from-accent-secondary to-accent-primary text-white'
+                    ? 'bg-inset text-muted border border-default'
+                    : 'bg-gradient-to-br from-accent-secondary to-accent-primary text-inverse'
                 }`}>
                 {getInitials(msg.name, msg.isAnonymous)}
             </div>
@@ -99,8 +99,8 @@ export function MessageItem({
                 <div className={`
                     relative px-4 py-3 rounded-2xl backdrop-blur-xl transition-all duration-300 group shadow-lg
                     ${isOwn
-                        ? 'bg-accent-primary/20 border border-accent-primary/30 text-white rounded-br-md'
-                        : 'bg-white/[0.04] border border-white/10 text-white/90 rounded-bl-md'
+                        ? 'bg-accent-primary/20 border border-accent-primary/30 text-primary rounded-br-md'
+                        : 'bg-surface-translucent border border-default text-primary rounded-bl-md'
                     }
                     after:absolute after:inset-0 after:rounded-2xl ${isOwn ? 'after:rounded-br-md' : 'after:rounded-bl-md'} after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none
                 `}>
@@ -109,7 +109,7 @@ export function MessageItem({
                     {msg.quotedMessage && (
                         <div
                             onClick={() => msg.quotedMessageId && onScrollToMessage(msg.quotedMessageId)}
-                            className="mb-2.5 cursor-pointer rounded-xl px-3 py-2 text-xs border-l-4 transition-all hover:brightness-125 bg-white/5 border-white/20 text-white/60"
+                            className="mb-2.5 cursor-pointer rounded-xl px-3 py-2 text-xs border-l-4 transition-all hover:brightness-125 bg-inset border-default text-secondary"
                         >
                             <div className="flex items-center gap-1.5 mb-1">
                                 <FaReply className="text-[8px] opacity-50" />
@@ -135,7 +135,7 @@ export function MessageItem({
                     <div className={`absolute ${isOwn ? 'left-0 -translate-x-full pl-2' : 'right-0 translate-x-full pr-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all flex gap-1`}>
                         <button
                             onClick={() => onTranslate(msg.id, msg.message)}
-                            className="w-7 h-7 bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-lg rounded-lg text-white/70 hover:text-white text-[10px] flex items-center justify-center transition-all"
+                            className="w-7 h-7 bg-inset hover:bg-surface-alt border border-default backdrop-blur-lg rounded-lg text-secondary hover:text-primary text-[10px] flex items-center justify-center transition-all"
                             title={t('messages.translate')}
                             disabled={isTranslating}
                         >
@@ -143,7 +143,7 @@ export function MessageItem({
                         </button>
                         <button
                             onClick={() => onReply(msg)}
-                            className="w-7 h-7 bg-white/10 hover:bg-accent-primary/30 border border-white/10 backdrop-blur-lg rounded-lg text-white/70 hover:text-white text-[10px] flex items-center justify-center transition-all"
+                            className="w-7 h-7 bg-inset hover:bg-accent-primary/30 border border-default backdrop-blur-lg rounded-lg text-secondary hover:text-primary text-[10px] flex items-center justify-center transition-all"
                             title={t('messages.reply')}
                         >
                             <FaReply />

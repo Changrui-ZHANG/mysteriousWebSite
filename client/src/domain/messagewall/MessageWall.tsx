@@ -29,7 +29,7 @@ export function MessageWall({ user, onOpenLogin, isAdmin = false, isSuperAdmin =
             {/* Online Count Indicator - Liquid Pill */}
             {(showOnlineCountToAll || isAdmin) && (
                 <div className="fixed top-20 right-6 z-40 transition-all duration-500">
-                    <span className="text-[10px] px-4 py-2 rounded-full font-black tracking-widest uppercase shadow-2xl flex items-center gap-2.5 bg-white/[0.05] text-accent-primary backdrop-blur-2xl border border-white/10 relative after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
+                    <span className="text-[10px] px-4 py-2 rounded-full font-black tracking-widest uppercase shadow-2xl flex items-center gap-2.5 bg-surface-translucent text-accent-primary backdrop-blur-2xl border border-default relative after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
                         <span className="w-2 h-2 rounded-full bg-accent-success animate-pulse shadow-[0_0_10px_var(--color-accent-success)]" />
                         {onlineCount} {t('messages.online')}
                     </span>

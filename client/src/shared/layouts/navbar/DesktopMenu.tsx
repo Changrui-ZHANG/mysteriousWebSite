@@ -48,11 +48,11 @@ export function DesktopMenu({
         { to: "/", label: t('nav.home') },
         { to: "/cv", label: t('nav.cv') },
         { to: "/game", label: t('nav.game') },
-        { to: "/notes", label: t('nav.notes') },
         { to: "/messages", label: t('nav.messages') }
     ];
 
     const moreLinks = [
+        { to: "/notes", label: t('nav.notes') },
         { to: "/suggestions", label: t('nav.suggestions') },
         { to: "/calendar", label: t('nav.calendar') },
         { to: "/learning", label: t('nav.learning') }
@@ -72,18 +72,20 @@ export function DesktopMenu({
                     </Link>
                 ))}
 
-                {/* Dropdown for More Links */}
+                {/* Dropdown for More Links - Horizontal Liquid Glass Style */}
                 <div className="relative group">
-                    <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
+                    <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/notes', '/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
                         {t('nav.more')} <FaChevronDown className="text-[10px] transition-transform duration-300 group-hover:rotate-180" />
                     </button>
-                    <div className="absolute top-full left-0 w-full h-2 bg-transparent z-40" />
-                    <div className="absolute top-[calc(100%+10px)] right-0 w-56 py-2 rounded-xl shadow-md border backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 bg-surface/95 border-default">
+                    {/* Invisible bridge to prevent hover gap */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-full h-3 bg-transparent z-40" />
+                    {/* Horizontal submenu with same navbar style */}
+                    <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
                         {moreLinks.map(link => (
                             <Link
                                 key={link.to}
                                 to={link.to}
-                                className={`relative block px-5 py-3 transition-all text-sm tracking-wide uppercase hover:bg-inset ${location.pathname === link.to ? 'text-primary font-bold' : 'text-secondary'}`}
+                                className={`relative z-10 px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
                             >
                                 {link.label}
                             </Link>

@@ -1,10 +1,9 @@
 package com.changrui.mysterious.domain.onlinecount.controller;
 
-import com.changrui.mysterious.domain.onlinecount.service.OnlineCountService;
+import com.changrui.mysterious.domain.onlinecount.service.WebSocketPresenceService;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
-import com.changrui.mysterious.shared.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,33 +12,26 @@ import java.util.Map;
 
 /**
  * Controller for tracking online user count.
+ * Now uses WebSocket-based presence tracking.
  */
 @RestController
 @RequestMapping("/api/presence")
 public class OnlineCountController {
 
     @Autowired
-    private OnlineCountService onlineCountService;
+    private WebSocketPresenceService presenceService;
 
     @Autowired
     private AdminService adminService;
 
-    @PostMapping("/heartbeat")
-    public ResponseEntity<ApiResponse<Void>> heartbeat(@RequestBody Map<String, String> payload) {
-        String userId = payload.get("userId");
-
-        if (userId == null || userId.isEmpty()) {
-            throw new ValidationException("User ID is required");
-        }
-
-        onlineCountService.updateHeartbeat(userId);
-        return ResponseEntity.ok(ApiResponse.successMessage("Heartbeat updated"));
-    }
-
+    /**
+     * Get current online count (for initial page load).
+     * Real-time updates are pushed via WebSocket.
+     */
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getOnlineCount() {
-        long count = onlineCountService.getOnlineCount();
-        boolean showToAll = onlineCountService.isShowOnlineCountToAll();
+        int count = presenceService.getOnlineCount();
+        boolean showToAll = presenceService.isShowOnlineCountToAll();
 
         return ResponseEntity.ok(ApiResponse.success(Map.of(
                 "count", count,
@@ -52,9 +44,9 @@ public class OnlineCountController {
             throw new UnauthorizedException("Invalid admin code");
         }
 
-        onlineCountService.toggleShowOnlineCountToAll();
+        boolean newValue = presenceService.toggleShowOnlineCountToAll();
 
         return ResponseEntity.ok(ApiResponse.success(
-                Map.of("showToAll", onlineCountService.isShowOnlineCountToAll())));
+                Map.of("showToAll", newValue)));
     }
 }
