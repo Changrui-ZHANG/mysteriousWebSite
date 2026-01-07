@@ -66,11 +66,31 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         setShowOnlineCountToAll(update.showToAll);
     }, []);
 
+    // Fetch initial online count after WebSocket connects
+    const fetchOnlineCount = useCallback(async () => {
+        try {
+            const response = await fetch(API_ENDPOINTS.PRESENCE.COUNT, {
+                headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+            });
+            const data = await response.json();
+            if (data.data) {
+                setOnlineCount(data.data.count);
+                setShowOnlineCountToAll(data.data.showToAll);
+            }
+        } catch (error) {
+            console.error('Failed to fetch online count:', error);
+        }
+    }, []);
+
     // Connect to WebSocket
     const { isConnected } = useWebSocket({
         onMessage: handleWebSocketMessage,
         onPresenceUpdate: handlePresenceUpdate,
-        onConnect: () => console.log('WebSocket connected'),
+        onConnect: () => {
+            console.log('WebSocket connected');
+            // Fetch count after connection is established
+            fetchOnlineCount();
+        },
         onDisconnect: () => console.log('WebSocket disconnected')
     });
 
@@ -89,27 +109,10 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         }
     }, []);
 
-    // Fetch initial online count (WebSocket will handle updates)
-    const fetchOnlineCount = useCallback(async () => {
-        try {
-            const response = await fetch(API_ENDPOINTS.PRESENCE.COUNT, {
-                headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-            });
-            const data = await response.json();
-            if (data.data) {
-                setOnlineCount(data.data.count);
-                setShowOnlineCountToAll(data.data.showToAll);
-            }
-        } catch (error) {
-            console.error('Failed to fetch online count:', error);
-        }
-    }, []);
-
     // Initial fetch only (no polling - WebSocket handles updates)
     useEffect(() => {
         fetchMessages();
-        fetchOnlineCount();
-    }, [fetchMessages, fetchOnlineCount]);
+    }, [fetchMessages]);
 
     // Translation handler
     const handleTranslate = useCallback(async (msgId: string, text: string) => {
