@@ -16,7 +16,6 @@ export const API_ENDPOINTS = {
 
     // Presence
     PRESENCE: {
-        HEARTBEAT: `${API_BASE}/presence/heartbeat`,
         COUNT: `${API_BASE}/presence/count`,
         TOGGLE_VISIBILITY: `${API_BASE}/presence/toggle-visibility`
     },

@@ -120,7 +120,7 @@ function AppContent() {
         { path: '/suggestions', element: <SuggestionsPage user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_SUGGESTIONS_ENABLED' },
         { path: '/calendar', element: <CalendarPage isAdmin={admin.isAdmin} />, settingKey: 'PAGE_CALENDAR_ENABLED' },
         { path: '/learning', element: <LearningPage />, settingKey: 'PAGE_LEARNING_ENABLED' },
-        { path: '/notes', element: <NotesPage />, settingKey: 'PAGE_NOTES_ENABLED' },
+        { path: '/notes', element: <NotesPage user={user} />, settingKey: 'PAGE_NOTES_ENABLED' },
         { path: '/terms', element: <TermsPage /> },
         { path: '/privacy', element: <PrivacyPage /> },
     ], [user, admin.isAdmin, admin.isSuperAdmin]);

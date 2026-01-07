@@ -69,12 +69,13 @@ public class WebSocketPresenceService {
      * Broadcast online count to all connected clients.
      */
     public void broadcastOnlineCount() {
-        messagingTemplate.convertAndSend("/topic/presence", 
-            new PresenceUpdate(getOnlineCount(), isShowOnlineCountToAll()));
+        messagingTemplate.convertAndSend("/topic/presence",
+                new PresenceUpdate(getOnlineCount(), isShowOnlineCountToAll()));
     }
 
     /**
      * Presence update payload.
      */
-    public record PresenceUpdate(int count, boolean showToAll) {}
+    public record PresenceUpdate(int count, boolean showToAll) {
+    }
 }
