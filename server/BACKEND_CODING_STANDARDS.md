@@ -10,20 +10,28 @@ Ce document définit les règles de codage et l'architecture du backend Spring B
 
 ```
 com.changrui.mysterious/
-├── MysteriousApplication.java          # Point d'entrée
-├── shared/                             # Éléments partagés cross-domain
-│   ├── config/                         # Configuration globale (CORS, etc.)
-│   ├── dto/                            # DTOs partagés (ApiResponse)
-│   └── exception/                      # Exceptions et handlers globaux
+├── MysteriousApplication.java      # Point d'entrée
 │
-└── domain/                             # Domaines métier
-    ├── user/                           # Authentification, préférences, gestion users
-    ├── game/                           # Scores, statuts jeux, génération maps
-    ├── vocabulary/                     # Vocabulaire et favoris
-    ├── community/                      # Messages et suggestions
-    ├── presence/                       # Utilisateurs en ligne
-    └── system/                         # Settings, calendrier, status API
+├── shared/                         # Éléments partagés cross-domain
+│   ├── config/                     # Configuration globale (CORS, etc.)
+│   ├── dto/                        # DTOs partagés (ApiResponse)
+│   └── exception/                  # Exceptions et handlers globaux
+│
+└── domain/                         # Domaines métier
+    └── {nom-domaine}/              # Un dossier par domaine métier
 ```
+
+### Domaines actuels
+
+| Domaine | Description |
+|---------|-------------|
+| `user` | Authentification, préférences, gestion utilisateurs |
+| `game` | Scores, statuts jeux, génération maps |
+| `vocabulary` | Vocabulaire et favoris |
+| `messagewall` | Messages et suggestions |
+| `onlinecount` | Compteur utilisateurs en ligne |
+| `calendar` | Configuration calendrier scolaire |
+| `settings` | Paramètres système et status API |
 
 ### Structure d'un domaine
 
@@ -477,3 +485,165 @@ void methodName_expectedBehavior_condition() {
 - [ ] Transactions sur les opérations d'écriture
 - [ ] Exceptions métier utilisées (pas de return null)
 - [ ] Logs ajoutés pour les opérations importantes
+- [ ] Changeset Liquibase créé pour les modifications de schéma
+
+---
+
+## Migrations de Base de Données (Liquibase)
+
+### Structure des fichiers
+
+```
+src/main/resources/db/changelog/
+├── db.changelog-master.xml         # Fichier principal (inclut les autres)
+└── changes/
+    ├── 001-initial-schema.xml      # Schéma initial
+    ├── 002-add-feature-x.xml       # Migrations suivantes
+    └── ...
+```
+
+### Format d'un changeset
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Commentaire de section pour le domaine -->
+    <!-- DOMAIN: NOM_DOMAINE -->
+    
+    <!-- Nom de l'entité concernée -->
+    <changeSet id="001-create-table-name" author="changrui">
+        <comment>Description de la migration</comment>
+        <createTable tableName="nom_table">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nom_colonne" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
+```
+
+### Règles Liquibase
+
+1. **ID unique** : Format `{numero}-{description}` (ex: `014-add-user-email`)
+2. **Un changeset = une modification logique** : Ne pas mélanger plusieurs tables
+3. **Jamais modifier un changeset existant** : Créer un nouveau changeset pour les corrections
+4. **Rollback** : Prévoir le rollback pour les migrations complexes
+5. **Commentaires** : Toujours documenter le but de la migration et le domaine concerné
+6. **Organisation** : Grouper les changesets par domaine avec des commentaires de section
+
+### Correspondance Entity ↔ Liquibase
+
+Le changelog doit correspondre **exactement** aux entités JPA. Règles de mapping :
+
+| Annotation JPA | Type Liquibase |
+|----------------|----------------|
+| `@Id @GeneratedValue(UUID)` | `VARCHAR(36)` |
+| `@Id` (String sans @GeneratedValue) | `VARCHAR(255)` |
+| `@Id @GeneratedValue(IDENTITY)` | `INT autoIncrement="true"` |
+| `String` (sans length) | `VARCHAR(255)` |
+| `@Column(length = N)` | `VARCHAR(N)` |
+| `@Column(columnDefinition = "TEXT")` | `TEXT` |
+| `int` / `Integer` | `INT` |
+| `long` / `Long` | `BIGINT` |
+| `boolean` / `Boolean` | `BOOLEAN` |
+| `LocalDateTime` | `TIMESTAMP` |
+| `@ElementCollection` | Table séparée avec FK |
+
+### Nommage des colonnes
+
+Spring Boot utilise `SpringPhysicalNamingStrategy` par défaut :
+- `userId` → `user_id`
+- `gameType` → `game_type`
+- `lastHeartbeat` → `last_heartbeat`
+
+Si `@Column(name = "...")` est spécifié, utiliser ce nom exact.
+
+### Exemple complet d'une entité
+
+```java
+@Entity
+@Table(name = "scores")
+public class Score {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;                    // → VARCHAR(36)
+
+    @Column(nullable = false)
+    private String username;              // → VARCHAR(255) NOT NULL
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;                // → user_id VARCHAR(255) NOT NULL
+
+    @Column(nullable = false)
+    private int score;                    // → INT NOT NULL
+
+    @Column(nullable = true)
+    private Integer attempts;             // → INT (nullable)
+}
+```
+
+```xml
+<createTable tableName="scores">
+    <column name="id" type="VARCHAR(36)">
+        <constraints primaryKey="true" nullable="false"/>
+    </column>
+    <column name="username" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+    </column>
+    <column name="user_id" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+    </column>
+    <column name="score" type="INT">
+        <constraints nullable="false"/>
+    </column>
+    <column name="attempts" type="INT"/>
+</createTable>
+```
+
+### Commandes utiles
+
+```bash
+# Appliquer les migrations (automatique au démarrage)
+mvn spring-boot:run
+
+# Valider le changelog sans l'appliquer
+mvn liquibase:validate
+
+# Voir le SQL qui serait exécuté
+mvn liquibase:updateSQL
+
+# Rollback de la dernière migration
+mvn liquibase:rollback -Dliquibase.rollbackCount=1
+
+# Marquer les changesets comme déjà appliqués (pour DB existante)
+mvn liquibase:changelogSync
+```
+
+### Configuration
+
+```properties
+# application.properties
+spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
+spring.liquibase.enabled=true
+
+# Désactiver Hibernate DDL auto (Liquibase gère le schéma)
+spring.jpa.hibernate.ddl-auto=none
+```
+
+### Checklist Liquibase
+
+- [ ] Le type Liquibase correspond exactement au type Hibernate généré
+- [ ] Les noms de colonnes suivent le naming strategy (snake_case)
+- [ ] Les contraintes (nullable, unique) correspondent à l'entité
+- [ ] Les index définis dans `@Table(indexes = ...)` sont créés
+- [ ] Les `@ElementCollection` ont leur table séparée avec FK
+- [ ] Le changeset est dans le bon fichier et bien commenté

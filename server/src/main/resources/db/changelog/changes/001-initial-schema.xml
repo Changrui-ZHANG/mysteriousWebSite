@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: USER                                 -->
+    <!-- ============================================ -->
+    <!-- AppUser entity -->
+    <changeSet id="001-create-app-users" author="changrui">
+        <comment>Table des utilisateurs de l'application</comment>
+        <createTable tableName="app_users">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="plain_password" type="VARCHAR(255)"/>
+            <column name="preferred_language" type="VARCHAR(255)" defaultValue="fr"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: GAME                                 -->
+    <!-- ============================================ -->
+    <!-- Score entity -->
+    <changeSet id="002-create-scores" author="changrui">
+        <comment>Table des scores de jeux</comment>
+        <createTable tableName="scores">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="game_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attempts" type="INT"/>
+        </createTable>
+        <createIndex indexName="idx_user_game" tableName="scores">
+            <column name="user_id"/>
+            <column name="game_type"/>
+        </createIndex>
+        <createIndex indexName="idx_game_score" tableName="scores">
+            <column name="game_type"/>
+            <column name="score"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- GameStatus entity -->
+    <changeSet id="003-create-game-status" author="changrui">
+        <comment>Table des statuts de jeux (activé/désactivé)</comment>
+        <createTable tableName="game_status">
+            <column name="game_type" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: VOCABULARY                           -->
+    <!-- ============================================ -->
+    <!-- VocabularyItem entity -->
+    <changeSet id="004-create-vocabulary-items" author="changrui">
+        <comment>Table des éléments de vocabulaire</comment>
+        <createTable tableName="vocabulary_items">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="expression" type="TEXT">
+                <constraints unique="true"/>
+            </column>
+            <column name="meaning" type="TEXT"/>
+            <column name="meaning_en" type="TEXT"/>
+            <column name="meaning_zh" type="TEXT"/>
+            <column name="example" type="TEXT"/>
+            <column name="level" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- UserVocabularyFavorite entity -->
+    <changeSet id="005-create-user-vocabulary-favorites" author="changrui">
+        <comment>Table des favoris vocabulaire par utilisateur</comment>
+        <createTable tableName="user_vocabulary_favorites">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vocabulary_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="user_vocabulary_favorites"
+                             columnNames="user_id, vocabulary_id"
+                             constraintName="uk_user_vocabulary"/>
+    </changeSet>
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: MESSAGEWALL                          -->
+    <!-- ============================================ -->
+    <!-- Message entity -->
+    <changeSet id="006-create-messages" author="changrui">
+        <comment>Table des messages du chat</comment>
+        <createTable tableName="messages">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_anonymous" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_verified" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quoted_message_id" type="VARCHAR(255)"/>
+            <column name="quoted_name" type="VARCHAR(255)"/>
+            <column name="quoted_message" type="VARCHAR(500)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Suggestion entity -->
+    <changeSet id="007-create-suggestions" author="changrui">
+        <comment>Table des suggestions utilisateurs</comment>
+        <createTable tableName="suggestions">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="suggestion" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- SuggestionComment entity -->
+    <changeSet id="008-create-suggestion-comments" author="changrui">
+        <comment>Table des commentaires sur les suggestions</comment>
+        <createTable tableName="suggestion_comments">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="suggestion_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quoted_comment_id" type="VARCHAR(255)"/>
+            <column name="quoted_username" type="VARCHAR(255)"/>
+            <column name="quoted_content" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ChatSetting entity -->
+    <changeSet id="009-create-chat-settings" author="changrui">
+        <comment>Table des paramètres du chat (mute, etc.)</comment>
+        <createTable tableName="chat_settings">
+            <column name="setting_key" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="setting_value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: ONLINECOUNT                          -->
+    <!-- ============================================ -->
+    <!-- OnlineUser entity -->
+    <changeSet id="010-create-online-users" author="changrui">
+        <comment>Table de présence des utilisateurs en ligne</comment>
+        <createTable tableName="online_users">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="last_heartbeat" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: CALENDAR                             -->
+    <!-- ============================================ -->
+    <!-- CalendarConfig entity -->
+    <changeSet id="011-create-calendar-config" author="changrui">
+        <comment>Table de configuration du calendrier scolaire</comment>
+        <createTable tableName="calendar_config">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="last_updated" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- CalendarConfig.activeZones @ElementCollection -->
+    <changeSet id="012-create-calendar-config-zones" author="changrui">
+        <comment>Table des zones actives du calendrier (ElementCollection)</comment>
+        <createTable tableName="calendar_config_active_zones">
+            <column name="calendar_config_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active_zones" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="calendar_config_active_zones"
+                                 baseColumnNames="calendar_config_id"
+                                 referencedTableName="calendar_config"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_calendar_zones_config"/>
+    </changeSet>
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: SETTINGS                             -->
+    <!-- ============================================ -->
+    <!-- SystemSetting entity -->
+    <changeSet id="013-create-system-settings" author="changrui">
+        <comment>Table des paramètres système</comment>
+        <createTable tableName="system_settings">
+            <column name="setting_key" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="setting_value" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,8 +1,6 @@
 package com.changrui.mysterious.domain.user.model;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Entity representing an application user.
@@ -27,11 +25,6 @@ public class AppUser {
 
     @Column(nullable = true)
     private String preferredLanguage = "fr";
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_vocabulary_favorites", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "vocabulary_id")
-    private Set<Integer> vocabularyFavorites = new HashSet<>();
 
     public AppUser() {
     }
@@ -81,13 +74,5 @@ public class AppUser {
 
     public void setPreferredLanguage(String preferredLanguage) {
         this.preferredLanguage = preferredLanguage;
-    }
-
-    public Set<Integer> getVocabularyFavorites() {
-        return vocabularyFavorites;
-    }
-
-    public void setVocabularyFavorites(Set<Integer> vocabularyFavorites) {
-        this.vocabularyFavorites = vocabularyFavorites;
     }
 }

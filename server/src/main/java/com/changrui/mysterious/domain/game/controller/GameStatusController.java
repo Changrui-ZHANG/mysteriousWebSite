@@ -1,7 +1,7 @@
 package com.changrui.mysterious.domain.game.controller;
 
 import com.changrui.mysterious.domain.game.model.GameStatus;
-import com.changrui.mysterious.domain.game.repository.GameStatusRepository;
+import com.changrui.mysterious.domain.game.service.GameStatusService;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
@@ -19,14 +19,14 @@ import java.util.List;
 public class GameStatusController {
 
     @Autowired
-    private GameStatusRepository gameStatusRepository;
+    private GameStatusService gameStatusService;
 
     @Autowired
     private AdminService adminService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<GameStatus>>> getAllStatuses() {
-        return ResponseEntity.ok(ApiResponse.success(gameStatusRepository.findAll()));
+        return ResponseEntity.ok(ApiResponse.success(gameStatusService.getAllStatuses()));
     }
 
     @PostMapping("/{gameType}/toggle")
@@ -38,14 +38,6 @@ public class GameStatusController {
             throw new UnauthorizedException("Invalid admin code");
         }
 
-        GameStatus status = gameStatusRepository.findById(gameType)
-                .map(existing -> {
-                    existing.setEnabled(!existing.isEnabled());
-                    return existing;
-                })
-                .orElseGet(() -> new GameStatus(gameType, false));
-
-        gameStatusRepository.save(status);
-        return ResponseEntity.ok(ApiResponse.success(status));
+        return ResponseEntity.ok(ApiResponse.success(gameStatusService.toggleGame(gameType)));
     }
 }
