@@ -25,3 +25,6 @@ target/
 mvnw
 mvnw.cmd
 *.log
+.agent/*
+.kiro/*
+.shared/*

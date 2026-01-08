@@ -32,9 +32,11 @@ export default function Match3({ onSubmitScore, personalBest, isAuthenticated, o
 
     return (
         <GameWindow
+            gameTitle="MATCH 3"
             color="pink"
             bgmUrl={AUDIO_CONFIG.BGM_URL}
             bgGradient="bg-gradient-to-b from-pink-900/50 to-slate-900/80"
+            gameStatus={true}
             onReset={() => { createBoard(); playSound('click'); }}
             hud={{
                 score,

@@ -134,13 +134,22 @@ export function GameScene({
 
     // Virtual Buttons Hookup
     useEffect(() => {
-        if (onMobileButtons) {
-            onMobileButtons({
-                moveLeft: (on: boolean) => { if (keys.current) { keys.current['KeyA'] = on; lastInputSource.current = 'keyboard'; } },
-                moveRight: (on: boolean) => { if (keys.current) { keys.current['KeyD'] = on; lastInputSource.current = 'keyboard'; } }
-            });
+        if (onMobileButtons && keys.current) {
+            const handlers = {
+                moveLeft: (on: boolean) => { 
+                    keys.current['KeyA'] = on; 
+                    lastInputSource.current = 'keyboard';
+                    console.log('Mobile Left:', on); // Debug log
+                },
+                moveRight: (on: boolean) => { 
+                    keys.current['KeyD'] = on; 
+                    lastInputSource.current = 'keyboard';
+                    console.log('Mobile Right:', on); // Debug log
+                }
+            };
+            onMobileButtons(handlers);
         }
-    }, [onMobileButtons, keys, lastInputSource]);
+    }, [onMobileButtons]);
 
     // Handle Pointer Lock
     useEffect(() => {

@@ -40,11 +40,11 @@ export function ScoreDisplay({
         : score;
 
     return (
-        <div className={`text-xl font-bold font-mono ${colors.primary} ${className}`}>
+        <div className={`text-xl font-bold font-mono ${colors.primary} drop-shadow-sm ${className}`}>
             {t('game.score')}: {attempts != null ? `${score}/${attempts}` : score}
 
             {showBest && personalBest && personalBest.score !== undefined && personalBest.score > 0 && (
-                <span className={`ml-3 text-lg ${colors.secondary} opacity-80`}>
+                <span className={`ml-3 text-lg ${colors.secondary} opacity-80 drop-shadow-sm`}>
                     ({t('game.best')}: {bestScore}
                     {personalBest.attempts != null && `/${personalBest.attempts}`})
                 </span>

@@ -79,8 +79,10 @@ export default function PokemonGame({ onSubmitScore, personalBest, isAuthenticat
 
     return (
         <GameWindow
+            gameTitle="POKEMON QUIZ"
             color="purple"
             bgmUrl={BGM_URLS.POKEMON_GAME}
+            gameStatus={true}
             hud={{
                 score,
                 attempts,

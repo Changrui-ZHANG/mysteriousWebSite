@@ -159,11 +159,25 @@ export default function MazeGame({ onSubmitScore, personalBest, isAuthenticated,
 
     return (
         <GameWindow
+            gameTitle="MAZE RUNNER"
             color="cyan"
             bgmUrl={BGM_URLS.MAZE_GAME}
+            gameStatus={true}
             onReset={fetchMaze}
             isFlipped={isFlipped}
             onFlipChange={setIsFlipped}
+            hud={{
+                score: moves,
+                personalBest,
+                customInfo: (
+                    <div className="flex items-center gap-3 text-xs">
+                        <span>Time: {timeElapsed}s</span>
+                        <span className={shiftTimer <= 3 ? 'text-red-400 animate-pulse' : 'text-pink-400'}>
+                            Shift: {shiftTimer}s
+                        </span>
+                    </div>
+                )
+            }}
             rulesContent={<MazeRules onClose={() => setIsFlipped(false)} />}
         >
             <div

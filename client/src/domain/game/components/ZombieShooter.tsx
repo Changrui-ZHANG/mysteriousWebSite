@@ -51,7 +51,7 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
             </div>
             <SuperRewardModal isOpen={isPickingUpgrade} upgrades={upgradeChoices} onSelect={handleUpgradeSelect} />
             {/* Notifications */}
-            <div className="absolute bottom-[40%] md:bottom-44 left-8 z-[70] pointer-events-none flex flex-col gap-2">
+            <div className="absolute bottom-[40%] md:bottom-44 left-8 z-50 pointer-events-none flex flex-col gap-2">
                 <AnimatePresence>
                     {notifications.map((n, i) => (
                         <motion.div key={n.id} initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: i === notifications.length - 1 ? 1 : 0.4 }} exit={{ x: 50, opacity: 0 }} transition={{ duration: 0.3 }}
@@ -68,17 +68,65 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
         </div>
     );
 
-    const mobileControls = gameState === 'playing' && !isPickingUpgrade && !isFlipped && (
-        <div className="flex justify-center gap-12 pb-6 md:hidden">
-            <button className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-                onTouchStart={() => { mobileMoveHandlers?.moveLeft(true); playSound('click'); }} onTouchEnd={() => mobileMoveHandlers?.moveLeft(false)}
-                onMouseDown={() => mobileMoveHandlers?.moveLeft(true)} onMouseUp={() => mobileMoveHandlers?.moveLeft(false)}>
-                <FaArrowLeft size={28} />
+    const mobileControls = gameState === 'playing' && !isPickingUpgrade && !isFlipped && mobileMoveHandlers && (
+        <div className="flex justify-center gap-8 md:gap-12 pb-4 md:pb-6 md:hidden px-4">
+            <button 
+                className="w-14 h-14 md:w-16 md:h-16 bg-cyan-500/20 dark:bg-cyan-500/10 active:bg-cyan-500/50 dark:active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-600 dark:text-cyan-400 backdrop-blur-md border border-cyan-500/40 dark:border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-200 hover:scale-105 active:scale-95"
+                onTouchStart={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveLeft(true); 
+                    playSound('click'); 
+                }} 
+                onTouchEnd={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveLeft(false); 
+                }}
+                onMouseDown={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveLeft(true); 
+                }} 
+                onMouseUp={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveLeft(false); 
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+                style={{ touchAction: 'manipulation' }}
+            >
+                <FaArrowLeft size={24} className="md:hidden" />
+                <FaArrowLeft size={28} className="hidden md:block" />
             </button>
-            <button className="w-16 h-16 bg-cyan-500/10 active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-400 backdrop-blur-md border border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-                onTouchStart={() => { mobileMoveHandlers?.moveRight(true); playSound('click'); }} onTouchEnd={() => mobileMoveHandlers?.moveRight(false)}
-                onMouseDown={() => mobileMoveHandlers?.moveRight(true)} onMouseUp={() => mobileMoveHandlers?.moveRight(false)}>
-                <FaArrowRight size={28} />
+            <button 
+                className="w-14 h-14 md:w-16 md:h-16 bg-cyan-500/20 dark:bg-cyan-500/10 active:bg-cyan-500/50 dark:active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-600 dark:text-cyan-400 backdrop-blur-md border border-cyan-500/40 dark:border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-200 hover:scale-105 active:scale-95"
+                onTouchStart={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveRight(true); 
+                    playSound('click'); 
+                }} 
+                onTouchEnd={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveRight(false); 
+                }}
+                onMouseDown={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveRight(true); 
+                }} 
+                onMouseUp={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveRight(false); 
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+                style={{ touchAction: 'manipulation' }}
+            >
+                <FaArrowRight size={24} className="md:hidden" />
+                <FaArrowRight size={28} className="hidden md:block" />
             </button>
         </div>
     );
@@ -86,6 +134,7 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
     return (
         <div className="w-full h-full flex flex-col">
             <GameWindow
+                gameTitle="ZOMBIE SHOOTER"
                 color="cyan"
                 onReset={handleStart}
                 showReset={gameState !== 'intro'}
@@ -93,6 +142,18 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
                 isFlipped={isFlipped}
                 onFlipChange={setIsFlipped}
                 fullscreenBg="bg-black"
+                gameStatus={true}
+                hud={gameState !== 'intro' ? {
+                    score,
+                    personalBest,
+                    customInfo: (
+                        <div className="flex items-center gap-3 text-xs">
+                            <span>WAVE: {wave}</span>
+                            <span>KILLS: {kills}</span>
+                            <span>WEAPONS: {weaponCount}</span>
+                        </div>
+                    )
+                } : undefined}
                 rulesContent={<RulesPanel onBack={() => setIsFlipped(false)} />}
             >
                 {gameContent}

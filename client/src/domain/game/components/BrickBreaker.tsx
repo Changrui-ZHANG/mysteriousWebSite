@@ -7,7 +7,8 @@ import { useSound } from '../../../shared/hooks/useSound';
 import { useMute } from '../../../shared/hooks/useMute';
 import { useBrickBreaker } from '../hooks/useBrickBreaker';
 import { useBrickBreakerEngine } from '../hooks/useBrickBreakerEngine';
-import { GameWindow, HUDItem } from './GameWindow';
+import { GameWindow } from './GameWindow';
+import { HUDItem } from './GameHUD';
 import {
     MapSelector,
     BrickBreakerRules,
@@ -48,6 +49,7 @@ export default function BrickBreaker({
     return (
         <>
             <GameWindow
+                gameTitle="BRICK BREAKER"
                 color="cyan"
                 bgmUrl={AUDIO_CONFIG.BGM_URL}
                 bgmEnabled={game.gameState === 'playing'}
@@ -56,6 +58,7 @@ export default function BrickBreaker({
                 containerRef={game.containerRef}
                 isFlipped={isFlipped}
                 onFlipChange={setIsFlipped}
+                gameStatus={true}
                 bgGradient="bg-gradient-to-b from-cyan-900/50 to-slate-900/80"
                 hud={{
                     score: game.score,
