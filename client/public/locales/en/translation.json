@@ -38,7 +38,8 @@
         "theme": {
             "light": "Light Mode",
             "dark": "Dark Mode",
-            "paper": "Paper Theme"
+            "paper": "Paper Theme",
+            "modern": "Modern Theme"
         },
         "lang": {
             "en": "English",
@@ -128,6 +129,8 @@
         "success_register": "Registration successful! Please login.",
         "failed": "Authentication failed",
         "confirm_logout": "Are you sure you want to logout?",
+        "login_required": "Login Required",
+        "login_required_description": "You must be logged in to access this feature.",
         "admin_code": "Admin Code",
         "admin_panel": "Admin Panel",
         "quit_admin": "Quit Admin",
@@ -147,6 +150,7 @@
         "disabled_by": "Disabled by"
     },
     "notes": {
+        "login_required_title": "Login Required for Notes",
         "login_required": "Log in to access your notes",
         "login_hint": "Your notes will be saved and synced."
     },
@@ -304,6 +308,7 @@
             }
         },
         "edu": {
+            "esgi": "Master's in Computer Science: Web Engineering",
             "master": "Master Informatique: Systèmes et Applications Répartis",
             "licence": "Licence Informatique: Informatique Générale"
         },
@@ -326,6 +331,7 @@
             "Video games",
             "Sport"
         ],
+        "availability": "Available immediately",
         "last_updated": "Last updated",
         "update_date": "January 2026",
         "location": "Paris, France",
@@ -471,6 +477,14 @@
         "game_disabled": "Game Disabled",
         "game_disabled_desc": "This game is currently disabled by the administrator.",
         "zombie": "Zombie Defense",
+        "zombie_desc": "Defend the base against the zombie horde!",
+        "mission_brief": "Mission Briefing",
+        "zombie_rules_text": "A zombie horde is approaching! You control the last defense turret. Move laterally to aim. Shooting is automatic.",
+        "start_mission": "START MISSION",
+        "retry": "RETRY",
+        "objective": "Objective",
+        "survival": "Survive as long as possible.",
+        "move": "Move",
         "next_shift": "Next Shift",
         "zombie_hud": {
             "system_status": "System Status",
@@ -605,7 +619,9 @@
     },
     "learning": {
         "title": "The Linguist",
+        "login_required_title": "Login Required for The Linguist",
         "login_required": "Please log in to access this page.",
+        "login_required_description": "You must be logged in to access The Linguist and save your favorite expressions.",
         "discover": "Discover",
         "review": "Review",
         "no_favorites": "No favorites yet.",
@@ -620,10 +636,10 @@
     "messages": {
         "title": "Message Wall",
         "subtitle": "Leave your mark",
+        "login_required_title": "Login Required for Messages",
+        "login_required_description": "You must be logged in to access the message wall and participate in community discussions.",
         "name_placeholder": "Your name",
         "message_placeholder": "Your message...",
-        "not_connected_placeholder": "Message... or ",
-        "guest_placeholder_link": "Log in",
         "translated": "Translated",
         "translation_limit": "Daily translation limit reached",
         "translation_error": "Translation failed",
@@ -711,6 +727,9 @@
     },
     "spacetraders": {
         "join_fleet": "Join the Space Fleet",
+        "rules_title": "Rules of Engagement",
+        "rules_text": "Pilot your fleet across the galaxy. Register a unique callsign to begin your career as a merchant or pirate.",
+        "rules_market": "Trade resources, upgrade your ships, and dominate the intergalactic market.",
         "register_desc": "Enter a callsign to register a new agent.",
         "callsign_placeholder": "ENTER CALL SIGN",
         "register_agent": "Register Agent",
@@ -734,13 +753,15 @@
     "suggestions": {
         "title": "Suggestions & Ideas",
         "subtitle": "Share your ideas to make this website better!",
+        "login_required_title": "Login Required for Suggestions",
+        "login_required_description": "You must be logged in to access suggestions and share your ideas with the community.",
         "submit_new": "Submit a New Idea",
         "placeholder": "I would like to see more arcade games...",
         "submit": "Submit Idea",
         "login_to_view": "Please log in to view and submit suggestions",
         "submitting": "Submitting...",
-        "login_to_submit": "Log in to suggest",
         "login_required": "Please log in to submit suggestions",
+        "login_required_description": "You must be logged in to access suggestions and share your ideas with the community.",
         "all_suggestions": "All Suggestions",
         "your_suggestions": "Your Suggestions",
         "submit_failed": "Failed to submit suggestion",

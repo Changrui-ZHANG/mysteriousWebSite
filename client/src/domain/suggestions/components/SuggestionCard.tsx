@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FaTrash, FaUndo } from 'react-icons/fa';
 import { StatusBadge } from './StatusBadge';
 import { CommentSection } from './CommentSection';
-import type { Suggestion, SuggestionUser } from '../suggestions.types';
+import type { Suggestion, SuggestionUser } from '../types';
 
 interface SuggestionCardProps {
     suggestion: Suggestion;

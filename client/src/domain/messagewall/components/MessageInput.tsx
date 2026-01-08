@@ -2,11 +2,7 @@ import { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperPlane, FaTimes, FaCog } from 'react-icons/fa';
-
-interface User {
-    userId: string;
-    username: string;
-}
+import { useAuth } from '../../../shared/contexts/AuthContext';
 
 interface Message {
     id: string;
@@ -22,31 +18,28 @@ interface Message {
 }
 
 interface MessageInputProps {
-    user: User | null;
     isAdmin: boolean;
     isGlobalMute: boolean;
     replyingTo: Message | null;
     onSubmit: (message: string, tempName: string) => Promise<void>;
     onCancelReply: () => void;
-    onOpenLogin: () => void;
     onOpenAdminPanel: () => void;
     showAdminPanel?: boolean;
     adminPanelContent?: ReactNode;
 }
 
 export function MessageInput({
-    user,
     isAdmin,
     isGlobalMute,
     replyingTo,
     onSubmit,
     onCancelReply,
-    onOpenLogin,
     onOpenAdminPanel,
     showAdminPanel = false,
     adminPanelContent
 }: MessageInputProps) {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [newMessage, setNewMessage] = useState('');
     const [showNameInput, setShowNameInput] = useState(false);
     const [tempName, setTempName] = useState('');
@@ -174,18 +167,6 @@ export function MessageInput({
                             />
 
                             {/* Guest Login Prompt */}
-                            {!user && !newMessage && !isMuted && (
-                                <div className="absolute inset-0 px-5 py-3 pointer-events-none flex items-center text-muted text-sm">
-                                    <span>{t('messages.guest_placeholder_text')}</span>
-                                    <button
-                                        type="button"
-                                        onClick={onOpenLogin}
-                                        className="pointer-events-auto font-black text-accent-primary ml-1.5 hover:text-accent-secondary transition-colors"
-                                    >
-                                        {t('messages.guest_placeholder_link')}
-                                    </button>
-                                </div>
-                            )}
                         </div>
 
                         {/* Send Button */}

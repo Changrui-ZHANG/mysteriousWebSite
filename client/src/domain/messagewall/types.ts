@@ -17,8 +17,5 @@ export interface User {
 }
 
 export interface MessageWallProps {
-    user?: User | null;
-    onOpenLogin?: () => void;
-    isAdmin?: boolean;
-    isSuperAdmin?: boolean;
+    // Props removed - now using useAuth() context
 }

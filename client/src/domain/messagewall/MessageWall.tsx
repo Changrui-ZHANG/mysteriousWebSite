@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import UserManagement from '../user/UserManagement';
-import { ScrollProgress } from '../../shared/components';
+import { ScrollProgress, LoginRequired } from '../../shared/components';
 import { MessageItem, MessageInput, MessageAdminPanel } from './components';
 import { useMessageWall } from './hooks/useMessageWall';
 import { getAdminCode } from '../../shared/constants/authStorage';
@@ -11,7 +11,7 @@ import type { MessageWallProps } from './types';
 
 export function MessageWall({ }: MessageWallProps) {
     const { t } = useTranslation();
-    const { user, isAdmin, isSuperAdmin, openAuthModal: onOpenLogin } = useAuth();
+    const { user, isAdmin, isSuperAdmin } = useAuth();
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [showUserManagement, setShowUserManagement] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -24,87 +24,104 @@ export function MessageWall({ }: MessageWallProps) {
         isOwnMessage, canDeleteMessage, scrollToMessage
     } = useMessageWall({ user, isAdmin });
 
+    const messageIcon = (
+        <svg className="w-8 h-8 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+    );
+
     return (
-        <div className="page-container fixed inset-0 overflow-hidden flex flex-col pt-20 overscroll-none">
-            <ScrollProgress target={scrollContainerRef} />
+        <LoginRequired
+            title={t('messages.login_required_title')}
+            description={t('messages.login_required_description')}
+            icon={messageIcon}
+        >
+            <div className="page-container fixed inset-0 overflow-hidden flex flex-col pt-20 overscroll-none relative">
+                <ScrollProgress target={scrollContainerRef} />
 
-            {/* Online Count Indicator - Liquid Pill */}
-            {(showOnlineCountToAll || isAdmin) && (
-                <div className="fixed top-20 right-6 z-40 transition-all duration-500">
-                    <span className="text-[10px] px-4 py-2 rounded-full font-black tracking-widest uppercase shadow-2xl flex items-center gap-2.5 bg-surface-translucent text-accent-primary backdrop-blur-2xl border border-default relative after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
-                        <span className="w-2 h-2 rounded-full bg-accent-success animate-pulse shadow-[0_0_10px_var(--color-accent-success)]" />
-                        {onlineCount} {t('messages.online')}
-                    </span>
+                {/* Online Count Indicator - Liquid Pill */}
+                {(showOnlineCountToAll || isAdmin) && (
+                    <div className="fixed top-20 right-6 z-40 transition-all duration-500">
+                        <span className="text-[10px] px-4 py-2 rounded-full font-black tracking-widest uppercase shadow-2xl flex items-center gap-2.5 bg-surface-translucent text-accent-primary backdrop-blur-2xl border border-default relative after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
+                            <span className="w-2 h-2 rounded-full bg-accent-success animate-pulse shadow-[0_0_10px_var(--color-accent-success)]" />
+                            {onlineCount} {t('messages.online')}
+                        </span>
+                    </div>
+                )}
+
+                {/* Messages Area */}
+                <div
+                    ref={scrollContainerRef}
+                    className="flex-1 overflow-y-auto px-4 md:px-8 pb-40"
+                    style={{ scrollbarGutter: 'stable' }}
+                >
+                    <div className="max-w-3xl mx-auto flex flex-col gap-4 py-6">
+                        <AnimatePresence mode="popLayout">
+                            {(!Array.isArray(messages) || messages.length === 0) ? (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="text-center py-32 opacity-30 text-lg font-medium"
+                                >
+                                    {t('messages.empty')}
+                                </motion.div>
+                            ) : (
+                                messages.map((msg, index) => (
+                                    <MessageItem
+                                        key={msg.id}
+                                        msg={msg}
+                                        index={index}
+                                        isOwn={isOwnMessage(msg)}
+                                        isHighlighted={highlightedMessageId === msg.id}
+                                        canDelete={canDeleteMessage(msg)}
+                                        translation={translations[msg.id]}
+                                        isTranslating={translating.has(msg.id)}
+                                        showTranslation={showTranslated.has(msg.id)}
+                                        onDelete={handleDelete}
+                                        onReply={setReplyingTo}
+                                        onTranslate={handleTranslate}
+                                        onScrollToMessage={scrollToMessage}
+                                    />
+                                ))
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
-            )}
 
-            {/* Messages Area - Centered Container */}
-            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 md:px-8 pb-40" style={{ scrollbarGutter: 'stable' }}>
-                <div className="max-w-3xl mx-auto flex flex-col gap-4 py-6">
-                    <AnimatePresence mode="popLayout">
-                        {(!Array.isArray(messages) || messages.length === 0) ? (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="text-center py-32 opacity-30 text-lg font-medium"
-                            >
-                                {t('messages.empty')}
-                            </motion.div>
-                        ) : (
-                            messages.map((msg, index) => (
-                                <MessageItem
-                                    key={msg.id}
-                                    msg={msg}
-                                    index={index}
-                                    isOwn={isOwnMessage(msg)}
-                                    isHighlighted={highlightedMessageId === msg.id}
-                                    canDelete={canDeleteMessage(msg)}
-                                    translation={translations[msg.id]}
-                                    isTranslating={translating.has(msg.id)}
-                                    showTranslation={showTranslated.has(msg.id)}
-                                    onDelete={handleDelete}
-                                    onReply={setReplyingTo}
-                                    onTranslate={handleTranslate}
-                                    onScrollToMessage={scrollToMessage}
-                                />
-                            ))
-                        )}
-                    </AnimatePresence>
-                </div>
-            </div>
+                {/* Input Area + Admin Panel Container */}
+                <MessageInput
+                    isAdmin={isAdmin}
+                    isGlobalMute={isGlobalMute}
+                    replyingTo={replyingTo}
+                    onSubmit={handleSubmit}
+                    onCancelReply={() => setReplyingTo(null)}
+                    onOpenAdminPanel={() => setShowAdminPanel(!showAdminPanel)}
+                    showAdminPanel={showAdminPanel}
+                    adminPanelContent={
+                        <MessageAdminPanel
+                            isAdmin={isAdmin}
+                            isSuperAdmin={isSuperAdmin}
+                            isGlobalMute={isGlobalMute}
+                            onlineCount={onlineCount}
+                            showOnlineCountToAll={showOnlineCountToAll}
+                            onToggleMute={toggleMute}
+                            onClearAll={clearAllMessages}
+                            onToggleOnlineVisibility={toggleOnlineCountVisibility}
+                            onRefreshOnlineCount={fetchOnlineCount}
+                            onOpenUserManagement={() => setShowUserManagement(true)}
+                        />
+                    }
+                />
 
-            {/* Input Area + Admin Panel Container */}
-            <MessageInput
-                user={user ?? null}
-                isAdmin={isAdmin}
-                isGlobalMute={isGlobalMute}
-                replyingTo={replyingTo}
-                onSubmit={handleSubmit}
-                onCancelReply={() => setReplyingTo(null)}
-                onOpenLogin={onOpenLogin ?? (() => { })}
-                onOpenAdminPanel={() => setShowAdminPanel(!showAdminPanel)}
-                showAdminPanel={showAdminPanel}
-                adminPanelContent={
-                    <MessageAdminPanel
-                        isAdmin={isAdmin}
-                        isSuperAdmin={isSuperAdmin}
-                        isGlobalMute={isGlobalMute}
-                        onlineCount={onlineCount}
-                        showOnlineCountToAll={showOnlineCountToAll}
-                        onToggleMute={toggleMute}
-                        onClearAll={clearAllMessages}
-                        onToggleOnlineVisibility={toggleOnlineCountVisibility}
-                        onRefreshOnlineCount={fetchOnlineCount}
-                        onOpenUserManagement={() => setShowUserManagement(true)}
+                {/* User Management Modal */}
+                {showUserManagement && (
+                    <UserManagement
+                        isOpen={showUserManagement}
+                        onClose={() => setShowUserManagement(false)}
+                        superAdminCode={getAdminCode() || ''}
                     />
-                }
-            />
-
-            <UserManagement
-                isOpen={showUserManagement}
-                onClose={() => setShowUserManagement(false)}
-                superAdminCode={getAdminCode() || ''}
-            />
-        </div>
+                )}
+            </div>
+        </LoginRequired>
     );
 }

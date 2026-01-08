@@ -129,6 +129,8 @@
         "success_register": "Inscription réussie ! Veuillez vous connecter.",
         "failed": "Échec de l'authentification",
         "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
+        "login_required": "Connexion requise",
+        "login_required_description": "Vous devez être connecté pour accéder à cette fonctionnalité.",
         "admin_code": "Code Admin",
         "admin_panel": "Panneau Admin",
         "quit_admin": "Quitter Admin",
@@ -148,6 +150,7 @@
         "disabled_by": "Désactivé par"
     },
     "notes": {
+        "login_required_title": "Connexion requise pour les notes",
         "login_required": "Connectez-vous pour accéder à vos notes",
         "login_hint": "Vos notes seront sauvegardées et synchronisées."
     },
@@ -608,7 +611,9 @@
     },
     "learning": {
         "title": "Le Linguiste",
+        "login_required_title": "Connexion requise pour le Linguiste",
         "login_required": "Veuillez vous connecter pour accéder à cette page.",
+        "login_required_description": "Vous devez être connecté pour accéder au Linguiste et sauvegarder vos expressions favorites.",
         "discover": "Découverte",
         "review": "Révision",
         "no_favorites": "Aucun favori pour le moment.",
@@ -623,10 +628,10 @@
     "messages": {
         "title": "Mur de Messages",
         "subtitle": "Laissez votre empreinte",
+        "login_required_title": "Connexion requise pour les messages",
+        "login_required_description": "Vous devez être connecté pour accéder au mur de messages et participer aux discussions de la communauté.",
         "name_placeholder": "Votre nom",
         "message_placeholder": "Votre message...",
-        "guest_placeholder_text": "Message... ou ",
-        "guest_placeholder_link": "Se connecter",
         "translated": "Traduit",
         "translation_limit": "Limite de traduction journalière atteinte",
         "translation_error": "Échec de la traduction",
@@ -740,13 +745,15 @@
     "suggestions": {
         "title": "Suggestions & Idées",
         "subtitle": "Partagez vos idées pour améliorer ce site !",
+        "login_required_title": "Connexion requise pour les suggestions",
+        "login_required_description": "Vous devez être connecté pour accéder aux suggestions et partager vos idées avec la communauté.",
         "submit_new": "Soumettre une Nouvelle Idée",
         "placeholder": "Je voudrais voir plus de jeux d'arcade...",
         "submit": "Soumettre l'Idée",
         "login_to_view": "Veuillez vous connecter pour voir et soumettre des suggestions",
         "submitting": "Envoi en cours...",
-        "login_to_submit": "Connectez-vous pour suggérer",
         "login_required": "Veuillez vous connecter pour soumettre des suggestions",
+        "login_required_description": "Vous devez être connecté pour accéder aux suggestions et partager vos idées avec la communauté.",
         "all_suggestions": "Toutes les Suggestions",
         "your_suggestions": "Vos Suggestions",
         "submit_failed": "Échec de l'envoi de la suggestion",

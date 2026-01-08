@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteRight, FaTrash } from 'react-icons/fa';
 import { fetchJson, postJson } from '../../../shared/api/httpClient';
-import type { SuggestionComment, SuggestionUser } from '../suggestions.types';
+import type { SuggestionComment, SuggestionUser } from '../types';
 
 interface CommentSectionProps {
     suggestionId: string;

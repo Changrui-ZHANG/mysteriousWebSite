@@ -5,15 +5,16 @@ import { FaLightbulb, FaCheck, FaPaperPlane } from 'react-icons/fa';
 import { fetchJson, postJson } from '../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
 import { useAuth } from '../../shared/contexts/AuthContext';
+import { LoginRequired } from '../../shared/components';
 import { SuggestionCard } from './components';
-import type { Suggestion } from './suggestions.types';
+import type { Suggestion } from './types';
 
 interface SuggestionsPageProps {
 }
 
 export function SuggestionsPage({ }: SuggestionsPageProps) {
     const { t } = useTranslation();
-    const { user, isAdmin, openAuthModal: onOpenLogin } = useAuth();
+    const { user, isAdmin } = useAuth();
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [newSuggestion, setNewSuggestion] = useState('');
     const [loading, setLoading] = useState(false);
@@ -43,12 +44,7 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) {
-            onOpenLogin();
-            return;
-        }
-
-        if (!newSuggestion.trim()) return;
+        if (!user || !newSuggestion.trim()) return;
 
         setLoading(true);
         setError(null);
@@ -100,7 +96,7 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
         setShowArchive(false);
     };
 
-    return (
+    const content = (
         <div className="page-container min-h-screen pt-24 pb-12 px-4 md:px-8">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
@@ -139,29 +135,17 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                                 <textarea
                                     value={newSuggestion}
                                     onChange={(e) => setNewSuggestion(e.target.value)}
-                                    placeholder={user ? t('suggestions.placeholder') : ''}
-                                    className={`w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-secondary/30 resize-none transition-all ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    placeholder={t('suggestions.placeholder')}
+                                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-secondary/30 resize-none transition-all"
                                     rows={4}
                                     maxLength={1000}
-                                    disabled={!user}
                                 />
-                                {!user && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[2px] rounded-xl">
-                                        <button
-                                            type="button"
-                                            onClick={onOpenLogin}
-                                            className="px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold transition-all hover:scale-105 active:scale-95"
-                                        >
-                                            {t('suggestions.login_to_submit')}
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-white/30 font-mono">{newSuggestion.length}/1000</span>
                                 <button
                                     type="submit"
-                                    disabled={loading || !user || !newSuggestion.trim()}
+                                    disabled={loading || !newSuggestion.trim()}
                                     className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-secondary to-accent-primary text-white font-bold text-sm disabled:opacity-30 disabled:scale-100 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-accent-secondary/20"
                                 >
                                     <FaPaperPlane className="text-xs" />
@@ -248,5 +232,15 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                 )}
             </div>
         </div>
+    );
+
+    return (
+        <LoginRequired
+            title={t('suggestions.login_required_title')}
+            description={t('suggestions.login_required_description')}
+            icon={<FaLightbulb className="text-2xl" />}
+        >
+            {content}
+        </LoginRequired>
     );
 }

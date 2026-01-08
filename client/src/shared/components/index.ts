@@ -11,6 +11,7 @@ export { Modal } from './ui/Modal';
 export { PageContainer } from './ui/PageContainer';
 export { Gallery } from './ui/Gallery';
 export { LiquidDecoration } from './ui/LiquidDecoration';
+export { LoginRequired } from './LoginRequired';
 
 export { ScrollProgress } from './ui/ScrollProgress';
 export { ScrollSection } from './ui/ScrollSection';

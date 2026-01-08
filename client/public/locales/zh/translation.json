@@ -38,7 +38,8 @@
         "theme": {
             "light": "亮色模式",
             "dark": "暗色模式",
-            "paper": "羊皮纸主题"
+            "paper": "羊皮纸主题",
+            "modern": "现代主题"
         },
         "lang": {
             "en": "English",
@@ -128,6 +129,8 @@
         "success_register": "注册成功！请登录。",
         "failed": "认证失败",
         "confirm_logout": "确定要注销吗？",
+        "login_required": "需要登录",
+        "login_required_description": "您必须登录才能访问此功能。",
         "admin_code": "管理员代码",
         "admin_panel": "管理面板",
         "quit_admin": "退出管理",
@@ -147,6 +150,7 @@
         "disabled_by": "禁用者"
     },
     "notes": {
+        "login_required_title": "笔记功能需要登录",
         "login_required": "登录以访问您的笔记",
         "login_hint": "您的笔记将被保存和同步。"
     },
@@ -304,6 +308,7 @@
             }
         },
         "edu": {
+            "esgi": "计算机硕士：Web工程",
             "master": "计算机硕士：分布式系统与应用",
             "licence": "计算机学士：通用计算机科学"
         },
@@ -471,6 +476,14 @@
         "game_disabled": "游戏已禁用",
         "game_disabled_desc": "该游戏目前已被管理员禁用。",
         "zombie": "僵尸防御",
+        "zombie_desc": "保卫基地抵御僵尸群！",
+        "mission_brief": "任务简报",
+        "zombie_rules_text": "僵尸群正在逼近！您控制着最后的防御炮塔。左右移动瞄准。自动射击。",
+        "start_mission": "开始任务",
+        "retry": "重试",
+        "objective": "目标",
+        "survival": "尽可能长时间生存。",
+        "move": "移动",
         "next_shift": "下次变换",
         "zombie_hud": {
             "system_status": "系统状态",
@@ -605,7 +618,9 @@
     },
     "learning": {
         "title": "语言学家",
+        "login_required_title": "语言学家功能需要登录",
         "login_required": "请登录以访问此页面。",
+        "login_required_description": "您必须登录才能访问语言学家并保存您喜欢的表达。",
         "discover": "探索",
         "review": "复习",
         "no_favorites": "暂无收藏。",
@@ -620,10 +635,10 @@
     "messages": {
         "title": "留言墙",
         "subtitle": "留下你的足迹",
+        "login_required_title": "留言功能需要登录",
+        "login_required_description": "您必须登录才能访问留言墙并参与社区讨论。",
         "name_placeholder": "你的名字",
         "message_placeholder": "留言内容...",
-        "guest_placeholder_text": "留言内容... 或 ",
-        "guest_placeholder_link": "登录",
         "translated": "已翻译",
         "translation_limit": "已达到每日翻译限制",
         "translation_error": "翻译失败",
@@ -711,6 +726,9 @@
     },
     "spacetraders": {
         "join_fleet": "加入太空舰队",
+        "rules_title": "交战规则",
+        "rules_text": "驾驶您的舰队穿越银河系。注册一个独特的呼号，开始您的商人或海盗生涯。",
+        "rules_market": "交易资源，升级您的飞船，统治星际市场。",
         "register_desc": "输入呼号以注册新代理。",
         "callsign_placeholder": "输入呼号",
         "register_agent": "注册代理",
@@ -734,12 +752,15 @@
     "suggestions": {
         "title": "建议与想法",
         "subtitle": "分享您的想法，让这个网站变得更好！",
+        "login_required_title": "建议功能需要登录",
+        "login_required_description": "您必须登录才能访问建议并与社区分享您的想法。",
         "submit_new": "提交新想法",
         "placeholder": "我想看到更多街机游戏...",
         "submit": "提交想法",
         "login_to_view": "请登录以查看和提交建议",
         "submitting": "提交中...",
         "login_required": "请登录以提交建议",
+        "login_required_description": "您必须登录才能访问建议并与社区分享您的想法。",
         "all_suggestions": "所有建议",
         "your_suggestions": "我的建议",
         "no_suggestions": "暂无建议。快来分享第一个想法吧！",
