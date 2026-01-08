@@ -1,13 +1,11 @@
-import { useState, useEffect, useMemo, ReactNode } from 'react'
+import { useEffect, useMemo, ReactNode } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Navbar } from './shared/layouts/Navbar'
 import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary } from './shared/components'
 import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
 import { AuthProvider, useAuth } from './shared/contexts/AuthContext'
-import { fetchJson } from './shared/api/httpClient'
-import { API_ENDPOINTS } from './shared/constants/endpoints'
-import { useAdmin } from './shared/hooks/useAdmin'
+import { SettingsProvider, useSettings } from './shared/contexts/SettingsContext'
 
 // Domain imports
 import { AuthModal } from './domain/user'
@@ -31,72 +29,40 @@ function AppContent() {
     const location = useLocation()
     const { i18n } = useTranslation()
 
-    // Centralized Admin State
-    const admin = useAdmin();
+    const { login, isAdmin, isAuthModalOpen, closeAuthModal, adminLogin } = useAuth();
 
-    // Global Auth State - now managed by AuthContext
-    const { user, login, logout } = useAuth();
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    // Global Settings State - now managed by SettingsContext
+    const { isEnabled, settings, isLoading: settingsLoading } = useSettings();
 
-    // Global Settings State
-    const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
-    const [settingsLoaded, setSettingsLoaded] = useState(false);
-
-    // Initial Load: Settings only (Auth is handled by AuthContext)
+    // Initial Load: i18n only
     useEffect(() => {
         const savedLanguage = localStorage.getItem('preferredLanguage');
         if (savedLanguage && i18n.language !== savedLanguage) {
             i18n.changeLanguage(savedLanguage);
         }
+    }, [i18n]);
 
-        fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
-            .then(data => {
-                setSiteSettings(data);
-                setSettingsLoaded(true);
-            })
-            .catch(err => {
-                console.error("Failed to load settings", err);
-                setSettingsLoaded(true);
-            });
-    }, []);
 
-    const handleLogin = (newUser: { userId: string; username: string }) => {
-        login(newUser);
-        setShowAuthModal(false);
-    };
-
-    const handleLogout = () => {
-        logout();
-    };
-
-    const refreshSettings = () => {
-        fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
-            .then(data => setSiteSettings(data))
-            .catch(err => console.error("Failed to refresh settings", err));
-    };
-
-    const isEnabled = (key: string) => siteSettings[key] === 'true';
-    const openLogin = () => setShowAuthModal(true);
 
     // Centralized route configuration
     const routes: RouteConfig[] = useMemo(() => [
         { path: '/', element: <Home /> },
         { path: '/cv', element: <CV />, settingKey: 'PAGE_CV_ENABLED' },
-        { path: '/game', element: <Game onOpenLogin={openLogin} isSuperAdmin={admin.isSuperAdmin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_GAME_ENABLED' },
-        { path: '/messages', element: <MessageWall user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} isSuperAdmin={admin.isSuperAdmin} />, settingKey: 'PAGE_MESSAGES_ENABLED' },
-        { path: '/suggestions', element: <SuggestionsPage user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_SUGGESTIONS_ENABLED' },
-        { path: '/calendar', element: <CalendarPage isAdmin={admin.isAdmin} />, settingKey: 'PAGE_CALENDAR_ENABLED' },
+        { path: '/game', element: <Game />, settingKey: 'PAGE_GAME_ENABLED' },
+        { path: '/messages', element: <MessageWall />, settingKey: 'PAGE_MESSAGES_ENABLED' },
+        { path: '/suggestions', element: <SuggestionsPage />, settingKey: 'PAGE_SUGGESTIONS_ENABLED' },
+        { path: '/calendar', element: <CalendarPage />, settingKey: 'PAGE_CALENDAR_ENABLED' },
         { path: '/learning', element: <LearningPage />, settingKey: 'PAGE_LEARNING_ENABLED' },
         { path: '/notes', element: <NotesPage />, settingKey: 'PAGE_NOTES_ENABLED' },
         { path: '/terms', element: <TermsPage /> },
         { path: '/privacy', element: <PrivacyPage /> },
-    ], [admin.isAdmin, admin.isSuperAdmin, user, openLogin]);
+    ], []);
 
     const maintenanceElement = (
         <MaintenancePage
-            message={siteSettings['SITE_MAINTENANCE_MESSAGE']}
-            activatedBy={siteSettings['SITE_MAINTENANCE_BY']}
-            onAdminLogin={admin.login}
+            message={settings['SITE_MAINTENANCE_MESSAGE']}
+            activatedBy={settings['SITE_MAINTENANCE_BY']}
+            onAdminLogin={adminLogin}
         />
     );
 
@@ -114,25 +80,16 @@ function AppContent() {
             {!location.pathname.startsWith('/messages') && <ScrollProgress />}
 
             <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-                onLoginSuccess={handleLogin}
+                isOpen={isAuthModalOpen}
+                onClose={closeAuthModal}
+                onLoginSuccess={login}
             />
 
-            {(settingsLoaded && isEnabled('SITE_MAINTENANCE_MODE') && !admin.isAdmin) ? (
+            {(!settingsLoading && isEnabled('SITE_MAINTENANCE_MODE') && !isAdmin) ? (
                 maintenanceElement
             ) : (
                 <>
-                    <Navbar
-                        onOpenLogin={openLogin}
-                        onLogout={handleLogout}
-                        isAdmin={admin.isAdmin}
-                        isSuperAdmin={admin.isSuperAdmin}
-                        adminCode={admin.adminCode}
-                        onAdminLogin={admin.login}
-                        onAdminLogout={admin.logout}
-                        onRefreshSettings={refreshSettings}
-                    />
+                    <Navbar />
 
                     {location.pathname === '/' && (
                         <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none">
@@ -165,9 +122,11 @@ function AppContent() {
 function App() {
     return (
         <AuthProvider>
-            <Router>
-                <AppContent />
-            </Router>
+            <SettingsProvider>
+                <Router>
+                    <AppContent />
+                </Router>
+            </SettingsProvider>
         </AuthProvider>
     )
 }

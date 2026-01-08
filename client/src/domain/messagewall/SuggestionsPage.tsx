@@ -4,17 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaLightbulb, FaCheck, FaPaperPlane } from 'react-icons/fa';
 import { fetchJson, postJson } from '../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
+import { useAuth } from '../../shared/contexts/AuthContext';
 import { SuggestionCard } from './components';
-import type { Suggestion, SuggestionUser } from './suggestions.types';
+import type { Suggestion } from './suggestions.types';
 
 interface SuggestionsPageProps {
-    user?: SuggestionUser | null;
-    onOpenLogin: () => void;
-    isAdmin?: boolean;
 }
 
-export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: SuggestionsPageProps) {
+export function SuggestionsPage({ }: SuggestionsPageProps) {
     const { t } = useTranslation();
+    const { user, isAdmin, openAuthModal: onOpenLogin } = useAuth();
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [newSuggestion, setNewSuggestion] = useState('');
     const [loading, setLoading] = useState(false);

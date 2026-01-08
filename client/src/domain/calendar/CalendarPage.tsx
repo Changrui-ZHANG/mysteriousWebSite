@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { fetchJson, postJson } from '../../shared/api/httpClient';
+import { useAuth } from '../../shared/contexts/AuthContext';
 import { useAdminCode } from '../../shared/hooks/useAdminCode';
 import { ZONE_LABELS, HOLIDAY_NAMES, DEFAULT_ZONES } from '../../shared/constants/calendarZones';
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
@@ -12,11 +13,11 @@ import { getDaysInMonth, getFirstDayOfMonth, isWeekend, formatDate, toLocalDateI
 import type { Holiday, SchoolHoliday, SchoolHolidayApiResponse } from './types';
 
 interface CalendarPageProps {
-    isAdmin: boolean;
 }
 
-export function CalendarPage({ isAdmin }: CalendarPageProps) {
+export function CalendarPage({ }: CalendarPageProps) {
     const { t, i18n } = useTranslation();
+    const { isAdmin } = useAuth();
     const adminCode = useAdminCode();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [holidays, setHolidays] = useState<Holiday[]>([]);

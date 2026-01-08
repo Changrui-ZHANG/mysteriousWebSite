@@ -24,7 +24,7 @@ export interface TopScore {
 }
 
 export interface GameProps {
-    onOpenLogin: () => void;
+    onOpenLogin?: () => void;
     isSuperAdmin?: boolean;
     isAdmin?: boolean;
 }

@@ -6,10 +6,12 @@ import { ScrollProgress } from '../../shared/components';
 import { MessageItem, MessageInput, MessageAdminPanel } from './components';
 import { useMessageWall } from './hooks/useMessageWall';
 import { getAdminCode } from '../../shared/constants/authStorage';
+import { useAuth } from '../../shared/contexts/AuthContext';
 import type { MessageWallProps } from './types';
 
-export function MessageWall({ user, onOpenLogin, isAdmin = false, isSuperAdmin = false }: MessageWallProps) {
+export function MessageWall({ }: MessageWallProps) {
     const { t } = useTranslation();
+    const { user, isAdmin, isSuperAdmin, openAuthModal: onOpenLogin } = useAuth();
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [showUserManagement, setShowUserManagement] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);

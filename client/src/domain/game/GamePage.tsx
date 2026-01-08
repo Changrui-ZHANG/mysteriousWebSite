@@ -16,9 +16,9 @@ import { GradientHeading } from '../../shared/components';
 import { GameSelector, GuestAlertModal } from './components/index';
 import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps } from './types';
 
-export function Game({ onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
+export function Game({ }: GameProps) {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { user, isAdmin, isSuperAdmin, openAuthModal: onOpenLogin } = useAuth();
     const adminCode = useAdminCode();
     const [activeGame, setActiveGame] = useState<GameKey>('brick');
 

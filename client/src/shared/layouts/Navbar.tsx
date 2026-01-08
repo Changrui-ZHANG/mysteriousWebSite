@@ -10,25 +10,15 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { AdminSiteControls } from '../../domain/user/AdminSiteControls';
 import { DesktopMenu, MobileMenu } from './navbar/index';
+import { useSettings } from '../contexts/SettingsContext';
 
 interface NavbarProps {
-    onOpenLogin: () => void;
-    onLogout?: () => void;
-    isAdmin?: boolean;
-    isSuperAdmin?: boolean;
-    adminCode?: string;
-    onAdminLogin?: (code: string) => Promise<boolean>;
-    onAdminLogout?: () => void;
-    onRefreshSettings?: () => void;
 }
 
-export function Navbar({
-    onOpenLogin, onLogout,
-    isAdmin = false, isSuperAdmin = false, adminCode = '',
-    onAdminLogin, onAdminLogout, onRefreshSettings
-}: NavbarProps) {
-    const { t, i18n } = useTranslation();
-    const { user } = useAuth();
+export function Navbar({ }: NavbarProps) {
+    const { t } = useTranslation();
+    const { user, isAdmin, isSuperAdmin, adminCode, adminLogin, adminLogout, logout, openAuthModal, changeLanguage } = useAuth();
+    const { refreshSettings } = useSettings();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [loginCode, setLoginCode] = useState('');
@@ -51,20 +41,8 @@ export function Navbar({
         return () => { document.body.style.position = ''; document.body.style.top = ''; document.body.style.width = ''; };
     }, [isOpen]);
 
-    const changeLanguage = async (lng: string) => {
-        i18n.changeLanguage(lng);
-        localStorage.setItem('preferredLanguage', lng);
-        if (user?.userId) {
-            try {
-                await fetch(`/api/users/${user.userId}/language`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ language: lng }),
-                });
-            } catch (error) {
-                console.error('Failed to save language preference:', error);
-            }
-        }
+    const handleChangeLanguage = async (lng: string) => {
+        await changeLanguage(lng);
     };
 
     const getPageTitle = () => {
@@ -97,41 +75,41 @@ export function Navbar({
                 </button>
 
                 <DesktopMenu
-                    onOpenLogin={onOpenLogin}
-                    onLogout={onLogout}
+                    onOpenLogin={openAuthModal}
+                    onLogout={logout}
                     isAdmin={isAdmin}
                     isSuperAdmin={isSuperAdmin}
                     loginCode={loginCode}
                     setLoginCode={setLoginCode}
-                    onAdminLogin={onAdminLogin}
-                    onAdminLogout={onAdminLogout}
+                    onAdminLogin={adminLogin}
+                    onAdminLogout={adminLogout}
                     onShowSiteControls={() => setShowSiteControls(true)}
-                    changeLanguage={changeLanguage}
+                    changeLanguage={handleChangeLanguage}
                 />
             </nav>
 
             <MobileMenu
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                onOpenLogin={onOpenLogin}
-                onLogout={onLogout}
+                onOpenLogin={openAuthModal}
+                onLogout={logout}
                 isAdmin={isAdmin}
                 isSuperAdmin={isSuperAdmin}
                 loginCode={loginCode}
                 setLoginCode={setLoginCode}
-                onAdminLogin={onAdminLogin}
-                onAdminLogout={onAdminLogout}
+                onAdminLogin={adminLogin}
+                onAdminLogout={adminLogout}
                 onShowSiteControls={() => setShowSiteControls(true)}
-                changeLanguage={changeLanguage}
+                changeLanguage={handleChangeLanguage}
             />
 
             <AdminSiteControls
                 isOpen={showSiteControls}
                 onClose={() => setShowSiteControls(false)}
                 adminCode={adminCode || ''}
-                onSettingsChange={onRefreshSettings}
+                onSettingsChange={refreshSettings}
                 user={user ?? undefined}
-                onOpenLogin={onOpenLogin}
+                onOpenLogin={openAuthModal}
             />
         </>
     );
