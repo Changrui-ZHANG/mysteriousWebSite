@@ -11,15 +11,13 @@ import {
     FaHome, FaUserAstronaut, FaGamepad, FaComments, FaStickyNote,
     FaLightbulb, FaCalendarAlt, FaGraduationCap, FaTimes
 } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
 import { LanguageButton } from './LanguageButton';
-
-interface User { userId: string; username: string; }
 
 interface MobileMenuProps {
     isOpen: boolean;
     onClose: () => void;
-    user?: User | null;
     onOpenLogin: () => void;
     onLogout?: () => void;
     isAdmin: boolean;
@@ -44,11 +42,12 @@ const navLinks = [
 ];
 
 export function MobileMenu({
-    isOpen, onClose, user, onOpenLogin, onLogout, isAdmin,
+    isOpen, onClose, onOpenLogin, onLogout, isAdmin,
     loginCode, setLoginCode, onAdminLogin, onAdminLogout, onShowSiteControls,
     changeLanguage,
 }: MobileMenuProps) {
     const { t, i18n } = useTranslation();
+    const { user } = useAuth();
     const { resolvedTheme, toggleTheme } = useThemeManager();
 
     const containerVariants = {

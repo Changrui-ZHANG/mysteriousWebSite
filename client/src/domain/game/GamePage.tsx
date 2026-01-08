@@ -8,6 +8,7 @@ import MazeGame from './components/MazeGame';
 import ZombieShooter from './components/ZombieShooter';
 import Leaderboard from './components/Leaderboard';
 import { fetchJson, postJson } from '../../shared/api/httpClient';
+import { useAuth } from '../../shared/contexts/AuthContext';
 import { useAdminCode } from '../../shared/hooks/useAdminCode';
 
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
@@ -15,8 +16,9 @@ import { GradientHeading } from '../../shared/components';
 import { GameSelector, GuestAlertModal } from './components/index';
 import type { GameKey, GameStatus, PersonalBest, ScoreData, TopScore, GameProps } from './types';
 
-export function Game({ user, onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
+export function Game({ onOpenLogin, isSuperAdmin = false, isAdmin = false }: GameProps) {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const adminCode = useAdminCode();
     const [activeGame, setActiveGame] = useState<GameKey>('brick');
 

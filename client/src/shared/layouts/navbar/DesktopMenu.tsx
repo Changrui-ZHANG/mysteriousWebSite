@@ -6,13 +6,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
 import { LanguageButton } from './LanguageButton';
 
-interface User { userId: string; username: string; }
-
 interface DesktopMenuProps {
-    user?: User | null;
     onOpenLogin: () => void;
     onLogout?: () => void;
     isAdmin: boolean;
@@ -26,11 +24,12 @@ interface DesktopMenuProps {
 }
 
 export function DesktopMenu({
-    user, onOpenLogin, onLogout, isAdmin, isSuperAdmin,
+    onOpenLogin, onLogout, isAdmin, isSuperAdmin,
     loginCode, setLoginCode, onAdminLogin, onAdminLogout, onShowSiteControls,
     changeLanguage,
 }: DesktopMenuProps) {
     const { t, i18n } = useTranslation();
+    const { user } = useAuth();
     const { resolvedTheme, toggleTheme } = useThemeManager();
     const location = useLocation();
     const [showAdminInput, setShowAdminInput] = useState(false);

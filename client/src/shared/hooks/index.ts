@@ -1,5 +1,5 @@
 // Custom Hooks
-export { useAuth } from './useAuth';
+export { useAuth } from '../contexts/AuthContext';
 export { useTheme } from './useTheme';
 export { useThemeManager } from './useThemeManager';
 export { useAdminCode } from './useAdminCode';

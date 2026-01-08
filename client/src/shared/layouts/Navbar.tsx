@@ -7,13 +7,11 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext';
 import { AdminSiteControls } from '../../domain/user/AdminSiteControls';
 import { DesktopMenu, MobileMenu } from './navbar/index';
 
-interface User { userId: string; username: string; }
-
 interface NavbarProps {
-    user?: User | null;
     onOpenLogin: () => void;
     onLogout?: () => void;
     isAdmin?: boolean;
@@ -25,11 +23,12 @@ interface NavbarProps {
 }
 
 export function Navbar({
-    user, onOpenLogin, onLogout,
+    onOpenLogin, onLogout,
     isAdmin = false, isSuperAdmin = false, adminCode = '',
     onAdminLogin, onAdminLogout, onRefreshSettings
 }: NavbarProps) {
     const { t, i18n } = useTranslation();
+    const { user } = useAuth();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [loginCode, setLoginCode] = useState('');
@@ -98,7 +97,6 @@ export function Navbar({
                 </button>
 
                 <DesktopMenu
-                    user={user}
                     onOpenLogin={onOpenLogin}
                     onLogout={onLogout}
                     isAdmin={isAdmin}
@@ -115,7 +113,6 @@ export function Navbar({
             <MobileMenu
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                user={user}
                 onOpenLogin={onOpenLogin}
                 onLogout={onLogout}
                 isAdmin={isAdmin}

@@ -60,7 +60,7 @@ export const API_ENDPOINTS = {
     SUGGESTIONS: {
         LIST: `${API_BASE}/suggestions`,
         ADD: `${API_BASE}/suggestions`,
-        DELETE: (id: number) => `${API_BASE}/suggestions/${id}`
+        DELETE: (id: string) => `${API_BASE}/suggestions/${id}`
     },
 
     // Notes

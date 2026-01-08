@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlus, FaTimes, FaTrash, FaSave, FaPen, FaUser } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../shared/contexts/AuthContext';
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
 import { postJson, deleteJson, putJson } from '../../shared/api/httpClient';
 
@@ -41,18 +42,9 @@ const COLORS = [
     'bg-rose-500/30',
 ];
 
-interface User {
-    userId: string;
-    username: string;
-}
-
-interface NotesPageProps {
-    user: User | null;
-}
-
-export const NotesPage: React.FC<NotesPageProps> = ({ user }) => {
+export const NotesPage: React.FC = () => {
     const { t } = useTranslation();
-    const isAuthenticated = !!user;
+    const { user, isAuthenticated } = useAuth();
     const [notes, setNotes] = useState<Note[]>([]);
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUserAstronaut, FaComments, FaLightbulb, FaGamepad, FaCalendarAlt, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../shared/contexts/AuthContext';
 import { SOCIAL_LINKS } from '../../shared/constants/urls';
 import {
     BentoCard,
@@ -26,8 +27,7 @@ const TAGLINE_ROTATION_INTERVAL = 5000;
 
 export function Home() {
     const { t } = useTranslation();
-    const userString = localStorage.getItem('user');
-    const user = userString ? JSON.parse(userString) : null;
+    const { user } = useAuth();
 
     const getGreeting = () => {
         const hour = new Date().getHours();

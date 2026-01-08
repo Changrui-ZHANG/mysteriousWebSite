@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaLightbulb, FaCheck, FaPaperPlane } from 'react-icons/fa';
@@ -30,16 +30,15 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
 
     const fetchSuggestions = async () => {
         try {
-            const endpoint = isAdmin
+            const endpoint = (isAdmin || !user)
                 ? API_ENDPOINTS.SUGGESTIONS.LIST
-                : user ? `/api/suggestions/user/${user.userId}` : null;
-
-            if (!endpoint) return;
+                : `/api/suggestions/user/${user.userId}`;
 
             const data = await fetchJson<Suggestion[]>(endpoint);
-            setSuggestions(data);
+            setSuggestions(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Failed to fetch suggestions:', err);
+            setSuggestions([]);
         }
     };
 
@@ -90,7 +89,7 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
         if (!window.confirm(t('suggestions.confirm_delete'))) return;
 
         try {
-            await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(parseInt(id)), { method: 'DELETE' });
+            await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(id), { method: 'DELETE' });
             fetchSuggestions();
         } catch (err) {
             console.error('Failed to delete suggestion:', err);
@@ -101,37 +100,6 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
         updateStatus(id, 'pending');
         setShowArchive(false);
     };
-
-    // Authentication gate - Liquid Glass style
-    if (!user) {
-        return (
-            <div className="page-container min-h-screen pt-24 pb-12 px-4 md:px-8 flex items-center justify-center">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="max-w-md w-full"
-                >
-                    <div className="relative rounded-[2rem] bg-white/[0.02] border border-white/10 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)] p-10 text-center after:absolute after:inset-0 after:rounded-[2rem] after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none">
-                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent-secondary to-accent-primary mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-accent-secondary/30">
-                            <FaLightbulb className="text-4xl text-white" />
-                        </div>
-                        <h1 className="text-3xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-accent-secondary to-accent-primary">
-                            {t('suggestions.title')}
-                        </h1>
-                        <p className="text-white/60 mb-8">
-                            {t('suggestions.login_to_view')}
-                        </p>
-                        <button
-                            onClick={onOpenLogin}
-                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-accent-secondary to-accent-primary text-white font-bold shadow-lg shadow-accent-secondary/30 hover:scale-105 active:scale-95 transition-transform"
-                        >
-                            {t('auth.login')}
-                        </button>
-                    </div>
-                </motion.div>
-            </div>
-        );
-    }
 
     return (
         <div className="page-container min-h-screen pt-24 pb-12 px-4 md:px-8">
@@ -168,15 +136,28 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
                             {t('suggestions.submit_new')}
                         </h2>
                         <form onSubmit={handleSubmit} className="space-y-5">
-                            <textarea
-                                value={newSuggestion}
-                                onChange={(e) => setNewSuggestion(e.target.value)}
-                                placeholder={t('suggestions.placeholder')}
-                                className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-secondary/30 resize-none transition-all"
-                                rows={4}
-                                maxLength={1000}
-                                disabled={!user}
-                            />
+                            <div className="relative">
+                                <textarea
+                                    value={newSuggestion}
+                                    onChange={(e) => setNewSuggestion(e.target.value)}
+                                    placeholder={user ? t('suggestions.placeholder') : ''}
+                                    className={`w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-secondary/30 resize-none transition-all ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    rows={4}
+                                    maxLength={1000}
+                                    disabled={!user}
+                                />
+                                {!user && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[2px] rounded-xl">
+                                        <button
+                                            type="button"
+                                            onClick={onOpenLogin}
+                                            className="px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            {t('suggestions.login_to_submit')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-white/30 font-mono">{newSuggestion.length}/1000</span>
                                 <button
@@ -218,7 +199,7 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
                                     key={suggestion.id}
                                     suggestion={suggestion}
                                     index={index}
-                                    user={user}
+                                    user={user ?? null}
                                     isAdmin={isAdmin}
                                     onUpdateStatus={updateStatus}
                                     onDelete={deleteSuggestion}
@@ -256,7 +237,7 @@ export function SuggestionsPage({ user, onOpenLogin, isAdmin = false }: Suggesti
                                     suggestion={suggestion}
                                     index={index}
                                     isArchived={true}
-                                    user={user}
+                                    user={user ?? null}
                                     isAdmin={isAdmin}
                                     onUpdateStatus={updateStatus}
                                     onDelete={deleteSuggestion}

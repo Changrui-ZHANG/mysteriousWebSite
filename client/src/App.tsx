@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Navbar } from './shared/layouts/Navbar'
 import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary } from './shared/components'
 import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
-import { STORAGE_KEYS } from './shared/constants/authStorage'
+import { AuthProvider, useAuth } from './shared/contexts/AuthContext'
 import { fetchJson } from './shared/api/httpClient'
 import { API_ENDPOINTS } from './shared/constants/endpoints'
 import { useAdmin } from './shared/hooks/useAdmin'
@@ -21,11 +21,6 @@ import { NotesPage } from './domain/note'
 
 import './App.css'
 
-interface User {
-    userId: string;
-    username: string;
-}
-
 interface RouteConfig {
     path: string;
     element: ReactNode;
@@ -39,35 +34,19 @@ function AppContent() {
     // Centralized Admin State
     const admin = useAdmin();
 
-    // Global Auth State
-    const [user, setUser] = useState<User | null>(null);
+    // Global Auth State - now managed by AuthContext
+    const { user, login, logout } = useAuth();
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Global Settings State
     const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
     const [settingsLoaded, setSettingsLoaded] = useState(false);
 
-    // Initial Load: Auth and Settings
+    // Initial Load: Settings only (Auth is handled by AuthContext)
     useEffect(() => {
-        const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-
-            fetch(`/api/users/${parsedUser.userId}/language`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.language && i18n.language !== data.language) {
-                        i18n.changeLanguage(data.language);
-                        localStorage.setItem('preferredLanguage', data.language);
-                    }
-                })
-                .catch(err => console.error('Failed to load language preference:', err));
-        } else {
-            const savedLanguage = localStorage.getItem('preferredLanguage');
-            if (savedLanguage && i18n.language !== savedLanguage) {
-                i18n.changeLanguage(savedLanguage);
-            }
+        const savedLanguage = localStorage.getItem('preferredLanguage');
+        if (savedLanguage && i18n.language !== savedLanguage) {
+            i18n.changeLanguage(savedLanguage);
         }
 
         fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC)
@@ -81,25 +60,13 @@ function AppContent() {
             });
     }, []);
 
-    const handleLogin = (newUser: User) => {
-        setUser(newUser);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
+    const handleLogin = (newUser: { userId: string; username: string }) => {
+        login(newUser);
         setShowAuthModal(false);
-
-        fetch(`/api/users/${newUser.userId}/language`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.language) {
-                    i18n.changeLanguage(data.language);
-                    localStorage.setItem('preferredLanguage', data.language);
-                }
-            })
-            .catch(err => console.error('Failed to load language preference:', err));
     };
 
     const handleLogout = () => {
-        setUser(null);
-        localStorage.removeItem(STORAGE_KEYS.USER);
+        logout();
     };
 
     const refreshSettings = () => {
@@ -115,15 +82,15 @@ function AppContent() {
     const routes: RouteConfig[] = useMemo(() => [
         { path: '/', element: <Home /> },
         { path: '/cv', element: <CV />, settingKey: 'PAGE_CV_ENABLED' },
-        { path: '/game', element: <Game user={user} onOpenLogin={openLogin} isSuperAdmin={admin.isSuperAdmin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_GAME_ENABLED' },
+        { path: '/game', element: <Game onOpenLogin={openLogin} isSuperAdmin={admin.isSuperAdmin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_GAME_ENABLED' },
         { path: '/messages', element: <MessageWall user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} isSuperAdmin={admin.isSuperAdmin} />, settingKey: 'PAGE_MESSAGES_ENABLED' },
         { path: '/suggestions', element: <SuggestionsPage user={user} onOpenLogin={openLogin} isAdmin={admin.isAdmin} />, settingKey: 'PAGE_SUGGESTIONS_ENABLED' },
         { path: '/calendar', element: <CalendarPage isAdmin={admin.isAdmin} />, settingKey: 'PAGE_CALENDAR_ENABLED' },
         { path: '/learning', element: <LearningPage />, settingKey: 'PAGE_LEARNING_ENABLED' },
-        { path: '/notes', element: <NotesPage user={user} />, settingKey: 'PAGE_NOTES_ENABLED' },
+        { path: '/notes', element: <NotesPage />, settingKey: 'PAGE_NOTES_ENABLED' },
         { path: '/terms', element: <TermsPage /> },
         { path: '/privacy', element: <PrivacyPage /> },
-    ], [user, admin.isAdmin, admin.isSuperAdmin]);
+    ], [admin.isAdmin, admin.isSuperAdmin, user, openLogin]);
 
     const maintenanceElement = (
         <MaintenancePage
@@ -157,7 +124,6 @@ function AppContent() {
             ) : (
                 <>
                     <Navbar
-                        user={user}
                         onOpenLogin={openLogin}
                         onLogout={handleLogout}
                         isAdmin={admin.isAdmin}
@@ -198,9 +164,11 @@ function AppContent() {
 
 function App() {
     return (
-        <Router>
-            <AppContent />
-        </Router>
+        <AuthProvider>
+            <Router>
+                <AppContent />
+            </Router>
+        </AuthProvider>
     )
 }
 
