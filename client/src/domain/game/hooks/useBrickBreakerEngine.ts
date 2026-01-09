@@ -45,12 +45,25 @@ export function useBrickBreakerEngine({
         if (!canvas || !container) return;
 
         const updateCanvasSize = () => {
-            const rect = container.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            // Use client dimensions which are more reliable for canvas buffers
+            // Fallback to min-height/width if client dimensions are zero
+            const width = Math.min(container.clientWidth || 400, window.innerWidth);
+            const height = container.clientHeight || 400;
+
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+            }
         };
         updateCanvasSize();
-        window.addEventListener('resize', updateCanvasSize);
+
+        // Debounce resize slightly for performance
+        let resizeTimer: number;
+        const handleResize = () => {
+            window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(updateCanvasSize, 100);
+        };
+        window.addEventListener('resize', handleResize);
 
         const ctx = canvas.getContext('2d', { alpha: false });
         if (!ctx) return;

@@ -238,7 +238,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                         {t('game.no_scores_yet')}
                     </div>
                 ) : (
-                    <div className="flex flex-wrap gap-2 justify-center">
+                    <div className="flex flex-wrap gap-2 justify-center w-full overflow-x-hidden p-1">
                         {scores.map((score, index) => {
                             const isPersonalScore = user && score.username === user.username;
                             const rankIcon = index === 0 ? <FaCrown className="text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" /> :

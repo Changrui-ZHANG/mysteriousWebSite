@@ -339,6 +339,8 @@
     "game": {
         "arcade_zone": "霓虹街机",
         "choose_your_challenge": "选择一个游戏开始挑战",
+        "select_game": "选择游戏",
+        "login_for_scores": "登录以保存您的分数",
         "brick_breaker": "打砖块",
         "match3": "三消游戏",
         "score": "分数",

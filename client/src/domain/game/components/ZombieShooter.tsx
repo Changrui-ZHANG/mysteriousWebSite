@@ -31,7 +31,7 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
     } = useZombieShooter({ onSubmitScore, onGameStart, isFlipped });
 
     const gameContent = (
-        <div className="relative w-full h-full bg-black overflow-hidden">
+        <div className="relative w-full h-full min-h-[300px] bg-black overflow-hidden">
             <div className="absolute inset-0 w-full h-full cursor-none">
                 <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 10, 15], fov: 45 }}>
                     <Suspense fallback={null}>
@@ -70,28 +70,28 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
 
     const mobileControls = gameState === 'playing' && !isPickingUpgrade && !isFlipped && mobileMoveHandlers && (
         <div className="flex justify-center gap-8 md:gap-12 pb-4 md:pb-6 md:hidden px-4">
-            <button 
+            <button
                 className="w-14 h-14 md:w-16 md:h-16 bg-cyan-500/20 dark:bg-cyan-500/10 active:bg-cyan-500/50 dark:active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-600 dark:text-cyan-400 backdrop-blur-md border border-cyan-500/40 dark:border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-200 hover:scale-105 active:scale-95"
-                onTouchStart={(e) => { 
-                    e.preventDefault(); 
+                onTouchStart={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    mobileMoveHandlers.moveLeft(true); 
-                    playSound('click'); 
-                }} 
-                onTouchEnd={(e) => { 
-                    e.preventDefault(); 
-                    e.stopPropagation();
-                    mobileMoveHandlers.moveLeft(false); 
+                    mobileMoveHandlers.moveLeft(true);
+                    playSound('click');
                 }}
-                onMouseDown={(e) => { 
-                    e.preventDefault(); 
+                onTouchEnd={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    mobileMoveHandlers.moveLeft(true); 
-                }} 
-                onMouseUp={(e) => { 
-                    e.preventDefault(); 
+                    mobileMoveHandlers.moveLeft(false);
+                }}
+                onMouseDown={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    mobileMoveHandlers.moveLeft(false); 
+                    mobileMoveHandlers.moveLeft(true);
+                }}
+                onMouseUp={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveLeft(false);
                 }}
                 onContextMenu={(e) => e.preventDefault()}
                 style={{ touchAction: 'manipulation' }}
@@ -99,28 +99,28 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
                 <FaArrowLeft size={24} className="md:hidden" />
                 <FaArrowLeft size={28} className="hidden md:block" />
             </button>
-            <button 
+            <button
                 className="w-14 h-14 md:w-16 md:h-16 bg-cyan-500/20 dark:bg-cyan-500/10 active:bg-cyan-500/50 dark:active:bg-cyan-500/40 rounded-2xl flex items-center justify-center text-cyan-600 dark:text-cyan-400 backdrop-blur-md border border-cyan-500/40 dark:border-cyan-500/30 select-none touch-manipulation shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-200 hover:scale-105 active:scale-95"
-                onTouchStart={(e) => { 
-                    e.preventDefault(); 
+                onTouchStart={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    mobileMoveHandlers.moveRight(true); 
-                    playSound('click'); 
-                }} 
-                onTouchEnd={(e) => { 
-                    e.preventDefault(); 
-                    e.stopPropagation();
-                    mobileMoveHandlers.moveRight(false); 
+                    mobileMoveHandlers.moveRight(true);
+                    playSound('click');
                 }}
-                onMouseDown={(e) => { 
-                    e.preventDefault(); 
+                onTouchEnd={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    mobileMoveHandlers.moveRight(true); 
-                }} 
-                onMouseUp={(e) => { 
-                    e.preventDefault(); 
+                    mobileMoveHandlers.moveRight(false);
+                }}
+                onMouseDown={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    mobileMoveHandlers.moveRight(false); 
+                    mobileMoveHandlers.moveRight(true);
+                }}
+                onMouseUp={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mobileMoveHandlers.moveRight(false);
                 }}
                 onContextMenu={(e) => e.preventDefault()}
                 style={{ touchAction: 'manipulation' }}

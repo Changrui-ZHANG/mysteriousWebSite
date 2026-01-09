@@ -338,6 +338,8 @@
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
         "choose_your_challenge": "Choisissez un jeu pour commencer",
+        "select_game": "Sélectionner un jeu",
+        "login_for_scores": "Connectez-vous pour sauvegarder vos scores",
         "brick_breaker": "Casse-Brique",
         "match3": "Match 3",
         "score": "SCORE",

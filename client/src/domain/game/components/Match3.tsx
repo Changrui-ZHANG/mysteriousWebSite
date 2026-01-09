@@ -45,6 +45,7 @@ export default function Match3({ onSubmitScore, personalBest, isAuthenticated, o
             }}
             rulesContent={<Match3Rules onClose={() => { }} />}
         >
+
             <div className="w-full h-full flex flex-col items-center justify-center p-4">
                 <div className="w-full max-w-[400px] grid grid-cols-8 gap-0.5 md:gap-1 p-2 md:p-4 bg-black/40 rounded-lg mx-auto">
                     <AnimatePresence mode='popLayout'>

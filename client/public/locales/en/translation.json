@@ -340,6 +340,8 @@
     "game": {
         "arcade_zone": "NEON ARCADE",
         "choose_your_challenge": "Select a game to start playing",
+        "select_game": "Select Game",
+        "login_for_scores": "Login to save your scores",
         "brick_breaker": "Brick Breaker",
         "match3": "Match 3",
         "score": "SCORE",

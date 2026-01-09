@@ -55,7 +55,7 @@ export default function BrickBreaker({
                 bgmEnabled={game.gameState === 'playing'}
                 onReset={game.handleReset}
                 showReset={game.gameState === 'playing'}
-                containerRef={game.containerRef}
+                gameAreaRef={game.containerRef}
                 isFlipped={isFlipped}
                 onFlipChange={setIsFlipped}
                 gameStatus={true}
@@ -69,17 +69,23 @@ export default function BrickBreaker({
                 }}
                 rulesContent={<BrickBreakerRules onClose={() => setIsFlipped(false)} />}
             >
-                <canvas ref={game.canvasRef} className="w-full h-full block touch-action-none" />
-                <BrickBreakerOverlay
-                    gameState={game.gameState}
-                    selectedMap={game.selectedMap}
-                    score={game.score}
-                    unlockedMaps={game.unlockedMaps}
-                    isLoadingMap={game.isLoadingMap}
-                    onShowMapSelector={() => game.setShowMapSelector(true)}
-                    onStartGame={() => game.handleStartGame()}
-                    onNextLevel={game.handleNextLevel}
-                />
+                <div className="relative w-full h-full min-h-[300px] flex-1">
+                    <canvas
+                        ref={game.canvasRef}
+                        className="absolute inset-0 w-full h-full block touch-action-none"
+                        style={{ backgroundColor: '#1e293b' }}
+                    />
+                    <BrickBreakerOverlay
+                        gameState={game.gameState}
+                        selectedMap={game.selectedMap}
+                        score={game.score}
+                        unlockedMaps={game.unlockedMaps}
+                        isLoadingMap={game.isLoadingMap}
+                        onShowMapSelector={() => game.setShowMapSelector(true)}
+                        onStartGame={() => game.handleStartGame()}
+                        onNextLevel={game.handleNextLevel}
+                    />
+                </div>
             </GameWindow>
 
             <MapSelector
