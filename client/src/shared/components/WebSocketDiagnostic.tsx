@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from 'react';
 
 interface WebSocketDiagnosticProps {
     isConnected: boolean;
@@ -8,7 +7,6 @@ interface WebSocketDiagnosticProps {
 }
 
 export function WebSocketDiagnostic({ isConnected, onlineCount, showOnlineCountToAll }: WebSocketDiagnosticProps) {
-    const { t } = useTranslation();
     const [showDiagnostic, setShowDiagnostic] = useState(false);
     const [connectionHistory, setConnectionHistory] = useState<string[]>([]);
 
