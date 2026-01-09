@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import UserManagement from '../user/UserManagement';
-import { ScrollProgress, LoginRequired } from '../../shared/components';
+import { ScrollProgress, LoginRequired, WebSocketDiagnostic } from '../../shared/components';
 import { MessageItem, MessageInput, MessageAdminPanel } from './components';
 import { useMessageWall } from './hooks/useMessageWall';
 import { getAdminCode } from '../../shared/constants/authStorage';
@@ -19,6 +19,7 @@ export function MessageWall({ }: MessageWallProps) {
     const {
         messages, replyingTo, setReplyingTo, translations, translating, showTranslated,
         isGlobalMute, onlineCount, showOnlineCountToAll, highlightedMessageId,
+        isWebSocketConnected,
         handleTranslate, handleSubmit, handleDelete,
         toggleMute, clearAllMessages, toggleOnlineCountVisibility, fetchOnlineCount,
         isOwnMessage, canDeleteMessage, scrollToMessage
@@ -119,6 +120,15 @@ export function MessageWall({ }: MessageWallProps) {
                         isOpen={showUserManagement}
                         onClose={() => setShowUserManagement(false)}
                         superAdminCode={getAdminCode() || ''}
+                    />
+                )}
+
+                {/* WebSocket Diagnostic - Visible seulement pour les admins ou en cas de problème */}
+                {(isAdmin || !isWebSocketConnected) && (
+                    <WebSocketDiagnostic
+                        isConnected={isWebSocketConnected}
+                        onlineCount={onlineCount}
+                        showOnlineCountToAll={showOnlineCountToAll}
                     />
                 )}
             </div>

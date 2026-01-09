@@ -29,13 +29,13 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     const clientRef = useRef<Client | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const mountedRef = useRef(true);
-    
+
     // Use refs for callbacks to avoid reconnection on callback changes
     const onMessageRef = useRef(options.onMessage);
     const onPresenceUpdateRef = useRef(options.onPresenceUpdate);
     const onConnectRef = useRef(options.onConnect);
     const onDisconnectRef = useRef(options.onDisconnect);
-    
+
     // Update refs when callbacks change
     useEffect(() => {
         onMessageRef.current = options.onMessage;
@@ -46,19 +46,29 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
 
     useEffect(() => {
         if (!enabled) return;
-        
+
         mountedRef.current = true;
-        
+
         // Small delay to handle React StrictMode double-mount
         const timeoutId = setTimeout(() => {
             if (!mountedRef.current || clientRef.current?.active) return;
 
             try {
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}/ws/websocket`;
-                
+                // Configuration WebSocket pour production et développement
+                let wsUrl: string;
+
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    // Développement - connexion directe au serveur
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    wsUrl = `${protocol}//${window.location.hostname}:8080/ws/websocket`;
+                } else {
+                    // Production - via le proxy nginx
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    wsUrl = `${protocol}//${window.location.host}/ws/websocket`;
+                }
+
                 console.log('[WebSocket] Connecting to:', wsUrl);
-                
+
                 const client = new Client({
                     brokerURL: wsUrl,
                     reconnectDelay: 5000,
@@ -69,12 +79,24 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
                             console.log('[STOMP]', str);
                         }
                     },
-                    
+
+                    // Configuration pour production - fallback avec SockJS si WebSocket natif échoue
+                    webSocketFactory: () => {
+                        try {
+                            return new WebSocket(wsUrl);
+                        } catch (error) {
+                            console.warn('[WebSocket] Native WebSocket failed, trying SockJS fallback');
+                            // Fallback vers SockJS en cas d'échec
+                            const sockjsUrl = wsUrl.replace('/ws/websocket', '/ws');
+                            return new WebSocket(sockjsUrl);
+                        }
+                    },
+
                     onConnect: () => {
                         console.log('[WebSocket] Connected!');
                         setIsConnected(true);
                         onConnectRef.current?.();
-                        
+
                         // Subscribe to messages topic
                         client.subscribe('/topic/messages', (message: IMessage) => {
                             console.log('[WebSocket] Received message:', message.body);
@@ -97,24 +119,26 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
                             }
                         });
                     },
-                    
+
                     onDisconnect: () => {
                         console.log('[WebSocket] Disconnected');
                         setIsConnected(false);
                         onDisconnectRef.current?.();
                     },
-                    
+
                     onStompError: (frame) => {
                         console.error('[WebSocket] STOMP error:', frame.headers['message']);
+                        console.error('[WebSocket] Full error frame:', frame);
                     },
 
                     onWebSocketError: (event) => {
-                        console.error('[WebSocket] Error:', event);
+                        console.error('[WebSocket] WebSocket error:', event);
+                        console.error('[WebSocket] URL was:', wsUrl);
                         setIsConnected(false);
                     },
 
-                    onWebSocketClose: () => {
-                        console.log('[WebSocket] Connection closed');
+                    onWebSocketClose: (event) => {
+                        console.log('[WebSocket] Connection closed:', event.code, event.reason);
                         setIsConnected(false);
                     }
                 });
@@ -129,7 +153,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
         return () => {
             mountedRef.current = false;
             clearTimeout(timeoutId);
-            
+
             if (clientRef.current) {
                 console.log('[WebSocket] Disconnecting...');
                 clientRef.current.deactivate();
