@@ -558,7 +558,11 @@
         "action_enable": "ENABLE",
         "confirm_reset_score": "Are you sure you want to reset the score for {{username}} to 0?",
         "error_reset_score": "Failed to reset score",
-        "reset_score": "Reset Score"
+        "reset_score": "Reset Score",
+        "clear_all_scores": "Clear All Scores",
+        "confirm_clear_all_scores": "⚠️ WARNING ⚠️\n\nAre you sure you want to delete ALL scores for {{gameType}} game?\n\nThis action is IRREVERSIBLE and will permanently delete all records for this game.\n\nType 'DELETE' to confirm:",
+        "cleanup_duplicates": "Clean Duplicates",
+        "confirm_cleanup_duplicates": "Are you sure you want to clean up all duplicate scores?\n\nThis action will remove duplicates and keep only the best score for each user in each game."
     },
     "holidays": {
         "jour_de_l_an": {

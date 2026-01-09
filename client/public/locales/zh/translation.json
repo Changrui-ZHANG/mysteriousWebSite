@@ -556,7 +556,11 @@
         "action_enable": "启用",
         "confirm_reset_score": "确定要将 {{username}} 的分数重置为0吗？",
         "error_reset_score": "重置分数失败",
-        "reset_score": "重置分数"
+        "reset_score": "重置分数",
+        "clear_all_scores": "清除所有分数",
+        "confirm_clear_all_scores": "⚠️ 警告 ⚠️\n\n您确定要删除 {{gameType}} 游戏的所有分数吗？\n\n此操作不可逆转，将永久删除此游戏的所有记录。\n\n输入 '删除' 确认：",
+        "cleanup_duplicates": "清理重复项",
+        "confirm_cleanup_duplicates": "您确定要清理所有重复的分数吗？\n\n此操作将删除重复项，只保留每个用户在每个游戏中的最佳分数。"
     },
     "holidays": {
         "jour_de_l_an": {
