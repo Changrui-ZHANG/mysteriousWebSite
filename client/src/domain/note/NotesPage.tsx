@@ -119,14 +119,14 @@ export const NotesPage: React.FC = () => {
                 // Mettre à jour la note dans la liste locale
                 setNotes(prevNotes =>
                     prevNotes.map(note =>
-                        note.id === editingId ? result : note
+                        note.id === editingId ? result as Note : note
                     )
                 );
             } else {
                 const result = await postJson(API_ENDPOINTS.NOTES.CREATE, noteData);
                 console.log('Create result:', result);
                 // Ajouter la nouvelle note au début de la liste locale
-                setNotes(prevNotes => [result, ...prevNotes]);
+                setNotes(prevNotes => [result as Note, ...prevNotes]);
             }
             resetForm();
         } catch (error) {
