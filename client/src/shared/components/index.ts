@@ -12,7 +12,6 @@ export { PageContainer } from './ui/PageContainer';
 export { Gallery } from './ui/Gallery';
 export { LiquidDecoration } from './ui/LiquidDecoration';
 export { LoginRequired } from './LoginRequired';
-export { WebSocketDiagnostic } from './WebSocketDiagnostic';
 
 export { ScrollProgress } from './ui/ScrollProgress';
 export { ScrollSection } from './ui/ScrollSection';
