@@ -23,8 +23,8 @@ export const getCVData = (t: TranslationFunction) => {
             { name: "JavaScript", icon: <IoLogoJavascript /> },
             { name: "TypeScript", icon: <SiTypescript /> },
             { name: "Tailwind CSS", icon: <SiTailwindcss /> },
-            { name: "Vite", icon: <SiVite /> },
-            { name: "Three.js", icon: <SiThreedotjs /> }
+       
+         
         ],
         backend: [
             { name: "Java", icon: <FaJava /> },
@@ -32,23 +32,20 @@ export const getCVData = (t: TranslationFunction) => {
             { name: "Scala", icon: <SiScala /> },
             { name: "C/C++", icon: <SiCplusplus /> },
             { name: "Python", icon: <FaPython /> },
-            { name: "REST API", icon: <TbApi /> }
+
         ],
         database: [
             { name: "PostgreSQL", icon: <SiPostgresql /> },
             { name: "MariaDB", icon: <SiMariadb /> },
             { name: "MySQL", icon: <SiMysql /> },
-            { name: "SQL/NoSQL", icon: <FaDatabase /> },
-            { name: "Elasticsearch", icon: <SiElasticsearch /> },
-            { name: "Redis", icon: <DiRedis /> }
+  
         ],
         devops: [
             { name: "Docker", icon: <FaDocker /> },
             { name: "CI/CD", icon: <FaServer /> },
             { name: "Git", icon: <FaGitAlt /> },
             { name: "Jenkins", icon: <FaJenkins /> },
-            { name: "Linux", icon: <FaLinux /> },
-            { name: "Windows", icon: <FaWindows /> }
+
         ]
     };
 
