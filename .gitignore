@@ -28,3 +28,15 @@ mvnw.cmd
 .agent/*
 .kiro/*
 .shared/*
+
+#bmad
+_bmad/*
+_bmad*
+.claude/
+.codex/
+.cursor/
+.gemini/
+.kiro/
+.trae/
+.windsurf/
+.mcp.json
