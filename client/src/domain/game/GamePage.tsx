@@ -128,7 +128,7 @@ export function Game(_props: GameProps) {
 
         if (isLocked) {
             return (
-                <div className="w-full h-full min-h-[300px] md:min-h-[400px] flex flex-col items-center justify-center bg-red-50/95 dark:bg-red-900/30 backdrop-blur-xl border border-red-200/70 dark:border-red-500/40 rounded-2xl md:rounded-3xl p-4 md:p-8 text-center shadow-lg">
+                <div className="w-full h-full min-h-[300px] flex flex-col items-center justify-center bg-red-50/95 dark:bg-red-900/30 backdrop-blur-xl border border-red-200/70 dark:border-red-500/40 rounded-2xl md:rounded-3xl p-4 md:p-8 text-center shadow-lg">
                     <FaLock className="text-4xl md:text-6xl mb-2 md:mb-4 text-red-600 dark:text-red-400 drop-shadow-lg" />
                     <h2 className="text-lg md:text-2xl font-bold text-red-800 dark:text-red-200 mb-1 md:mb-2 drop-shadow-sm">{t('game.game_disabled')}</h2>
                     <p className="text-sm md:text-base text-red-700 dark:text-red-300">{t('game.game_disabled_desc')}</p>
@@ -136,10 +136,10 @@ export function Game(_props: GameProps) {
             );
         }
 
-        const baseProps = { 
-            onSubmitScore: submitScore, 
-            personalBest, 
-            isAuthenticated: !!user, 
+        const baseProps = {
+            onSubmitScore: submitScore,
+            personalBest,
+            isAuthenticated: !!user,
             onGameStart: resetGuestAlert
         };
 
@@ -163,16 +163,16 @@ export function Game(_props: GameProps) {
             {/* Main Layout Container */}
             <div className="max-w-[1600px] mx-auto px-3 md:px-6 relative z-10">
                 {/* Full Width Horizontal Leaderboard - Top */}
-                <motion.div 
-                    initial={{ opacity: 0, y: -20 }} 
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-4"
                 >
                     <div className="bg-slate-800/90 dark:bg-black/90 backdrop-blur-xl border border-purple-500/30 dark:border-purple-400/20 rounded-xl p-4 shadow-lg">
-                        <Leaderboard 
-                            gameType={activeGame} 
-                            refreshTrigger={refreshLeaderboard} 
-                            isAdmin={isAdmin} 
+                        <Leaderboard
+                            gameType={activeGame}
+                            refreshTrigger={refreshLeaderboard}
+                            isAdmin={isAdmin}
                             isSuperAdmin={isSuperAdmin}
                             horizontal={true}
                         />
@@ -182,8 +182,8 @@ export function Game(_props: GameProps) {
                 {/* Game Selector + GameWindow Row */}
                 <div className="flex flex-col lg:flex-row gap-4">
                     {/* Game Selector - Left Side */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: -20 }} 
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="w-full lg:w-[280px] flex-shrink-0 order-2 lg:order-1"
                     >
@@ -203,13 +203,12 @@ export function Game(_props: GameProps) {
                                             key={gameKey}
                                             onClick={() => !isLocked && setActiveGame(gameKey)}
                                             disabled={isLocked}
-                                            className={`flex-1 p-3 rounded-xl text-left transition-all duration-300 flex items-center justify-between group min-h-[44px] cursor-pointer ${
-                                                isActive 
-                                                    ? 'bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 border-2 border-purple-400/70 dark:border-purple-400/50 shadow-lg' 
-                                                    : isLocked
-                                                        ? 'bg-gray-100/80 dark:bg-gray-800/50 border border-gray-300/50 dark:border-gray-600/50 opacity-60 cursor-not-allowed'
-                                                        : 'bg-gray-50/90 dark:bg-gray-800/30 border border-gray-200/70 dark:border-gray-600/30 hover:bg-gray-100/90 dark:hover:bg-gray-700/40 hover:border-gray-300/70 dark:hover:border-gray-500/50 cursor-pointer'
-                                            }`}
+                                            className={`flex-1 p-3 rounded-xl text-left transition-all duration-300 flex items-center justify-between group min-h-[44px] cursor-pointer ${isActive
+                                                ? 'bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 border-2 border-purple-400/70 dark:border-purple-400/50 shadow-lg'
+                                                : isLocked
+                                                    ? 'bg-gray-100/80 dark:bg-gray-800/50 border border-gray-300/50 dark:border-gray-600/50 opacity-60 cursor-not-allowed'
+                                                    : 'bg-gray-50/90 dark:bg-gray-800/30 border border-gray-200/70 dark:border-gray-600/30 hover:bg-gray-100/90 dark:hover:bg-gray-700/40 hover:border-gray-300/70 dark:hover:border-gray-500/50 cursor-pointer'
+                                                }`}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-3 h-3 rounded-full ${isActive ? 'bg-purple-500' : isLocked ? 'bg-gray-400' : 'bg-gray-400 dark:bg-gray-500'}`} />
@@ -238,11 +237,10 @@ export function Game(_props: GameProps) {
                                                         e.stopPropagation();
                                                         toggleGameStatus(gameKey);
                                                     }}
-                                                    className={`text-xs px-2 py-1 rounded-md transition-colors min-h-[32px] ${
-                                                        isEnabled
-                                                            ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
-                                                            : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
-                                                    }`}
+                                                    className={`text-xs px-2 py-1 rounded-md transition-colors min-h-[32px] ${isEnabled
+                                                        ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
+                                                        : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
+                                                        }`}
                                                 >
                                                     {gameKey.slice(0, 3)} {isEnabled ? '✓' : '✗'}
                                                 </button>
@@ -272,10 +270,10 @@ export function Game(_props: GameProps) {
                     </motion.div>
 
                     {/* Game Window - Right Side */}
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }} 
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex-1 order-1 lg:order-2 h-[600px]"
+                        className="flex-1 order-1 lg:order-2 min-h-[50vh] sm:min-h-[60vh] lg:min-h-[600px] w-full flex flex-col min-w-0 overflow-hidden"
                     >
                         {renderGame()}
                     </motion.div>

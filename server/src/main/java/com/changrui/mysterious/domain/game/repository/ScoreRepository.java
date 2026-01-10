@@ -16,6 +16,8 @@ public interface ScoreRepository extends JpaRepository<Score, String> {
 
     List<Score> findTop50ByGameTypeOrderByScoreAsc(String gameType);
 
+    List<Score> findByGameType(String gameType);
+
     List<Score> findByUserIdAndGameType(String userId, String gameType);
 
     Score findTopByUserIdAndGameTypeOrderByScoreDesc(String userId, String gameType);

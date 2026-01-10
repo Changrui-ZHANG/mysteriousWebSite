@@ -31,6 +31,10 @@ export const API_ENDPOINTS = {
         TOP_SCORES: (gameType: string) => `${API_BASE}/scores/top/${gameType}`,
         USER_SCORE: (userId: string, gameType: string) => `${API_BASE}/scores/user/${userId}/${gameType}`,
         DELETE_SCORE: (id: string) => `${API_BASE}/scores/${id}`,
+        DELETE_ALL_GAME_SCORES: (gameType: string) => `${API_BASE}/scores/clear/${gameType}`,
+        CLEANUP_DUPLICATES: `${API_BASE}/scores/cleanup-duplicates`,
+        FORCE_CLEANUP_DUPLICATES: `${API_BASE}/scores/force-cleanup-duplicates`,
+        DUPLICATES_REPORT: `${API_BASE}/scores/duplicates-report`,
         MAZE_GENERATE: `${API_BASE}/maze/generate`
     },
 

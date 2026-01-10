@@ -339,6 +339,8 @@
     "game": {
         "arcade_zone": "SALLE D'ARCADE",
         "choose_your_challenge": "Choisissez un jeu pour commencer",
+        "select_game": "Sélectionner un jeu",
+        "login_for_scores": "Connectez-vous pour sauvegarder vos scores",
         "brick_breaker": "Casse-Brique",
         "match3": "Match 3",
         "score": "SCORE",
@@ -550,7 +552,11 @@
         "action_enable": "ACTIVER",
         "confirm_reset_score": "Êtes-vous sûr de vouloir réinitialiser le score de {{username}} à 0 ?",
         "error_reset_score": "Échec de la réinitialisation du score",
-        "reset_score": "Réinitialiser le score"
+        "reset_score": "Réinitialiser le score",
+        "clear_all_scores": "Supprimer tous les scores",
+        "confirm_clear_all_scores": "⚠️ ATTENTION ⚠️\n\nÊtes-vous sûr de vouloir supprimer TOUS les scores du jeu {{gameType}} ?\n\nCette action est IRRÉVERSIBLE et supprimera définitivement tous les records de ce jeu.\n\nTapez 'SUPPRIMER' pour confirmer :",
+        "cleanup_duplicates": "Nettoyer les doublons",
+        "confirm_cleanup_duplicates": "Êtes-vous sûr de vouloir nettoyer tous les scores dupliqués ?\n\nCette action supprimera les doublons et ne gardera que le meilleur score de chaque utilisateur pour chaque jeu."
     },
     "holidays": {
         "jour_de_l_an": {

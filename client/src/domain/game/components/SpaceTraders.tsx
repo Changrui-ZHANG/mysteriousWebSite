@@ -163,6 +163,7 @@ export default function SpaceTraders() {
 
     return (
         <GameWindow
+            gameTitle="SPACE TRADERS"
             color="cyan"
             bgmUrl={BGM_URLS.SPACE_TRADERS}
             onReset={() => { playSound('click'); logout(); }}

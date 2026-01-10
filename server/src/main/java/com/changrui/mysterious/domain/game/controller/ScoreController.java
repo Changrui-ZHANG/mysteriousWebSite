@@ -58,4 +58,52 @@ public class ScoreController {
         scoreService.deleteScore(id);
         return ResponseEntity.ok(ApiResponse.successMessage("Score deleted successfully"));
     }
+
+    @PostMapping("/cleanup-duplicates")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> cleanupDuplicateScores(
+            @RequestParam String adminCode) {
+        if (!adminService.isSuperAdmin(adminCode)) {
+            throw new UnauthorizedException("Super admin access required");
+        }
+        int duplicatesRemoved = scoreService.cleanupDuplicateScores();
+        return ResponseEntity.ok(ApiResponse.success(
+                "Duplicate scores cleaned up successfully",
+                Map.of("duplicatesRemoved", duplicatesRemoved)));
+    }
+
+    @GetMapping("/duplicates-report")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getDuplicatesReport(
+            @RequestParam String adminCode) {
+        if (!adminService.isSuperAdmin(adminCode)) {
+            throw new UnauthorizedException("Super admin access required");
+        }
+        Map<String, Object> report = scoreService.getDuplicateScoresReport();
+        return ResponseEntity.ok(ApiResponse.success("Duplicates report generated", report));
+    }
+
+    @PostMapping("/force-cleanup-duplicates")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> forceCleanupDuplicateScores(
+            @RequestParam String adminCode) {
+        if (!adminService.isSuperAdmin(adminCode)) {
+            throw new UnauthorizedException("Super admin access required");
+        }
+        int duplicatesRemoved = scoreService.forceCleanupDuplicates();
+        return ResponseEntity.ok(ApiResponse.success(
+                "Duplicate scores force cleaned up successfully",
+                Map.of("duplicatesRemoved", duplicatesRemoved)));
+    }
+
+    @DeleteMapping("/clear/{gameType}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> deleteAllScoresForGame(
+            @PathVariable String gameType,
+            @RequestParam String adminCode) {
+        if (!adminService.isSuperAdmin(adminCode)) {
+            throw new UnauthorizedException("Super admin access required");
+        }
+
+        int deletedCount = scoreService.deleteAllScoresForGame(gameType);
+        return ResponseEntity.ok(ApiResponse.success(
+                "All scores deleted for game: " + gameType,
+                Map.of("gameType", gameType, "deletedCount", deletedCount)));
+    }
 }
