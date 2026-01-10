@@ -29,33 +29,68 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ message, activ
     };
 
     return (
-        <div className="page-container flex flex-col items-center justify-center p-8 text-center relative">
+        <div className="page-container flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
+            {/* Simple animated background */}
+            <div className="absolute inset-0 opacity-5">
+                <motion.div
+                    className="absolute w-32 h-32 bg-blue-500 rounded-full blur-xl"
+                    animate={{
+                        x: [0, 100, -50, 0],
+                        y: [0, -50, 100, 0],
+                    }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ top: '20%', left: '10%' }}
+                />
+            </div>
+
             <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="flex flex-col items-center relative z-10"
             >
-                <div className="text-6xl mb-6">🚧</div>
+                {/* Simple icon */}
+                <motion.div
+                    animate={{ 
+                        scale: [1, 1.1, 1],
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="text-6xl mb-8"
+                >
+                    🔧
+                </motion.div>
+
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">
                     {t('maintenance.title')}
                 </h1>
-                <p className="text-xl text-secondary max-w-md mx-auto mb-8 font-mono whitespace-pre-wrap">
+                
+                <p className="text-lg text-secondary max-w-md mx-auto mb-8 leading-relaxed">
                     {message || t('maintenance.description')}
                 </p>
 
                 {activatedBy && (
-                    <div className="mb-8 text-sm text-muted font-mono">
-                        {t('maintenance.disabled_by')}: <span className="font-bold">{activatedBy}</span>
+                    <div className="mb-8 text-sm text-muted font-mono px-4 py-2 bg-surface-secondary rounded-lg border border-border-default/30">
+                        {t('maintenance.disabled_by')}: <span className="font-bold text-accent-primary">{activatedBy}</span>
                     </div>
                 )}
 
-                <div className="h-1 w-24 mx-auto rounded-full bg-border-default/20 mb-12">
-                    <motion.div
-                        className="h-full rounded-full bg-blue-500"
-                        animate={{ width: ['0%', '100%', '0%'], x: ['0%', '100%', '0%'] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    />
+                {/* Simple loading dots */}
+                <div className="flex space-x-2 mb-12">
+                    {[0, 1, 2].map((i) => (
+                        <motion.div
+                            key={i}
+                            className="w-2 h-2 bg-blue-500 rounded-full"
+                            animate={{
+                                scale: [1, 1.5, 1],
+                                opacity: [0.5, 1, 0.5],
+                            }}
+                            transition={{
+                                duration: 1.5,
+                                repeat: Infinity,
+                                delay: i * 0.2,
+                            }}
+                        />
+                    ))}
                 </div>
 
                 {/* Admin Access Section */}

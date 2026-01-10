@@ -21,12 +21,15 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
             setSettings(data);
         } catch (err) {
             console.error("Failed to load settings", err);
+            // En cas d'erreur, on continue avec des paramètres par défaut
+            setSettings({});
         } finally {
             setIsLoading(false);
         }
     }, []);
 
     useEffect(() => {
+        // Démarrer le chargement immédiatement
         refreshSettings();
     }, [refreshSettings]);
 

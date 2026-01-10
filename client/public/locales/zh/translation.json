@@ -9,7 +9,8 @@
         "good_morning": "晨安",
         "good_afternoon": "午后安康",
         "good_evening": "晚安",
-        "guest": "访客"
+        "guest": "访客",
+        "loading": "加载中..."
     },
     "brand": {
         "author_name": "张常瑞",

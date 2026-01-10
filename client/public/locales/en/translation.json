@@ -9,7 +9,8 @@
         "good_morning": "Beautiful Morning",
         "good_afternoon": "Productive Afternoon",
         "good_evening": "Wonderful Evening",
-        "guest": "Guest"
+        "guest": "Guest",
+        "loading": "Loading..."
     },
     "brand": {
         "author_name": "Changrui ZHANG",

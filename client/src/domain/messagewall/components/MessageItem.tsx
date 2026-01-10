@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaLanguage, FaSpinner, FaReply, FaTrash } from 'react-icons/fa';
@@ -30,7 +31,7 @@ interface MessageItemProps {
     onScrollToMessage: (id: string) => void;
 }
 
-export function MessageItem({
+export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
     msg,
     index,
     isOwn,
@@ -43,7 +44,7 @@ export function MessageItem({
     onReply,
     onTranslate,
     onScrollToMessage
-}: MessageItemProps) {
+}, ref) => {
     const { t } = useTranslation();
 
     const formatTimestamp = (timestamp: number) => {
@@ -62,6 +63,7 @@ export function MessageItem({
 
     return (
         <motion.div
+            ref={ref}
             id={`message-${msg.id}`}
             initial={{ opacity: 0, y: 15, scale: 0.98 }}
             animate={{
@@ -162,4 +164,6 @@ export function MessageItem({
             </div>
         </motion.div>
     );
-}
+});
+
+MessageItem.displayName = 'MessageItem';

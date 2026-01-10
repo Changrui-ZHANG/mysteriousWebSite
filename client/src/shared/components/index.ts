@@ -12,6 +12,7 @@ export { PageContainer } from './ui/PageContainer';
 export { Gallery } from './ui/Gallery';
 export { LiquidDecoration } from './ui/LiquidDecoration';
 export { LoginRequired } from './LoginRequired';
+export { SplashScreen } from './SplashScreen';
 
 export { ScrollProgress } from './ui/ScrollProgress';
 export { ScrollSection } from './ui/ScrollSection';
@@ -28,6 +29,7 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { MuteButton } from './audio/MuteButton';
 
 // Re-exports from domain (for backward compatibility)
+// Note: These cross-domain imports can cause circular dependencies
 export { GravityPlayground } from '../../domain/game/components/GravityPlayground';
 export { ScoreDisplay } from '../../domain/game/components/ScoreDisplay';
 export { LiquidSphere, ExperienceCard } from '../../domain/cv/components';

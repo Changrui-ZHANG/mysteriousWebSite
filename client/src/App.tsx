@@ -1,8 +1,9 @@
 import { useEffect, useMemo, ReactNode } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { AnimatePresence } from 'framer-motion'
 import { Navbar } from './shared/layouts/Navbar'
-import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary } from './shared/components'
+import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary, SplashScreen } from './shared/components'
 import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
 import { AuthProvider, useAuth } from './shared/contexts/AuthContext'
 import { SettingsProvider, useSettings } from './shared/contexts/SettingsContext'
@@ -78,42 +79,56 @@ function AppContent() {
 
     return (
         <div className="page-container relative font-sans">
-            {!location.pathname.startsWith('/messages') && <ScrollProgress />}
+            {/* Optimized loading screen with smooth transition */}
+            <AnimatePresence mode="wait">
+                {settingsLoading && (
+                    <SplashScreen 
+                        key="splash"
+                        isLoading={true} 
+                    />
+                )}
+            </AnimatePresence>
 
-            <AuthModal
-                isOpen={isAuthModalOpen}
-                onClose={closeAuthModal}
-                onLoginSuccess={login}
-            />
-
-            {(!settingsLoading && isEnabled('SITE_MAINTENANCE_MODE') && !isAdmin) ? (
-                maintenanceElement
-            ) : (
+            {!settingsLoading && (
                 <>
-                    <Navbar />
+                    {!location.pathname.startsWith('/messages') && <ScrollProgress />}
 
-                    {location.pathname === '/' && (
-                        <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none">
-                            <VisualEffect />
-                            <div className="aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] bg-accent-secondary/30" style={{ animationDelay: '0s' }}></div>
-                            <div className="aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] bg-accent-info/30" style={{ animationDelay: '2s' }}></div>
-                            <LiquidDecoration className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
-                        </div>
+                    <AuthModal
+                        isOpen={isAuthModalOpen}
+                        onClose={closeAuthModal}
+                        onLoginSuccess={login}
+                    />
+
+                    {(isEnabled('SITE_MAINTENANCE_MODE') && !isAdmin) ? (
+                        maintenanceElement
+                    ) : (
+                        <>
+                            <Navbar />
+
+                            {location.pathname === '/' && (
+                                <div className="fixed top-0 left-0 w-full h-screen z-10 pointer-events-none">
+                                    <VisualEffect />
+                                    <div className="aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] bg-accent-secondary/50" style={{ animationDelay: '0s' }}></div>
+                                    <div className="aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] bg-accent-info/50" style={{ animationDelay: '2s' }}></div>
+                                    <LiquidDecoration className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
+                                </div>
+                            )}
+
+                            <div className="relative z-20">
+                                <ErrorBoundary>
+                                    <Routes>
+                                        {routes.map(route => (
+                                            <Route
+                                                key={route.path}
+                                                path={route.path}
+                                                element={renderRoute(route)}
+                                            />
+                                        ))}
+                                    </Routes>
+                                </ErrorBoundary>
+                            </div>
+                        </>
                     )}
-
-                    <div className="relative z-10">
-                        <ErrorBoundary>
-                            <Routes>
-                                {routes.map(route => (
-                                    <Route
-                                        key={route.path}
-                                        path={route.path}
-                                        element={renderRoute(route)}
-                                    />
-                                ))}
-                            </Routes>
-                        </ErrorBoundary>
-                    </div>
                 </>
             )}
         </div>

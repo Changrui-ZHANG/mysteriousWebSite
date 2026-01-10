@@ -9,7 +9,8 @@
         "good_morning": "Excellente matinée",
         "good_afternoon": "Bel après-midi",
         "good_evening": "Douce soirée",
-        "guest": "Invité"
+        "guest": "Invité",
+        "loading": "Chargement..."
     },
     "brand": {
         "author_name": "Changrui ZHANG",
@@ -144,8 +145,8 @@
         "signed_in_as": "Connecté en tant que"
     },
     "maintenance": {
-        "title": "En Maintenance",
-        "description": "Le site est actuellement en maintenance. Nous serons de retour très bientôt.",
+        "title": "Mise à jour en cours",
+        "description": "Nous améliorons votre expérience. Quelques instants de patience...",
         "backend_unavailable": "Le serveur est temporairement indisponible. Veuillez réessayer plus tard.",
         "disabled_by": "Désactivé par"
     },
