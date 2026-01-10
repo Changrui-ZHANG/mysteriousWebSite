@@ -137,20 +137,20 @@ export function GameWindow({
                 style={{ perspective: '1000px' }}
             >
                 {/* Unified Header with Game Info and Controls */}
-                <div className={`relative flex justify-between items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 md:p-5 bg-gradient-to-r from-slate-900/95 via-gray-900/95 to-slate-900/95 dark:from-gray-950/95 dark:via-black/95 dark:to-gray-950/95 backdrop-blur-xl border-2 border-purple-500/30 dark:border-purple-400/20 transition-all duration-300 shadow-[0_0_20px_rgba(124,58,237,0.15)] ${isFullScreen ? 'rounded-none border-x-0 border-t-0' : 'rounded-t-lg sm:rounded-t-xl md:rounded-t-2xl'}`}>
+                <div className={`relative flex justify-between items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 md:p-5 bg-surface backdrop-blur-xl border-2 border-default transition-all duration-300 shadow-lg ${isFullScreen ? 'rounded-none border-x-0 border-t-0' : 'rounded-t-lg sm:rounded-t-xl md:rounded-t-2xl'}`}>
                     {/* Sci-Fi Accent Effects */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent opacity-50"></div>
-                    <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent"></div>
-                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent-secondary/5 to-transparent opacity-50"></div>
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-info/40 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-secondary/30 to-transparent"></div>
 
                     {/* Left: Game Title and Status */}
                     <div className="flex items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
                         <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse shadow-[0_0_8px_${colors.glow}] ${gameStatus ? colors.primary.replace('text-', 'bg-') : 'bg-red-500'}`}></div>
                         <div className="flex flex-col">
-                            <h2 className={`text-base sm:text-lg md:text-xl font-bold font-mono ${colors.primary} tracking-wider uppercase drop-shadow-[0_0_8px_${colors.glow}]`}>
+                            <h2 className={`text-base sm:text-lg md:text-xl font-bold font-mono text-primary tracking-wider uppercase drop-shadow-sm`}>
                                 {gameTitle}
                             </h2>
-                            <span className="text-xs font-mono text-gray-300 dark:text-gray-400 opacity-90">
+                            <span className="text-xs font-mono text-secondary opacity-90">
                                 {gameStatus ? 'SYSTEM ACTIVE' : 'SYSTEM OFFLINE'}
                             </span>
                         </div>
@@ -161,9 +161,9 @@ export function GameWindow({
                         <div className="hidden md:flex items-center gap-4 relative z-10">
                             <div className="flex items-center gap-4">
                                 {/* Current Score with Enhanced Styling */}
-                                <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/90 dark:bg-black/90 rounded-lg border border-purple-400/50 backdrop-blur-sm">
-                                    <span className="text-xs font-mono text-gray-300 dark:text-gray-400 uppercase tracking-wider">SCORE</span>
-                                    <span className={`text-lg font-mono font-black ${colors.primary} drop-shadow-[0_0_8px_${colors.glow}] tracking-wider`}>
+                                <div className="flex items-center gap-2 px-3 py-2 bg-surface-alt rounded-lg border border-default backdrop-blur-sm">
+                                    <span className="text-xs font-mono text-secondary uppercase tracking-wider">SCORE</span>
+                                    <span className={`text-lg font-mono font-black text-primary tracking-wider`}>
                                         {hud.attempts !== undefined ? `${hud.score}/${hud.attempts}` : hud.score}
                                     </span>
                                 </div>
@@ -172,20 +172,20 @@ export function GameWindow({
                                 {hud.personalBest && hud.personalBest.score > 0 && (
                                     <div className="relative">
                                         {/* Achievement Glow Effect */}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-orange-400/30 to-yellow-400/20 rounded-lg blur-sm animate-pulse"></div>
-                                        <div className="relative flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-yellow-900/80 via-orange-900/80 to-yellow-900/80 dark:from-yellow-800/90 dark:via-orange-800/90 dark:to-yellow-800/90 rounded-lg border-2 border-yellow-400/70 backdrop-blur-sm shadow-[0_0_15px_rgba(234,179,8,0.4)]">
-                                            <span className="text-xs font-mono text-yellow-200 uppercase tracking-wider font-bold">BEST</span>
-                                            <span className="text-lg font-mono font-black text-yellow-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.6)] tracking-wider">
+                                        <div className="absolute inset-0 achievement-glow rounded-lg blur-sm animate-pulse"></div>
+                                        <div className="relative flex items-center gap-2 px-3 py-2 achievement-bg rounded-lg border-2 backdrop-blur-sm shadow-md">
+                                            <span className="text-xs font-mono achievement-text-label uppercase tracking-wider font-bold">BEST</span>
+                                            <span className="text-lg font-mono font-black achievement-text-score tracking-wider">
                                                 {Math.max(hud.score, hud.personalBest.score)}
                                             </span>
                                             {/* Achievement Badge */}
-                                            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse shadow-[0_0_6px_rgba(234,179,8,0.8)]"></div>
+                                            <div className="w-2 h-2 achievement-badge rounded-full animate-pulse shadow-sm"></div>
                                         </div>
                                     </div>
                                 )}
                             </div>
                             {hud.customInfo && (
-                                <div className="text-xs text-gray-300 dark:text-gray-400 font-mono">
+                                <div className="text-xs text-secondary font-mono">
                                     {hud.customInfo}
                                 </div>
                             )}
@@ -195,10 +195,10 @@ export function GameWindow({
                     {/* Right: Controls */}
                     <div className="flex items-center gap-1 sm:gap-2 relative z-10">
                         {/* Volume Control */}
-                        <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-slate-800/80 dark:bg-black/80 rounded-lg border border-purple-400/40 dark:border-purple-500/30 backdrop-blur-sm">
+                        <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-surface-alt rounded-lg border border-default backdrop-blur-sm">
                             <button
                                 onClick={toggleMute}
-                                className={`${colors.primary} hover:${colors.secondary} transition-colors p-1`}
+                                className={`text-primary hover:text-secondary transition-colors p-1`}
                                 title={isMuted ? 'Unmute' : 'Mute'}
                             >
                                 {isMuted ? <FaVolumeMute size={16} /> : <FaVolumeUp size={16} />}
@@ -257,18 +257,18 @@ export function GameWindow({
                     style={{ transformStyle: 'preserve-3d' }}
                 >
                     {/* Front Face - Game Content */}
-                    <div className={`${isFlipped ? 'hidden' : ''} w-full h-full flex flex-col transition-all duration-500 bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-slate-800/95 dark:from-gray-950/95 dark:via-black/90 dark:to-gray-900/95 backdrop-blur-xl max-w-full overflow-hidden ${isFullScreen ? 'rounded-none border-0' : `border-2 border-l-purple-500/30 border-r-purple-500/30 border-b-purple-500/30 dark:border-l-purple-400/20 dark:border-r-purple-400/20 dark:border-b-purple-400/20 ${borderClass} rounded-b-lg sm:rounded-b-xl md:rounded-b-2xl`} ${bgGradient || ''}`}>
+                    <div className={`${isFlipped ? 'hidden' : ''} w-full h-full flex flex-col transition-all duration-500 bg-surface backdrop-blur-xl max-w-full overflow-hidden ${isFullScreen ? 'rounded-none border-0' : `border-2 border-l-default border-r-default border-b-default ${borderClass} rounded-b-lg sm:rounded-b-xl md:rounded-b-2xl`} ${bgGradient || ''}`}>
                         {/* Inner glow effect */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-cyan-500/5 pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent-secondary/2 via-transparent to-accent-info/2 pointer-events-none"></div>
 
                         {/* Mobile HUD with Enhanced Personal Score Display */}
                         {hud && (
-                            <div className="md:hidden px-4 py-3 bg-slate-800/90 dark:bg-black/90 border-b border-purple-400/30 backdrop-blur-sm">
+                            <div className="md:hidden px-4 py-3 bg-surface-alt border-b border-default backdrop-blur-sm">
                                 <div className="flex justify-between items-center">
                                     {/* Current Score */}
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-mono text-gray-300 uppercase tracking-wider">SCORE</span>
-                                        <span className={`text-base font-mono font-black ${colors.primary} drop-shadow-[0_0_6px_${colors.glow}] tracking-wider`}>
+                                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">SCORE</span>
+                                        <span className={`text-base font-mono font-black text-primary tracking-wider`}>
                                             {hud.attempts !== undefined ? `${hud.score}/${hud.attempts}` : hud.score}
                                         </span>
                                     </div>
@@ -276,13 +276,13 @@ export function GameWindow({
                                     {/* Personal Best with Mobile Achievement Styling */}
                                     {hud.personalBest && hud.personalBest.score > 0 && (
                                         <div className="relative">
-                                            <div className="absolute inset-0 bg-yellow-400/20 rounded-md blur-sm animate-pulse"></div>
-                                            <div className="relative flex items-center gap-2 px-2 py-1 bg-gradient-to-r from-yellow-900/80 to-orange-900/80 dark:from-yellow-800/90 dark:to-orange-800/90 rounded-md border border-yellow-400/70 backdrop-blur-sm">
-                                                <span className="text-xs font-mono text-yellow-200 uppercase tracking-wider font-bold">BEST</span>
-                                                <span className="text-base font-mono font-black text-yellow-300 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)] tracking-wider">
+                                            <div className="absolute inset-0 achievement-glow rounded-md blur-sm animate-pulse"></div>
+                                            <div className="relative flex items-center gap-2 px-2 py-1 achievement-bg rounded-md border backdrop-blur-sm">
+                                                <span className="text-xs font-mono achievement-text-label uppercase tracking-wider font-bold">BEST</span>
+                                                <span className="text-base font-mono font-black achievement-text-score tracking-wider">
                                                     {Math.max(hud.score, hud.personalBest.score)}
                                                 </span>
-                                                <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></div>
+                                                <div className="w-1.5 h-1.5 achievement-badge rounded-full animate-pulse"></div>
                                             </div>
                                         </div>
                                     )}
@@ -300,9 +300,9 @@ export function GameWindow({
                     </div>
 
                     {/* Back Face - Rules */}
-                    <div className={`${isFlipped ? '' : 'hidden'} absolute inset-0 w-full h-full transition-all duration-500 bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-slate-800/95 dark:from-gray-950/95 dark:via-black/90 dark:to-gray-900/95 max-w-full overflow-hidden ${isFullScreen ? 'rounded-none border-0' : `border-2 border-l-cyan-400/30 border-r-cyan-400/30 border-b-cyan-400/30 dark:border-l-cyan-500/20 dark:border-r-cyan-500/20 dark:border-b-cyan-500/20 rounded-b-lg sm:rounded-b-xl backdrop-blur-xl`}`}>
+                    <div className={`${isFlipped ? '' : 'hidden'} absolute inset-0 w-full h-full transition-all duration-500 bg-surface max-w-full overflow-hidden ${isFullScreen ? 'rounded-none border-0' : `border-2 border-l-accent-info/30 border-r-accent-info/30 border-b-accent-info/30 rounded-b-lg sm:rounded-b-xl backdrop-blur-xl`}`}>
                         {/* Inner glow effect for rules */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent-info/5 via-transparent to-accent-secondary/5 pointer-events-none"></div>
                         {rulesContent}
                     </div>
                 </motion.div>

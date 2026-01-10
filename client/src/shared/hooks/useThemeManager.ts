@@ -39,10 +39,14 @@ export function useThemeManager() {
             root.classList.add('no-transitions');
         }
 
-        // Mises à jour DOM synchrones
+        // Mises à jour DOM synchrones - IMPORTANT: supprimer l'ancienne classe avant d'ajouter la nouvelle
         root.setAttribute('data-theme', themeValue);
         root.classList.remove('light', 'dark');
         root.classList.add(themeValue);
+
+        // Aussi appliquer sur le body pour s'assurer que les classes Tailwind fonctionnent
+        document.body.classList.remove('light', 'dark');
+        document.body.classList.add(themeValue);
 
         // Body background micro-fix pour les thèmes extrêmes
         let bgColor = '#0a0a0b'; // default dark
@@ -61,6 +65,9 @@ export function useThemeManager() {
                 root.classList.remove('no-transitions');
             }, 50);
         }
+
+        // Debug: log pour vérifier que les classes sont bien appliquées
+        console.log('Theme applied:', themeValue, 'HTML classes:', root.classList.toString(), 'Body classes:', document.body.classList.toString());
     }, []);
 
     // Changer le thème

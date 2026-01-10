@@ -128,10 +128,12 @@ export function Game(_props: GameProps) {
 
         if (isLocked) {
             return (
-                <div className="w-full h-full min-h-[300px] flex flex-col items-center justify-center bg-red-50/95 dark:bg-red-900/30 backdrop-blur-xl border border-red-200/70 dark:border-red-500/40 rounded-2xl md:rounded-3xl p-4 md:p-8 text-center shadow-lg">
-                    <FaLock className="text-4xl md:text-6xl mb-2 md:mb-4 text-red-600 dark:text-red-400 drop-shadow-lg" />
-                    <h2 className="text-lg md:text-2xl font-bold text-red-800 dark:text-red-200 mb-1 md:mb-2 drop-shadow-sm">{t('game.game_disabled')}</h2>
-                    <p className="text-sm md:text-base text-red-700 dark:text-red-300">{t('game.game_disabled_desc')}</p>
+                <div className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-4 md:p-8 text-center">
+                    <div className="error-container backdrop-blur-xl border rounded-xl p-6 md:p-8 shadow-lg max-w-md mx-auto">
+                        <FaLock className="error-icon text-4xl md:text-6xl mb-2 md:mb-4 drop-shadow-lg mx-auto" />
+                        <h2 className="error-title text-lg md:text-2xl font-bold mb-1 md:mb-2 drop-shadow-sm">{t('game.game_disabled')}</h2>
+                        <p className="error-text text-sm md:text-base">{t('game.game_disabled_desc')}</p>
+                    </div>
                 </div>
             );
         }
@@ -155,9 +157,10 @@ export function Game(_props: GameProps) {
     return (
         <div className="page-container pt-16 md:pt-20 pb-4 md:pb-8 relative overflow-hidden min-h-screen">
             {/* Gaming Background Effects - Optimized for both themes */}
-            <div className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none">
-                <div className="absolute top-10 left-10 w-32 md:w-48 h-32 md:h-48 bg-gradient-to-br from-purple-500/30 via-cyan-500/20 to-pink-500/20 rounded-full blur-2xl animate-pulse"></div>
-                <div className="absolute bottom-20 right-10 w-40 md:w-60 h-40 md:h-60 bg-gradient-to-br from-blue-500/25 via-indigo-500/15 to-purple-600/15 rounded-full blur-xl animate-pulse delay-2000"></div>
+            <div className="absolute inset-0 bg-effects pointer-events-none">
+                <div className="absolute top-10 left-10 w-32 md:w-48 h-32 md:h-48 bg-gradient-to-br from-purple-600/40 via-cyan-500/30 to-pink-600/30 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-10 w-40 md:w-60 h-40 md:h-60 bg-gradient-to-br from-blue-600/35 via-indigo-600/25 to-purple-700/25 rounded-full blur-2xl animate-pulse delay-2000"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 md:w-32 h-20 md:h-32 bg-gradient-to-br from-pink-500/20 via-purple-500/15 to-indigo-500/20 rounded-full blur-xl animate-pulse delay-1000"></div>
             </div>
 
             {/* Main Layout Container */}
@@ -168,7 +171,7 @@ export function Game(_props: GameProps) {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-4"
                 >
-                    <div className="bg-slate-800/90 dark:bg-black/90 backdrop-blur-xl border border-purple-500/30 dark:border-purple-400/20 rounded-xl p-4 shadow-lg">
+                    <div className="gaming-leaderboard backdrop-blur-xl border rounded-xl p-4 shadow-lg">
                         <Leaderboard
                             gameType={activeGame}
                             refreshTrigger={refreshLeaderboard}
@@ -187,9 +190,9 @@ export function Game(_props: GameProps) {
                         animate={{ opacity: 1, x: 0 }}
                         className="w-full lg:w-[280px] flex-shrink-0 order-2 lg:order-1"
                     >
-                        <div className="bg-white/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl p-4 shadow-lg h-full lg:h-[600px] flex flex-col">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                <FaGamepad className="text-purple-500" />
+                        <div className="bg-surface backdrop-blur-xl border border-default rounded-2xl p-4 shadow-lg h-full lg:h-[600px] flex flex-col">
+                            <h3 className="text-lg font-bold text-primary mb-3 flex items-center gap-2">
+                                <FaGamepad className="text-purple-600" />
                                 {t('game.select_game')}
                             </h3>
                             <div className="flex-1 flex flex-col gap-2">
@@ -203,21 +206,21 @@ export function Game(_props: GameProps) {
                                             key={gameKey}
                                             onClick={() => !isLocked && setActiveGame(gameKey)}
                                             disabled={isLocked}
-                                            className={`flex-1 p-3 rounded-xl text-left transition-all duration-300 flex items-center justify-between group min-h-[44px] cursor-pointer ${isActive
-                                                ? 'bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 border-2 border-purple-400/70 dark:border-purple-400/50 shadow-lg'
+                                            className={`flex-1 p-3 rounded-xl text-left transition-all duration-200 flex items-center justify-between group min-h-[44px] cursor-pointer ${isActive
+                                                ? 'game-button-active'
                                                 : isLocked
-                                                    ? 'bg-gray-100/80 dark:bg-gray-800/50 border border-gray-300/50 dark:border-gray-600/50 opacity-60 cursor-not-allowed'
-                                                    : 'bg-gray-50/90 dark:bg-gray-800/30 border border-gray-200/70 dark:border-gray-600/30 hover:bg-gray-100/90 dark:hover:bg-gray-700/40 hover:border-gray-300/70 dark:hover:border-gray-500/50 cursor-pointer'
+                                                    ? 'game-button-locked'
+                                                    : 'game-button-inactive'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-3 h-3 rounded-full ${isActive ? 'bg-purple-500' : isLocked ? 'bg-gray-400' : 'bg-gray-400 dark:bg-gray-500'}`} />
-                                                <span className={`font-medium text-sm ${isActive ? 'text-purple-700 dark:text-purple-300' : isLocked ? 'text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-200'}`}>
+                                                <div className={`w-3 h-3 rounded-full transition-colors duration-200 ${isActive ? 'game-indicator-active' : isLocked ? 'game-indicator-inactive' : 'game-indicator-inactive group-hover:game-indicator-inactive'}`} />
+                                                <span className={`font-medium text-sm transition-colors duration-200 ${isActive ? 'game-text-active' : isLocked ? 'text-muted' : 'game-text-inactive group-hover:game-text-inactive'}`}>
                                                     {getGameLabel(gameKey, t)}
                                                 </span>
                                             </div>
-                                            {isLocked && <FaLock className="text-xs text-red-500" />}
-                                            {isActive && <span className="text-purple-500">▶</span>}
+                                            {isLocked && <FaLock className="text-xs text-accent-danger" />}
+                                            {isActive && <span className="text-accent-secondary animate-pulse">▶</span>}
                                         </button>
                                     );
                                 })}
@@ -225,8 +228,8 @@ export function Game(_props: GameProps) {
 
                             {/* Admin Controls */}
                             {(isSuperAdmin || isAdmin) && (
-                                <div className="mt-4 pt-4 border-t border-gray-200/70 dark:border-gray-600/50">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Admin:</p>
+                                <div className="mt-4 pt-4 border-t border-muted">
+                                    <p className="text-xs text-secondary mb-2 font-medium">Admin Controls:</p>
                                     <div className="flex flex-wrap gap-1">
                                         {GAME_KEYS.map((gameKey) => {
                                             const isEnabled = gameStatuses[gameKey] !== false;
@@ -237,9 +240,9 @@ export function Game(_props: GameProps) {
                                                         e.stopPropagation();
                                                         toggleGameStatus(gameKey);
                                                     }}
-                                                    className={`text-xs px-2 py-1 rounded-md transition-colors min-h-[32px] ${isEnabled
-                                                        ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
-                                                        : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
+                                                    className={`text-xs px-2 py-1 rounded-md transition-all duration-200 min-h-[32px] cursor-pointer font-medium ${isEnabled
+                                                        ? 'status-success'
+                                                        : 'status-error'
                                                         }`}
                                                 >
                                                     {gameKey.slice(0, 3)} {isEnabled ? '✓' : '✗'}
@@ -252,14 +255,14 @@ export function Game(_props: GameProps) {
 
                             {/* Login Prompt - Compact */}
                             {!user && (
-                                <div className="mt-4 pt-4 border-t border-gray-200/70 dark:border-gray-600/50">
+                                <div className="mt-4 pt-4 border-t border-muted">
                                     <div className="text-center">
-                                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                                        <p className="text-xs text-secondary mb-2">
                                             {t('game.login_for_scores')}
                                         </p>
                                         <button
                                             onClick={onOpenLogin}
-                                            className="w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-bold rounded-lg transition-all duration-300 text-sm min-h-[40px]"
+                                            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-lg transition-all duration-200 text-sm min-h-[40px] shadow-md shadow-purple-500/25 hover:shadow-lg hover:shadow-purple-500/30 cursor-pointer"
                                         >
                                             {t('auth.login')}
                                         </button>
@@ -275,7 +278,9 @@ export function Game(_props: GameProps) {
                         animate={{ opacity: 1, scale: 1 }}
                         className="flex-1 order-1 lg:order-2 min-h-[50vh] sm:min-h-[60vh] lg:min-h-[600px] w-full flex flex-col min-w-0 overflow-hidden"
                     >
-                        {renderGame()}
+                        <div className="bg-surface backdrop-blur-xl border border-default rounded-2xl shadow-lg h-full overflow-hidden">
+                            {renderGame()}
+                        </div>
                     </motion.div>
                 </div>
             </div>

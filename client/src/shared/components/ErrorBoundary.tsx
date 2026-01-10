@@ -55,29 +55,37 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             return (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     {/* Background overlay avec effet glassmorphism */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/10 to-black/30 dark:from-black/40 dark:via-black/20 dark:to-black/50 backdrop-blur-2xl" />
+                    <div className="absolute inset-0 bg-overlay backdrop-blur-2xl" />
 
                     {/* Particules flottantes d'arrière-plan */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <motion.div
-                            className="absolute w-32 h-32 bg-red-500/10 dark:bg-red-500/20 rounded-full blur-3xl"
+                            className="absolute w-32 h-32 rounded-full blur-3xl"
                             animate={{
                                 x: [0, 100, -50, 0],
                                 y: [0, -50, 100, 0],
                                 scale: [1, 1.2, 0.8, 1],
                             }}
                             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                            style={{ top: '20%', left: '10%' }}
+                            style={{ 
+                                top: '20%', 
+                                left: '10%',
+                                backgroundColor: 'var(--error-particle-red)'
+                            }}
                         />
                         <motion.div
-                            className="absolute w-24 h-24 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-3xl"
+                            className="absolute w-24 h-24 rounded-full blur-3xl"
                             animate={{
                                 x: [0, -80, 60, 0],
                                 y: [0, 80, -40, 0],
                                 scale: [0.8, 1.3, 0.9, 0.8],
                             }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                            style={{ bottom: '30%', right: '15%' }}
+                            style={{ 
+                                bottom: '30%', 
+                                right: '15%',
+                                backgroundColor: 'var(--error-particle-orange)'
+                            }}
                         />
                     </div>
 
@@ -94,13 +102,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                         className="relative max-w-lg mx-auto"
                     >
                         {/* Carte principale avec effet liquid glass */}
-                        <div className="relative rounded-3xl bg-white/15 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-3xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.4)] overflow-hidden">
+                        <div className="error-container rounded-3xl backdrop-blur-3xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.4)] overflow-hidden">
                             {/* Effets de brillance et reflets */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/15 dark:from-white/8 via-transparent to-transparent pointer-events-none" />
-                            <div className="absolute inset-0 bg-gradient-to-tl from-red-500/5 dark:from-red-500/3 via-transparent to-orange-500/5 dark:to-orange-500/3 pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-tl from-accent-danger/5 via-transparent to-accent-warning/5 pointer-events-none" />
 
                             {/* Bordure interne lumineuse */}
-                            <div className="absolute inset-px rounded-[calc(1.5rem-1px)] bg-gradient-to-b from-white/10 dark:from-white/5 to-transparent pointer-events-none" />
+                            <div className="absolute inset-px rounded-[calc(1.5rem-1px)] bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
 
                             {/* Contenu principal */}
                             <div className="relative z-10 p-8 text-center">
@@ -111,9 +119,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                     transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
                                     className="relative w-20 h-20 mx-auto mb-6"
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 dark:from-red-500/20 to-orange-500/30 dark:to-orange-500/20 rounded-2xl backdrop-blur-xl border border-black/10 dark:border-white/10" />
-                                    <div className="absolute inset-px bg-gradient-to-br from-white/20 dark:from-white/10 to-transparent rounded-[calc(1rem-1px)]" />
-                                    <div className="relative w-full h-full flex items-center justify-center text-red-600 dark:text-red-400">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-accent-danger/30 to-accent-warning/30 rounded-2xl backdrop-blur-xl border border-default" />
+                                    <div className="absolute inset-px bg-gradient-to-br from-white/20 to-transparent rounded-[calc(1rem-1px)]" />
+                                    <div className="relative w-full h-full flex items-center justify-center text-accent-danger">
                                         <motion.div
                                             animate={{ 
                                                 scale: [1, 1.1, 1],
@@ -125,7 +133,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                         </motion.div>
                                     </div>
                                     {/* Effet de lueur autour de l'icône */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/40 dark:from-red-500/30 to-orange-500/40 dark:to-orange-500/30 rounded-2xl blur-xl opacity-50" />
+                                    <div className="absolute inset-0 bg-gradient-to-br from-accent-danger/40 to-accent-warning/40 rounded-2xl blur-xl opacity-50" />
                                 </motion.div>
 
                                 {/* Titre avec effet de texte */}
@@ -133,7 +141,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.3, duration: 0.4 }}
-                                    className="text-2xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 dark:from-white dark:via-white/90 dark:to-white/70 font-heading"
+                                    className="text-2xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-text-primary via-text-secondary to-text-muted font-heading"
                                 >
                                     Oups, quelque chose s'est mal passé
                                 </motion.h2>
@@ -143,7 +151,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.4, duration: 0.4 }}
-                                    className="text-gray-700 dark:text-white/70 mb-6 leading-relaxed"
+                                    className="text-secondary mb-6 leading-relaxed"
                                 >
                                     {this.state.error?.message || 'Une erreur inattendue s\'est produite'}
                                 </motion.p>
@@ -156,11 +164,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                         transition={{ delay: 0.5, duration: 0.4 }}
                                         className="mb-6 text-left"
                                     >
-                                        <summary className="cursor-pointer text-xs text-gray-600 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/80 mb-2 font-mono">
+                                        <summary className="cursor-pointer text-xs text-muted hover:text-secondary mb-2 font-mono">
                                             🔍 Détails techniques
                                         </summary>
-                                        <div className="mt-2 p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 backdrop-blur-sm">
-                                            <pre className="text-xs text-gray-600 dark:text-white/60 overflow-auto max-h-32 font-mono">
+                                        <div className="mt-2 p-3 bg-inset rounded-xl border border-default backdrop-blur-sm">
+                                            <pre className="text-xs text-muted overflow-auto max-h-32 font-mono">
                                                 {this.state.error.stack}
                                             </pre>
                                         </div>
@@ -180,7 +188,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                         className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 p-px transition-all duration-300 hover:scale-105 active:scale-95"
                                     >
                                         <div className="relative rounded-[calc(0.75rem-1px)] bg-gradient-to-r from-blue-500/90 to-purple-500/90 backdrop-blur-xl px-6 py-3 transition-all duration-300 group-hover:from-blue-500 group-hover:to-purple-500">
-                                            <div className="absolute inset-0 bg-gradient-to-r from-white/30 dark:from-white/20 via-white/20 dark:via-white/10 to-white/30 dark:to-white/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                                            <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-white/20 to-white/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                                             <span className="relative z-10 font-bold text-white tracking-wide">
                                                 🔄 Réessayer
                                             </span>
@@ -190,9 +198,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                                     {/* Bouton Reload Page */}
                                     <button
                                         onClick={() => window.location.reload()}
-                                        className="group relative overflow-hidden rounded-xl bg-white/10 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-xl px-6 py-3 transition-all duration-300 hover:bg-white/20 dark:hover:bg-white/10 hover:scale-105 active:scale-95"
+                                        className="group relative overflow-hidden rounded-xl bg-surface border border-default backdrop-blur-xl px-6 py-3 transition-all duration-300 hover:bg-surface-alt hover:scale-105 active:scale-95"
                                     >
-                                        <span className="relative z-10 font-bold text-gray-800 dark:text-white/90 tracking-wide">
+                                        <span className="relative z-10 font-bold text-primary tracking-wide">
                                             🔃 Recharger la page
                                         </span>
                                     </button>
@@ -200,9 +208,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                             </div>
 
                             {/* Effets décoratifs flottants */}
-                            <div className="absolute top-4 right-4 w-2 h-2 bg-gray-400/40 dark:bg-white/20 rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
-                            <div className="absolute bottom-6 left-6 w-1 h-1 bg-red-500/60 dark:bg-red-500/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-                            <div className="absolute top-1/3 left-4 w-1.5 h-1.5 bg-orange-500/50 dark:bg-orange-500/30 rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+                            <div className="absolute top-4 right-4 w-2 h-2 bg-muted rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
+                            <div className="absolute bottom-6 left-6 w-1 h-1 bg-accent-danger rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+                            <div className="absolute top-1/3 left-4 w-1.5 h-1.5 bg-accent-warning rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
                         </div>
                     </motion.div>
                 </div>
