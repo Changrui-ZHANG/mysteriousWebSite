@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark' | 'system' | 'paper';
 
 const STORAGE_KEY = 'app-theme';
 
@@ -24,6 +24,7 @@ export function useThemeManager() {
 
     // Résoudre le thème effectif (light ou dark)
     const resolveTheme = useCallback((themeValue: Theme): 'light' | 'dark' => {
+        if (themeValue === 'paper') return 'light';
         if (themeValue === 'system') {
             return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
@@ -31,7 +32,7 @@ export function useThemeManager() {
     }, []);
 
     // Appliquer le thème au DOM de manière atomique
-    const applyTheme = useCallback((themeValue: 'light' | 'dark', skipTransition = false) => {
+    const applyTheme = useCallback((themeValue: Theme, skipTransition = false) => {
         const root = document.documentElement;
 
         // Bloquer les transitions si demandé (pour éviter le clignotement)
@@ -39,24 +40,18 @@ export function useThemeManager() {
             root.classList.add('no-transitions');
         }
 
-        // Mises à jour DOM synchrones - IMPORTANT: supprimer l'ancienne classe avant d'ajouter la nouvelle
         root.setAttribute('data-theme', themeValue);
+
+        const effectiveTheme = resolveTheme(themeValue);
+
         root.classList.remove('light', 'dark');
-        root.classList.add(themeValue);
+        root.classList.add(effectiveTheme);
 
         // Aussi appliquer sur le body pour s'assurer que les classes Tailwind fonctionnent
         document.body.classList.remove('light', 'dark');
-        document.body.classList.add(themeValue);
+        document.body.classList.add(effectiveTheme);
 
-        // Body background micro-fix pour les thèmes extrêmes
-        let bgColor = '#0a0a0b'; // default dark
-        if (themeValue === 'light') bgColor = '#fcfcfd';
-
-        document.body.style.backgroundColor = bgColor;
-        root.style.backgroundColor = bgColor;
-
-        // Mettre à jour l'état React pour les composants qui en dépendent
-        setResolvedTheme(themeValue);
+        setResolvedTheme(effectiveTheme);
 
         // Débloquer les transitions après un court délai
         if (skipTransition) {
@@ -66,8 +61,6 @@ export function useThemeManager() {
             }, 50);
         }
 
-        // Debug: log pour vérifier que les classes sont bien appliquées
-        console.log('Theme applied:', themeValue, 'HTML classes:', root.classList.toString(), 'Body classes:', document.body.classList.toString());
     }, []);
 
     // Changer le thème
@@ -85,32 +78,31 @@ export function useThemeManager() {
 
     // Application du thème au plus tôt avant le paint
     useLayoutEffect(() => {
-        const effectiveTheme = resolveTheme(theme);
-
         // On bloque les transitions SEULEMENT lors d'un switch manuel, pas au montage initial
         const shouldSkipTransition = !isInitialMount.current;
-        applyTheme(effectiveTheme, shouldSkipTransition);
+        applyTheme(theme, shouldSkipTransition);
 
         isInitialMount.current = false;
-    }, [theme, applyTheme, resolveTheme]);
+    }, [theme, applyTheme]);
 
     // Écoute des changements système (seulement si en mode system)
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const handleChange = () => {
             if (theme === 'system') {
-                applyTheme(resolveTheme('system'), true);
+                applyTheme('system', true);
             }
         };
 
         mediaQuery.addEventListener('change', handleChange);
         return () => mediaQuery.removeEventListener('change', handleChange);
-    }, [theme, applyTheme, resolveTheme]);
+    }, [theme, applyTheme]);
 
     return {
         theme,
         resolvedTheme,
         isDarkMode: resolvedTheme === 'dark',
+        isPaperTheme: theme === 'paper',
         setTheme,
         toggleTheme,
     };

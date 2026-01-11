@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { STORAGE_KEYS } from '../constants/authStorage';
+import { fetchJson, postJson } from '../api/httpClient';
 import i18n from '../../i18n';
 
 interface User {
@@ -50,8 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 setUser(parsedUser);
 
                 // Load user language preference
-                fetch(`/api/users/${parsedUser.userId}/language`)
-                    .then(res => res.json())
+                fetchJson<{ language: string }>(`/api/users/${parsedUser.userId}/language`)
                     .then(data => {
                         if (data.language && i18n.language !== data.language) {
                             i18n.changeLanguage(data.language);
@@ -83,8 +83,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
 
         // Load user language preference
-        fetch(`/api/users/${newUser.userId}/language`)
-            .then(res => res.json())
+        fetchJson<{ language: string }>(`/api/users/${newUser.userId}/language`)
             .then(data => {
                 if (data.language) {
                     i18n.changeLanguage(data.language);
@@ -104,7 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('preferredLanguage', lng);
         if (user?.userId) {
             try {
-                await fetch(`/api/users/${user.userId}/language`, {
+                await fetchJson(`/api/users/${user.userId}/language`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ language: lng }),
@@ -117,7 +116,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const adminLogin = async (code: string): Promise<boolean> => {
         try {
-            const { postJson } = await import('../api/httpClient');
             const response = await postJson<{ role: string; message: string }>(
                 '/api/auth/verify-admin',
                 { code }

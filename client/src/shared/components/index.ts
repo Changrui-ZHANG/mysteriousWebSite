@@ -28,8 +28,5 @@ export { ErrorBoundary } from './ErrorBoundary';
 // Audio Components
 export { MuteButton } from './audio/MuteButton';
 
-// Re-exports from domain (for backward compatibility)
-// Note: These cross-domain imports can cause circular dependencies
-export { GravityPlayground } from '../../domain/game/components/GravityPlayground';
-export { ScoreDisplay } from '../../domain/game/components/ScoreDisplay';
-export { LiquidSphere, ExperienceCard } from '../../domain/cv/components';
+// Note: Cross-domain imports removed to prevent circular dependencies
+// Import components directly from their domains when needed

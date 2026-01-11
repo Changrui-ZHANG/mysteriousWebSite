@@ -15,6 +15,15 @@ export interface ScoreData {
     attempts?: number;
 }
 
+export interface Score {
+    id: string;
+    userId: string;
+    username: string;
+    gameType: GameKey;
+    score: number;
+    timestamp: number;
+}
+
 export interface TopScore {
     userId: string;
     username: string;

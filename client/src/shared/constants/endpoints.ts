@@ -38,6 +38,9 @@ export const API_ENDPOINTS = {
         MAZE_GENERATE: `${API_BASE}/maze/generate`
     },
 
+    // Scores
+    SCORES: `${API_BASE}/scores`,
+
     // Calendar
     CALENDAR: {
         CONFIG: `${API_BASE}/calendar-config`
