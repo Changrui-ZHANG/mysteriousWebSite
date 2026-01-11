@@ -558,6 +558,21 @@
         "cleanup_duplicates": "Nettoyer les doublons",
         "confirm_cleanup_duplicates": "Êtes-vous sûr de vouloir nettoyer tous les scores dupliqués ?\n\nCette action supprimera les doublons et ne gardera que le meilleur score de chaque utilisateur pour chaque jeu."
     },
+    "errors": {
+        "failed_to_load_messages": "Impossible de charger les messages",
+        "failed_to_send_message": "Impossible d'envoyer le message",
+        "failed_to_delete_message": "Impossible de supprimer le message",
+        "failed_to_toggle_mute": "Impossible de changer le mode muet",
+        "failed_to_clear_messages": "Impossible d'effacer les messages",
+        "unknown_error": "Erreur inconnue",
+        "error_boundary": {
+            "title": "Oops! Quelque chose s'est mal passé",
+            "description": "Une erreur inattendue est survenue. Vous pouvez essayer de recharger la page.",
+            "retry": "Réessayer",
+            "reload_page": "Recharger la page",
+            "error_details": "Détails de l'erreur (développement)"
+        }
+    },
     "holidays": {
         "jour_de_l_an": {
             "title": "Jour de l'an",

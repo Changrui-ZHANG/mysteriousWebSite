@@ -1,16 +1,18 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { handleApiError, getUserErrorMessage, logError, AppError } from '../utils/errorHandling';
+import { useToastContext } from '../contexts/ToastContext';
 
 /**
- * Simplified error handler hook without Toast dependencies
- * Fallback version for debugging
+ * Hook for standardized error handling across the application
+ * Provides consistent error logging, user notifications, and error recovery
  */
 export function useErrorHandler() {
     const { t } = useTranslation();
+    const toast = useToastContext();
 
     /**
-     * Handle and process errors with logging and console feedback
+     * Handle and process errors with logging and user feedback
      */
     const handleError = useCallback((
         error: unknown, 
@@ -38,20 +40,19 @@ export function useErrorHandler() {
         // Get user-friendly message
         const userMessage = customMessage || getUserErrorMessage(appError, t);
 
-        // Show to user via console for now (fallback)
+        // Show to user if enabled
         if (showToUser) {
-            console.error('User Error:', userMessage);
-            // Could show alert in development
-            if (import.meta.env?.DEV) {
-                // alert(userMessage); // Uncomment for debugging
-            }
+            toast.error(userMessage, {
+                title: t('errors.error_occurred'),
+                duration: 6000,
+            });
         }
 
         return {
             error: appError,
             userMessage,
         };
-    }, [t]);
+    }, [t, toast]);
 
     /**
      * Wrapper for async operations with error handling

@@ -298,6 +298,41 @@
 .dark .game-icon-locked {
     color: rgb(248, 113, 113); /* dark:text-red-400 */
 }
+/* ----- ERROR BOUNDARY ----- */
+.error-boundary {
+    @apply fixed inset-0 z-[999] flex items-center justify-center min-h-screen bg-overlay/90 backdrop-blur-sm;
+}
+
+.error-boundary__content {
+    @apply max-w-md w-full mx-4 p-6 bg-surface border border-default rounded-2xl shadow-2xl text-center;
+}
+
+.error-boundary__content h2 {
+    @apply text-xl font-bold text-primary mb-4;
+}
+
+.error-boundary__content p {
+    @apply text-secondary mb-6;
+}
+
+.error-boundary__actions {
+    @apply flex gap-3 justify-center mb-6;
+}
+
+.error-boundary__details {
+    @apply text-left mt-4 p-4 bg-surface-alt border border-default rounded-lg;
+}
+
+.error-boundary__details summary {
+    @apply cursor-pointer font-medium text-primary mb-2 hover:text-accent-primary transition-colors;
+}
+
+.error-boundary__details pre {
+    @apply text-xs text-muted overflow-auto max-h-40 bg-inset p-2 rounded border border-default;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* ----- ERROR CONTAINER (existing styles) ----- */
 .error-container {
     background-color: rgba(254, 242, 242, 0.9); /* bg-red-50/90 */
     border: 1px solid rgba(252, 165, 165, 0.6); /* border-red-300/60 */

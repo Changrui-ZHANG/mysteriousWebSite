@@ -1,28 +1,22 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import { STORAGE_KEYS, TIMING } from '../constants/config';
 
 export type Theme = 'light' | 'dark' | 'system' | 'paper';
 
-const STORAGE_KEY = 'app-theme';
-
 /**
- * Hook centralisé pour la gestion du thème
- * 
- * Optimisé pour éviter les flashs (flickering) lors du changement :
- * - Utilisation de useLayoutEffect pour les modifs DOM avant le paint
- * - Désactivation temporaire des transitions via la classe .no-transitions
- * - Batching des mises à jour d'état
+ * Simplified theme manager hook
+ * Reduces complexity while maintaining flicker-free theme switching
  */
 export function useThemeManager() {
     const [theme, setThemeState] = useState<Theme>(() => {
         if (typeof window === 'undefined') return 'dark';
-        const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
+        const saved = localStorage.getItem(STORAGE_KEYS.THEME) as Theme | null;
         return saved || 'dark';
     });
 
     const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
-    const isInitialMount = useRef(true);
 
-    // Résoudre le thème effectif (light ou dark)
+    // Resolve theme to actual light/dark value
     const resolveTheme = useCallback((themeValue: Theme): 'light' | 'dark' => {
         if (themeValue === 'paper') return 'light';
         if (themeValue === 'system') {
@@ -31,68 +25,58 @@ export function useThemeManager() {
         return themeValue as 'light' | 'dark';
     }, []);
 
-    // Appliquer le thème au DOM de manière atomique
-    const applyTheme = useCallback((themeValue: Theme, skipTransition = false) => {
+    // Apply theme to DOM with optional transition blocking
+    const applyTheme = useCallback((themeValue: Theme, preventTransition = false) => {
         const root = document.documentElement;
-
-        // Bloquer les transitions si demandé (pour éviter le clignotement)
-        if (skipTransition) {
-            root.classList.add('no-transitions');
-        }
-
-        root.setAttribute('data-theme', themeValue);
-
+        const body = document.body;
         const effectiveTheme = resolveTheme(themeValue);
 
-        root.classList.remove('light', 'dark');
-        root.classList.add(effectiveTheme);
+        // Prevent transitions during theme change to avoid flicker
+        if (preventTransition) {
+            root.style.setProperty('--theme-transition', 'none');
+        }
 
-        // Aussi appliquer sur le body pour s'assurer que les classes Tailwind fonctionnent
-        document.body.classList.remove('light', 'dark');
-        document.body.classList.add(effectiveTheme);
+        // Apply theme attributes and classes
+        root.setAttribute('data-theme', themeValue);
+        root.className = root.className.replace(/\b(light|dark)\b/g, '');
+        root.classList.add(effectiveTheme);
+        
+        body.className = body.className.replace(/\b(light|dark)\b/g, '');
+        body.classList.add(effectiveTheme);
 
         setResolvedTheme(effectiveTheme);
 
-        // Débloquer les transitions après un court délai
-        if (skipTransition) {
-            // Un petit timeout permet au navigateur d'appliquer les nouvelles couleurs sans transition
+        // Re-enable transitions after DOM update
+        if (preventTransition) {
             setTimeout(() => {
-                root.classList.remove('no-transitions');
-            }, 50);
+                root.style.removeProperty('--theme-transition');
+            }, TIMING.THEME_TRANSITION_DURATION);
         }
+    }, [resolveTheme]);
 
-    }, []);
-
-    // Changer le thème
+    // Change theme with persistence
     const setTheme = useCallback((newTheme: Theme) => {
         setThemeState(newTheme);
-        localStorage.setItem(STORAGE_KEY, newTheme);
-        // On laisse useLayoutEffect gérer l'application pour éviter les doubles appels
+        localStorage.setItem(STORAGE_KEYS.THEME, newTheme);
     }, []);
 
-    // Toggle entre light et dark
+    // Toggle between light and dark
     const toggleTheme = useCallback(() => {
         const nextTheme: Theme = resolvedTheme === 'dark' ? 'light' : 'dark';
         setTheme(nextTheme);
     }, [resolvedTheme, setTheme]);
 
-    // Application du thème au plus tôt avant le paint
+    // Apply theme changes immediately before paint
     useLayoutEffect(() => {
-        // On bloque les transitions SEULEMENT lors d'un switch manuel, pas au montage initial
-        const shouldSkipTransition = !isInitialMount.current;
-        applyTheme(theme, shouldSkipTransition);
-
-        isInitialMount.current = false;
+        applyTheme(theme, true);
     }, [theme, applyTheme]);
 
-    // Écoute des changements système (seulement si en mode system)
+    // Listen for system theme changes when in system mode
     useEffect(() => {
+        if (theme !== 'system') return;
+
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleChange = () => {
-            if (theme === 'system') {
-                applyTheme('system', true);
-            }
-        };
+        const handleChange = () => applyTheme('system', true);
 
         mediaQuery.addEventListener('change', handleChange);
         return () => mediaQuery.removeEventListener('change', handleChange);

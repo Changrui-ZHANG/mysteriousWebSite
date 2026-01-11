@@ -8,6 +8,7 @@ import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary, SplashSc
 import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
 import { AuthProvider, useAuth } from './shared/contexts/AuthContext'
 import { SettingsProvider, useSettings } from './shared/contexts/SettingsContext'
+import { ToastProvider } from './shared/contexts/ToastContext'
 
 // Domain imports (lazy-loaded)
 import { AuthModal } from './domain/user'
@@ -142,9 +143,11 @@ function App() {
     return (
         <AuthProvider>
             <SettingsProvider>
-                <Router>
-                    <AppContent />
-                </Router>
+                <ToastProvider>
+                    <Router>
+                        <AppContent />
+                    </Router>
+                </ToastProvider>
             </SettingsProvider>
         </AuthProvider>
     )

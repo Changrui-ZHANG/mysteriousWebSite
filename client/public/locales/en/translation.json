@@ -567,6 +567,21 @@
         "cleanup_duplicates": "Clean Duplicates",
         "confirm_cleanup_duplicates": "Are you sure you want to clean up all duplicate scores?\n\nThis action will remove duplicates and keep only the best score for each user in each game."
     },
+    "errors": {
+        "failed_to_load_messages": "Failed to load messages",
+        "failed_to_send_message": "Failed to send message",
+        "failed_to_delete_message": "Failed to delete message",
+        "failed_to_toggle_mute": "Failed to toggle mute",
+        "failed_to_clear_messages": "Failed to clear messages",
+        "unknown_error": "Unknown error",
+        "error_boundary": {
+            "title": "Oops! Something went wrong",
+            "description": "An unexpected error occurred. You can try reloading the page.",
+            "retry": "Try Again",
+            "reload_page": "Reload Page",
+            "error_details": "Error Details (Development)"
+        }
+    },
     "holidays": {
         "jour_de_l_an": {
             "title": "New Year's Day",

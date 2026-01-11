@@ -1,8 +1,9 @@
 /**
- * useMessageWall - Composed hook for message wall logic
- * Combines specialized hooks for better maintainability
+ * useMessageWall - Simplified composed hook for message wall logic
+ * Reduces exposed API surface and focuses on essential functionality
  */
 
+import { useMemo } from 'react';
 import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import { useMessages } from './useMessages';
 import { useMessageTranslation } from './useMessageTranslation';
@@ -24,46 +25,60 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
     const translation = useMessageTranslation();
     const presence = useUserPresence();
 
-    // Connect to WebSocket with combined handlers
-    const { isConnected } = useWebSocket({
+    // Combine WebSocket handlers
+    const webSocketHandlers = useMemo(() => ({
         onMessage: messages.handleWebSocketMessage,
         onPresenceUpdate: presence.handlePresenceUpdate,
         onConnect: () => {
             console.log('WebSocket connected');
-            // Fetch count after connection is established
             presence.fetchOnlineCount();
         },
         onDisconnect: () => console.log('WebSocket disconnected')
-    });
+    }), [messages.handleWebSocketMessage, presence.handlePresenceUpdate, presence.fetchOnlineCount]);
 
+    // Connect to WebSocket
+    const { isConnected } = useWebSocket(webSocketHandlers);
+
+    // Return simplified API focused on essential operations
     return {
-        // Messages state and actions
+        // Core message operations
         messages: messages.messages,
-        replyingTo: messages.replyingTo,
-        setReplyingTo: messages.setReplyingTo,
-        isGlobalMute: messages.isGlobalMute,
-        highlightedMessageId: messages.highlightedMessageId,
+        isLoading: messages.isLoading,
         handleSubmit: messages.handleSubmit,
         handleDelete: messages.handleDelete,
-        toggleMute: messages.toggleMute,
-        clearAllMessages: messages.clearAllMessages,
+        
+        // Reply functionality
+        replyingTo: messages.replyingTo,
+        setReplyingTo: messages.setReplyingTo,
+        scrollToMessage: messages.scrollToMessage,
+        
+        // Message permissions
         isOwnMessage: messages.isOwnMessage,
         canDeleteMessage: messages.canDeleteMessage,
-        scrollToMessage: messages.scrollToMessage,
-
-        // Translation state and actions
+        
+        // Admin operations (only exposed if admin)
+        ...(isAdmin && {
+            isGlobalMute: messages.isGlobalMute,
+            toggleMute: messages.toggleMute,
+            clearAllMessages: messages.clearAllMessages,
+        }),
+        
+        // Translation functionality
         translations: translation.translations,
         translating: translation.translating,
-        showTranslated: translation.showTranslated,
         handleTranslate: translation.handleTranslate,
-
-        // Presence state and actions
+        showTranslated: translation.showTranslated,
+        
+        // User presence
         onlineCount: presence.onlineCount,
         showOnlineCountToAll: presence.showOnlineCountToAll,
-        fetchOnlineCount: presence.fetchOnlineCount,
         toggleOnlineCountVisibility: presence.toggleOnlineCountVisibility,
-
-        // WebSocket connection status
+        fetchOnlineCount: presence.fetchOnlineCount,
+        
+        // Connection status
         isWebSocketConnected: isConnected,
+        
+        // UI state
+        highlightedMessageId: messages.highlightedMessageId,
     };
 }

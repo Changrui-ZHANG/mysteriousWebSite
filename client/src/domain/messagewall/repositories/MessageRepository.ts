@@ -1,5 +1,5 @@
 import { BaseService } from '../../../shared/services/BaseService';
-import { fetchJson, postJson, deleteJson } from '../../../shared/api/httpClient';
+import { postJson, deleteJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { getAdminCode } from '../../../shared/constants/authStorage';
 import type { Message } from '../types';
@@ -22,6 +22,7 @@ interface MessageFilters {
 /**
  * Repository for message data access
  * Implements the Repository pattern for clean separation of data access logic
+ * Updated to match backend endpoints exactly
  */
 export class MessageRepository extends BaseService<Message, CreateMessageData> {
     constructor() {
@@ -29,21 +30,11 @@ export class MessageRepository extends BaseService<Message, CreateMessageData> {
     }
 
     /**
-     * Get messages with optional filters
+     * Get all messages (backend doesn't support filtering yet)
      */
-    async getMessages(filters?: MessageFilters): Promise<Message[]> {
-        if (!filters) {
-            return this.findAll();
-        }
-
-        const params: Record<string, string | number> = {};
-        if (filters.userId) params.userId = filters.userId;
-        if (filters.startDate) params.startDate = filters.startDate.toISOString();
-        if (filters.endDate) params.endDate = filters.endDate.toISOString();
-        if (filters.limit) params.limit = filters.limit;
-        if (filters.offset) params.offset = filters.offset;
-
-        return fetchJson<Message[]>(this.buildUrl('', params));
+    async getMessages(_filters?: MessageFilters): Promise<Message[]> {
+        // Backend only supports getting all messages, no filtering
+        return this.findAll();
     }
 
     /**
@@ -51,17 +42,22 @@ export class MessageRepository extends BaseService<Message, CreateMessageData> {
      */
     async submitMessage(data: CreateMessageData, isAdmin: boolean = false): Promise<Message> {
         const adminCode = isAdmin ? getAdminCode() : undefined;
-        const url = adminCode ? `${this.baseUrl}?adminCode=${adminCode}` : this.baseUrl;
         
-        return postJson<Message>(url, {
-            id: Date.now().toString() + Math.random().toString(36).slice(2, 11),
+        // Create message object matching backend expectations
+        // Backend generates the ID, so we don't send it
+        const messagePayload = {
             userId: data.userId,
-            name: data.username,
+            name: data.username || '',
             message: data.content,
             timestamp: Date.now(),
-            isAnonymous: !data.username,
-            quotedMessageId: data.replyToId,
-        });
+            isAnonymous: !data.username || data.username.trim() === '',
+            quotedMessageId: data.replyToId || null,
+        };
+
+        const url = adminCode ? `${this.baseUrl}?adminCode=${adminCode}` : this.baseUrl;
+        
+        const response = await postJson<{ success: boolean; data: Message }>(url, messagePayload);
+        return response.data;
     }
 
     /**
@@ -76,34 +72,29 @@ export class MessageRepository extends BaseService<Message, CreateMessageData> {
     }
 
     /**
-     * Translate a message
-     */
-    async translateMessage(messageId: string, targetLanguage: string): Promise<string> {
-        const response = await postJson<{ translation: string }>(
-            `${this.baseUrl}/${messageId}/translate`,
-            { targetLanguage }
-        );
-        return response.translation;
-    }
-
-    /**
-     * Get global mute status
+     * Get global mute status from response headers
      */
     async getGlobalMuteStatus(): Promise<boolean> {
-        const response = await fetchJson<{ isGlobalMute: boolean }>(`${this.baseUrl}/global-mute`);
-        return response.isGlobalMute;
+        try {
+            const response = await fetch(this.baseUrl);
+            const muteHeader = response.headers.get('X-System-Muted');
+            return muteHeader === 'true';
+        } catch (error) {
+            console.warn('Failed to get mute status:', error);
+            return false;
+        }
     }
 
     /**
      * Toggle global mute (admin only)
      */
-    async toggleGlobalMute(enabled: boolean): Promise<void> {
+    async toggleGlobalMute(_enabled: boolean): Promise<void> {
         const adminCode = getAdminCode();
         if (!adminCode) throw new Error('Admin access required');
 
         return postJson<void>(
-            this.buildUrl('/global-mute', { adminCode }),
-            { enabled }
+            `${API_ENDPOINTS.MESSAGES.TOGGLE_MUTE}?adminCode=${adminCode}`,
+            {}
         );
     }
 
@@ -115,23 +106,36 @@ export class MessageRepository extends BaseService<Message, CreateMessageData> {
         if (!adminCode) throw new Error('Admin access required');
 
         return postJson<void>(
-            this.buildUrl('/clear', { adminCode }),
+            `${API_ENDPOINTS.MESSAGES.CLEAR}?adminCode=${adminCode}`,
             {}
         );
     }
 
     /**
-     * Get message statistics
+     * Get message statistics (not implemented in backend yet)
      */
     async getMessageStats(): Promise<{
         totalMessages: number;
         messagesThisWeek: number;
         activeUsers: number;
     }> {
-        return fetchJson<{
-            totalMessages: number;
-            messagesThisWeek: number;
-            activeUsers: number;
-        }>(`${this.baseUrl}/stats`);
+        // Backend doesn't have this endpoint yet, return mock data
+        const messages = await this.getMessages();
+        return {
+            totalMessages: messages.length,
+            messagesThisWeek: messages.filter(m => {
+                const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                return m.timestamp > weekAgo;
+            }).length,
+            activeUsers: new Set(messages.map(m => m.userId)).size,
+        };
+    }
+
+    /**
+     * Translate a message (not implemented in backend yet)
+     */
+    async translateMessage(_messageId: string, _targetLanguage: string): Promise<string> {
+        // Backend doesn't have translation endpoint yet
+        throw new Error('Translation not implemented in backend');
     }
 }

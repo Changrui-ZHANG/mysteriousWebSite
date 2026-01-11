@@ -138,6 +138,10 @@ export const validateCreateMessage = (data: unknown) => {
     return CreateMessageSchema.safeParse(data);
 };
 
+export const validateMessageData = (data: unknown) => {
+    return CreateMessageSchema.safeParse(data);
+};
+
 export const validateMessageFilters = (data: unknown) => {
     return MessageFiltersSchema.safeParse(data);
 };

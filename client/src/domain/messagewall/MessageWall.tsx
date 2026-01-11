@@ -91,7 +91,7 @@ export function MessageWall({ }: MessageWallProps) {
                 {/* Input Area + Admin Panel Container */}
                 <MessageInput
                     isAdmin={isAdmin}
-                    isGlobalMute={isGlobalMute}
+                    isGlobalMute={isGlobalMute || false}
                     replyingTo={replyingTo}
                     onSubmit={handleSubmit}
                     onCancelReply={() => setReplyingTo(null)}
@@ -101,11 +101,11 @@ export function MessageWall({ }: MessageWallProps) {
                         <MessageAdminPanel
                             isAdmin={isAdmin}
                             isSuperAdmin={isSuperAdmin}
-                            isGlobalMute={isGlobalMute}
+                            isGlobalMute={isGlobalMute || false}
                             onlineCount={onlineCount}
                             showOnlineCountToAll={showOnlineCountToAll}
-                            onToggleMute={toggleMute}
-                            onClearAll={clearAllMessages}
+                            onToggleMute={toggleMute || (() => {})}
+                            onClearAll={clearAllMessages || (() => {})}
                             onToggleOnlineVisibility={toggleOnlineCountVisibility}
                             onRefreshOnlineCount={fetchOnlineCount}
                             onOpenUserManagement={() => setShowUserManagement(true)}
