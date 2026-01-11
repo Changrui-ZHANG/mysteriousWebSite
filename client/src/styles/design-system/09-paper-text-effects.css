@@ -1,0 +1,94 @@
+/* ============================================
+   8. PAPER THEME - TEXT EFFECTS
+   ============================================ */
+
+/**
+ * Letterpress Effects
+ * - Use .text-letterpress for body text and small headings
+ * - Use .text-letterpress-strong for medium headings (h2, h3)
+ * - Use .text-letterpress-title for large titles (h1)
+ * - Use .text-letterpress-subtle for roles/subtitles
+ */
+
+/* Base letterpress — body text, small headings */
+.text-letterpress {
+    color: var(--paper-text-accent);
+    font-weight: 600;
+    text-shadow:
+        0 -1px 0 rgba(255, 245, 220, 0.25),
+        0 1px 1px rgba(0, 0, 0, 0.35);
+    filter: url(#leatherTextTexture);
+}
+
+/* Medium letterpress — h2, h3, emphasis */
+.text-letterpress-strong {
+    color: var(--paper-text-accent);
+    font-weight: 700;
+    text-shadow:
+        0 -1px 0 rgba(255, 245, 220, 0.45),
+        0 -2px 1px rgba(255, 235, 200, 0.25),
+        0 1px 0 rgba(0, 0, 0, 0.55),
+        0 2px 2px rgba(0, 0, 0, 0.35),
+        0 4px 4px rgba(0, 0, 0, 0.2);
+    filter: url(#leatherTextTexture);
+}
+
+/* Large letterpress — h1, hero titles */
+.text-letterpress-title {
+    color: var(--paper-text-accent);
+    font-weight: 900;
+    text-shadow:
+        0 -3px 1px rgba(255, 245, 220, 0.7),
+        0 -5px 2px rgba(255, 240, 210, 0.5),
+        0 -7px 3px rgba(255, 235, 200, 0.3),
+        0 3px 1px rgba(0, 0, 0, 0.9),
+        0 5px 2px rgba(0, 0, 0, 0.7),
+        -2px -2px 3px rgba(0, 0, 0, 0.6),
+        0 8px 8px rgba(0, 0, 0, 0.5),
+        0 12px 12px rgba(0, 0, 0, 0.4),
+        0 18px 18px rgba(0, 0, 0, 0.3),
+        0 25px 25px rgba(0, 0, 0, 0.2);
+    filter: url(#leatherTextTexture);
+}
+
+/* Subtle letterpress for roles/subtitles */
+.text-letterpress-subtle {
+    color: var(--paper-text-secondary);
+    font-weight: 600;
+    text-shadow:
+        0 -1px 0 rgba(255, 245, 220, 0.2),
+        0 1px 1px rgba(0, 0, 0, 0.3);
+    filter: url(#leatherTextTexture);
+}
+
+/**
+ * Alternative Text Effects
+ * - Use sparingly for special cases
+ */
+
+/* Embossed — raised from surface */
+.text-embossed {
+    color: var(--paper-text-primary);
+    text-shadow:
+        1px 1px 1px rgba(255, 255, 255, 0.3),
+        -1px -1px 1px rgba(0, 0, 0, 0.4),
+        0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Embossed light variant */
+.text-embossed-light {
+    color: var(--paper-text-primary);
+    text-shadow:
+        1px 1px 0px rgba(255, 255, 255, 0.25),
+        -1px -1px 1px rgba(0, 0, 0, 0.35);
+}
+
+/* Debossed — pressed into surface */
+.text-debossed {
+    color: var(--paper-text-primary);
+    text-shadow:
+        -1px -1px 1px rgba(255, 255, 255, 0.4),
+        1px 1px 2px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(0, 0, 0, 0.3);
+}
+/* ============================================ */

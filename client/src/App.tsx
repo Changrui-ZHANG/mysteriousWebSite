@@ -1,4 +1,5 @@
-import { useEffect, useMemo, ReactNode } from 'react'
+import { useEffect, useMemo, ReactNode, Suspense } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence } from 'framer-motion'
@@ -8,16 +9,16 @@ import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
 import { AuthProvider, useAuth } from './shared/contexts/AuthContext'
 import { SettingsProvider, useSettings } from './shared/contexts/SettingsContext'
 
-// Domain imports
+// Domain imports (lazy-loaded)
 import { AuthModal } from './domain/user'
-import { Home } from './domain/dashboard'
-import { CV } from './domain/cv'
-import { Game } from './domain/game'
-import { MessageWall } from './domain/messagewall'
-import { SuggestionsPage } from './domain/suggestions'
-import { CalendarPage } from './domain/calendar'
-import { LearningPage } from './domain/vocabulary'
-import { NotesPage } from './domain/note'
+const Home = React.lazy(() => import('./domain/dashboard').then(m => ({ default: m.Home })));
+const CV = React.lazy(() => import('./domain/cv').then(m => ({ default: m.CV })));
+const Game = React.lazy(() => import('./domain/game').then(m => ({ default: m.Game })));
+const MessageWall = React.lazy(() => import('./domain/messagewall').then(m => ({ default: m.MessageWall })));
+const SuggestionsPage = React.lazy(() => import('./domain/suggestions').then(m => ({ default: m.SuggestionsPage })));
+const CalendarPage = React.lazy(() => import('./domain/calendar').then(m => ({ default: m.CalendarPage })));
+const LearningPage = React.lazy(() => import('./domain/vocabulary').then(m => ({ default: m.LearningPage })));
+const NotesPage = React.lazy(() => import('./domain/note').then(m => ({ default: m.NotesPage })));
 
 import './App.css'
 
@@ -116,15 +117,17 @@ function AppContent() {
 
                             <div className="relative z-20">
                                 <ErrorBoundary>
-                                    <Routes>
-                                        {routes.map(route => (
-                                            <Route
-                                                key={route.path}
-                                                path={route.path}
-                                                element={renderRoute(route)}
-                                            />
-                                        ))}
-                                    </Routes>
+                                    <Suspense fallback={<SplashScreen isLoading={true} />}>
+                                        <Routes>
+                                            {routes.map(route => (
+                                                <Route
+                                                    key={route.path}
+                                                    path={route.path}
+                                                    element={renderRoute(route)}
+                                                />
+                                            ))}
+                                        </Routes>
+                                    </Suspense>
                                 </ErrorBoundary>
                             </div>
                         </>

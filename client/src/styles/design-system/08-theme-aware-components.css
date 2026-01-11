@@ -1,0 +1,191 @@
+/* ============================================
+   8. THEME-AWARE COMPONENT UTILITIES
+   ============================================ */
+
+/* ----- AURORA CARDS (theme-aware) ----- */
+.aurora-card {
+    @apply relative overflow-hidden backdrop-blur-surface border transition-all duration-500 bg-surface-translucent border-default shadow-lg;
+}
+
+.aurora-card--primary {
+    @apply hover:border-accent-primary/50;
+}
+
+.aurora-card--secondary {
+    @apply hover:border-accent-secondary/50;
+}
+
+.aurora-card--success {
+    @apply hover:border-accent-success/50;
+}
+
+.aurora-card--info {
+    @apply hover:border-accent-info/50;
+}
+
+.aurora-card--warning {
+    @apply hover:border-accent-warning/50;
+}
+
+.aurora-card--danger {
+    @apply hover:border-accent-danger/50;
+}
+
+.aurora-card--multi {
+    @apply hover:border-accent-secondary/50;
+}
+
+/* ----- SUGGESTION CARD ----- */
+.suggestion-card {
+    @apply p-6 rounded-xl backdrop-blur-surface bg-surface-translucent border border-accent-secondary/20;
+}
+
+.dark .suggestion-card {
+    @apply bg-black/60 border-accent-secondary/30;
+}
+
+/* ----- COMMENT SECTION ----- */
+.comment-box {
+    @apply bg-accent-secondary/10 rounded-lg;
+}
+
+.dark .comment-box {
+    @apply bg-accent-secondary/20;
+}
+
+.comment-textarea {
+    @apply bg-surface border border-accent-secondary/30 text-primary;
+}
+
+.dark .comment-textarea {
+    @apply bg-black/40;
+}
+
+.reply-indicator {
+    @apply bg-accent-secondary/15;
+}
+
+.dark .reply-indicator {
+    @apply bg-accent-secondary/30;
+}
+
+/* ----- HERO HEADING (theme-aware shadow) ----- */
+.hero-heading-shadow {
+    filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.3));
+}
+
+.dark .hero-heading-shadow {
+    filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.5));
+}
+
+/* ----- GALLERY SCROLL BUTTONS ----- */
+.gallery-scroll-btn {
+    @apply p-4 rounded-full backdrop-blur-md transition-all duration-150 bg-black/10 text-primary hover:bg-black/20 hover:scale-110 active:scale-95 dark:bg-white/10 dark:hover:bg-white/20;
+}
+
+/* ----- GALLERY CARD SHADOW ----- */
+.gallery-card-shadow {
+    @apply shadow-gallery;
+}
+
+/* ----- VOCABULARY CARD ----- */
+.vocabulary-card {
+    @apply bg-gradient-to-br from-surface to-elevated border border-default shadow-xl transition-all duration-300 hover:border-accent-warning/30;
+}
+
+.vocabulary-meaning {
+    @apply text-secondary dark:text-amber-100;
+}
+
+.vocabulary-example-box {
+    @apply bg-inset text-secondary dark:bg-black/20 dark:text-gray-300;
+}
+
+/* ----- GAME CANDY SHADOW ----- */
+.candy-shadow {
+    @apply shadow-candy;
+}
+
+/* ----- GAMING LIQUIDGLASS UTILITIES ----- */
+.liquid-glass-panel {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-[0_8px_32px_rgba(31,38,135,0.37)];
+}
+
+.liquid-glass-button {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95;
+}
+
+.liquid-glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/20 rounded-3xl shadow-[0_8px_32px_rgba(31,38,135,0.37)] transition-all duration-300 hover:border-white/30 hover:shadow-[0_8px_32px_rgba(31,38,135,0.5)];
+}
+
+.liquid-iridescent-glow {
+    @apply shadow-[0_0_20px_rgba(6,182,212,0.3),0_0_40px_rgba(168,85,247,0.2),0_0_60px_rgba(236,72,153,0.1)];
+}
+
+/* ===== PAPER THEME UTILITIES ===== */
+
+/* Layout & Containers */
+.paper-card {
+    border: 3px solid var(--paper-border-strong);
+    border-radius: 40px;
+    box-shadow: var(--paper-shadow-card);
+}
+
+.paper-card-sm {
+    border: 2px solid var(--paper-border-strong);
+    border-radius: 20px;
+    box-shadow: var(--paper-shadow-card);
+}
+
+/* Borders */
+.paper-border {
+    border: 3px solid var(--paper-border-strong);
+}
+
+.paper-border-sm {
+    border: 2px solid var(--paper-border-strong);
+}
+
+.paper-border-subtle {
+    border: 2px solid var(--paper-border-medium);
+    border-radius: 10px;
+}
+
+.paper-border-medium {
+    border: 2px solid var(--paper-border-medium);
+}
+
+/* Backgrounds */
+.paper-bg {
+    background-color: var(--paper-bg-primary);
+}
+
+/* Text Colors - Simple color utility for non-letterpress text */
+.paper-text {
+    color: var(--paper-text-primary);
+}
+
+/* SVG/Icon Utilities */
+.paper-stroke {
+    stroke: var(--paper-border-strong);
+}
+
+.paper-icon-filter {
+    filter: sepia(100%) saturate(50%) brightness(70%);
+}
+
+/* Button Styles */
+.paper-btn {
+    border: 2px solid var(--paper-border-medium);
+    background-color: transparent;
+    color: var(--paper-text-primary);
+    transition: all 0.2s ease;
+}
+
+.paper-btn:hover {
+    border-color: var(--paper-border-strong);
+    box-shadow: var(--paper-shadow-button);
+}
+
+/* ============================================ */

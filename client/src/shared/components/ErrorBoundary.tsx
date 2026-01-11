@@ -208,7 +208,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                             </div>
 
                             {/* Effets décoratifs flottants */}
-                            <div className="absolute top-4 right-4 w-2 h-2 bg-muted rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
+                            <div className="absolute top-4 right-4 w-2 h-2 bg-inset rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
                             <div className="absolute bottom-6 left-6 w-1 h-1 bg-accent-danger rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
                             <div className="absolute top-1/3 left-4 w-1.5 h-1.5 bg-accent-warning rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
                         </div>

@@ -1,0 +1,44 @@
+/* ============================================
+   7. GAME & MODAL COMPONENTS
+   ============================================ */
+
+/* ----- AUTH MODAL ----- */
+.auth-modal {
+    @apply bg-surface-translucent backdrop-blur-surface border border-default rounded-2xl text-primary;
+}
+
+.auth-modal-shimmer {
+    @apply absolute inset-0 bg-gradient-to-br from-surface to-transparent opacity-50;
+}
+
+
+
+/* ----- GAME CARD ----- */
+.game-card {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-[0_8px_32px_rgba(31,38,135,0.37)];
+}
+
+/* ----- WARNING BANNER ----- */
+.warning-banner {
+    @apply bg-accent-warning/10 text-accent-warning border border-accent-warning/30 rounded-lg;
+}
+
+/* ----- ADMIN PANEL ----- */
+.admin-panel {
+    @apply bg-surface border border-default rounded-xl text-primary;
+}
+
+.admin-panel-section {
+    @apply bg-inset rounded-lg p-4;
+}
+
+/* ----- USER MANAGEMENT ----- */
+.user-management-modal {
+    @apply bg-surface text-primary rounded-xl;
+}
+
+.user-management-input {
+    @apply bg-inset text-primary border-none rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-success;
+}
+
+/* ============================================ */

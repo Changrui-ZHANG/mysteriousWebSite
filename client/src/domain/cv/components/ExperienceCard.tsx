@@ -17,7 +17,7 @@ export function ExperienceCard({ exp, isPaperTheme = false }: ExperienceCardProp
     // Paper theme: transparent card with leather-style border
     if (isPaperTheme) {
         return (
-            <div className="paper-theme w-full p-8 sm:p-10 rounded-[40px] flex flex-col min-h-[400px] max-h-[75vh] h-full relative paper-card">
+            <div className="w-full p-8 sm:p-10 rounded-[40px] flex flex-col min-h-[400px] max-h-[75vh] h-full relative paper-card">
                 {/* Fixed Header */}
                 <div className="shrink-0 mb-6 space-y-2">
                     <div className="flex justify-between items-start">

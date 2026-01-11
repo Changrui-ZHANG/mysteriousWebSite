@@ -126,7 +126,8 @@ export function CV({ }: CVProps) {
     return (
         <div
             ref={containerRef}
-            className={`page-container overflow-x-hidden ${isPaperTheme ? 'paper-theme' : ''}`}
+            data-theme={isPaperTheme ? 'paper' : undefined}
+            className="page-container overflow-x-hidden"
         >
             {/* Paper Theme Toggle Button */}
             <button

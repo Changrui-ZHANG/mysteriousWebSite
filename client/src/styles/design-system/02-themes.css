@@ -1,0 +1,167 @@
+/* ============================================
+   2. CSS CUSTOM PROPERTIES (for theming)
+   ============================================ */
+
+/* ----- LIGHT THEME (default) ----- */
+:root,
+[data-theme="light"],
+.light {
+    /* Backgrounds */
+    --bg-page: #fcfcfd;
+    --bg-surface: #ffffff;
+    --bg-surface-alt: #f8fafc;
+    --bg-elevated: #ffffff;
+    --bg-inset: #f1f5f9;
+    --bg-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Text */
+    --text-primary: #1d1d1f;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-inverse: #ffffff;
+    --text-disabled: #cbd5e1;
+
+    /* Borders */
+    --border-default: #e2e8f0;
+    --border-subtle: #f1f5f9;
+    --border-strong: #cbd5e1;
+    --border-focus: #3b82f6;
+    --border-danger: #dc2626;
+
+    /* Accents */
+    --accent-primary: #3b82f6;
+    --accent-secondary: #6366f1;
+    --accent-muted: #93c5fd;
+    --accent-success: #16a34a;
+    --accent-warning: #f59e0b;
+    --accent-danger: #dc2626;
+    --accent-info: #0ea5e9;
+
+    /* Error component colors */
+    --error-bg: rgba(254, 242, 242, 0.9);
+    --error-border: rgba(252, 165, 165, 0.6);
+    --error-particle-red: rgba(239, 68, 68, 0.1);
+    --error-particle-orange: rgba(249, 115, 22, 0.1);
+
+    /* Shadows */
+
+    /* Radius */
+
+    /* Effects */
+    --bg-surface-translucent: rgba(255, 255, 255, 0.8);
+    --filter-blur-surface: 12px;
+    --noise-opacity: 0;
+    --grain-opacity: 0;
+    --bg-effects-opacity: 0.05;
+
+    /* Legacy compatibility / Game Specific */
+    --value-invert: 0;
+    --glass-blur: 12px;
+
+    /* Achievement colors */
+    --achievement-bg-glow: rgba(234, 179, 8, 0.1);
+    --achievement-bg-from: rgba(254, 249, 195, 0.8);
+    --achievement-bg-via: rgba(253, 230, 138, 0.8);
+    --achievement-bg-to: rgba(254, 249, 195, 0.8);
+    --achievement-border: rgba(234, 179, 8, 0.6);
+    --achievement-text-label: rgb(133, 77, 14);
+    --achievement-text-score: rgb(120, 53, 15);
+    --achievement-badge: rgb(234, 179, 8);
+    --achievement-shadow: rgba(234, 179, 8, 0.2);
+
+    /* Login particles */
+    --particle-primary: rgba(59, 130, 246, 0.1);
+    --particle-secondary: rgba(99, 102, 241, 0.1);
+    --particle-info: rgba(14, 165, 233, 0.1);
+
+    /* Base styles */
+}
+
+/* ----- DARK THEME ----- */
+[data-theme="dark"],
+.dark {
+    --bg-page: #0a0a0b;
+    --bg-surface: #171717;
+    --bg-surface-alt: #1e1e1e;
+    --bg-elevated: #262626;
+    --bg-inset: #1e1e1e;
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-inverse: #0a0a0b;
+    --text-disabled: #475569;
+
+    --border-default: rgba(255, 255, 255, 0.1);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-strong: rgba(255, 255, 255, 0.2);
+
+    --bg-surface-translucent: rgba(0, 0, 0, 0.6);
+    --filter-blur-surface: 16px;
+
+    --value-invert: 1;
+    --shadow-gallery: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    --shadow-candy: 0 0 10px rgba(255, 255, 255, 0.2);
+    --glass-blur: 16px;
+    --bg-effects-opacity: 0.15;
+
+    /* Error component colors - dark theme */
+    --error-bg: rgba(127, 29, 29, 0.4);
+    --error-border: rgba(239, 68, 68, 0.5);
+    --error-particle-red: rgba(239, 68, 68, 0.2);
+    --error-particle-orange: rgba(249, 115, 22, 0.2);
+
+    /* Achievement colors - dark theme */
+    --achievement-bg-glow: rgba(234, 179, 8, 0.2);
+    --achievement-bg-from: rgba(120, 53, 15, 0.8);
+    --achievement-bg-via: rgba(146, 64, 14, 0.8);
+    --achievement-bg-to: rgba(120, 53, 15, 0.8);
+    --achievement-border: rgba(234, 179, 8, 0.7);
+    --achievement-text-label: rgb(254, 240, 138);
+    --achievement-text-score: rgb(253, 224, 71);
+    --achievement-badge: rgb(234, 179, 8);
+    --achievement-shadow: rgba(234, 179, 8, 0.4);
+
+    /* Login particles */
+    --particle-primary: rgba(59, 130, 246, 0.2);
+    --particle-secondary: rgba(99, 102, 241, 0.2);
+    --particle-info: rgba(14, 165, 233, 0.2);
+}
+
+
+/* ----- PAPER/LEATHER THEME ----- */
+[data-theme="paper"] {
+    /* Base Colors */
+    --paper-bg-primary: #dfc49a;
+    /* Main parchment background */
+    --paper-bg-overlay: rgba(223, 196, 154, 0.95);
+
+    /* Border Colors */
+    --paper-border-strong: #8b6f47;
+    /* Primary borders */
+    --paper-border-medium: rgba(139, 111, 71, 0.4);
+    --paper-border-subtle: rgba(139, 111, 71, 0.3);
+
+    /* Text Colors */
+    --paper-text-primary: #3d2815;
+    /* Main text (dark brown) */
+    --paper-text-secondary: #856433;
+    /* Slightly lighter for roles */
+    --paper-text-accent: #a88858;
+    /* Gold/tan for highlights */
+    --paper-text-muted: #8b6f47;
+    /* Muted brown for periods */
+
+    /* Shadow System */
+    --paper-shadow-card: inset 0 2px 0 rgba(255, 240, 210, 0.3), 0 6px 20px rgba(80, 50, 20, 0.2);
+    --paper-shadow-inset-light: inset 0 2px 0 rgba(255, 240, 210, 0.3);
+    --paper-shadow-button: 0 2px 8px rgba(80, 50, 20, 0.15);
+
+    /* Vignette Colors */
+    --paper-vignette-dark: rgba(20, 10, 0, 0.6);
+    --paper-vignette-medium: rgba(80, 50, 10, 0.4);
+    --paper-vignette-light: rgba(160, 100, 30, 0.2);
+    --paper-vignette-subtle: rgba(180, 130, 50, 0.1);
+}
+/* ============================================ */

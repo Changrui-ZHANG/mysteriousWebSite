@@ -1,8 +1,6 @@
-import { DiRedis } from "react-icons/di";
-import { FaReact, FaJava, FaPython, FaDocker, FaLinux, FaGitAlt, FaJenkins, FaWindows, FaServer, FaDatabase } from "react-icons/fa";
-import { SiTypescript, SiTailwindcss, SiVite, SiThreedotjs, SiSpringboot, SiScala, SiCplusplus, SiPostgresql, SiMariadb, SiMysql, SiElasticsearch } from "react-icons/si";
+import { FaReact, FaJava, FaPython, FaDocker, FaGitAlt, FaJenkins, FaServer } from "react-icons/fa";
+import { SiTypescript, SiTailwindcss, SiSpringboot, SiScala, SiCplusplus, SiPostgresql, SiMariadb, SiMysql } from "react-icons/si";
 import { IoLogoJavascript } from "react-icons/io5";
-import { TbApi } from "react-icons/tb";
 import { TFunction } from 'i18next';
 
 type TranslationFunction = TFunction<'translation', undefined>;

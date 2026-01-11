@@ -183,7 +183,7 @@ export function CalendarPage({ }: CalendarPageProps) {
                                         return (
                                             <div key={day}
                                                 onClick={() => { if (holiday) { setSelectedHoliday(holiday); setIsModalOpen(true); } }}
-                                                className={`h-8 flex items-center justify-center rounded-lg relative group transition-all duration-200 hover:z-50 ${bgClass} ${textClass} ${!bgClass ? 'hover:bg-muted/10' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 shadow-sm' : 'cursor-default'}`}>
+                                                className={`h-8 flex items-center justify-center rounded-lg relative group transition-all duration-200 hover:z-50 ${bgClass} ${textClass} ${!bgClass ? 'hover:bg-inset/10' : ''} ${holiday ? 'cursor-pointer hover:scale-110 active:scale-95 shadow-sm' : 'cursor-default'}`}>
                                                 {day}
                                                 {holiday && (
                                                     <div className="absolute top-0.5 right-0.5 z-10 opacity-40 group-hover:opacity-100 transition-opacity">

@@ -337,7 +337,7 @@ export const NotesPage: React.FC = () => {
                                         <button
                                             onClick={handleSaveNote}
                                             disabled={!title.trim()}
-                                            className="flex items-center gap-2 px-6 py-3 bg-accent-primary hover:bg-accent-primary/90 disabled:bg-muted disabled:cursor-not-allowed text-white rounded-xl transition-all"
+                                            className="flex items-center gap-2 px-6 py-3 bg-accent-primary hover:bg-accent-primary/90 disabled:bg-inset disabled:cursor-not-allowed text-white rounded-xl transition-all"
                                         >
                                             <FaSave className="w-4 h-4" />
                                             {editingId ? 'Update' : 'Save'}

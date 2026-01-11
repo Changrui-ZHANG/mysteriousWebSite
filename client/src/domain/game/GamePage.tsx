@@ -228,7 +228,7 @@ export function Game(_props: GameProps) {
 
                             {/* Admin Controls */}
                             {(isSuperAdmin || isAdmin) && (
-                                <div className="mt-4 pt-4 border-t border-muted">
+                                <div className="mt-4 pt-4 border-t border-subtle">
                                     <p className="text-xs text-secondary mb-2 font-medium">Admin Controls:</p>
                                     <div className="flex flex-wrap gap-1">
                                         {GAME_KEYS.map((gameKey) => {
@@ -255,7 +255,7 @@ export function Game(_props: GameProps) {
 
                             {/* Login Prompt - Compact */}
                             {!user && (
-                                <div className="mt-4 pt-4 border-t border-muted">
+                                <div className="mt-4 pt-4 border-t border-subtle">
                                     <div className="text-center">
                                         <p className="text-xs text-secondary mb-2">
                                             {t('game.login_for_scores')}

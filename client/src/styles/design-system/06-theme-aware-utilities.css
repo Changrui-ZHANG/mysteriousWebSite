@@ -1,0 +1,84 @@
+/* ============================================
+   6. THEME-AWARE UTILITIES
+   ============================================ */
+
+
+
+/* ----- INPUT FIELDS (theme-aware) ----- */
+.input-themed::placeholder {
+    color: var(--text-muted);
+}
+
+.input-themed:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+
+
+/* ----- QUOTE/REPLY BLOCKS ----- */
+.quote-block {
+    padding-left: 0.75rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-left: 2px solid var(--border-default);
+    background-color: var(--bg-inset);
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+
+
+/* ----- STATUS INDICATORS ----- */
+.status-indicator {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+}
+
+.status-indicator-info {
+    background-color: var(--bg-inset);
+    color: var(--text-secondary);
+}
+
+/* ----- VERIFIED ICON COLOR ----- */
+.verified-icon {
+    color: var(--accent-info);
+}
+
+
+
+/* ----- MESSAGE INPUT BAR ----- */
+.message-input-bar {
+    @apply bg-surface-translucent backdrop-blur-surface border-t border-default;
+}
+
+/* ----- MESSAGE BUBBLES ----- */
+.message-bubble {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    position: relative;
+}
+
+.message-bubble-own {
+    @apply bg-accent-success text-white rounded-tr-[2px];
+}
+
+.message-bubble-other {
+    @apply bg-inset rounded-tl-[2px];
+}
+
+.message-bubble-verified-own {
+    @apply bg-gradient-to-br from-accent-success to-green-500 text-white rounded-tr-[2px] border-2 border-accent-info shadow-lg shadow-accent-info/30;
+}
+
+.message-bubble-verified-other {
+    @apply bg-gradient-to-br from-accent-info/20 to-accent-primary/10 rounded-tl-[2px] border-2 border-accent-info/50 shadow-lg shadow-accent-info/20;
+}
+
+/* ----- HIGHLIGHT ANIMATION ----- */
+.message-highlight {
+    @apply bg-inset;
+}
+
+/* ============================================ */
