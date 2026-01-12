@@ -1,0 +1,86 @@
+import type { UserProfile, ActivityStats } from '../types';
+
+/**
+ * Backend response structure (raw entities)
+ */
+interface BackendProfileResponse {
+    userId: string;
+    displayName: string;
+    bio?: string;
+    avatarUrl?: string;
+    joinDate: string;
+    lastActive: string;
+    isPublic: boolean;
+    privacySettings?: {
+        userId: string;
+        profileVisibility: string;
+        showBio: boolean;
+        showStats: boolean;
+        showAchievements: boolean;
+        showLastActive: boolean;
+    } | null;
+    activityStats?: {
+        userId: string;
+        totalMessages: number;
+        totalGamesPlayed: number;
+        bestScores: string; // JSON string
+        currentStreak: number;
+        longestStreak: number;
+        timeSpent: number;
+        lastUpdated: string;
+    } | null;
+}
+
+/**
+ * Transforms backend profile response to frontend UserProfile type
+ */
+export function transformBackendProfile(backendProfile: BackendProfileResponse): UserProfile {
+    // Parse bestScores JSON string
+    let bestScores: Record<string, number> = {};
+    if (backendProfile.activityStats?.bestScores) {
+        try {
+            bestScores = JSON.parse(backendProfile.activityStats.bestScores);
+        } catch {
+            bestScores = {};
+        }
+    }
+
+    // Transform activity stats
+    const activityStats: ActivityStats | undefined = backendProfile.activityStats ? {
+        totalMessages: backendProfile.activityStats.totalMessages,
+        totalGamesPlayed: backendProfile.activityStats.totalGamesPlayed,
+        bestScores,
+        currentStreak: backendProfile.activityStats.currentStreak,
+        longestStreak: backendProfile.activityStats.longestStreak,
+        timeSpent: backendProfile.activityStats.timeSpent
+    } : undefined;
+
+    // Transform privacy settings
+    const privacySettings = backendProfile.privacySettings ? {
+        profileVisibility: backendProfile.privacySettings.profileVisibility as 'public' | 'friends' | 'private',
+        showBio: backendProfile.privacySettings.showBio,
+        showStats: backendProfile.privacySettings.showStats,
+        showAchievements: backendProfile.privacySettings.showAchievements,
+        showLastActive: backendProfile.privacySettings.showLastActive
+    } : undefined;
+
+    return {
+        userId: backendProfile.userId,
+        displayName: backendProfile.displayName,
+        bio: backendProfile.bio,
+        avatarUrl: backendProfile.avatarUrl,
+        joinDate: new Date(backendProfile.joinDate),
+        lastActive: new Date(backendProfile.lastActive),
+        isPublic: backendProfile.isPublic,
+        privacySettings,
+        activityStats,
+        achievements: [] // TODO: Add when backend supports achievements
+    };
+}
+
+/**
+ * Transforms array of backend profiles
+ */
+export function transformBackendProfiles(backendProfiles: BackendProfileResponse[]): UserProfile[] {
+    return backendProfiles.map(transformBackendProfile);
+}

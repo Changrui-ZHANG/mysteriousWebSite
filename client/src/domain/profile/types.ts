@@ -3,12 +3,12 @@ export interface UserProfile {
     displayName: string;
     bio?: string;
     avatarUrl?: string;
-    joinDate: Date;
-    lastActive: Date;
+    joinDate: Date | string; // Backend sends string, frontend converts to Date
+    lastActive: Date | string; // Backend sends string, frontend converts to Date
     isPublic: boolean;
-    privacySettings: PrivacySettings;
-    activityStats: ActivityStats;
-    achievements: Achievement[];
+    privacySettings?: PrivacySettings | null; // Can be null from backend
+    activityStats?: ActivityStats | null; // Can be null from backend
+    achievements?: Achievement[]; // Optional, may not be provided by backend yet
 }
 
 export interface PrivacySettings {
@@ -22,7 +22,7 @@ export interface PrivacySettings {
 export interface ActivityStats {
     totalMessages: number;
     totalGamesPlayed: number;
-    bestScores: Record<string, number>;
+    bestScores: Record<string, number> | string; // Can be JSON string from backend
     currentStreak: number;
     longestStreak: number;
     timeSpent: number; // in minutes

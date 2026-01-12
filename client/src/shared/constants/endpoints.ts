@@ -103,20 +103,23 @@ export const API_ENDPOINTS = {
         SEARCH: `${API_BASE}/profiles/search`,
         DIRECTORY: `${API_BASE}/profiles/directory`,
         PRIVACY: (userId: string) => `${API_BASE}/profiles/${userId}/privacy`,
-        STATS: (userId: string) => `${API_BASE}/profiles/${userId}/stats`,
-        ACHIEVEMENTS: (userId: string) => `${API_BASE}/profiles/${userId}/achievements`
+        STATS: (userId: string) => `${API_BASE}/activity/${userId}/stats`,
+        ACHIEVEMENTS: (userId: string) => `${API_BASE}/activity/${userId}/achievements`,
+        UPDATE_LAST_ACTIVE: (userId: string) => `${API_BASE}/profiles/${userId}/activity`,
+        BASIC_INFO: (userId: string) => `${API_BASE}/profiles/${userId}/basic`
     },
 
     // Avatars
     AVATARS: {
-        UPLOAD: (userId: string) => `${API_BASE}/profiles/${userId}/avatar`,
-        DELETE: (userId: string) => `${API_BASE}/profiles/${userId}/avatar`,
+        UPLOAD: (userId: string) => `${API_BASE}/avatars/${userId}`,
+        DELETE: (userId: string) => `${API_BASE}/avatars/${userId}`,
         DEFAULTS: `${API_BASE}/avatars/defaults`
     },
 
     // Activity
     ACTIVITY: {
         MESSAGE: `${API_BASE}/activity/message`,
-        GAME: `${API_BASE}/activity/game`
+        GAME: `${API_BASE}/activity/game`,
+        INIT_ACHIEVEMENTS: `${API_BASE}/activity/achievements/init`
     }
 } as const;

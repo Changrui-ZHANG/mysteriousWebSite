@@ -16,12 +16,20 @@ export class AvatarService {
     /**
      * Upload and process avatar with validation and resizing
      */
-    async uploadAvatar(userId: string, file: File, onProgress?: (progress: number) => void): Promise<string> {
+    async uploadAvatar(userId: string, file: File, requesterId: string, onProgress?: (progress: number) => void): Promise<string> {
         if (!userId) {
             throw new AppError(
                 'User ID is required',
                 ERROR_CODES.INVALID_INPUT,
                 'ID utilisateur requis'
+            );
+        }
+
+        if (!requesterId) {
+            throw new AppError(
+                'Requester ID is required',
+                ERROR_CODES.INVALID_INPUT,
+                'ID du demandeur requis'
             );
         }
 
@@ -55,6 +63,7 @@ export class AvatarService {
             const avatarUrl = await this.repository.uploadFileWithProgress(
                 userId, 
                 processedFile, 
+                requesterId,
                 onProgress
             );
 
@@ -73,7 +82,7 @@ export class AvatarService {
     /**
      * Delete user's avatar
      */
-    async deleteAvatar(userId: string): Promise<void> {
+    async deleteAvatar(userId: string, requesterId: string): Promise<void> {
         if (!userId) {
             throw new AppError(
                 'User ID is required',
@@ -82,8 +91,16 @@ export class AvatarService {
             );
         }
 
+        if (!requesterId) {
+            throw new AppError(
+                'Requester ID is required',
+                ERROR_CODES.INVALID_INPUT,
+                'ID du demandeur requis'
+            );
+        }
+
         try {
-            await this.repository.deleteFile(userId);
+            await this.repository.deleteFile(userId, requesterId);
         } catch (error) {
             throw new AppError(
                 'Avatar deletion failed',

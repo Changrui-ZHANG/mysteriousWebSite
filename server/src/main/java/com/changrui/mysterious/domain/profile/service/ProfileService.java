@@ -1,0 +1,235 @@
+package com.changrui.mysterious.domain.profile.service;
+
+import com.changrui.mysterious.domain.profile.dto.*;
+import com.changrui.mysterious.domain.profile.model.*;
+import com.changrui.mysterious.domain.profile.repository.*;
+import com.changrui.mysterious.shared.exception.NotFoundException;
+import com.changrui.mysterious.shared.exception.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Service for managing user profiles.
+ */
+@Service
+public class ProfileService {
+
+    @Autowired
+    private UserProfileRepository profileRepository;
+
+    @Autowired
+    private PrivacySettingsRepository privacyRepository;
+
+    @Autowired
+    private ActivityStatsRepository activityRepository;
+
+    @Autowired
+    private ActivityService activityService;
+
+    /**
+     * Create a new user profile
+     */
+    @Transactional
+    public ProfileResponse createProfile(CreateProfileRequest request) {
+        // Check if profile already exists
+        if (profileRepository.existsByUserId(request.userId())) {
+            throw new BadRequestException("Profile already exists for user: " + request.userId());
+        }
+
+        // Create profile
+        UserProfile profile = new UserProfile(request.userId(), request.displayName());
+        if (request.bio() != null && !request.bio().trim().isEmpty()) {
+            profile.setBio(request.bio().trim());
+        }
+        profile = profileRepository.save(profile);
+
+        // Create default privacy settings
+        PrivacySettings privacy = new PrivacySettings(request.userId());
+        privacy = privacyRepository.save(privacy);
+
+        // Create default activity stats
+        ActivityStats stats = new ActivityStats(request.userId());
+        stats = activityRepository.save(stats);
+
+        return ProfileResponse.ownerFrom(profile, privacy, stats);
+    }
+
+    /**
+     * Get user profile by ID
+     */
+    public ProfileResponse getProfile(String userId, String requesterId) {
+        UserProfile profile = profileRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+
+        PrivacySettings privacy = privacyRepository.findByUserId(userId).orElse(null);
+        ActivityStats stats = activityRepository.findByUserId(userId).orElse(null);
+
+        boolean isOwner = userId.equals(requesterId);
+        
+        // Check if profile is accessible
+        if (!isOwner && !profile.isPublic()) {
+            throw new NotFoundException("Profile not found for user: " + userId);
+        }
+
+        return isOwner ? 
+            ProfileResponse.ownerFrom(profile, privacy, stats) :
+            ProfileResponse.publicFrom(profile, privacy, stats);
+    }
+
+    /**
+     * Update user profile
+     */
+    @Transactional
+    public ProfileResponse updateProfile(String userId, UpdateProfileRequest request, String requesterId) {
+        // Check ownership
+        if (!userId.equals(requesterId)) {
+            throw new BadRequestException("Cannot update another user's profile");
+        }
+
+        UserProfile profile = profileRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+
+        // Update fields
+        if (request.displayName() != null && !request.displayName().trim().isEmpty()) {
+            profile.setDisplayName(request.displayName().trim());
+        }
+        
+        if (request.bio() != null) {
+            profile.setBio(request.bio().trim().isEmpty() ? null : request.bio().trim());
+        }
+        
+        if (request.avatarUrl() != null) {
+            profile.setAvatarUrl(request.avatarUrl().trim().isEmpty() ? null : request.avatarUrl().trim());
+        }
+
+        profile = profileRepository.save(profile);
+
+        PrivacySettings privacy = privacyRepository.findByUserId(userId).orElse(null);
+        ActivityStats stats = activityRepository.findByUserId(userId).orElse(null);
+
+        return ProfileResponse.ownerFrom(profile, privacy, stats);
+    }
+
+    /**
+     * Update privacy settings
+     */
+    @Transactional
+    public void updatePrivacySettings(String userId, UpdatePrivacyRequest request, String requesterId) {
+        // Check ownership
+        if (!userId.equals(requesterId)) {
+            throw new BadRequestException("Cannot update another user's privacy settings");
+        }
+
+        PrivacySettings privacy = privacyRepository.findByUserId(userId)
+            .orElse(new PrivacySettings(userId));
+
+        // Update fields
+        if (request.profileVisibility() != null) {
+            privacy.setProfileVisibility(request.profileVisibility());
+            
+            // Update profile public flag
+            UserProfile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+            profile.setPublic("public".equals(request.profileVisibility()));
+            profileRepository.save(profile);
+        }
+        
+        if (request.showBio() != null) {
+            privacy.setShowBio(request.showBio());
+        }
+        
+        if (request.showStats() != null) {
+            privacy.setShowStats(request.showStats());
+        }
+        
+        if (request.showAchievements() != null) {
+            privacy.setShowAchievements(request.showAchievements());
+        }
+        
+        if (request.showLastActive() != null) {
+            privacy.setShowLastActive(request.showLastActive());
+        }
+
+        privacyRepository.save(privacy);
+    }
+
+    /**
+     * Search profiles
+     */
+    public List<ProfileResponse> searchProfiles(String query, String requesterId) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+
+        List<UserProfile> profiles = profileRepository.searchByDisplayNameOrBio(query.trim());
+        
+        return profiles.stream()
+            .map(profile -> {
+                PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
+                ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
+                boolean isOwner = profile.getUserId().equals(requesterId);
+                
+                return isOwner ? 
+                    ProfileResponse.ownerFrom(profile, privacy, stats) :
+                    ProfileResponse.publicFrom(profile, privacy, stats);
+            })
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Get public profiles directory
+     */
+    public List<ProfileResponse> getPublicProfiles(String requesterId) {
+        List<UserProfile> profiles = profileRepository.findPublicProfiles();
+        
+        return profiles.stream()
+            .map(profile -> {
+                PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
+                ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
+                boolean isOwner = profile.getUserId().equals(requesterId);
+                
+                return isOwner ? 
+                    ProfileResponse.ownerFrom(profile, privacy, stats) :
+                    ProfileResponse.publicFrom(profile, privacy, stats);
+            })
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Delete user profile
+     */
+    @Transactional
+    public void deleteProfile(String userId, String requesterId) {
+        // Check ownership
+        if (!userId.equals(requesterId)) {
+            throw new BadRequestException("Cannot delete another user's profile");
+        }
+
+        if (!profileRepository.existsByUserId(userId)) {
+            throw new NotFoundException("Profile not found for user: " + userId);
+        }
+
+        // Delete related data
+        privacyRepository.findByUserId(userId).ifPresent(privacyRepository::delete);
+        activityRepository.findByUserId(userId).ifPresent(activityRepository::delete);
+        
+        // Delete profile
+        profileRepository.deleteById(userId);
+    }
+
+    /**
+     * Update last active timestamp
+     */
+    @Transactional
+    public void updateLastActive(String userId) {
+        profileRepository.findByUserId(userId).ifPresent(profile -> {
+            profile.setLastActive(LocalDateTime.now());
+            profileRepository.save(profile);
+        });
+    }
+}

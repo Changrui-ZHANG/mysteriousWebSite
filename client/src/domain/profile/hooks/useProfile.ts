@@ -122,12 +122,12 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
      * Update existing profile
      */
     const updateProfile = useCallback(async (data: UpdateProfileRequest) => {
-        if (!userId || isUpdating || isLoading || isCreating) return;
+        if (!userId || !viewerId || isUpdating || isLoading || isCreating) return;
         
         try {
             setIsUpdating(true);
             
-            const updatedProfile = await profileService.updateProfile(userId, data);
+            const updatedProfile = await profileService.updateProfile(userId, data, viewerId);
             setProfile(updatedProfile);
             
             showToast('Profile updated successfully');
@@ -137,18 +137,18 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
         } finally {
             setIsUpdating(false);
         }
-    }, [userId, profileService, handleError, showToast, isUpdating, isLoading, isCreating]);
+    }, [userId, viewerId, profileService, handleError, showToast, isUpdating, isLoading, isCreating]);
 
     /**
      * Update privacy settings
      */
     const updatePrivacySettings = useCallback(async (settings: PrivacySettings) => {
-        if (!userId || isUpdating || isLoading || isCreating) return;
+        if (!userId || !viewerId || isUpdating || isLoading || isCreating) return;
         
         try {
             setIsUpdating(true);
             
-            await profileService.updatePrivacySettings(userId, settings);
+            await profileService.updatePrivacySettings(userId, settings, viewerId);
             
             // Update local profile state
             if (profile) {
@@ -165,7 +165,7 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
         } finally {
             setIsUpdating(false);
         }
-    }, [userId, profile, profileService, handleError, showToast, isUpdating, isLoading, isCreating]);
+    }, [userId, viewerId, profile, profileService, handleError, showToast, isUpdating, isLoading, isCreating]);
 
     /**
      * Refresh profile data

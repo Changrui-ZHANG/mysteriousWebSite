@@ -9,11 +9,12 @@ export class AvatarRepository {
     /**
      * Upload avatar file for a user
      */
-    async uploadFile(userId: string, file: File): Promise<string> {
+    async uploadFile(userId: string, file: File, requesterId: string): Promise<string> {
         const formData = new FormData();
         formData.append('avatar', file);
 
-        const response = await fetch(API_ENDPOINTS.AVATARS.UPLOAD(userId), {
+        const url = `${API_ENDPOINTS.AVATARS.UPLOAD(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
+        const response = await fetch(url, {
             method: 'POST',
             body: formData,
         });
@@ -33,6 +34,7 @@ export class AvatarRepository {
     async uploadFileWithProgress(
         userId: string, 
         file: File, 
+        requesterId: string,
         onProgress?: (progress: number) => void
     ): Promise<string> {
         return new Promise((resolve, reject) => {
@@ -77,7 +79,8 @@ export class AvatarRepository {
                 reject(new Error('Upload was aborted'));
             });
 
-            xhr.open('POST', API_ENDPOINTS.AVATARS.UPLOAD(userId));
+            const url = `${API_ENDPOINTS.AVATARS.UPLOAD(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
+            xhr.open('POST', url);
             xhr.send(formData);
         });
     }
@@ -85,8 +88,9 @@ export class AvatarRepository {
     /**
      * Delete avatar file for a user
      */
-    async deleteFile(userId: string): Promise<void> {
-        return deleteJson<void>(API_ENDPOINTS.AVATARS.DELETE(userId));
+    async deleteFile(userId: string, requesterId: string): Promise<void> {
+        const url = `${API_ENDPOINTS.AVATARS.DELETE(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
+        return deleteJson<void>(url);
     }
 
     /**

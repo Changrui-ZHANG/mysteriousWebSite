@@ -1,6 +1,7 @@
 import { BaseService } from '../../../shared/services/BaseService';
-import { fetchJson, postJson, putJson } from '../../../shared/api/httpClient';
+import { fetchJson, postJson, putJson, deleteJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
+import { transformBackendProfile, transformBackendProfiles } from '../utils/ProfileTransformer';
 import type { 
     UserProfile, 
     CreateProfileRequest, 
@@ -23,30 +24,41 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
     /**
      * Find profile by user ID
      */
-    async findByUserId(userId: string): Promise<UserProfile> {
-        return fetchJson<UserProfile>(API_ENDPOINTS.PROFILES.GET(userId));
+    async findByUserId(userId: string, requesterId?: string): Promise<UserProfile> {
+        const url = requesterId 
+            ? `${API_ENDPOINTS.PROFILES.GET(userId)}?requesterId=${encodeURIComponent(requesterId)}`
+            : API_ENDPOINTS.PROFILES.GET(userId);
+        const backendProfile = await fetchJson<any>(url);
+        return transformBackendProfile(backendProfile);
     }
 
     /**
      * Create a new profile
      */
     async createProfile(data: CreateProfileRequest): Promise<UserProfile> {
-        return postJson<UserProfile>(API_ENDPOINTS.PROFILES.CREATE, data);
+        const backendProfile = await postJson<any>(API_ENDPOINTS.PROFILES.CREATE, data);
+        return transformBackendProfile(backendProfile);
     }
 
     /**
      * Update an existing profile
      */
-    async updateProfile(userId: string, data: UpdateProfileRequest): Promise<UserProfile> {
-        return putJson<UserProfile>(API_ENDPOINTS.PROFILES.UPDATE(userId), data);
+    async updateProfile(userId: string, data: UpdateProfileRequest, requesterId: string): Promise<UserProfile> {
+        const url = `${API_ENDPOINTS.PROFILES.UPDATE(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
+        const backendProfile = await putJson<any>(url, data);
+        return transformBackendProfile(backendProfile);
     }
 
     /**
      * Search profiles by display name
      */
-    async searchByDisplayName(query: string): Promise<UserProfile[]> {
-        const searchParams = new URLSearchParams({ q: query });
-        return fetchJson<UserProfile[]>(`${API_ENDPOINTS.PROFILES.SEARCH}?${searchParams.toString()}`);
+    async searchByDisplayName(query: string, requesterId?: string): Promise<UserProfile[]> {
+        const params = new URLSearchParams({ q: query });
+        if (requesterId) {
+            params.append('requesterId', requesterId);
+        }
+        const backendProfiles = await fetchJson<any[]>(`${API_ENDPOINTS.PROFILES.SEARCH}?${params.toString()}`);
+        return transformBackendProfiles(backendProfiles);
     }
 
     /**
@@ -67,13 +79,18 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
     /**
      * Get public profiles for directory
      */
-    async getPublicProfiles(limit?: number): Promise<UserProfile[]> {
+    async getPublicProfiles(limit?: number, requesterId?: string): Promise<UserProfile[]> {
+        const params = new URLSearchParams();
         if (limit) {
-            const searchParams = new URLSearchParams({ limit: limit.toString() });
-            return fetchJson<UserProfile[]>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${searchParams.toString()}`);
+            params.append('limit', limit.toString());
+        }
+        if (requesterId) {
+            params.append('requesterId', requesterId);
         }
         
-        return fetchJson<UserProfile[]>(API_ENDPOINTS.PROFILES.DIRECTORY);
+        const url = params.toString() ? `${API_ENDPOINTS.PROFILES.DIRECTORY}?${params.toString()}` : API_ENDPOINTS.PROFILES.DIRECTORY;
+        const backendProfiles = await fetchJson<any[]>(url);
+        return transformBackendProfiles(backendProfiles);
     }
 
     /**
@@ -92,14 +109,22 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
         }
 
         const searchParams = new URLSearchParams(params);
-        return fetchJson<ProfileSearchResult>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${searchParams.toString()}`);
+        const backendProfiles = await fetchJson<any[]>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${searchParams.toString()}`);
+        const profiles = transformBackendProfiles(backendProfiles);
+        
+        return {
+            profiles,
+            total: profiles.length,
+            hasMore: profiles.length === filters.limit
+        };
     }
 
     /**
      * Update privacy settings for a profile
      */
-    async updatePrivacySettings(userId: string, settings: PrivacySettings): Promise<void> {
-        return putJson<void>(API_ENDPOINTS.PROFILES.PRIVACY(userId), settings);
+    async updatePrivacySettings(userId: string, settings: PrivacySettings, requesterId: string): Promise<void> {
+        const url = `${API_ENDPOINTS.PROFILES.PRIVACY(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
+        return putJson<void>(url, settings);
     }
 
     /**
@@ -164,7 +189,8 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
             limit: limit.toString()
         });
         
-        return fetchJson<UserProfile[]>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${params.toString()}`);
+        const backendProfiles = await fetchJson<any[]>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${params.toString()}`);
+        return transformBackendProfiles(backendProfiles);
     }
 
     /**
@@ -177,6 +203,29 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
             limit: limit.toString()
         });
         
-        return fetchJson<UserProfile[]>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${params.toString()}`);
+        const backendProfiles = await fetchJson<any[]>(`${API_ENDPOINTS.PROFILES.DIRECTORY}?${params.toString()}`);
+        return transformBackendProfiles(backendProfiles);
+    }
+
+    /**
+     * Delete a user profile
+     */
+    async deleteProfile(userId: string, requesterId: string): Promise<void> {
+        const url = `${API_ENDPOINTS.PROFILES.DELETE(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
+        return deleteJson<void>(url);
+    }
+
+    /**
+     * Update last active timestamp
+     */
+    async updateLastActive(userId: string): Promise<void> {
+        return postJson<void>(API_ENDPOINTS.PROFILES.UPDATE_LAST_ACTIVE(userId), {});
+    }
+
+    /**
+     * Get basic profile info (display name and avatar)
+     */
+    async getBasicProfileInfo(userId: string): Promise<{ displayName: string; avatarUrl: string | null }> {
+        return fetchJson<{ displayName: string; avatarUrl: string | null }>(API_ENDPOINTS.PROFILES.BASIC_INFO(userId));
     }
 }

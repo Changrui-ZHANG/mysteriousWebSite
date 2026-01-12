@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ============================================ -->
+    <!-- DOMAIN: PROFILE                             -->
+    <!-- ============================================ -->
+    
+    <changeSet id="014-create-user-profiles" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="user_profiles"/></not>
+        </preConditions>
+        <comment>Table des profils utilisateurs</comment>
+        <createTable tableName="user_profiles">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="display_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bio" type="VARCHAR(500)"/>
+            <column name="avatar_url" type="VARCHAR(500)"/>
+            <column name="join_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_active" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_public" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="015-create-profile-privacy-settings" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="profile_privacy_settings"/></not>
+        </preConditions>
+        <comment>Table des paramètres de confidentialité des profils</comment>
+        <createTable tableName="profile_privacy_settings">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="profile_visibility" type="VARCHAR(20)" defaultValue="public">
+                <constraints nullable="false"/>
+            </column>
+            <column name="show_bio" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="show_stats" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="show_achievements" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="show_last_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="016-create-user-activity-stats" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="user_activity_stats"/></not>
+        </preConditions>
+        <comment>Table des statistiques d'activité des utilisateurs</comment>
+        <createTable tableName="user_activity_stats">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="total_messages" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_games_played" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="best_scores" type="TEXT"/>
+            <column name="current_streak" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longest_streak" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_spent" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="017-create-achievements" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="achievements"/></not>
+        </preConditions>
+        <comment>Table des succès/achievements du système</comment>
+        <createTable tableName="achievements">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="icon_url" type="VARCHAR(500)"/>
+            <column name="category" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="threshold_value" type="INT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="018-create-user-achievements" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="user_achievements"/></not>
+        </preConditions>
+        <comment>Table des succès débloqués par les utilisateurs</comment>
+        <createTable tableName="user_achievements">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="achievement_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unlocked_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Add primary key constraint for user_achievements -->
+    <changeSet id="018b-add-user-achievements-pk" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><primaryKeyExists tableName="user_achievements"/></not>
+        </preConditions>
+        <addPrimaryKey tableName="user_achievements" 
+                       columnNames="user_id, achievement_id" 
+                       constraintName="pk_user_achievements"/>
+    </changeSet>
+
+    <!-- Add foreign key constraints -->
+    <changeSet id="019-add-profile-foreign-keys" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><foreignKeyConstraintExists foreignKeyName="fk_privacy_settings_profile"/></not>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="profile_privacy_settings"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="user_profiles"
+                                 referencedColumnNames="user_id"
+                                 constraintName="fk_privacy_settings_profile"/>
+    </changeSet>
+
+    <changeSet id="020-add-activity-stats-foreign-keys" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><foreignKeyConstraintExists foreignKeyName="fk_activity_stats_profile"/></not>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="user_activity_stats"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="user_profiles"
+                                 referencedColumnNames="user_id"
+                                 constraintName="fk_activity_stats_profile"/>
+    </changeSet>
+
+    <changeSet id="021-add-user-achievements-foreign-keys" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><foreignKeyConstraintExists foreignKeyName="fk_user_achievements_profile"/></not>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="user_achievements"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="user_profiles"
+                                 referencedColumnNames="user_id"
+                                 constraintName="fk_user_achievements_profile"/>
+    </changeSet>
+
+    <changeSet id="022-add-user-achievements-achievement-fk" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><foreignKeyConstraintExists foreignKeyName="fk_user_achievements_achievement"/></not>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="user_achievements"
+                                 baseColumnNames="achievement_id"
+                                 referencedTableName="achievements"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_user_achievements_achievement"/>
+    </changeSet>
+
+    <!-- Add indexes for better performance -->
+    <changeSet id="023-add-profile-indexes" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="idx_profile_display_name"/></not>
+        </preConditions>
+        <createIndex indexName="idx_profile_display_name" tableName="user_profiles">
+            <column name="display_name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="024-add-profile-public-index" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="idx_profile_public_join_date"/></not>
+        </preConditions>
+        <createIndex indexName="idx_profile_public_join_date" tableName="user_profiles">
+            <column name="is_public"/>
+            <column name="join_date"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="025-add-achievements-category-index" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="idx_achievements_category"/></not>
+        </preConditions>
+        <createIndex indexName="idx_achievements_category" tableName="achievements">
+            <column name="category"/>
+            <column name="threshold_value"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

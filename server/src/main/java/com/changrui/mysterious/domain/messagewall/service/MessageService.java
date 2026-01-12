@@ -4,6 +4,8 @@ import com.changrui.mysterious.domain.messagewall.model.ChatSetting;
 import com.changrui.mysterious.domain.messagewall.model.Message;
 import com.changrui.mysterious.domain.messagewall.repository.ChatSettingRepository;
 import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
+import com.changrui.mysterious.domain.profile.service.ActivityService;
+import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +24,32 @@ public class MessageService {
     @Autowired
     private ChatSettingRepository chatSettingRepository;
 
+    @Autowired
+    private ActivityService activityService;
+
+    @Autowired
+    private ProfileIntegrationService profileIntegrationService;
+
     public List<Message> getAllMessages() {
-        return messageRepository.findAllByOrderByTimestampAsc();
+        List<Message> messages = messageRepository.findAllByOrderByTimestampAsc();
+        return profileIntegrationService.enrichMessagesWithProfiles(messages);
     }
 
     public Message addMessage(Message message) {
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        
+        // Record activity for profile statistics and update last active
+        if (savedMessage.getUserId() != null && !savedMessage.getUserId().isEmpty()) {
+            try {
+                activityService.recordMessageActivity(savedMessage.getUserId());
+                profileIntegrationService.updateLastActiveFromMessage(savedMessage.getUserId());
+            } catch (Exception e) {
+                // Log error but don't fail the message save
+                // Could add logging here if needed
+            }
+        }
+        
+        return savedMessage;
     }
 
     public Message getMessageById(String id) {

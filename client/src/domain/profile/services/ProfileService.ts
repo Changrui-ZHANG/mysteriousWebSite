@@ -67,12 +67,20 @@ export class ProfileService {
     /**
      * Update an existing profile with validation
      */
-    async updateProfile(userId: string, data: UpdateProfileRequest): Promise<UserProfile> {
+    async updateProfile(userId: string, data: UpdateProfileRequest, requesterId: string): Promise<UserProfile> {
         if (!userId) {
             throw new AppError(
                 'User ID is required',
                 ERROR_CODES.INVALID_INPUT,
                 'ID utilisateur requis'
+            );
+        }
+
+        if (!requesterId) {
+            throw new AppError(
+                'Requester ID is required',
+                ERROR_CODES.INVALID_INPUT,
+                'ID du demandeur requis'
             );
         }
 
@@ -99,7 +107,7 @@ export class ProfileService {
             await this.validateUniqueDisplayName(sanitizedData.displayName, userId);
         }
 
-        return this.repository.updateProfile(userId, sanitizedData);
+        return this.repository.updateProfile(userId, sanitizedData, requesterId);
     }
 
     /**
@@ -114,7 +122,7 @@ export class ProfileService {
             );
         }
 
-        const profile = await this.repository.findByUserId(userId);
+        const profile = await this.repository.findByUserId(userId, viewerId);
         
         // Business logic: Apply privacy filtering
         return this.applyPrivacyFiltering(profile, viewerId);
@@ -195,12 +203,20 @@ export class ProfileService {
     /**
      * Update privacy settings with validation
      */
-    async updatePrivacySettings(userId: string, settings: PrivacySettings): Promise<void> {
+    async updatePrivacySettings(userId: string, settings: PrivacySettings, requesterId: string): Promise<void> {
         if (!userId) {
             throw new AppError(
                 'User ID is required',
                 ERROR_CODES.INVALID_INPUT,
                 'ID utilisateur requis'
+            );
+        }
+
+        if (!requesterId) {
+            throw new AppError(
+                'Requester ID is required',
+                ERROR_CODES.INVALID_INPUT,
+                'ID du demandeur requis'
             );
         }
 
@@ -215,7 +231,7 @@ export class ProfileService {
             );
         }
 
-        return this.repository.updatePrivacySettings(userId, settings);
+        return this.repository.updatePrivacySettings(userId, settings, requesterId);
     }
 
     /**
@@ -263,7 +279,8 @@ export class ProfileService {
             const profile = await this.repository.findByUserId(userId);
             
             // Business logic: Check privacy settings
-            if (profile.privacySettings.profileVisibility === 'private' && userId !== viewerId) {
+            const privacySettings = profile.privacySettings;
+            if (privacySettings?.profileVisibility === 'private' && userId !== viewerId) {
                 return false;
             }
             
@@ -322,22 +339,28 @@ export class ProfileService {
             return profile;
         }
 
-        // Apply privacy settings
-        const { privacySettings } = profile;
+        // Get privacy settings with defaults
+        const privacySettings = profile.privacySettings || {
+            profileVisibility: 'public' as const,
+            showBio: true,
+            showStats: true,
+            showAchievements: true,
+            showLastActive: true
+        };
         
         // If profile is private, return minimal info
         if (privacySettings.profileVisibility === 'private') {
             return {
                 ...profile,
                 bio: undefined,
-                activityStats: {
+                activityStats: profile.activityStats ? {
                     totalMessages: 0,
                     totalGamesPlayed: 0,
                     bestScores: {},
                     currentStreak: 0,
                     longestStreak: 0,
                     timeSpent: 0
-                },
+                } : undefined,
                 achievements: [],
                 lastActive: new Date(0) // Epoch time to indicate hidden
             };
@@ -347,15 +370,8 @@ export class ProfileService {
         const filteredProfile: UserProfile = {
             ...profile,
             bio: privacySettings.showBio ? profile.bio : undefined,
-            activityStats: privacySettings.showStats ? profile.activityStats : {
-                totalMessages: 0,
-                totalGamesPlayed: 0,
-                bestScores: {},
-                currentStreak: 0,
-                longestStreak: 0,
-                timeSpent: 0
-            },
-            achievements: privacySettings.showAchievements ? profile.achievements : [],
+            activityStats: privacySettings.showStats ? profile.activityStats : undefined,
+            achievements: privacySettings.showAchievements ? (profile.achievements || []) : [],
             lastActive: privacySettings.showLastActive ? profile.lastActive : new Date(0)
         };
 

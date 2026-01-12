@@ -3,6 +3,7 @@ package com.changrui.mysterious.domain.game.service;
 import com.changrui.mysterious.domain.game.dto.ScoreSubmissionDTO;
 import com.changrui.mysterious.domain.game.model.Score;
 import com.changrui.mysterious.domain.game.repository.ScoreRepository;
+import com.changrui.mysterious.domain.profile.service.ActivityService;
 import com.changrui.mysterious.shared.exception.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class ScoreService {
 
     @Autowired
     private ScoreRepository scoreRepository;
+
+    @Autowired
+    private ActivityService activityService;
 
     /**
      * Get top scores for a specific game type.
@@ -374,7 +378,17 @@ public class ScoreService {
                 dto.score(),
                 System.currentTimeMillis(),
                 dto.attempts());
-        scoreRepository.save(newScore);
+        Score savedScore = scoreRepository.save(newScore);
+        
+        // Record activity for profile statistics
+        if (savedScore.getUserId() != null && !savedScore.getUserId().isEmpty()) {
+            try {
+                activityService.recordGameActivity(savedScore.getUserId(), savedScore.getGameType(), savedScore.getScore());
+            } catch (Exception e) {
+                // Log error but don't fail the score save
+                log.warn("Failed to record game activity for user {}: {}", savedScore.getUserId(), e.getMessage());
+            }
+        }
     }
 
     /**

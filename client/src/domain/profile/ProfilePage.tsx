@@ -244,7 +244,7 @@ export const ProfilePage: React.FC = () => {
                             {activeTab === 'privacy' && (
                                 <div className="p-6">
                                     <div className="max-w-2xl mx-auto">
-                                        {profile ? (
+                                        {profile?.privacySettings ? (
                                             <PrivacySettings
                                                 settings={profile.privacySettings}
                                                 onUpdate={updatePrivacySettings}

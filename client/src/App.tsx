@@ -21,6 +21,7 @@ const CalendarPage = React.lazy(() => import('./domain/calendar').then(m => ({ d
 const LearningPage = React.lazy(() => import('./domain/vocabulary').then(m => ({ default: m.LearningPage })));
 const NotesPage = React.lazy(() => import('./domain/note').then(m => ({ default: m.NotesPage })));
 const ProfilePage = React.lazy(() => import('./domain/profile').then(m => ({ default: m.ProfilePage })));
+const ApiTestPage = React.lazy(() => import('./domain/profile/components/ApiTestPage').then(m => ({ default: m.ApiTestPage })));
 
 import './App.css'
 
@@ -60,6 +61,7 @@ function AppContent() {
         { path: '/learning', element: <LearningPage />, settingKey: 'PAGE_LEARNING_ENABLED' },
         { path: '/notes', element: <NotesPage />, settingKey: 'PAGE_NOTES_ENABLED' },
         { path: '/profile', element: <ProfilePage /> },
+        { path: '/api-test', element: <ApiTestPage /> },
         { path: '/terms', element: <TermsPage /> },
         { path: '/privacy', element: <PrivacyPage /> },
     ], []);

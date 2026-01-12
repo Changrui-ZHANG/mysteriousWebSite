@@ -2,6 +2,7 @@ import { fetchJson, postJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { validateActivityUpdate } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
+import { transformBackendActivityStats, transformBackendAchievements } from '../utils/ActivityStatsTransformer';
 import type { ActivityStats, ActivityUpdate, Achievement } from '../types';
 
 /**
@@ -36,15 +37,20 @@ export class ActivityService {
         const processedActivity = this.processActivityUpdate(activity);
 
         try {
-            // Send to appropriate endpoint based on activity type
-            const endpoint = activity.type === 'message' 
-                ? API_ENDPOINTS.ACTIVITY.MESSAGE 
-                : API_ENDPOINTS.ACTIVITY.GAME;
-
-            await postJson(endpoint, {
-                userId,
-                ...processedActivity
-            });
+            // Send to appropriate endpoint based on activity type with query parameters
+            if (activity.type === 'message') {
+                const params = new URLSearchParams({
+                    userId: userId
+                });
+                await postJson(`${API_ENDPOINTS.ACTIVITY.MESSAGE}?${params.toString()}`, {});
+            } else if (activity.type === 'game') {
+                const params = new URLSearchParams({
+                    userId: userId,
+                    gameType: processedActivity.gameType || '',
+                    score: (processedActivity.score || 0).toString()
+                });
+                await postJson(`${API_ENDPOINTS.ACTIVITY.GAME}?${params.toString()}`, {});
+            }
 
             // Check for new achievements after activity update
             await this.checkAndUnlockAchievements(userId);
@@ -71,7 +77,8 @@ export class ActivityService {
         }
 
         try {
-            return await fetchJson<ActivityStats>(API_ENDPOINTS.PROFILES.STATS(userId));
+            const backendStats = await fetchJson<any>(API_ENDPOINTS.PROFILES.STATS(userId));
+            return transformBackendActivityStats(backendStats);
         } catch (error) {
             throw new AppError(
                 'Failed to get activity stats',
@@ -125,7 +132,8 @@ export class ActivityService {
         }
 
         try {
-            return await fetchJson<Achievement[]>(API_ENDPOINTS.PROFILES.ACHIEVEMENTS(userId));
+            const backendAchievements = await fetchJson<any[]>(API_ENDPOINTS.PROFILES.ACHIEVEMENTS(userId));
+            return transformBackendAchievements(backendAchievements);
         } catch (error) {
             throw new AppError(
                 'Failed to get achievements',
@@ -405,5 +413,21 @@ export class ActivityService {
      */
     private generateSessionId(): string {
         return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    /**
+     * Initialize default achievements (admin function)
+     */
+    async initializeDefaultAchievements(): Promise<void> {
+        try {
+            await postJson<void>(API_ENDPOINTS.ACTIVITY.INIT_ACHIEVEMENTS, {});
+        } catch (error) {
+            throw new AppError(
+                'Failed to initialize achievements',
+                ERROR_CODES.OPERATION_FAILED,
+                'Échec de l\'initialisation des succès',
+                error
+            );
+        }
     }
 }

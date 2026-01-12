@@ -27,28 +27,41 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         joinDate,
         lastActive,
         activityStats,
-        achievements,
+        achievements = [], // Default to empty array
         privacySettings
-    } = profile;
+    } = profile || {}; // Add null safety for profile object
 
-    const formatDate = (date: Date) => {
+    const formatDate = (date: Date | string) => {
+        const dateObj = typeof date === 'string' ? new Date(date) : date;
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
-        }).format(new Date(date));
+        }).format(dateObj);
     };
 
-    const shouldShowStats = isOwnProfile || privacySettings.showStats;
-    const shouldShowBio = isOwnProfile || privacySettings.showBio;
-    const shouldShowAchievements = isOwnProfile || privacySettings.showAchievements;
-    const shouldShowLastActive = isOwnProfile || privacySettings.showLastActive;
+    // Safe access to privacy settings with defaults
+    const shouldShowStats = isOwnProfile || (privacySettings?.showStats ?? true);
+    const shouldShowBio = isOwnProfile || (privacySettings?.showBio ?? true);
+    const shouldShowAchievements = isOwnProfile || (privacySettings?.showAchievements ?? true);
+    const shouldShowLastActive = isOwnProfile || (privacySettings?.showLastActive ?? true);
+
+    // Handle missing data gracefully
+    if (!profile) {
+        return (
+            <div className={`profile-card bg-white rounded-lg shadow-md p-6 ${className}`}>
+                <div className="text-center text-gray-500">
+                    Profile not available
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={`profile-card bg-white rounded-lg shadow-md p-6 ${className}`}>
             {/* Header with avatar and basic info */}
             <div className="flex items-start space-x-4 mb-4">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     <img
                         src={avatarUrl || '/default-avatar.png'}
                         alt={`${displayName}'s avatar`}
@@ -56,7 +69,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     />
                 </div>
                 
-                <div className="flex-grow">
+                <div className="grow">
                     <h3 className="text-xl font-semibold text-gray-900 mb-1">
                         {displayName}
                     </h3>
@@ -65,7 +78,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                         Joined {formatDate(joinDate)}
                     </p>
                     
-                    {shouldShowLastActive && (
+                    {shouldShowLastActive && lastActive && (
                         <p className="text-xs text-gray-400">
                             Last active: {formatDate(lastActive)}
                         </p>
@@ -104,32 +117,32 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             )}
 
             {/* Activity Stats */}
-            {shouldShowStats && (
+            {shouldShowStats && activityStats && (
                 <div className="mb-4">
                     <h4 className="text-sm font-medium text-gray-900 mb-2">Activity</h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                             <span className="text-gray-500">Messages:</span>
-                            <span className="ml-1 font-medium">{activityStats.totalMessages}</span>
+                            <span className="ml-1 font-medium">{activityStats.totalMessages || 0}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Games:</span>
-                            <span className="ml-1 font-medium">{activityStats.totalGamesPlayed}</span>
+                            <span className="ml-1 font-medium">{activityStats.totalGamesPlayed || 0}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Current Streak:</span>
-                            <span className="ml-1 font-medium">{activityStats.currentStreak} days</span>
+                            <span className="ml-1 font-medium">{activityStats.currentStreak || 0} days</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Time Spent:</span>
-                            <span className="ml-1 font-medium">{Math.round(activityStats.timeSpent / 60)}h</span>
+                            <span className="ml-1 font-medium">{Math.round((activityStats.timeSpent || 0) / 60)}h</span>
                         </div>
                     </div>
                 </div>
             )}
 
             {/* Achievements */}
-            {shouldShowAchievements && achievements.length > 0 && (
+            {shouldShowAchievements && achievements && achievements.length > 0 && (
                 <div>
                     <h4 className="text-sm font-medium text-gray-900 mb-2">
                         Achievements ({achievements.length})
@@ -161,7 +174,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             )}
 
             {/* Privacy indicator */}
-            {!isOwnProfile && privacySettings.profileVisibility !== 'public' && (
+            {!isOwnProfile && privacySettings?.profileVisibility !== 'public' && (
                 <div className="mt-4 pt-4 border-t border-gray-200">
                     <p className="text-xs text-gray-500 flex items-center">
                         <span className="mr-1">🔒</span>
