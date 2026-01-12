@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ProfileService } from '../services/ProfileService';
 import { useSilentErrorHandler } from '../../../shared/hooks/useSilentErrorHandler';
 import { useToastContext } from '../../../shared/contexts/ToastContext';
-import { useRetryableRequest } from '../../../shared/hooks/useRetryableRequest';
-import { ERROR_CODES } from '../../../shared/utils/errorHandling';
+import { useConnectionState } from '../../../shared/hooks/useConnectionState';
 import type { 
     UserProfile, 
     CreateProfileRequest, 
@@ -24,6 +23,14 @@ interface UseProfileReturn {
     isCreating: boolean;
     isUpdating: boolean;
     
+    // Connection state - NOUVEAU pour éviter les boucles d'erreur
+    connectionState: any;
+    connectionError: any;
+    isRetrying: boolean;
+    canRetryConnection: boolean;
+    retryConnection: () => Promise<void>;
+    clearConnectionError: () => void;
+    
     // Actions
     createProfile: (data: CreateProfileRequest) => Promise<void>;
     updateProfile: (data: UpdateProfileRequest) => Promise<void>;
@@ -39,11 +46,12 @@ interface UseProfileReturn {
 }
 
 /**
- * Hook for profile management with intelligent retry and circuit breaker protection
- * Prevents infinite request loops while providing robust error handling
+ * Hook for profile management with manual retry to avoid error loops
+ * Uses useConnectionState to prevent automatic retries
  */
 export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfileReturn {
     const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [lastLoadedUserId, setLastLoadedUserId] = useState<string | undefined>();
@@ -52,60 +60,42 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
     const { success: showToast } = useToastContext();
     const profileService = new ProfileService();
 
-    // Retryable request hook for profile loading
-    const {
-        data: profileData,
-        isLoading,
-        error,
-        canRetry,
-        executeRequest: executeProfileRequest,
-        retry: retryProfileRequest,
-        reset: resetProfileRequest
-    } = useRetryableRequest<UserProfile>(`profile-${userId}`, {
-        maxAttempts: 3,
-        baseDelay: 1000,
-        maxDelay: 5000
-    });
-
-    // Computed values
-    const hasProfile = profile !== null;
-    const isOwnProfile = userId && viewerId ? userId === viewerId : false;
-
     /**
-     * Load profile data with retry protection
+     * Load profile data avec gestion d'erreur sans boucle
      */
     const loadProfile = useCallback(async (targetUserId: string) => {
         if (isLoading || isCreating || isUpdating) return;
         
         try {
-            await executeProfileRequest(
-                async () => {
-                    const profileData = await profileService.getProfile(targetUserId, viewerId);
-                    return profileData;
-                },
-                {
-                    onSuccess: (data) => {
-                        setProfile(data);
-                        setLastLoadedUserId(targetUserId);
-                    },
-                    onFailure: (error) => {
-                        // Only show toast for non-network errors to avoid spam
-                        if (error.code !== ERROR_CODES.NETWORK_ERROR) {
-                            // Don't show toast automatically - let UI handle it with retry button
-                            console.warn('Profile load failed:', error.message);
-                        }
-                        setProfile(null);
-                    },
-                    onRetry: (attempt, error) => {
-                        console.log(`Retrying profile load (attempt ${attempt}):`, error.message);
-                    }
-                }
-            );
-        } catch (err) {
-            // Error is already handled by the retryable request hook
-            console.error('Profile load failed after all retries:', err);
+            setIsLoading(true);
+            
+            const profileData = await profileService.getProfile(targetUserId, viewerId);
+            setProfile(profileData);
+            setLastLoadedUserId(targetUserId);
+            
+            return profileData; // Retourner les données pour useConnectionState
+        } catch (error) {
+            setProfile(null);
+            throw error; // Re-throw pour que useConnectionState puisse gérer l'erreur
+        } finally {
+            setIsLoading(false);
         }
-    }, [profileService, viewerId, executeProfileRequest, isLoading, isCreating, isUpdating]);
+    }, [profileService, viewerId, isLoading, isCreating, isUpdating]);
+
+    // Gestion de l'état de connexion pour éviter les boucles d'erreur
+    const connectionState = useConnectionState(
+        async () => {
+            // Fonction de retry pour le profil
+            if (userId) {
+                await loadProfile(userId);
+            }
+        },
+        3 // Maximum 3 tentatives
+    );
+
+    // Computed values
+    const hasProfile = profile !== null;
+    const isOwnProfile = userId && viewerId ? userId === viewerId : false;
 
     /**
      * Create a new profile
@@ -122,7 +112,6 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
             showToast('Profile created successfully');
         } catch (err) {
             handleError(err);
-            // Don't show error toast automatically - let UI handle it
             throw err; // Re-throw for form handling
         } finally {
             setIsCreating(false);
@@ -144,7 +133,6 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
             showToast('Profile updated successfully');
         } catch (err) {
             handleError(err);
-            // Don't show error toast automatically - let UI handle it
             throw err; // Re-throw for form handling
         } finally {
             setIsUpdating(false);
@@ -173,7 +161,6 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
             showToast('Privacy settings updated');
         } catch (err) {
             handleError(err);
-            // Don't show error toast automatically - let UI handle it
             throw err;
         } finally {
             setIsUpdating(false);
@@ -185,73 +172,52 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
      */
     const refreshProfile = useCallback(async () => {
         if (userId) {
-            resetProfileRequest();
             await loadProfile(userId);
         }
-    }, [userId, loadProfile, resetProfileRequest]);
+    }, [userId, loadProfile]);
 
     /**
      * Retry loading profile
      */
     const retryLoad = useCallback(async () => {
-        if (userId && canRetry) {
-            try {
-                await retryProfileRequest(
-                    async () => {
-                        return await profileService.getProfile(userId, viewerId);
-                    },
-                    {
-                        onSuccess: (data) => {
-                            setProfile(data as UserProfile);
-                            setLastLoadedUserId(userId);
-                        },
-                        onFailure: (error) => {
-                            if (error.code !== ERROR_CODES.NETWORK_ERROR) {
-                                // Don't show toast automatically - let UI handle it
-                                console.warn('Profile retry failed:', error.message);
-                            }
-                            setProfile(null);
-                        }
-                    }
-                );
-            } catch (err) {
-                console.error('Profile retry failed:', err);
-            }
+        if (userId && connectionState.canRetry) {
+            await connectionState.manualRetry();
         }
-    }, [userId, canRetry, retryProfileRequest, profileService, viewerId]);
+    }, [userId, connectionState]);
 
     /**
      * Clear error state
      */
     const clearError = useCallback(() => {
-        resetProfileRequest();
-    }, [resetProfileRequest]);
+        connectionState.clearError();
+    }, [connectionState]);
 
-    // Load profile when userId changes
+    // Load profile when userId changes - UNE SEULE FOIS
     useEffect(() => {
         if (userId && userId !== lastLoadedUserId) {
             loadProfile(userId);
         } else if (!userId) {
             setProfile(null);
             setLastLoadedUserId(undefined);
-            resetProfileRequest();
+            connectionState.clearError();
         }
-    }, [userId, lastLoadedUserId, loadProfile, resetProfileRequest]);
-
-    // Update profile state when profileData changes
-    useEffect(() => {
-        if (profileData && typeof profileData === 'object') {
-            setProfile(profileData as UserProfile);
-        }
-    }, [profileData]);
+    }, [userId, lastLoadedUserId]); // Pas de loadProfile dans les dépendances pour éviter les boucles
 
     return {
         // State
         profile,
         isLoading,
-        error,
+        error: connectionState.lastError?.message || null,
         isCreating,
         isUpdating,
+        
+        // Connection state - NOUVEAU pour éviter les boucles d'erreur
+        connectionState: connectionState.connectionState,
+        connectionError: connectionState.lastError,
+        isRetrying: connectionState.isRetrying,
+        canRetryConnection: connectionState.canRetry,
+        retryConnection: connectionState.manualRetry,
+        clearConnectionError: connectionState.clearError,
         
         // Actions
         createProfile,
@@ -263,7 +229,7 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
         // Helpers
         hasProfile,
         isOwnProfile,
-        canRetry,
+        canRetry: connectionState.canRetry,
         retryLoad
     };
 }

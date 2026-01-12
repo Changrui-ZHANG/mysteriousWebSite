@@ -10,7 +10,17 @@
         "good_afternoon": "Productive Afternoon",
         "good_evening": "Wonderful Evening",
         "guest": "Guest",
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "dismiss": "Dismiss"
+    },
+    "connection": {
+        "reconnecting": "Reconnecting...",
+        "error": "Connection Error",
+        "unknown": "Connection Status",
+        "retry": "Retry Connection",
+        "retry_count": "Attempt {{count}}",
+        "max_retries": "Maximum retry attempts reached. Please check your connection.",
+        "retry_disabled": "Retry is currently disabled."
     },
     "brand": {
         "author_name": "Changrui ZHANG",
@@ -575,6 +585,17 @@
         "failed_to_toggle_mute": "Failed to toggle mute",
         "failed_to_clear_messages": "Failed to clear messages",
         "unknown_error": "Unknown error",
+        "connection": {
+            "failed": "Connection failed",
+            "retry_failed": "Retry failed",
+            "not_connected": "Not connected to server"
+        },
+        "messages": {
+            "fetch_failed": "Failed to load messages",
+            "send_failed": "Failed to send message",
+            "delete_failed": "Failed to delete message",
+            "not_connected": "Not connected to server"
+        },
         "error_boundary": {
             "title": "Oops! Something went wrong",
             "description": "An unexpected error occurred. You can try reloading the page.",

@@ -6,7 +6,7 @@ import { ProfileCard } from './components/ProfileCard';
 import { ProfileForm } from './components/ProfileForm';
 import { AvatarUpload } from './components/AvatarUpload';
 import { PrivacySettings } from './components/PrivacySettings';
-import { ErrorDisplay } from '../../shared/components';
+import { ErrorDisplay, ConnectionStatus } from '../../shared/components';
 import type { UpdateProfileRequest } from './types';
 
 type TabType = 'overview' | 'edit' | 'privacy' | 'activity';
@@ -28,7 +28,14 @@ export const ProfilePage: React.FC = () => {
         refreshProfile,
         hasProfile,
         canRetry,
-        retryLoad
+        retryLoad,
+        // Nouveau : état de connexion pour éviter les boucles d'erreur
+        connectionState,
+        connectionError,
+        isRetrying,
+        canRetryConnection,
+        retryConnection,
+        clearConnectionError
     } = useProfile({ 
         userId: user?.userId,
         viewerId: user?.userId 
@@ -40,7 +47,14 @@ export const ProfilePage: React.FC = () => {
         isLoading: statsLoading,
         refreshStats,
         canRetry: canRetryStats,
-        retryLoad: retryStatsLoad
+        retryLoad: retryStatsLoad,
+        // Nouveau : état de connexion pour les stats
+        connectionState: statsConnectionState,
+        connectionError: statsConnectionError,
+        isRetrying: statsIsRetrying,
+        canRetryConnection: statsCanRetryConnection,
+        retryConnection: statsRetryConnection,
+        clearConnectionError: statsClearConnectionError
     } = useActivityStats({ 
         userId: user?.userId || '',
         autoRefresh: true 
@@ -90,6 +104,36 @@ export const ProfilePage: React.FC = () => {
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
                     <p className="text-gray-600">Manage your profile information and privacy settings</p>
                 </div>
+
+                {/* Connection Status - NOUVEAU pour éviter les boucles d'erreur */}
+                {(connectionError || isRetrying) && (
+                    <div className="mb-6">
+                        <ConnectionStatus
+                            connectionState={connectionState}
+                            lastError={connectionError}
+                            isRetrying={isRetrying}
+                            retryCount={0}
+                            onRetry={canRetryConnection ? retryConnection : undefined}
+                            onDismiss={clearConnectionError}
+                            className="max-w-2xl mx-auto"
+                        />
+                    </div>
+                )}
+
+                {/* Stats Connection Status */}
+                {activeTab === 'activity' && (statsConnectionError || statsIsRetrying) && (
+                    <div className="mb-6">
+                        <ConnectionStatus
+                            connectionState={statsConnectionState}
+                            lastError={statsConnectionError}
+                            isRetrying={statsIsRetrying}
+                            retryCount={0}
+                            onRetry={statsCanRetryConnection ? statsRetryConnection : undefined}
+                            onDismiss={statsClearConnectionError}
+                            className="max-w-2xl mx-auto"
+                        />
+                    </div>
+                )}
 
                 {/* Tab Navigation */}
                 <div className="bg-white rounded-lg shadow-sm mb-6">

@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ActivityService } from '../services/ActivityService';
 import { useSilentErrorHandler } from '../../../shared/hooks/useSilentErrorHandler';
 import { useToastContext } from '../../../shared/contexts/ToastContext';
-import { useRetryableRequest } from '../../../shared/hooks/useRetryableRequest';
-import { ERROR_CODES } from '../../../shared/utils/errorHandling';
+import { useConnectionState } from '../../../shared/hooks/useConnectionState';
 import type { ActivityStats, Achievement, ActivityUpdate } from '../types';
 
 interface UseActivityStatsProps {
@@ -20,6 +19,14 @@ interface UseActivityStatsReturn {
     isUpdating: boolean;
     error: string | null;
     lastUpdated: Date | null;
+    
+    // Connection state - NOUVEAU pour éviter les boucles d'erreur
+    connectionState: any;
+    connectionError: any;
+    isRetrying: boolean;
+    canRetryConnection: boolean;
+    retryConnection: () => Promise<void>;
+    clearConnectionError: () => void;
     
     // Actions
     refreshStats: () => Promise<void>;
@@ -47,15 +54,17 @@ interface UseActivityStatsReturn {
 }
 
 /**
- * Hook for activity statistics and achievement management with retry protection
- * Prevents infinite request loops while providing robust error handling
+ * Hook for activity statistics with manual retry to avoid error loops
+ * Uses useConnectionState to prevent automatic retries
  */
 export function useActivityStats({ 
     userId, 
     autoRefresh = false, 
     refreshInterval = 30000 // 30 seconds
 }: UseActivityStatsProps): UseActivityStatsReturn {
+    const [stats, setStats] = useState<ActivityStats | null>(null);
     const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [activityQueue, setActivityQueue] = useState<ActivityUpdate[]>([]);
     const [isProcessingQueue, setIsProcessingQueue] = useState(false);
@@ -66,91 +75,52 @@ export function useActivityStats({
     const refreshIntervalRef = useRef<number | null>(null);
     const queueProcessorRef = useRef<number | null>(null);
 
-    // Retryable request hook for stats loading
-    const {
-        data: stats,
-        isLoading,
-        error,
-        canRetry,
-        executeRequest: executeStatsRequest,
-        retry: retryStatsRequest,
-        reset: resetStatsRequest
-    } = useRetryableRequest<ActivityStats>(`activity-stats-${userId}`, {
-        maxAttempts: 3,
-        baseDelay: 2000,
-        maxDelay: 10000
-    });
+    /**
+     * Load activity statistics avec gestion d'erreur sans boucle
+     */
+    const loadStats = useCallback(async () => {
+        if (isLoading || isProcessingQueue) return;
+        
+        try {
+            setIsLoading(true);
+            
+            const statsData = await activityService.getActivityStats(userId);
+            setStats(statsData);
+            setLastUpdated(new Date());
+            
+            return statsData; // Retourner les données pour useConnectionState
+        } catch (error) {
+            throw error; // Re-throw pour que useConnectionState puisse gérer l'erreur
+        } finally {
+            setIsLoading(false);
+        }
+    }, [userId, activityService, isLoading, isProcessingQueue]);
 
-    // Retryable request hook for achievements loading
-    const {
-        executeRequest: executeAchievementsRequest
-    } = useRetryableRequest<Achievement[]>(`achievements-${userId}`, {
-        maxAttempts: 2,
-        baseDelay: 1000,
-        maxDelay: 5000
-    });
+    // Gestion de l'état de connexion pour éviter les boucles d'erreur
+    const connectionState = useConnectionState(
+        async () => {
+            // Fonction de retry pour les stats d'activité
+            await loadStats();
+        },
+        3 // Maximum 3 tentatives
+    );
 
     // Computed values
     const hasStats = stats !== null;
     const hasAchievements = achievements.length > 0;
 
     /**
-     * Load activity statistics with retry protection
-     */
-    const loadStats = useCallback(async () => {
-        if (isLoading || isProcessingQueue) return;
-        
-        try {
-            await executeStatsRequest(
-                async () => {
-                    return await activityService.getActivityStats(userId);
-                },
-                {
-                    onSuccess: () => {
-                        setLastUpdated(new Date());
-                    },
-                    onFailure: (error) => {
-                        // Only log network errors, don't show toast to avoid spam
-                        if (error.code === ERROR_CODES.NETWORK_ERROR) {
-                            console.warn('Network error loading activity stats:', error.message);
-                        } else {
-                            console.warn('Failed to load activity stats:', error.message);
-                        }
-                    },
-                    onRetry: (attempt, error) => {
-                        console.log(`Retrying stats load (attempt ${attempt}):`, error.message);
-                    }
-                }
-            );
-        } catch (err) {
-            console.error('Stats load failed after all retries:', err);
-        }
-    }, [userId, activityService, executeStatsRequest, isLoading, isProcessingQueue]);
-
-    /**
-     * Load achievements with retry protection
+     * Load achievements avec gestion d'erreur sans boucle
      */
     const loadAchievements = useCallback(async () => {
         try {
-            await executeAchievementsRequest(
-                async () => {
-                    return await activityService.getAchievements(userId);
-                },
-                {
-                    onSuccess: (data) => {
-                        setAchievements(data);
-                    },
-                    onFailure: (error) => {
-                        if (error.code !== ERROR_CODES.NETWORK_ERROR) {
-                            console.warn('Failed to load achievements:', error.message);
-                        }
-                    }
-                }
-            );
-        } catch (err) {
-            console.error('Achievements load failed:', err);
+            const achievementsData = await activityService.getAchievements(userId);
+            setAchievements(achievementsData);
+        } catch (error) {
+            console.warn('Failed to load achievements:', error);
+            // Ne pas déclencher d'erreur de connexion pour les achievements
         }
-    }, [userId, activityService, executeAchievementsRequest]);
+    }, [userId, activityService]);
 
     /**
      * Process activity queue to batch requests and prevent spam
@@ -221,9 +191,8 @@ export function useActivityStats({
      * Refresh statistics
      */
     const refreshStats = useCallback(async () => {
-        resetStatsRequest();
         await loadStats();
-    }, [loadStats, resetStatsRequest]);
+    }, [loadStats]);
 
     /**
      * Refresh achievements
@@ -236,23 +205,10 @@ export function useActivityStats({
      * Retry loading stats
      */
     const retryLoad = useCallback(async () => {
-        if (canRetry) {
-            try {
-                await retryStatsRequest(
-                    async () => {
-                        return await activityService.getActivityStats(userId);
-                    },
-                    {
-                        onSuccess: () => {
-                            setLastUpdated(new Date());
-                        }
-                    }
-                );
-            } catch (err) {
-                console.error('Stats retry failed:', err);
-            }
+        if (connectionState.canRetry) {
+            await connectionState.manualRetry();
         }
-    }, [canRetry, retryStatsRequest, userId, activityService]);
+    }, [connectionState]);
 
     /**
      * Record message activity
@@ -340,22 +296,22 @@ export function useActivityStats({
      * Clear error state
      */
     const clearError = useCallback(() => {
-        resetStatsRequest();
-    }, [resetStatsRequest]);
+        connectionState.clearError();
+    }, [connectionState]);
 
     /**
      * Setup auto-refresh with intelligent backoff
      */
     const setupAutoRefresh = useCallback(() => {
-        if (autoRefresh && refreshInterval > 0 && !error) {
+        if (autoRefresh && refreshInterval > 0 && connectionState.isConnected) {
             refreshIntervalRef.current = setInterval(() => {
-                // Only refresh if not currently loading and no errors
-                if (!isLoading && !error) {
+                // Only refresh if not currently loading and connected
+                if (!isLoading && connectionState.isConnected) {
                     loadStats();
                 }
             }, refreshInterval);
         }
-    }, [autoRefresh, refreshInterval, loadStats, isLoading, error]);
+    }, [autoRefresh, refreshInterval, loadStats, isLoading, connectionState]);
 
     /**
      * Clear auto-refresh
@@ -367,13 +323,13 @@ export function useActivityStats({
         }
     }, []);
 
-    // Load initial data
+    // Load initial data - UNE SEULE FOIS au démarrage
     useEffect(() => {
         if (userId) {
             loadStats();
             loadAchievements();
         }
-    }, [userId, loadStats, loadAchievements]);
+    }, [userId]); // Pas de loadStats dans les dépendances pour éviter les boucles
 
     // Setup auto-refresh
     useEffect(() => {
@@ -398,8 +354,16 @@ export function useActivityStats({
         achievements,
         isLoading,
         isUpdating: isProcessingQueue,
-        error,
+        error: connectionState.lastError?.message || null,
         lastUpdated,
+        
+        // Connection state - NOUVEAU pour éviter les boucles d'erreur
+        connectionState: connectionState.connectionState,
+        connectionError: connectionState.lastError,
+        isRetrying: connectionState.isRetrying,
+        canRetryConnection: connectionState.canRetry,
+        retryConnection: connectionState.manualRetry,
+        clearConnectionError: connectionState.clearError,
         
         // Actions
         refreshStats,
@@ -414,7 +378,7 @@ export function useActivityStats({
         // Helpers
         hasStats,
         hasAchievements,
-        canRetry,
+        canRetry: connectionState.canRetry,
         retryLoad,
         getStreakInfo,
         getTotalActivity,

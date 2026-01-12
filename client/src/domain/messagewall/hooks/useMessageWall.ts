@@ -56,6 +56,14 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         isOwnMessage: messages.isOwnMessage,
         canDeleteMessage: messages.canDeleteMessage,
         
+        // Connection state - NOUVEAU pour éviter les boucles d'erreur
+        connectionState: messages.connectionState,
+        connectionError: messages.connectionError,
+        isRetrying: messages.isRetrying,
+        canRetryConnection: messages.canRetryConnection,
+        retryConnection: messages.retryConnection,
+        clearConnectionError: messages.clearConnectionError,
+        
         // Admin operations (only exposed if admin)
         ...(isAdmin && {
             isGlobalMute: messages.isGlobalMute,

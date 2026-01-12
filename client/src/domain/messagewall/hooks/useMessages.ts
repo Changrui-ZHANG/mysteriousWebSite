@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { STORAGE_KEYS } from '../../../shared/constants/config';
+import { useConnectionState } from '../../../shared/hooks/useConnectionState';
 import type { Message } from '../types';
 
 interface User { 
@@ -15,8 +16,8 @@ interface UseMessagesProps {
 }
 
 /**
- * Simplified version of useMessages hook to avoid runtime errors
- * Fallback to basic functionality while debugging
+ * Hook pour gérer les messages avec gestion d'erreur sans boucle
+ * Utilise useConnectionState pour éviter les retry automatiques
  */
 export function useMessages({ user, isAdmin }: UseMessagesProps) {
     const { t } = useTranslation();
@@ -26,6 +27,15 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
     const [isGlobalMute, setIsGlobalMute] = useState(false);
     const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    // Gestion de l'état de connexion pour éviter les boucles d'erreur
+    const connectionState = useConnectionState(
+        async () => {
+            // Fonction de retry pour la connexion
+            await fetchMessages();
+        },
+        3 // Maximum 3 tentatives
+    );
 
     // Initialize User ID
     useEffect(() => {
@@ -37,12 +47,14 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         setCurrentUserId(userId);
     }, []);
 
-    // Fetch Messages (basic version)
+    // Fetch Messages avec gestion d'erreur sans boucle
     const fetchMessages = useCallback(async () => {
-        if (isLoading) return; // Prevent multiple calls
+        if (isLoading || !connectionState.isConnected) return;
         
         try {
             setIsLoading(true);
+            connectionState.setReconnecting();
+            
             const response = await fetch(API_ENDPOINTS.MESSAGES.LIST);
             
             if (response.ok) {
@@ -56,27 +68,43 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 if (muteHeader !== null) {
                     setIsGlobalMute(muteHeader === 'true');
                 }
+                
+                // Marquer comme connecté en cas de succès
+                connectionState.setConnected();
             } else {
-                console.error('Failed to fetch messages:', response.status);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.error('Error fetching messages:', error);
+            const errorMessage = error instanceof Error 
+                ? error.message 
+                : t('errors.messages.fetch_failed', 'Failed to load messages');
+            
+            // Marquer comme déconnecté SANS retry automatique
+            connectionState.setDisconnected(errorMessage, true);
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading]);
+    }, [isLoading, connectionState, t]);
 
-    // Initial fetch
+    // Initial fetch - UNE SEULE FOIS au démarrage
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchMessages();
         }, 100);
         
         return () => clearTimeout(timer);
-    }, []);
+    }, []); // Pas de dépendances pour éviter les re-exécutions
 
-    // Submit message (basic version)
+    // Submit message avec gestion d'erreur
     const handleSubmit = useCallback(async (messageText: string, tempName: string) => {
+        if (!connectionState.isConnected) {
+            connectionState.setDisconnected(
+                t('errors.messages.not_connected', 'Not connected to server'), 
+                true
+            );
+            return;
+        }
+
         try {
             const senderId = user ? user.userId : currentUserId;
             let senderName = user ? user.username : tempName;
@@ -103,18 +131,30 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
 
             if (response.ok) {
                 setReplyingTo(null);
-                // Optionally refresh messages
+                // Refresh messages après envoi réussi
                 setTimeout(() => fetchMessages(), 100);
             } else {
-                console.error('Failed to send message:', response.status);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.error('Error sending message:', error);
+            const errorMessage = error instanceof Error 
+                ? error.message 
+                : t('errors.messages.send_failed', 'Failed to send message');
+            
+            connectionState.setDisconnected(errorMessage, true);
         }
-    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages]);
+    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages, connectionState]);
 
-    // Delete message (basic version)
+    // Delete message avec gestion d'erreur
     const handleDelete = useCallback(async (id: string) => {
+        if (!connectionState.isConnected) {
+            connectionState.setDisconnected(
+                t('errors.messages.not_connected', 'Not connected to server'), 
+                true
+            );
+            return;
+        }
+
         try {
             const userIdToCheck = user ? user.userId : currentUserId;
             const url = `${API_ENDPOINTS.MESSAGES.DELETE(id)}?userId=${userIdToCheck}`;
@@ -127,12 +167,16 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 // Remove from local state
                 setMessages(prev => prev.filter(m => m.id !== id));
             } else {
-                console.error('Failed to delete message:', response.status);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.error('Error deleting message:', error);
+            const errorMessage = error instanceof Error 
+                ? error.message 
+                : t('errors.messages.delete_failed', 'Failed to delete message');
+            
+            connectionState.setDisconnected(errorMessage, true);
         }
-    }, [user, currentUserId]);
+    }, [user, currentUserId, connectionState, t]);
 
     // Helpers
     const isOwnMessage = useCallback((message: Message) => {
@@ -185,6 +229,14 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         highlightedMessageId,
         currentUserId,
         isLoading,
+
+        // Connection state - NOUVEAU
+        connectionState: connectionState.connectionState,
+        connectionError: connectionState.lastError,
+        isRetrying: connectionState.isRetrying,
+        canRetryConnection: connectionState.canRetry,
+        retryConnection: connectionState.manualRetry,
+        clearConnectionError: connectionState.clearError,
 
         // Actions
         handleSubmit,

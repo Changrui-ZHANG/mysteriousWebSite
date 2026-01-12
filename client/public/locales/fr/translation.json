@@ -10,7 +10,17 @@
         "good_afternoon": "Bel après-midi",
         "good_evening": "Douce soirée",
         "guest": "Invité",
-        "loading": "Chargement..."
+        "loading": "Chargement...",
+        "dismiss": "Ignorer"
+    },
+    "connection": {
+        "reconnecting": "Reconnexion...",
+        "error": "Erreur de Connexion",
+        "unknown": "État de Connexion",
+        "retry": "Réessayer la Connexion",
+        "retry_count": "Tentative {{count}}",
+        "max_retries": "Nombre maximum de tentatives atteint. Vérifiez votre connexion.",
+        "retry_disabled": "Retry actuellement désactivé."
     },
     "brand": {
         "author_name": "Changrui ZHANG",
@@ -566,6 +576,17 @@
         "failed_to_toggle_mute": "Impossible de changer le mode muet",
         "failed_to_clear_messages": "Impossible d'effacer les messages",
         "unknown_error": "Erreur inconnue",
+        "connection": {
+            "failed": "Échec de connexion",
+            "retry_failed": "Échec de la reconnexion",
+            "not_connected": "Non connecté au serveur"
+        },
+        "messages": {
+            "fetch_failed": "Impossible de charger les messages",
+            "send_failed": "Impossible d'envoyer le message",
+            "delete_failed": "Impossible de supprimer le message",
+            "not_connected": "Non connecté au serveur"
+        },
         "error_boundary": {
             "title": "Oops! Quelque chose s'est mal passé",
             "description": "Une erreur inattendue est survenue. Vous pouvez essayer de recharger la page.",

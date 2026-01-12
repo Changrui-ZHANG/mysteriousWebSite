@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import UserManagement from '../user/UserManagement';
 import { ScrollProgress, LoginRequired } from '../../shared/components';
+import { ConnectionStatus } from '../../shared/components/ui/ConnectionStatus';
 import { MessageItem, MessageInput, MessageAdminPanel } from './components';
 import { useMessageWall } from './hooks/useMessageWall';
 import { getAdminCode } from '../../shared/constants/authStorage';
@@ -21,7 +22,9 @@ export function MessageWall({ }: MessageWallProps) {
         isGlobalMute, onlineCount, showOnlineCountToAll, highlightedMessageId,
         handleTranslate, handleSubmit, handleDelete,
         toggleMute, clearAllMessages, toggleOnlineCountVisibility, fetchOnlineCount,
-        isOwnMessage, canDeleteMessage, scrollToMessage
+        isOwnMessage, canDeleteMessage, scrollToMessage,
+        // Nouveau : état de connexion pour éviter les boucles d'erreur
+        connectionState, connectionError, isRetrying, canRetryConnection, retryConnection, clearConnectionError
     } = useMessageWall({ user, isAdmin });
 
     const messageIcon = (
@@ -38,6 +41,21 @@ export function MessageWall({ }: MessageWallProps) {
         >
             <div className="page-container fixed inset-0 overflow-hidden flex flex-col pt-20 overscroll-none relative">
                 <ScrollProgress target={scrollContainerRef} />
+
+                {/* Connection Status - NOUVEAU pour éviter les boucles d'erreur */}
+                {(connectionError || isRetrying) && (
+                    <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+                        <ConnectionStatus
+                            connectionState={connectionState}
+                            lastError={connectionError}
+                            isRetrying={isRetrying}
+                            retryCount={0} // TODO: exposer depuis useConnectionState si nécessaire
+                            onRetry={canRetryConnection ? retryConnection : undefined}
+                            onDismiss={clearConnectionError}
+                            className="shadow-lg"
+                        />
+                    </div>
+                )}
 
                 {/* Online Count Indicator - Liquid Pill */}
                 {(showOnlineCountToAll || isAdmin) && (
