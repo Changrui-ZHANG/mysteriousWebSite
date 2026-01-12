@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog,
     FaHome, FaUserAstronaut, FaGamepad, FaComments, FaStickyNote,
-    FaLightbulb, FaCalendarAlt, FaGraduationCap, FaTimes
+    FaLightbulb, FaCalendarAlt, FaGraduationCap, FaTimes, FaUserCircle
 } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
@@ -34,6 +34,7 @@ const navLinks = [
     { to: "/", icon: FaHome, labelKey: 'nav.home' },
     { to: "/cv", icon: FaUserAstronaut, labelKey: 'nav.cv' },
     { to: "/game", icon: FaGamepad, labelKey: 'nav.game' },
+    { to: "/profile", icon: FaUserCircle, labelKey: 'nav.profile' },
     { to: "/notes", icon: FaStickyNote, labelKey: 'nav.notes' },
     { to: "/messages", icon: FaComments, labelKey: 'nav.messages' },
     { to: "/suggestions", icon: FaLightbulb, labelKey: 'nav.suggestions' },

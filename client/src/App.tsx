@@ -20,6 +20,7 @@ const SuggestionsPage = React.lazy(() => import('./domain/suggestions').then(m =
 const CalendarPage = React.lazy(() => import('./domain/calendar').then(m => ({ default: m.CalendarPage })));
 const LearningPage = React.lazy(() => import('./domain/vocabulary').then(m => ({ default: m.LearningPage })));
 const NotesPage = React.lazy(() => import('./domain/note').then(m => ({ default: m.NotesPage })));
+const ProfilePage = React.lazy(() => import('./domain/profile').then(m => ({ default: m.ProfilePage })));
 
 import './App.css'
 
@@ -58,6 +59,7 @@ function AppContent() {
         { path: '/calendar', element: <CalendarPage />, settingKey: 'PAGE_CALENDAR_ENABLED' },
         { path: '/learning', element: <LearningPage />, settingKey: 'PAGE_LEARNING_ENABLED' },
         { path: '/notes', element: <NotesPage />, settingKey: 'PAGE_NOTES_ENABLED' },
+        { path: '/profile', element: <ProfilePage /> },
         { path: '/terms', element: <TermsPage /> },
         { path: '/privacy', element: <PrivacyPage /> },
     ], []);

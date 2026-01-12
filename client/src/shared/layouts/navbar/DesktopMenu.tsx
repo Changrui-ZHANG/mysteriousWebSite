@@ -51,6 +51,7 @@ export function DesktopMenu({
     ];
 
     const moreLinks = [
+        { to: "/profile", label: t('nav.profile') },
         { to: "/notes", label: t('nav.notes') },
         { to: "/suggestions", label: t('nav.suggestions') },
         { to: "/calendar", label: t('nav.calendar') },
@@ -73,7 +74,7 @@ export function DesktopMenu({
 
                 {/* Dropdown for More Links - Horizontal Liquid Glass Style */}
                 <div className="relative group">
-                    <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/notes', '/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
+                    <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/profile', '/notes', '/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
                         {t('nav.more')} <FaChevronDown className="text-[10px] transition-transform duration-300 group-hover:rotate-180" />
                     </button>
                     {/* Invisible bridge to prevent hover gap */}

@@ -91,5 +91,32 @@ export const API_ENDPOINTS = {
     SUPER_ADMIN: {
         USERS: `${API_BASE}/superadmin/users`,
         USER: (id: string) => `${API_BASE}/superadmin/users/${id}`
+    },
+
+    // Profiles
+    PROFILES: {
+        LIST: `${API_BASE}/profiles`,
+        GET: (userId: string) => `${API_BASE}/profiles/${userId}`,
+        CREATE: `${API_BASE}/profiles`,
+        UPDATE: (userId: string) => `${API_BASE}/profiles/${userId}`,
+        DELETE: (userId: string) => `${API_BASE}/profiles/${userId}`,
+        SEARCH: `${API_BASE}/profiles/search`,
+        DIRECTORY: `${API_BASE}/profiles/directory`,
+        PRIVACY: (userId: string) => `${API_BASE}/profiles/${userId}/privacy`,
+        STATS: (userId: string) => `${API_BASE}/profiles/${userId}/stats`,
+        ACHIEVEMENTS: (userId: string) => `${API_BASE}/profiles/${userId}/achievements`
+    },
+
+    // Avatars
+    AVATARS: {
+        UPLOAD: (userId: string) => `${API_BASE}/profiles/${userId}/avatar`,
+        DELETE: (userId: string) => `${API_BASE}/profiles/${userId}/avatar`,
+        DEFAULTS: `${API_BASE}/avatars/defaults`
+    },
+
+    // Activity
+    ACTIVITY: {
+        MESSAGE: `${API_BASE}/activity/message`,
+        GAME: `${API_BASE}/activity/game`
     }
 } as const;

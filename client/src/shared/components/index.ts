@@ -24,6 +24,7 @@ export { default as ElasticSlider } from './ui/ElasticSlider/ElasticSlider';
 
 // Error Handling
 export { ErrorBoundary } from './ErrorBoundary';
+export { ErrorDisplay } from './ui/ErrorDisplay';
 
 // Audio Components
 export { MuteButton } from './audio/MuteButton';
