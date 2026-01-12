@@ -53,87 +53,20 @@ export function useAvatarUpload({
     const avatarService = new AvatarService();
     const previewUrlRef = useRef<string | null>(null);
 
-    // Computed values
+    // Computed values - Add safety check for userId
     const canUpload = !isUploading && Boolean(userId);
     const hasPreview = previewUrl !== null;
 
     /**
-     * Upload avatar file
+     * Clear preview URL and free memory
      */
-    const uploadAvatar = useCallback(async (file: File) => {
-        if (!canUpload) return;
-        
-        try {
-            setIsUploading(true);
-            setUploadProgress(0);
-            setError(null);
-            
-            // Validate file first
-            const validation = await avatarService.validateImageFile(file);
-            if (!validation.isValid) {
-                const errorMessage = validation.errors.join(', ');
-                setError(errorMessage);
-                showErrorToast(`Invalid file: ${errorMessage}`);
-                onUploadError?.(errorMessage);
-                return;
-            }
-            
-            // Upload with progress tracking
-            const avatarUrl = await avatarService.uploadAvatar(
-                userId, 
-                file, 
-                (progress) => setUploadProgress(progress)
-            );
-            
-            // Clear preview after successful upload
-            clearPreview();
-            
-            showToast('Avatar uploaded successfully');
-            onUploadComplete?.(avatarUrl);
-            
-        } catch (err) {
-            const { userMessage } = handleError(err);
-            setError(userMessage);
-            showErrorToast('Failed to upload avatar');
-            onUploadError?.(userMessage);
-        } finally {
-            setIsUploading(false);
-            setUploadProgress(0);
+    const clearPreview = useCallback(() => {
+        if (previewUrlRef.current) {
+            avatarService.revokePreviewUrl(previewUrlRef.current);
+            previewUrlRef.current = null;
         }
-    }, [canUpload, userId, avatarService, handleError, showToast, onUploadComplete, onUploadError]);
-
-    /**
-     * Delete current avatar
-     */
-    const deleteAvatar = useCallback(async () => {
-        if (!userId) return;
-        
-        try {
-            setError(null);
-            
-            await avatarService.deleteAvatar(userId);
-            
-            showToast('Avatar deleted successfully');
-            
-        } catch (err) {
-            const { userMessage } = handleError(err);
-            setError(userMessage);
-            showErrorToast('Failed to delete avatar');
-            throw err;
-        }
-    }, [userId, avatarService, handleError, showToast]);
-
-    /**
-     * Validate file before upload
-     */
-    const validateFile = useCallback(async (file: File) => {
-        try {
-            return await avatarService.validateImageFile(file);
-        } catch (err) {
-            const { userMessage } = handleError(err);
-            return { isValid: false, errors: [userMessage] };
-        }
-    }, [avatarService, handleError]);
+        setPreviewUrl(null);
+    }, [avatarService]);
 
     /**
      * Create preview URL for file
@@ -150,18 +83,89 @@ export function useAvatarUpload({
             const { userMessage } = handleError(err);
             setError(userMessage);
         }
-    }, [avatarService, handleError]);
+    }, [avatarService, handleError, clearPreview]);
 
     /**
-     * Clear preview URL and free memory
+     * Upload avatar file
      */
-    const clearPreview = useCallback(() => {
-        if (previewUrlRef.current) {
-            avatarService.revokePreviewUrl(previewUrlRef.current);
-            previewUrlRef.current = null;
+    const uploadAvatar = useCallback(async (file: File) => {
+        if (!canUpload || !userId) return; // Added userId check
+        
+        try {
+            setIsUploading(true);
+            setUploadProgress(0);
+            setError(null);
+            
+            // Validate file first
+            const validation = await avatarService.validateImageFile(file);
+            if (!validation.isValid) {
+                const errorMessage = validation.errors.join(', ');
+                setError(errorMessage);
+                showErrorToast(`Invalid file: ${errorMessage}`);
+                onUploadError?.(errorMessage);
+                return;
+            }
+            
+            // Upload with progress tracking - FIXED: correct parameter order
+            const avatarUrl = await avatarService.uploadAvatar(
+                userId, 
+                file, 
+                userId, // requesterId should be the same as userId for self-upload
+                (progress) => setUploadProgress(progress)
+            );
+            
+            showToast('Avatar uploaded successfully');
+            onUploadComplete?.(avatarUrl);
+            
+            // FIXED: Delay clearing preview to allow parent component to update currentAvatarUrl first
+            // This prevents blob URL errors when the component tries to display the old preview
+            setTimeout(() => {
+                clearPreview();
+            }, 100);
+            
+        } catch (err) {
+            const { userMessage } = handleError(err);
+            setError(userMessage);
+            showErrorToast('Failed to upload avatar');
+            onUploadError?.(userMessage);
+        } finally {
+            setIsUploading(false);
+            setUploadProgress(0);
         }
-        setPreviewUrl(null);
-    }, [avatarService]);
+    }, [canUpload, userId, avatarService, handleError, showToast, showErrorToast, onUploadComplete, onUploadError, clearPreview]);
+
+    /**
+     * Delete current avatar
+     */
+    const deleteAvatar = useCallback(async () => {
+        if (!userId) return; // Added explicit userId check
+        
+        try {
+            setError(null);
+            
+            await avatarService.deleteAvatar(userId, userId); // FIXED: added requesterId
+            
+            showToast('Avatar deleted successfully');
+            
+        } catch (err) {
+            const { userMessage } = handleError(err);
+            setError(userMessage);
+            showErrorToast('Failed to delete avatar');
+            throw err;
+        }
+    }, [userId, avatarService, handleError, showToast, showErrorToast]);
+
+    /**
+     * Validate file before upload
+     */
+    const validateFile = useCallback(async (file: File) => {
+        try {
+            return await avatarService.validateImageFile(file);
+        } catch (err) {
+            const { userMessage } = handleError(err);
+            return { isValid: false, errors: [userMessage] };
+        }
+    }, [avatarService, handleError]);
 
     /**
      * Load default avatar options

@@ -23,6 +23,17 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
     const [isDragOver, setIsDragOver] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Early return if no userId to prevent hook initialization errors
+    if (!userId) {
+        return (
+            <div className={`avatar-upload ${className}`}>
+                <div className="text-center text-gray-500 py-8">
+                    <p>User ID required for avatar upload</p>
+                </div>
+            </div>
+        );
+    }
+
     const {
         isUploading,
         uploadProgress,
@@ -40,7 +51,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         onUploadError
     });
 
-    const displayUrl = previewUrl || currentAvatarUrl;
+    const displayUrl = currentAvatarUrl || previewUrl;
 
     const handleFileSelect = async (file: File) => {
         clearError();

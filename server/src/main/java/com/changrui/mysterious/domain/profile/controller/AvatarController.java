@@ -3,9 +3,16 @@ package com.changrui.mysterious.domain.profile.controller;
 import com.changrui.mysterious.domain.profile.service.AvatarService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -18,6 +25,19 @@ public class AvatarController {
 
     @Autowired
     private AvatarService avatarService;
+
+    /**
+     * Upload avatar file
+     */
+    @PostMapping("/{userId}")
+    public ResponseEntity<ApiResponse<String>> uploadAvatar(
+            @PathVariable String userId,
+            @RequestParam("avatar") MultipartFile file,
+            @RequestParam String requesterId) {
+        
+        String avatarUrl = avatarService.uploadAvatar(userId, file, requesterId);
+        return ResponseEntity.ok(ApiResponse.success(avatarUrl, "Avatar uploaded successfully"));
+    }
 
     /**
      * Update user avatar URL
@@ -53,14 +73,25 @@ public class AvatarController {
         return ResponseEntity.ok(ApiResponse.success(defaultAvatars));
     }
 
-    // TODO: Add file upload endpoint
-    // @PostMapping("/{userId}/upload")
-    // public ResponseEntity<ApiResponse<String>> uploadAvatar(
-    //         @PathVariable String userId,
-    //         @RequestParam("file") MultipartFile file,
-    //         @RequestParam String requesterId) {
-    //     
-    //     String avatarUrl = avatarService.uploadAvatar(userId, file);
-    //     return ResponseEntity.ok(ApiResponse.success("Avatar uploaded successfully", avatarUrl));
-    // }
+    /**
+     * Serve avatar files
+     */
+    @GetMapping("/files/{filename}")
+    public ResponseEntity<Resource> serveAvatarFile(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("uploads/avatars").resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+            
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

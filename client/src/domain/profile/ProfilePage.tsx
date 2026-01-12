@@ -85,7 +85,8 @@ export const ProfilePage: React.FC = () => {
     };
 
     const handleAvatarUpload = async (avatarUrl: string) => {
-        await updateProfile({ avatarUrl });
+        // L'avatar a déjà été mis à jour par le backend lors de l'upload
+        // Il suffit de rafraîchir le profil pour récupérer les nouvelles données
         await refreshProfile();
     };
 
@@ -220,11 +221,13 @@ export const ProfilePage: React.FC = () => {
                                         {/* Avatar Upload */}
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Picture</h3>
-                                            <AvatarUpload
-                                                userId={user.userId}
-                                                currentAvatarUrl={profile?.avatarUrl}
-                                                onUploadComplete={handleAvatarUpload}
-                                            />
+                                            {user?.userId && (
+                                                <AvatarUpload
+                                                    userId={user.userId}
+                                                    currentAvatarUrl={profile?.avatarUrl}
+                                                    onUploadComplete={handleAvatarUpload}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Profile Form */}

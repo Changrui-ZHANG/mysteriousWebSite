@@ -113,7 +113,8 @@ export const API_ENDPOINTS = {
     AVATARS: {
         UPLOAD: (userId: string) => `${API_BASE}/avatars/${userId}`,
         DELETE: (userId: string) => `${API_BASE}/avatars/${userId}`,
-        DEFAULTS: `${API_BASE}/avatars/defaults`
+        DEFAULTS: `${API_BASE}/avatars/defaults`,
+        FILES: (filename: string) => `${API_BASE}/avatars/files/${filename}`
     },
 
     // Activity

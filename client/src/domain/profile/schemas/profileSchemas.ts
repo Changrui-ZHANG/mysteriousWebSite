@@ -3,6 +3,7 @@ import { IdSchema } from '../../../shared/schemas/validation';
 
 /**
  * Validation schemas for profile domain
+ * Updated: Fixed optional field validation
  */
 
 // Display name validation (2-30 characters)
@@ -13,14 +14,23 @@ export const DisplayNameSchema = z.string()
     .regex(/^[a-zA-Z0-9\s_-]+$/, 'Display name can only contain letters, numbers, spaces, underscores, and hyphens');
 
 // Bio validation (≤500 characters)
-export const BioSchema = z.string()
-    .max(500, 'Bio must be less than 500 characters')
-    .trim()
-    .optional();
+export const BioSchema = z.optional(
+    z.string()
+        .max(500, 'Bio must be less than 500 characters')
+        .trim()
+);
 
-// Avatar URL validation
+// Avatar URL validation - Updated to accept both absolute and relative URLs
 export const AvatarUrlSchema = z.string()
-    .regex(/^https?:\/\/.+\.(jpg|jpeg|png|webp)(\?.*)?$/i, 'Avatar URL must be a valid image URL')
+    .refine(
+        (url) => {
+            // Allow relative URLs starting with / or absolute HTTP/HTTPS URLs
+            const relativePattern = /^\/.*\.(jpg|jpeg|png|webp)(\?.*)?$/i;
+            const absolutePattern = /^https?:\/\/.+\.(jpg|jpeg|png|webp)(\?.*)?$/i;
+            return relativePattern.test(url) || absolutePattern.test(url);
+        },
+        'Avatar URL must be a valid image URL (relative or absolute)'
+    )
     .optional();
 
 // Privacy settings schema
@@ -86,8 +96,8 @@ export type CreateProfileRequest = z.infer<typeof CreateProfileSchema>;
 // Update profile request schema
 export const UpdateProfileSchema = z.object({
     displayName: DisplayNameSchema.optional(),
-    bio: BioSchema,
-    avatarUrl: AvatarUrlSchema,
+    bio: BioSchema.optional(),
+    avatarUrl: AvatarUrlSchema.optional(),
     privacySettings: PrivacySettingsSchema.partial().optional(),
 });
 

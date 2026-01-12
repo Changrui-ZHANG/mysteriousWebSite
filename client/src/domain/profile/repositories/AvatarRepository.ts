@@ -15,7 +15,7 @@ export class AvatarRepository {
 
         const url = `${API_ENDPOINTS.AVATARS.UPLOAD(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
         const response = await fetch(url, {
-            method: 'POST',
+            method: 'POST', // FIXED: Changed from PUT to POST
             body: formData,
         });
 
@@ -25,7 +25,7 @@ export class AvatarRepository {
         }
 
         const result = await response.json();
-        return result.avatarUrl || result.data?.avatarUrl;
+        return result.data || result.avatarUrl; // FIXED: Handle both response formats
     }
 
     /**
@@ -57,7 +57,7 @@ export class AvatarRepository {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     try {
                         const result = JSON.parse(xhr.responseText);
-                        resolve(result.avatarUrl || result.data?.avatarUrl);
+                        resolve(result.data || result.avatarUrl); // FIXED: Handle both response formats
                     } catch (error) {
                         reject(new Error('Invalid response format'));
                     }

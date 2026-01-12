@@ -5,12 +5,23 @@ import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.exception.NotFoundException;
 import com.changrui.mysterious.shared.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Service for managing user avatars.
@@ -22,8 +33,99 @@ public class AvatarService {
     @Autowired
     private UserProfileRepository profileRepository;
 
+    @Value("${app.avatar.upload-dir:uploads/avatars}")
+    private String uploadDir;
+
+    @Value("${app.avatar.base-url:/api/avatars/files}")
+    private String baseUrl;
+
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+    /**
+     * Upload and process avatar file
+     */
+    @Transactional
+    public String uploadAvatar(String userId, MultipartFile file, String requesterId) {
+        // Check ownership
+        if (!userId.equals(requesterId)) {
+            throw new BadRequestException("Cannot upload avatar for another user");
+        }
+
+        // Validate file
+        validateAvatarFile(file);
+
+        try {
+            // Process and resize image
+            BufferedImage processedImage = processAvatarImage(file);
+            
+            // Generate unique filename
+            String filename = userId + "_" + UUID.randomUUID().toString() + ".jpg";
+            
+            // Ensure upload directory exists
+            Path uploadPath = Paths.get(uploadDir);
+            Files.createDirectories(uploadPath);
+            
+            // Save processed image
+            Path filePath = uploadPath.resolve(filename);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(processedImage, "jpg", baos);
+            Files.write(filePath, baos.toByteArray());
+            
+            // Generate URL
+            String avatarUrl = baseUrl + "/" + filename;
+            
+            // Update profile with new avatar URL
+            updateAvatarUrl(userId, avatarUrl, requesterId);
+            
+            return avatarUrl;
+            
+        } catch (IOException e) {
+            throw new BadRequestException("Failed to process avatar image: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Process and resize avatar image to 256x256
+     */
+    private BufferedImage processAvatarImage(MultipartFile file) throws IOException {
+        BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
+        
+        if (originalImage == null) {
+            throw new BadRequestException("Invalid image file");
+        }
+        
+        // Create 256x256 image
+        BufferedImage resizedImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        
+        // Enable high-quality rendering
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        // Fill background with white
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, 256, 256);
+        
+        // Calculate scaling to maintain aspect ratio
+        int originalWidth = originalImage.getWidth();
+        int originalHeight = originalImage.getHeight();
+        double scale = Math.min(256.0 / originalWidth, 256.0 / originalHeight);
+        
+        int scaledWidth = (int) (originalWidth * scale);
+        int scaledHeight = (int) (originalHeight * scale);
+        
+        // Center the image
+        int x = (256 - scaledWidth) / 2;
+        int y = (256 - scaledHeight) / 2;
+        
+        // Draw the scaled image
+        g2d.drawImage(originalImage, x, y, scaledWidth, scaledHeight, null);
+        g2d.dispose();
+        
+        return resizedImage;
+    }
 
     /**
      * Update user avatar URL
@@ -112,13 +214,4 @@ public class AvatarService {
         }
         return filename.substring(lastDotIndex + 1);
     }
-
-    // TODO: Implement file upload functionality
-    // public String uploadAvatar(String userId, MultipartFile file) {
-    //     validateAvatarFile(file);
-    //     // Process and save file
-    //     // Resize to 256x256
-    //     // Save to storage (local, S3, etc.)
-    //     // Return URL
-    // }
 }
