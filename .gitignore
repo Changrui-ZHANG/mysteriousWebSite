@@ -31,11 +31,11 @@ mvnw.cmd
 
 #bmad
 _bmad/*
-.claude/
-.codex/
-.cursor/
-.gemini/
-.kiro/
-.trae/
-.windsurf/
-.mcp.json
+#.claude/
+#.codex/
+#.cursor/
+#.gemini/
+#.kiro/
+#.trae/
+#.windsurf/
+#.mcp.json
