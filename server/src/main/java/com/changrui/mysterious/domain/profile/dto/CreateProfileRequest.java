@@ -15,5 +15,7 @@ public record CreateProfileRequest(
     String displayName,
     
     @Size(max = 500, message = "Bio must not exceed 500 characters")
-    String bio
+    String bio,
+    
+    Boolean isPublic
 ) {}

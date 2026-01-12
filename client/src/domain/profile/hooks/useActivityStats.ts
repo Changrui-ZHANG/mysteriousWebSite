@@ -3,6 +3,7 @@ import { ActivityService } from '../services/ActivityService';
 import { useSilentErrorHandler } from '../../../shared/hooks/useSilentErrorHandler';
 import { useToastContext } from '../../../shared/contexts/ToastContext';
 import { useConnectionState } from '../../../shared/hooks/useConnectionState';
+import { useRealTimeProfile } from './useRealTimeProfile';
 import type { ActivityStats, Achievement, ActivityUpdate } from '../types';
 
 interface UseActivityStatsProps {
@@ -27,6 +28,10 @@ interface UseActivityStatsReturn {
     canRetryConnection: boolean;
     retryConnection: () => Promise<void>;
     clearConnectionError: () => void;
+    
+    // Real-time updates
+    isRealTimeConnected: boolean;
+    realTimeConnectionState: string;
     
     // Actions
     refreshStats: () => Promise<void>;
@@ -105,6 +110,19 @@ export function useActivityStats({
         3 // Maximum 3 tentatives
     );
 
+    // Real-time activity updates
+    const realTimeProfile = useRealTimeProfile({
+        userId,
+        onActivityUpdate: (updatedStats) => {
+            setStats(updatedStats);
+            setLastUpdated(new Date());
+        },
+        onAchievementUnlocked: (achievement) => {
+            setAchievements(prev => [...prev, achievement]);
+        },
+        enableNotifications: true
+    });
+
     // Computed values
     const hasStats = stats !== null;
     const hasAchievements = achievements.length > 0;
@@ -161,12 +179,17 @@ export function useActivityStats({
             // Refresh stats after processing activities
             await loadStats();
             
+            // Broadcast real-time activity update
+            if (stats) {
+                realTimeProfile.broadcastActivityUpdate(userId, stats);
+            }
+            
         } catch (err) {
             console.error('Activity queue processing failed:', err);
         } finally {
             setIsProcessingQueue(false);
         }
-    }, [userId, activityService, activityQueue, isProcessingQueue, showToast, loadStats]);
+    }, [userId, activityService, activityQueue, isProcessingQueue, showToast, loadStats, stats, realTimeProfile]);
 
     /**
      * Queue activity for batch processing
@@ -364,6 +387,10 @@ export function useActivityStats({
         canRetryConnection: connectionState.canRetry,
         retryConnection: connectionState.manualRetry,
         clearConnectionError: connectionState.clearError,
+        
+        // Real-time updates
+        isRealTimeConnected: realTimeProfile.isConnected,
+        realTimeConnectionState: realTimeProfile.connectionState,
         
         // Actions
         refreshStats,

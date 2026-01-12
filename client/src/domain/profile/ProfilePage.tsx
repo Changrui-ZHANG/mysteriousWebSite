@@ -84,7 +84,7 @@ export const ProfilePage: React.FC = () => {
         setActiveTab('overview');
     };
 
-    const handleAvatarUpload = async (avatarUrl: string) => {
+    const handleAvatarUpload = async (_avatarUrl: string) => {
         // L'avatar a déjà été mis à jour par le backend lors de l'upload
         // Il suffit de rafraîchir le profil pour récupérer les nouvelles données
         await refreshProfile();

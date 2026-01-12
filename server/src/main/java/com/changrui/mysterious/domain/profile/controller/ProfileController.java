@@ -1,9 +1,14 @@
 package com.changrui.mysterious.domain.profile.controller;
 
 import com.changrui.mysterious.domain.profile.dto.*;
+import com.changrui.mysterious.domain.profile.middleware.FilterPrivateFields;
+import com.changrui.mysterious.domain.profile.middleware.RequirePrivacyLevel;
+import com.changrui.mysterious.domain.profile.middleware.RequireProfileOwnership;
+import com.changrui.mysterious.domain.profile.middleware.PrivacyFilterMiddleware;
 import com.changrui.mysterious.domain.profile.service.ProfileService;
 import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +18,7 @@ import java.util.List;
 
 /**
  * Controller for user profile operations.
- * REST endpoints for profile management.
+ * REST endpoints for profile management with authentication middleware.
  */
 @RestController
 @RequestMapping("/api/profiles")
@@ -30,7 +35,14 @@ public class ProfileController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse<ProfileResponse>> createProfile(
-            @Valid @RequestBody CreateProfileRequest request) {
+            @Valid @RequestBody CreateProfileRequest request,
+            HttpServletRequest httpRequest) {
+        
+        // Extract requester ID from request (handled by middleware)
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
         
         ProfileResponse profile = profileService.createProfile(request);
         return ResponseEntity.ok(ApiResponse.success("Profile created successfully", profile));
@@ -38,24 +50,46 @@ public class ProfileController {
 
     /**
      * Get user profile by ID
+     * Public endpoint - no ownership required, but privacy rules apply
      */
     @GetMapping("/{userId}")
+    @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
+    @FilterPrivateFields(fields = {"bio", "lastActive", "stats", "achievements"})
     public ResponseEntity<ApiResponse<ProfileResponse>> getProfile(
             @PathVariable String userId,
-            @RequestParam(required = false) String requesterId) {
+            HttpServletRequest httpRequest) {
         
-        ProfileResponse profile = profileService.getProfile(userId, requesterId);
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
+        
+        // Check if admin access is being used
+        String adminCode = httpRequest.getHeader("X-Admin-Code");
+        boolean isAdminAccess = adminCode != null && !adminCode.trim().isEmpty();
+        
+        ProfileResponse profile = isAdminAccess ? 
+            profileService.getProfile(userId, requesterId, true) :
+            profileService.getProfile(userId, requesterId);
+            
         return ResponseEntity.ok(ApiResponse.success(profile));
     }
 
     /**
      * Update user profile
+     * Requires profile ownership
      */
     @PutMapping("/{userId}")
+    @RequireProfileOwnership(allowAdminOverride = true)
     public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
             @PathVariable String userId,
             @Valid @RequestBody UpdateProfileRequest request,
-            @RequestParam String requesterId) {
+            HttpServletRequest httpRequest) {
+        
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
         
         ProfileResponse profile = profileService.updateProfile(userId, request, requesterId);
         return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", profile));
@@ -63,11 +97,18 @@ public class ProfileController {
 
     /**
      * Delete user profile
+     * Requires profile ownership
      */
     @DeleteMapping("/{userId}")
+    @RequireProfileOwnership(allowAdminOverride = true)
     public ResponseEntity<ApiResponse<Void>> deleteProfile(
             @PathVariable String userId,
-            @RequestParam String requesterId) {
+            HttpServletRequest httpRequest) {
+        
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
         
         profileService.deleteProfile(userId, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Profile deleted successfully"));
@@ -75,11 +116,19 @@ public class ProfileController {
 
     /**
      * Search profiles
+     * Public endpoint with rate limiting
      */
     @GetMapping("/search")
+    @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
+    @FilterPrivateFields(fields = {"bio", "lastActive", "stats", "achievements"})
     public ResponseEntity<ApiResponse<List<ProfileResponse>>> searchProfiles(
             @RequestParam String q,
-            @RequestParam(required = false) String requesterId) {
+            HttpServletRequest httpRequest) {
+        
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
         
         List<ProfileResponse> profiles = profileService.searchProfiles(q, requesterId);
         return ResponseEntity.ok(ApiResponse.success(profiles));
@@ -87,10 +136,18 @@ public class ProfileController {
 
     /**
      * Get public profiles directory
+     * Public endpoint with rate limiting
      */
     @GetMapping("/directory")
+    @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
+    @FilterPrivateFields(fields = {"bio", "lastActive", "stats", "achievements"})
     public ResponseEntity<ApiResponse<List<ProfileResponse>>> getPublicProfiles(
-            @RequestParam(required = false) String requesterId) {
+            HttpServletRequest httpRequest) {
+        
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
         
         List<ProfileResponse> profiles = profileService.getPublicProfiles(requesterId);
         return ResponseEntity.ok(ApiResponse.success(profiles));
@@ -98,12 +155,19 @@ public class ProfileController {
 
     /**
      * Update privacy settings
+     * Requires profile ownership
      */
     @PutMapping("/{userId}/privacy")
+    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> updatePrivacySettings(
             @PathVariable String userId,
             @Valid @RequestBody UpdatePrivacyRequest request,
-            @RequestParam String requesterId) {
+            HttpServletRequest httpRequest) {
+        
+        String requesterId = httpRequest.getParameter("requesterId");
+        if (requesterId == null) {
+            requesterId = httpRequest.getHeader("X-Requester-Id");
+        }
         
         profileService.updatePrivacySettings(userId, request, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Privacy settings updated successfully"));
@@ -111,18 +175,25 @@ public class ProfileController {
 
     /**
      * Update last active timestamp
+     * Requires profile ownership
      */
     @PostMapping("/{userId}/activity")
-    public ResponseEntity<ApiResponse<Void>> updateLastActive(@PathVariable String userId) {
+    @RequireProfileOwnership
+    public ResponseEntity<ApiResponse<Void>> updateLastActive(
+            @PathVariable String userId) {
+        
         profileService.updateLastActive(userId);
         return ResponseEntity.ok(ApiResponse.successMessage("Last active updated"));
     }
 
     /**
      * Get basic profile info for message display (avatar, display name)
+     * Public endpoint - no authentication required
      */
     @GetMapping("/{userId}/basic")
-    public ResponseEntity<ApiResponse<BasicProfileInfo>> getBasicProfileInfo(@PathVariable String userId) {
+    public ResponseEntity<ApiResponse<BasicProfileInfo>> getBasicProfileInfo(
+            @PathVariable String userId) {
+        
         var profile = profileIntegrationService.getProfileForMessage(userId);
         if (profile == null) {
             return ResponseEntity.ok(ApiResponse.success(null));

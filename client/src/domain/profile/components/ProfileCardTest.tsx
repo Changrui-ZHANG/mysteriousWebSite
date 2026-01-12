@@ -11,7 +11,7 @@ export const ProfileCardTest: React.FC = () => {
         userId: 'f0bf523e-fbe3-4c54-82d7-5871b6552e1c',
         displayName: 'Changrui',
         bio: 'Test user profile',
-        avatarUrl: null,
+        avatarUrl: undefined,
         joinDate: new Date('2026-01-12T03:28:54.848403'),
         lastActive: new Date('2026-01-12T03:28:54.848403'),
         isPublic: true,

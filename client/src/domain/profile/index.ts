@@ -30,3 +30,8 @@ export type {
     ProfileSearchResult,
     ProfileDirectoryFilters
 } from './types';
+
+// Real-time and optimistic updates
+export { useRealTimeProfile } from './hooks/useRealTimeProfile';
+export { useOptimisticUpdates } from './hooks/useOptimisticUpdates';
+export { RealTimeStatus, RealTimeStatusCompact, RealTimeStatusPanel } from './components/RealTimeStatus';

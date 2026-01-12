@@ -3,6 +3,7 @@ import { ProfileService } from '../services/ProfileService';
 import { useSilentErrorHandler } from '../../../shared/hooks/useSilentErrorHandler';
 import { useToastContext } from '../../../shared/contexts/ToastContext';
 import { useConnectionState } from '../../../shared/hooks/useConnectionState';
+import { useRealTimeProfile } from './useRealTimeProfile';
 import type { 
     UserProfile, 
     CreateProfileRequest, 
@@ -30,6 +31,10 @@ interface UseProfileReturn {
     canRetryConnection: boolean;
     retryConnection: () => Promise<void>;
     clearConnectionError: () => void;
+    
+    // Real-time updates
+    isRealTimeConnected: boolean;
+    realTimeConnectionState: string;
     
     // Actions
     createProfile: (data: CreateProfileRequest) => Promise<void>;
@@ -97,6 +102,22 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
     const hasProfile = profile !== null;
     const isOwnProfile = userId && viewerId ? userId === viewerId : false;
 
+    // Real-time profile updates
+    const realTimeProfile = useRealTimeProfile({
+        userId,
+        onProfileUpdate: (updatedData) => {
+            if (profile) {
+                setProfile(prev => prev ? { ...prev, ...updatedData } : null);
+            }
+        },
+        onPrivacyUpdate: (privacySettings) => {
+            if (profile) {
+                setProfile(prev => prev ? { ...prev, privacySettings } : null);
+            }
+        },
+        enableNotifications: isOwnProfile
+    });
+
     /**
      * Create a new profile
      */
@@ -130,6 +151,9 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
             const updatedProfile = await profileService.updateProfile(userId, data, viewerId);
             setProfile(updatedProfile);
             
+            // Broadcast real-time update
+            realTimeProfile.broadcastProfileUpdate(userId, updatedProfile);
+            
             showToast('Profile updated successfully');
         } catch (err) {
             handleError(err);
@@ -137,7 +161,7 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
         } finally {
             setIsUpdating(false);
         }
-    }, [userId, viewerId, profileService, handleError, showToast, isUpdating, isLoading, isCreating]);
+    }, [userId, viewerId, profileService, handleError, showToast, isUpdating, isLoading, isCreating, realTimeProfile]);
 
     /**
      * Update privacy settings
@@ -158,6 +182,9 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
                 });
             }
             
+            // Broadcast real-time update
+            realTimeProfile.broadcastProfileUpdate(userId, { privacySettings: settings });
+            
             showToast('Privacy settings updated');
         } catch (err) {
             handleError(err);
@@ -165,7 +192,7 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
         } finally {
             setIsUpdating(false);
         }
-    }, [userId, viewerId, profile, profileService, handleError, showToast, isUpdating, isLoading, isCreating]);
+    }, [userId, viewerId, profile, profileService, handleError, showToast, isUpdating, isLoading, isCreating, realTimeProfile]);
 
     /**
      * Refresh profile data
@@ -218,6 +245,10 @@ export function useProfile({ userId, viewerId }: UseProfileProps = {}): UseProfi
         canRetryConnection: connectionState.canRetry,
         retryConnection: connectionState.manualRetry,
         clearConnectionError: connectionState.clearError,
+        
+        // Real-time updates
+        isRealTimeConnected: realTimeProfile.isConnected,
+        realTimeConnectionState: realTimeProfile.connectionState,
         
         // Actions
         createProfile,

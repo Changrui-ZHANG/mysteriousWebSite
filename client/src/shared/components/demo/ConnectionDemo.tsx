@@ -1,5 +1,5 @@
 import React from 'react';
-import { useConnectionState, ConnectionState } from '../../hooks/useConnectionState';
+import { useConnectionState } from '../../hooks/useConnectionState';
 import { ConnectionStatus } from '../ui/ConnectionStatus';
 
 /**

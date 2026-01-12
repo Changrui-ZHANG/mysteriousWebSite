@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { validateDisplayNameField, validateBioField } from '../schemas/profileSchemas';
 import { ErrorDisplay } from '../../../shared/components';
+import { useOptimisticUpdates } from '../hooks/useOptimisticUpdates';
+import { RealTimeStatus } from './RealTimeStatus';
 import type { UserProfile, UpdateProfileRequest } from '../types';
 
 interface ProfileFormProps {
@@ -41,6 +43,14 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
     const [errors, setErrors] = useState<FormErrors>({});
     const [hasChanges, setHasChanges] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Optimistic updates for better UX
+    const optimisticUpdates = useOptimisticUpdates({
+        onRollback: (type, error) => {
+            console.warn(`Optimistic update rolled back for ${type}:`, error);
+            setErrors(prev => ({ ...prev, submit: 'Update failed - changes reverted' }));
+        }
+    });
 
     // Track changes
     useEffect(() => {
@@ -108,7 +118,20 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                 bio: formData.bio.trim() || undefined
             };
 
-            await onSubmit(updateData);
+            // Use optimistic updates if profile is available
+            if (profile) {
+                await optimisticUpdates.applyOptimisticProfileUpdate(
+                    profile,
+                    updateData,
+                    () => onSubmit(updateData).then(() => profile), // Return updated profile
+                    (error) => {
+                        const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
+                        setErrors(prev => ({ ...prev, submit: errorMessage }));
+                    }
+                );
+            } else {
+                await onSubmit(updateData);
+            }
         } catch (error) {
             // Set submit error for display
             const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
@@ -236,10 +259,27 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                 )}
             </div>
 
-            {/* Change indicator */}
-            {hasChanges && (
-                <div className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">
-                    You have unsaved changes
+            {/* Change indicator and real-time status */}
+            <div className="flex items-center justify-between">
+                {hasChanges && (
+                    <div className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">
+                        You have unsaved changes
+                    </div>
+                )}
+                
+                {profile && (
+                    <RealTimeStatus 
+                        userId={profile.userId} 
+                        showDetails={false}
+                        className="text-xs"
+                    />
+                )}
+            </div>
+            
+            {/* Optimistic updates indicator */}
+            {optimisticUpdates.hasPendingUpdates && (
+                <div className="text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-md">
+                    Saving changes...
                 </div>
             )}
         </form>

@@ -1,5 +1,6 @@
 package com.changrui.mysterious.domain.profile.service;
 
+import com.changrui.mysterious.domain.profile.middleware.FileUploadMiddleware;
 import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.exception.NotFoundException;
@@ -33,6 +34,9 @@ public class AvatarService {
     @Autowired
     private UserProfileRepository profileRepository;
 
+    @Autowired
+    private FileUploadMiddleware fileUploadMiddleware;
+
     @Value("${app.avatar.upload-dir:uploads/avatars}")
     private String uploadDir;
 
@@ -52,28 +56,29 @@ public class AvatarService {
             throw new BadRequestException("Cannot upload avatar for another user");
         }
 
-        // Validate file
-        validateAvatarFile(file);
+        // Validate file using middleware (additional validation beyond interceptor)
+        fileUploadMiddleware.validateUploadedFile(file, "avatar");
 
         try {
             // Process and resize image
             BufferedImage processedImage = processAvatarImage(file);
             
-            // Generate unique filename
-            String filename = userId + "_" + UUID.randomUUID().toString() + ".jpg";
+            // Generate secure filename using middleware
+            String secureFilename = fileUploadMiddleware.generateSecureFilename(
+                file.getOriginalFilename(), userId);
             
             // Ensure upload directory exists
             Path uploadPath = Paths.get(uploadDir);
             Files.createDirectories(uploadPath);
             
             // Save processed image
-            Path filePath = uploadPath.resolve(filename);
+            Path filePath = uploadPath.resolve(secureFilename);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processedImage, "jpg", baos);
             Files.write(filePath, baos.toByteArray());
             
             // Generate URL
-            String avatarUrl = baseUrl + "/" + filename;
+            String avatarUrl = baseUrl + "/" + secureFilename;
             
             // Update profile with new avatar URL
             updateAvatarUrl(userId, avatarUrl, requesterId);

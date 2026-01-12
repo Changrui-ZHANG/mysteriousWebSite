@@ -1,5 +1,8 @@
 package com.changrui.mysterious.domain.profile.controller;
 
+import com.changrui.mysterious.domain.profile.middleware.RequireProfileOwnership;
+import com.changrui.mysterious.domain.profile.middleware.SecureFileUpload;
+import com.changrui.mysterious.domain.profile.middleware.ValidateFileUpload;
 import com.changrui.mysterious.domain.profile.service.AvatarService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +33,11 @@ public class AvatarController {
      * Upload avatar file
      */
     @PostMapping("/{userId}")
+    @SecureFileUpload(operation = "avatar_upload", maxFiles = 1)
+    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<String>> uploadAvatar(
             @PathVariable String userId,
-            @RequestParam("avatar") MultipartFile file,
+            @RequestParam("avatar") @ValidateFileUpload(fileType = "avatar", maxSize = 5242880) MultipartFile file,
             @RequestParam String requesterId) {
         
         String avatarUrl = avatarService.uploadAvatar(userId, file, requesterId);
@@ -43,6 +48,7 @@ public class AvatarController {
      * Update user avatar URL
      */
     @PutMapping("/{userId}")
+    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> updateAvatarUrl(
             @PathVariable String userId,
             @RequestBody String avatarUrl,
@@ -56,6 +62,7 @@ public class AvatarController {
      * Delete user avatar
      */
     @DeleteMapping("/{userId}")
+    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> deleteAvatar(
             @PathVariable String userId,
             @RequestParam String requesterId) {

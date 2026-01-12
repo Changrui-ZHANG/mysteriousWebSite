@@ -92,7 +92,7 @@ export function useRetryableRequest<T>(
             circuitState: circuitBreaker.getState()
         }));
 
-        let lastError: AppError;
+        let lastError: AppError | null = null;
         
         for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
             if (signal.aborted) {
@@ -131,7 +131,7 @@ export function useRetryableRequest<T>(
                 lastError = handleApiError(error, `${requestKey} attempt ${attempt}`);
                 
                 // Check if circuit breaker is blocking requests
-                if (lastError.message.includes('Circuit breaker')) {
+                if (lastError!.message.includes('Circuit breaker')) {
                     setState(prev => ({
                         ...prev,
                         isLoading: false,
@@ -140,22 +140,22 @@ export function useRetryableRequest<T>(
                         circuitState: circuitBreaker.getState()
                     }));
                     
-                    options.onFailure?.(lastError);
-                    throw lastError;
+                    options.onFailure?.(lastError!);
+                    throw lastError!;
                 }
 
                 // Don't retry on certain error types
-                if (shouldNotRetry(lastError)) {
+                if (shouldNotRetry(lastError!)) {
                     setState(prev => ({
                         ...prev,
                         isLoading: false,
-                        error: lastError.userMessage || lastError.message,
+                        error: lastError!.userMessage || lastError!.message,
                         canRetry: false,
                         circuitState: circuitBreaker.getState()
                     }));
                     
-                    options.onFailure?.(lastError);
-                    throw lastError;
+                    options.onFailure?.(lastError!);
+                    throw lastError!;
                 }
 
                 // If this is the last attempt, don't wait
@@ -165,7 +165,7 @@ export function useRetryableRequest<T>(
 
                 // Wait before retry
                 const delay = calculateDelay(attempt);
-                options.onRetry?.(attempt, lastError);
+                options.onRetry?.(attempt, lastError!);
                 
                 await new Promise(resolve => {
                     const timeoutId = setTimeout(resolve, delay);
@@ -180,16 +180,31 @@ export function useRetryableRequest<T>(
         }
 
         // All attempts failed
-        setState(prev => ({
-            ...prev,
-            isLoading: false,
-            error: lastError.userMessage || lastError.message,
-            canRetry: !shouldNotRetry(lastError),
-            circuitState: circuitBreaker.getState()
-        }));
+        if (lastError) {
+            setState(prev => ({
+                ...prev,
+                isLoading: false,
+                error: lastError.userMessage || lastError.message,
+                canRetry: !shouldNotRetry(lastError),
+                circuitState: circuitBreaker.getState()
+            }));
 
-        options.onFailure?.(lastError);
-        throw lastError;
+            options.onFailure?.(lastError);
+            throw lastError;
+        } else {
+            // This should not happen, but handle it gracefully
+            const fallbackError = new AppError('Unknown error occurred', ERROR_CODES.OPERATION_FAILED);
+            setState(prev => ({
+                ...prev,
+                isLoading: false,
+                error: 'Unknown error occurred',
+                canRetry: true,
+                circuitState: circuitBreaker.getState()
+            }));
+            
+            options.onFailure?.(fallbackError);
+            throw fallbackError;
+        }
     }, [requestKey, config, calculateDelay, circuitBreaker]);
 
     /**

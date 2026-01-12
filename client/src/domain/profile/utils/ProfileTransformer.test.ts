@@ -1,35 +1,77 @@
+import { describe, it, expect } from 'vitest';
 import { transformBackendProfile } from './ProfileTransformer';
 
-// Test the transformer with real backend data
-const testBackendResponse = {
-    userId: "f0bf523e-fbe3-4c54-82d7-5871b6552e1c",
-    displayName: "Changrui",
-    bio: null,
-    avatarUrl: null,
-    joinDate: "2026-01-12T03:28:54.848403",
-    lastActive: "2026-01-12T03:28:54.848403",
-    isPublic: true,
-    privacySettings: null,
-    activityStats: {
+describe('ProfileTransformer', () => {
+    const testBackendResponse = {
         userId: "f0bf523e-fbe3-4c54-82d7-5871b6552e1c",
-        totalMessages: 14,
-        totalGamesPlayed: 6,
-        bestScores: "{}",
-        currentStreak: 0,
-        longestStreak: 0,
-        timeSpent: 0,
-        lastUpdated: "2026-01-12T03:28:54.856506"
-    }
-};
+        displayName: "Changrui",
+        bio: undefined as string | undefined,
+        avatarUrl: undefined as string | undefined,
+        joinDate: "2026-01-12T03:28:54.848403",
+        lastActive: "2026-01-12T03:28:54.848403",
+        isPublic: true,
+        privacySettings: undefined,
+        activityStats: {
+            userId: "f0bf523e-fbe3-4c54-82d7-5871b6552e1c",
+            totalMessages: 14,
+            totalGamesPlayed: 6,
+            bestScores: "{}",
+            currentStreak: 0,
+            longestStreak: 0,
+            timeSpent: 0,
+            lastUpdated: "2026-01-12T03:28:54.856506"
+        }
+    };
 
-// Transform and log the result
-console.log('Backend Response:', testBackendResponse);
-console.log('Transformed Profile:', transformBackendProfile(testBackendResponse));
+    it('should transform backend profile response correctly', () => {
+        const result = transformBackendProfile(testBackendResponse);
+        
+        expect(result.userId).toBe(testBackendResponse.userId);
+        expect(result.displayName).toBe(testBackendResponse.displayName);
+        expect(result.bio).toBe(testBackendResponse.bio);
+        expect(result.avatarUrl).toBe(testBackendResponse.avatarUrl);
+        expect(result.isPublic).toBe(testBackendResponse.isPublic);
+        
+        // Check date transformation
+        expect(result.joinDate).toBeInstanceOf(Date);
+        expect(result.lastActive).toBeInstanceOf(Date);
+        
+        // Check activity stats transformation
+        expect(result.activityStats).toBeDefined();
+        expect(result.activityStats?.totalMessages).toBe(14);
+        expect(result.activityStats?.totalGamesPlayed).toBe(6);
+        expect(result.activityStats?.bestScores).toEqual({});
+        
+        // Check achievements array is initialized
+        expect(result.achievements).toEqual([]);
+    });
 
-// Test with null activity stats
-const testWithNullStats = {
-    ...testBackendResponse,
-    activityStats: null
-};
+    it('should handle null activity stats', () => {
+        const testWithNullStats = {
+            ...testBackendResponse,
+            activityStats: undefined
+        };
 
-console.log('Transformed Profile (null stats):', transformBackendProfile(testWithNullStats));
+        const result = transformBackendProfile(testWithNullStats);
+        
+        expect(result.activityStats).toBeUndefined();
+        expect(result.achievements).toEqual([]);
+    });
+
+    it('should parse bestScores JSON correctly', () => {
+        const testWithScores = {
+            ...testBackendResponse,
+            activityStats: {
+                ...testBackendResponse.activityStats,
+                bestScores: '{"game1": 100, "game2": 200}'
+            }
+        };
+
+        const result = transformBackendProfile(testWithScores);
+        
+        expect(result.activityStats?.bestScores).toEqual({
+            game1: 100,
+            game2: 200
+        });
+    });
+});

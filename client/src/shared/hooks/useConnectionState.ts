@@ -47,7 +47,7 @@ export function useConnectionState(
     const [isRetrying, setIsRetrying] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
     
-    const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const retryTimeoutRef = useRef<number | null>(null);
 
     // Nettoyer les timeouts à la destruction
     useEffect(() => {

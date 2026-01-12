@@ -46,6 +46,12 @@ public class ProfileService {
         if (request.bio() != null && !request.bio().trim().isEmpty()) {
             profile.setBio(request.bio().trim());
         }
+        
+        // Set public/private status
+        if (request.isPublic() != null) {
+            profile.setPublic(request.isPublic());
+        }
+        
         profile = profileRepository.save(profile);
 
         // Create default privacy settings
@@ -72,11 +78,35 @@ public class ProfileService {
         boolean isOwner = userId.equals(requesterId);
         
         // Check if profile is accessible
+        // Note: Admin access is handled by middleware, so if we reach here, access is already granted
         if (!isOwner && !profile.isPublic()) {
             throw new NotFoundException("Profile not found for user: " + userId);
         }
 
         return isOwner ? 
+            ProfileResponse.ownerFrom(profile, privacy, stats) :
+            ProfileResponse.publicFrom(profile, privacy, stats);
+    }
+
+    /**
+     * Get user profile by ID with admin access consideration
+     */
+    public ProfileResponse getProfile(String userId, String requesterId, boolean isAdminAccess) {
+        UserProfile profile = profileRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+
+        PrivacySettings privacy = privacyRepository.findByUserId(userId).orElse(null);
+        ActivityStats stats = activityRepository.findByUserId(userId).orElse(null);
+
+        boolean isOwner = userId.equals(requesterId);
+        
+        // Check if profile is accessible
+        if (!isOwner && !profile.isPublic() && !isAdminAccess) {
+            throw new NotFoundException("Profile not found for user: " + userId);
+        }
+
+        // Admin and owner get full access, others get public view
+        return (isOwner || isAdminAccess) ? 
             ProfileResponse.ownerFrom(profile, privacy, stats) :
             ProfileResponse.publicFrom(profile, privacy, stats);
     }

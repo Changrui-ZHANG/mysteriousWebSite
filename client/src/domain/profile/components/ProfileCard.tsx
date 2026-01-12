@@ -1,4 +1,5 @@
 import React from 'react';
+import { RealTimeStatusCompact } from './RealTimeStatus';
 import type { UserProfile } from '../types';
 
 interface ProfileCardProps {
@@ -70,9 +71,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 </div>
                 
                 <div className="grow">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1">
-                        {displayName}
-                    </h3>
+                    <div className="flex items-center space-x-2">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                            {displayName}
+                        </h3>
+                        <RealTimeStatusCompact userId={profile.userId} />
+                    </div>
                     
                     <p className="text-sm text-gray-500 mb-2">
                         Joined {formatDate(joinDate)}
