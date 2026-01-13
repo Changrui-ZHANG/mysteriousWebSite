@@ -1,16 +1,16 @@
 import { ProfileRepository } from '../repositories/ProfileRepository';
-import { 
-    validateCreateProfile, 
-    validateUpdateProfile, 
+import {
+    validateCreateProfile,
+    validateUpdateProfile,
     validatePrivacySettings,
     validateProfileSearchQuery,
     validateProfileDirectoryFilters
 } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
-import type { 
-    UserProfile, 
-    CreateProfileRequest, 
-    UpdateProfileRequest, 
+import type {
+    UserProfile,
+    CreateProfileRequest,
+    UpdateProfileRequest,
     PrivacySettings,
     ProfileSearchQuery,
     ProfileSearchResult,
@@ -102,11 +102,6 @@ export class ProfileService {
             bio: data.bio?.trim()
         };
 
-        // Check for duplicate display names if changing display name
-        if (sanitizedData.displayName) {
-            await this.validateUniqueDisplayName(sanitizedData.displayName, userId);
-        }
-
         return this.repository.updateProfile(userId, sanitizedData, requesterId);
     }
 
@@ -126,7 +121,7 @@ export class ProfileService {
         const effectiveViewerId = viewerId || userId;
 
         const profile = await this.repository.findByUserId(userId, effectiveViewerId);
-        
+
         // Business logic: Apply privacy filtering
         return this.applyPrivacyFiltering(profile, effectiveViewerId);
     }
@@ -158,7 +153,7 @@ export class ProfileService {
         const result = await this.repository.searchProfiles(sanitizedQuery);
 
         // Apply privacy filtering to results
-        const filteredProfiles = result.profiles.map(profile => 
+        const filteredProfiles = result.profiles.map(profile =>
             this.applyPrivacyFiltering(profile, viewerId)
         );
 
@@ -193,7 +188,7 @@ export class ProfileService {
         const result = await this.repository.getProfileDirectory(sanitizedFilters);
 
         // Apply privacy filtering
-        const filteredProfiles = result.profiles.map(profile => 
+        const filteredProfiles = result.profiles.map(profile =>
             this.applyPrivacyFiltering(profile, viewerId)
         );
 
@@ -259,7 +254,7 @@ export class ProfileService {
      */
     async getRecentlyActiveProfiles(limit: number = 10, viewerId?: string): Promise<UserProfile[]> {
         const profiles = await this.repository.getRecentlyActiveProfiles(Math.min(limit, 50));
-        
+
         // Apply privacy filtering
         return profiles.map(profile => this.applyPrivacyFiltering(profile, viewerId));
     }
@@ -269,7 +264,7 @@ export class ProfileService {
      */
     async getMostActiveProfiles(limit: number = 10, viewerId?: string): Promise<UserProfile[]> {
         const profiles = await this.repository.getMostActiveProfiles(Math.min(limit, 50));
-        
+
         // Apply privacy filtering
         return profiles.map(profile => this.applyPrivacyFiltering(profile, viewerId));
     }
@@ -280,13 +275,13 @@ export class ProfileService {
     async isProfileAccessible(userId: string, viewerId?: string): Promise<boolean> {
         try {
             const profile = await this.repository.findByUserId(userId);
-            
+
             // Business logic: Check privacy settings
             const privacySettings = profile.privacySettings;
             if (privacySettings?.profileVisibility === 'private' && userId !== viewerId) {
                 return false;
             }
-            
+
             return true;
         } catch {
             return false;
@@ -313,10 +308,10 @@ export class ProfileService {
     private async validateUniqueDisplayName(displayName: string, excludeUserId?: string): Promise<void> {
         try {
             const existingProfiles = await this.repository.searchByDisplayName(displayName);
-            const duplicates = excludeUserId 
+            const duplicates = excludeUserId
                 ? existingProfiles.filter(p => p.userId !== excludeUserId)
                 : existingProfiles;
-                
+
             if (duplicates.length > 0) {
                 throw new AppError(
                     'Display name already exists',
@@ -350,7 +345,7 @@ export class ProfileService {
             showAchievements: true,
             showLastActive: true
         };
-        
+
         // If profile is private, return minimal info
         if (privacySettings.profileVisibility === 'private') {
             return {

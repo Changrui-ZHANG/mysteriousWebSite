@@ -21,6 +21,7 @@ interface AvatarUploadWithCroppingProps {
 /**
  * Enhanced AvatarUpload component with integrated cropping functionality
  * Provides seamless transition from file selection to cropping to upload
+ * Adapted for Glassmorphism design
  */
 export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> = ({
     userId,
@@ -45,7 +46,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     if (!userId) {
         return (
             <div className={`avatar-upload ${className}`}>
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-[var(--text-muted)] py-8">
                     <p>User ID required for avatar upload</p>
                 </div>
             </div>
@@ -89,10 +90,10 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      */
     const handleFileSelect = async (file: File) => {
         clearError();
-        
+
         // Validate file first
         const validation = await validateFile(file);
-        
+
         if (!validation.isValid) {
             return; // Error is handled by the hook
         }
@@ -105,7 +106,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             // Direct upload without cropping (legacy behavior)
             const preview = createPreview(file);
             setPreviewUrl(preview);
-            
+
             setLoading('avatarUpload', true);
             try {
                 await uploadAvatar(file, (progress) => setUploadProgress(progress));
@@ -121,10 +122,10 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     const handleCropComplete = async (cropResult: CropResult) => {
         try {
             closeModal('avatarCropper');
-            
+
             // Create a new File object from the cropped blob
             const croppedFile = new File(
-                [cropResult.croppedImageBlob], 
+                [cropResult.croppedImageBlob],
                 selectedFile?.name || 'cropped-avatar.jpg',
                 { type: 'image/jpeg' }
             );
@@ -143,7 +144,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             } finally {
                 setLoading('avatarUpload', false);
             }
-            
+
             // Clean up
             setSelectedFile(null);
             if (cropResult.croppedImageUrl) {
@@ -205,7 +206,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                 clearPreview(previewUrl);
                 setPreviewUrl(null);
             }
-            
+
             addSuccessNotification(
                 'Avatar Removed',
                 'Your profile picture has been removed.'
@@ -232,14 +233,14 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             <div className={`avatar-upload ${className}`}>
                 {/* Avatar Display */}
                 <div className="flex items-center space-x-4 mb-4">
-                    <div className="relative">
+                    <div className="relative group">
                         <img
                             src={displayUrl || '/default-avatar.png'}
                             alt="Avatar"
-                            className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                            className="w-20 h-20 rounded-full object-cover border-2 border-[var(--glass-border)] shadow-md group-hover:scale-105 transition-transform"
                         />
                         {isUploading && (
-                            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
                                 <div className="text-white text-xs font-medium">
                                     {uploadProgress}%
                                 </div>
@@ -248,19 +249,19 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                     </div>
 
                     <div className="flex-1">
-                        <h4 className="text-sm font-medium text-gray-900 mb-1">
+                        <h4 className="text-sm font-medium text-[var(--text-primary)] mb-1">
                             Profile Picture
                         </h4>
-                        <p className="text-xs text-gray-500 mb-2">
-                            JPG, PNG or WebP. Max size 5MB. 
+                        <p className="text-xs text-[var(--text-muted)] mb-2">
+                            JPG, PNG or WebP. Max size 5MB.
                             {enableCropping && ' You can crop after selecting.'}
                         </p>
-                        
+
                         {previewUrl && (
                             <div className="flex space-x-2">
                                 <button
                                     onClick={handleCancelPreview}
-                                    className="text-xs text-gray-600 hover:text-gray-800 underline"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline"
                                     disabled={isUploading}
                                 >
                                     Cancel Preview
@@ -272,11 +273,14 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                 {/* Upload Area */}
                 <div
-                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
-                        isDragOver
-                            ? 'border-blue-400 bg-blue-50'
-                            : 'border-gray-300 hover:border-gray-400'
-                    } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`
+                        border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer 
+                        ${isDragOver
+                            ? 'border-[var(--accent-primary)] bg-[var(--accent-primary-alpha)] scale-[1.02]'
+                            : 'border-[var(--border-subtle)] hover:border-[var(--accent-primary)] hover:bg-[var(--bg-surface-translucent)]'
+                        } 
+                        ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
+                    `}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
@@ -293,30 +297,30 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                     {isUploading ? (
                         <div className="space-y-2">
-                            <div className="text-sm text-gray-600">Uploading...</div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="text-sm text-[var(--text-secondary)]">Uploading...</div>
+                            <div className="w-full bg-[var(--bg-surface)] rounded-full h-2 overflow-hidden">
                                 <div
-                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    className="bg-[var(--accent-primary)] h-2 rounded-full transition-all duration-300"
                                     style={{ width: `${uploadProgress}%` }}
                                 />
                             </div>
                         </div>
                     ) : (
                         <div className="space-y-2">
-                            <div className="text-gray-400">
-                                <svg className="mx-auto h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="text-[var(--text-muted)]">
+                                <svg className="mx-auto h-8 w-8 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
                             </div>
-                            <div className="text-sm text-gray-600">
-                                <span className="font-medium text-blue-600 hover:text-blue-500">
+                            <div className="text-sm text-[var(--text-muted)]">
+                                <span className="font-medium text-[var(--accent-primary)] hover:underline">
                                     Click to upload
                                 </span>
                                 {' '}or drag and drop
                             </div>
                             {enableCropping && (
-                                <div className="text-xs text-blue-600">
-                                    ✂️ Cropping enabled - perfect your avatar after upload
+                                <div className="text-xs text-[var(--accent-secondary)] flex items-center justify-center mt-1">
+                                    <span className="mr-1">✂️</span> Cropping enabled
                                 </div>
                             )}
                         </div>
@@ -328,7 +332,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                     <div className="mt-4 flex justify-center">
                         <button
                             onClick={handleDelete}
-                            className="text-sm text-red-600 hover:text-red-800 underline"
+                            className="text-sm text-red-500 hover:text-red-600 underline transition-colors"
                         >
                             Remove Avatar
                         </button>
@@ -337,9 +341,9 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                 {/* Error Display */}
                 {error && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <div className="mt-4 p-3 bg-red-50/50 border border-red-200 rounded-lg backdrop-blur-sm">
                         <div className="flex">
-                            <div className="text-sm text-red-700">
+                            <div className="text-sm text-red-700 break-words">
                                 {error}
                             </div>
                             <button
@@ -355,8 +359,8 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                 )}
 
                 {/* Cropping toggle */}
-                <div className="mt-4 flex items-center justify-center">
-                    <label className="flex items-center space-x-2 text-sm text-gray-600">
+                <div className="mt-4 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+                    <label className="flex items-center space-x-2 text-xs text-[var(--text-muted)] cursor-pointer">
                         <input
                             type="checkbox"
                             checked={enableCropping}
@@ -364,10 +368,10 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                                 // This would be controlled by parent component
                                 // For now, just show the current state
                             }}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-[var(--border-subtle)] text-[var(--accent-primary)] focus:ring-[var(--accent-primary)]"
                             disabled={isUploading}
                         />
-                        <span>Enable cropping for perfect avatars</span>
+                        <span>Enable cropping</span>
                     </label>
                 </div>
             </div>

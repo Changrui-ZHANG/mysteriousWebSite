@@ -4,11 +4,11 @@ import { ErrorDisplay } from '../../../shared/components';
 import { RealTimeStatus } from './RealTimeStatus';
 import { useUpdateProfileMutation } from '../queries/profileQueries';
 import { useEditingActions, useHasUnsavedChanges, useNotificationActions } from '../stores/uiStore';
-import { 
-    ProfileFormData, 
-    profileFormResolver, 
+import {
+    ProfileFormData,
+    profileFormResolver,
     transformProfileFormData,
-    getFormErrorMessage 
+    getFormErrorMessage
 } from '../schemas/formSchemas';
 import type { UserProfile, UpdateProfileRequest } from '../types';
 
@@ -22,7 +22,7 @@ interface ProfileFormProps {
 
 /**
  * ProfileForm component for editing profile information
- * Now using React Hook Form with TanStack Query mutations for better performance and validation
+ * Adapted for Glassmorphism design
  */
 export const ProfileForm: React.FC<ProfileFormProps> = ({
     profile,
@@ -87,10 +87,10 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
     const onFormSubmit = handleSubmit(async (data: ProfileFormData) => {
         if (!profile) return;
-        
+
         try {
             clearErrors('root.submit');
-            
+
             const updateData = transformProfileFormData(data);
 
             // Use TanStack Query mutation with optimistic updates
@@ -108,13 +108,13 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             // Call the parent onSubmit callback for any additional handling
             await onSubmit(updateData);
-            
+
             // Reset editing state
             setUnsavedChanges(false);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
             setError('root.submit', { message: errorMessage });
-            
+
             // Show error notification
             addErrorNotification(
                 'Update Failed',
@@ -134,11 +134,10 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
     const handleCancel = () => {
         if (hasUnsavedChanges) {
-            // Could show a confirmation modal here
             const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
             if (!confirmCancel) return;
         }
-        
+
         handleReset();
         resetEditingState();
         onCancel();
@@ -165,117 +164,129 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             {/* Display Name */}
             <div>
-                <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="displayName" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Display Name *
                 </label>
                 <input
                     type="text"
                     id="displayName"
                     {...register('displayName')}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.displayName 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'border-gray-300 focus:border-blue-500'
-                    }`}
+                    className={`
+                        glass-input w-full px-4 py-3 rounded-xl placeholder-[var(--text-muted)] text-[var(--text-primary)]
+                        focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent
+                        ${errors.displayName ? 'border-red-400 focus:ring-red-400' : ''}
+                    `}
                     placeholder="Enter your display name"
                     maxLength={30}
                     disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
                 />
                 {errors.displayName && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-sm text-red-500 font-medium">
                         {getFormErrorMessage(errors.displayName)}
                     </p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
-                    {displayNameLength}/30 characters
-                </p>
+                <div className="flex justify-end mt-1">
+                    <p className="text-xs text-[var(--text-muted)]">
+                        {displayNameLength}/30 characters
+                    </p>
+                </div>
             </div>
 
             {/* Bio */}
             <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="bio" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Bio
                 </label>
                 <textarea
                     id="bio"
                     {...register('bio')}
                     rows={4}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical ${
-                        errors.bio 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'border-gray-300 focus:border-blue-500'
-                    }`}
+                    className={`
+                        glass-input w-full px-4 py-3 rounded-xl placeholder-[var(--text-muted)] text-[var(--text-primary)]
+                        focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent resize-vertical
+                        ${errors.bio ? 'border-red-400 focus:ring-red-400' : ''}
+                    `}
                     placeholder="Tell others about yourself..."
                     maxLength={500}
                     disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
                 />
                 {errors.bio && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-sm text-red-500 font-medium">
                         {getFormErrorMessage(errors.bio)}
                     </p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
-                    {bioLength}/500 characters
-                </p>
+                <div className="flex justify-end mt-1">
+                    <p className="text-xs text-[var(--text-muted)]">
+                        {bioLength}/500 characters
+                    </p>
+                </div>
             </div>
 
             {/* Form Actions */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                <div className="flex space-x-3">
-                    <button
-                        type="submit"
-                        disabled={!canSubmit}
-                        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                            canSubmit
-                                ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
-                    >
-                        {isSubmitting || updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
-                    </button>
-                    
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-[var(--border-subtle)] gap-4">
+                <div className="flex flex-col-reverse sm:flex-row space-y-reverse space-y-3 sm:space-y-0 sm:space-x-3 gap-3 sm:gap-0">
                     <button
                         type="button"
                         onClick={handleCancel}
                         disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="glass-panel px-6 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)] hover:text-[var(--text-primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        disabled={!canSubmit}
+                        className={`
+                            px-6 py-2.5 text-sm font-medium rounded-xl shadow-lg transition-all
+                            ${canSubmit
+                                ? 'bg-[var(--accent-primary)] text-white hover:brightness-110 hover:scale-105 hover:shadow-xl'
+                                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border border-[var(--border-subtle)] cursor-not-allowed'}
+                        `}
+                    >
+                        {isSubmitting || updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
                     </button>
                 </div>
 
                 {isDirty && (
-                    <button
-                        type="button"
-                        onClick={handleReset}
-                        disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                        className="px-3 py-1 text-xs text-gray-600 hover:text-gray-800 underline disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Reset Changes
-                    </button>
+                    <div className="flex items-center justify-between sm:justify-end">
+                        <button
+                            type="button"
+                            onClick={handleReset}
+                            disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
+                            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline mr-4 disabled:opacity-50"
+                        >
+                            Reset Changes
+                        </button>
+                        {hasUnsavedChanges && (
+                            <span className="text-xs text-amber-600 bg-amber-50/80 backdrop-blur-sm border border-amber-200 px-3 py-1.5 rounded-full font-medium sm:hidden">
+                                Unsaved changes
+                            </span>
+                        )}
+                    </div>
                 )}
             </div>
 
-            {/* Change indicator and real-time status */}
+            {/* Change indicator and real-time status - Desktop only for unsaved message */}
             <div className="flex items-center justify-between">
                 {hasUnsavedChanges && (
-                    <div className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">
-                        You have unsaved changes
+                    <div className="hidden sm:block text-xs text-amber-600 bg-amber-50/80 backdrop-blur-sm border border-amber-200 px-3 py-2 rounded-md font-medium">
+                        ⚠️ You have unsaved changes
                     </div>
                 )}
-                
+
                 {profile && (
-                    <RealTimeStatus 
-                        userId={profile.userId} 
+                    <RealTimeStatus
+                        userId={profile.userId}
                         showDetails={false}
-                        className="text-xs"
+                        className="text-xs ml-auto"
                     />
                 )}
             </div>
-            
+
             {/* TanStack Query mutation status indicator */}
             {updateProfileMutation.isPending && (
-                <div className="text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-md">
+                <div className="text-xs text-[var(--accent-primary)] bg-blue-50/80 backdrop-blur-sm px-3 py-2 rounded-md font-medium text-center">
                     Saving changes...
                 </div>
             )}

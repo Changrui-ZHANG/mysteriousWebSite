@@ -57,6 +57,15 @@
     /* Legacy compatibility / Game Specific */
     --value-invert: 0;
     --glass-blur: 12px;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+    
+    /* Liquid Background Colors */
+    --liquid-bg-1: #e0f2fe; /* Light Blue */
+    --liquid-bg-2: #f3e8ff; /* Light Purple */
+    --liquid-bg-3: #fce7f3; /* Light Pink */
 
     /* Achievement colors */
     --achievement-bg-glow: rgba(234, 179, 8, 0.1);
@@ -105,6 +114,16 @@
     --shadow-candy: 0 0 10px rgba(255, 255, 255, 0.2);
     --glass-blur: 16px;
     --bg-effects-opacity: 0.15;
+
+    --glass-bg: rgba(23, 23, 23, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08); /* Plus subtil en dark mode */
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+
+     /* Liquid Background Colors - Dark Mode */
+    --liquid-bg-1: #0c4a6e; /* Dark Blue */
+    --liquid-bg-2: #581c87; /* Dark Purple */
+    --liquid-bg-3: #831843; /* Dark Pink */
 
     /* Error component colors - dark theme */
     --error-bg: rgba(127, 29, 29, 0.4);

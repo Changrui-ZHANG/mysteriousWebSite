@@ -46,13 +46,13 @@ export interface LoadingStates {
 export interface UIState {
     // Modal states
     modals: ModalStates;
-    
+
     // Notification states
     notifications: Notification[];
-    
+
     // Loading states
     loading: LoadingStates;
-    
+
     // Current editing context
     editingProfile: boolean;
     hasUnsavedChanges: boolean;
@@ -67,7 +67,7 @@ export interface UIActions {
     closeModal: (modal: keyof ModalStates) => void;
     closeAllModals: () => void;
     toggleModal: (modal: keyof ModalStates) => void;
-    
+
     // Notification actions
     addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
     removeNotification: (id: string) => void;
@@ -76,12 +76,12 @@ export interface UIActions {
     addErrorNotification: (title: string, message: string) => void;
     addWarningNotification: (title: string, message: string) => void;
     addInfoNotification: (title: string, message: string) => void;
-    
+
     // Loading actions
     setLoading: (key: keyof LoadingStates, loading: boolean) => void;
     setMultipleLoading: (states: Partial<LoadingStates>) => void;
     clearAllLoading: () => void;
-    
+
     // Editing context actions
     setEditingProfile: (editing: boolean) => void;
     setUnsavedChanges: (hasChanges: boolean) => void;
@@ -123,7 +123,7 @@ export const useUIStore = create<UIStore>()(
     devtools(
         (set, get) => ({
             ...initialState,
-            
+
             // Modal actions
             openModal: (modal) => set(
                 (state) => ({
@@ -132,7 +132,7 @@ export const useUIStore = create<UIStore>()(
                 false,
                 `openModal/${modal}`
             ),
-            
+
             closeModal: (modal) => set(
                 (state) => ({
                     modals: { ...state.modals, [modal]: false }
@@ -140,7 +140,7 @@ export const useUIStore = create<UIStore>()(
                 false,
                 `closeModal/${modal}`
             ),
-            
+
             closeAllModals: () => set(
                 (state) => ({
                     modals: Object.keys(state.modals).reduce(
@@ -151,7 +151,7 @@ export const useUIStore = create<UIStore>()(
                 false,
                 'closeAllModals'
             ),
-            
+
             toggleModal: (modal) => set(
                 (state) => ({
                     modals: { ...state.modals, [modal]: !state.modals[modal] }
@@ -159,7 +159,7 @@ export const useUIStore = create<UIStore>()(
                 false,
                 `toggleModal/${modal}`
             ),
-            
+
             // Notification actions
             addNotification: (notification) => {
                 const id = crypto.randomUUID();
@@ -171,7 +171,7 @@ export const useUIStore = create<UIStore>()(
                     autoClose: notification.autoClose ?? true,
                     duration: notification.duration ?? 5000,
                 };
-                
+
                 set(
                     (state) => ({
                         notifications: [...state.notifications, newNotification]
@@ -179,7 +179,7 @@ export const useUIStore = create<UIStore>()(
                     false,
                     `addNotification/${notification.type}`
                 );
-                
+
                 // Auto-remove notification if autoClose is enabled
                 if (newNotification.autoClose) {
                     setTimeout(() => {
@@ -187,7 +187,7 @@ export const useUIStore = create<UIStore>()(
                     }, newNotification.duration);
                 }
             },
-            
+
             removeNotification: (id) => set(
                 (state) => ({
                     notifications: state.notifications.filter(n => n.id !== id)
@@ -195,35 +195,36 @@ export const useUIStore = create<UIStore>()(
                 false,
                 `removeNotification/${id}`
             ),
-            
+
             clearNotifications: () => set(
                 { notifications: [] },
                 false,
                 'clearNotifications'
             ),
-            
+
             // Convenience notification methods
             addSuccessNotification: (title, message) => {
                 get().addNotification({ type: 'success', title, message });
             },
-            
+
             addErrorNotification: (title, message) => {
-                get().addNotification({ 
-                    type: 'error', 
-                    title, 
-                    message, 
-                    autoClose: false // Errors should be manually dismissed
+                get().addNotification({
+                    type: 'error',
+                    title,
+                    message,
+                    autoClose: true,
+                    duration: 10000 // Errors auto-close after 10 seconds
                 });
             },
-            
+
             addWarningNotification: (title, message) => {
                 get().addNotification({ type: 'warning', title, message });
             },
-            
+
             addInfoNotification: (title, message) => {
                 get().addNotification({ type: 'info', title, message });
             },
-            
+
             // Loading actions
             setLoading: (key, loading) => set(
                 (state) => ({
@@ -232,7 +233,7 @@ export const useUIStore = create<UIStore>()(
                 false,
                 `setLoading/${key}/${loading}`
             ),
-            
+
             setMultipleLoading: (states) => set(
                 (state) => ({
                     loading: { ...state.loading, ...states }
@@ -240,7 +241,7 @@ export const useUIStore = create<UIStore>()(
                 false,
                 'setMultipleLoading'
             ),
-            
+
             clearAllLoading: () => set(
                 (state) => ({
                     loading: Object.keys(state.loading).reduce(
@@ -251,20 +252,20 @@ export const useUIStore = create<UIStore>()(
                 false,
                 'clearAllLoading'
             ),
-            
+
             // Editing context actions
             setEditingProfile: (editing) => set(
                 { editingProfile: editing },
                 false,
                 `setEditingProfile/${editing}`
             ),
-            
+
             setUnsavedChanges: (hasChanges) => set(
                 { hasUnsavedChanges: hasChanges },
                 false,
                 `setUnsavedChanges/${hasChanges}`
             ),
-            
+
             resetEditingState: () => set(
                 { editingProfile: false, hasUnsavedChanges: false },
                 false,
@@ -283,7 +284,7 @@ export const useUIStore = create<UIStore>()(
  */
 
 // Modal selectors
-export const useModalState = (modal: keyof ModalStates) => 
+export const useModalState = (modal: keyof ModalStates) =>
     useUIStore((state) => state.modals[modal]);
 
 export const useModalActions = () => {
@@ -291,7 +292,7 @@ export const useModalActions = () => {
     const closeModal = useUIStore((state) => state.closeModal);
     const closeAllModals = useUIStore((state) => state.closeAllModals);
     const toggleModal = useUIStore((state) => state.toggleModal);
-    
+
     return {
         openModal,
         closeModal,
@@ -301,7 +302,7 @@ export const useModalActions = () => {
 };
 
 // Notification selectors
-export const useNotifications = () => 
+export const useNotifications = () =>
     useUIStore((state) => state.notifications);
 
 export const useNotificationActions = () => {
@@ -312,7 +313,7 @@ export const useNotificationActions = () => {
     const addErrorNotification = useUIStore((state) => state.addErrorNotification);
     const addWarningNotification = useUIStore((state) => state.addWarningNotification);
     const addInfoNotification = useUIStore((state) => state.addInfoNotification);
-    
+
     return {
         addNotification,
         removeNotification,
@@ -325,14 +326,14 @@ export const useNotificationActions = () => {
 };
 
 // Loading selectors
-export const useLoadingState = (key: keyof LoadingStates) => 
+export const useLoadingState = (key: keyof LoadingStates) =>
     useUIStore((state) => state.loading[key]);
 
 export const useLoadingActions = () => {
     const setLoading = useUIStore((state) => state.setLoading);
     const setMultipleLoading = useUIStore((state) => state.setMultipleLoading);
     const clearAllLoading = useUIStore((state) => state.clearAllLoading);
-    
+
     return {
         setLoading,
         setMultipleLoading,
@@ -341,17 +342,17 @@ export const useLoadingActions = () => {
 };
 
 // Editing context selectors
-export const useEditingProfile = () => 
+export const useEditingProfile = () =>
     useUIStore((state) => state.editingProfile);
 
-export const useHasUnsavedChanges = () => 
+export const useHasUnsavedChanges = () =>
     useUIStore((state) => state.hasUnsavedChanges);
 
 export const useEditingActions = () => {
     const setEditingProfile = useUIStore((state) => state.setEditingProfile);
     const setUnsavedChanges = useUIStore((state) => state.setUnsavedChanges);
     const resetEditingState = useUIStore((state) => state.resetEditingState);
-    
+
     return {
         setEditingProfile,
         setUnsavedChanges,
@@ -364,17 +365,17 @@ export const useEditingActions = () => {
  */
 
 // Check if any modal is open
-export const useAnyModalOpen = () => 
+export const useAnyModalOpen = () =>
     useUIStore((state) => Object.values(state.modals).some(Boolean));
 
 // Check if any loading state is active
-export const useAnyLoading = () => 
+export const useAnyLoading = () =>
     useUIStore((state) => Object.values(state.loading).some(Boolean));
 
 // Get notification count by type
-export const useNotificationCount = (type?: Notification['type']) => 
-    useUIStore((state) => 
-        type 
+export const useNotificationCount = (type?: Notification['type']) =>
+    useUIStore((state) =>
+        type
             ? state.notifications.filter(n => n.type === type).length
             : state.notifications.length
     );

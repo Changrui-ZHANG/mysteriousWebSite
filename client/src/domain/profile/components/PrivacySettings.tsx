@@ -11,6 +11,7 @@ interface PrivacySettingsProps {
 /**
  * PrivacySettings component for granular privacy control
  * Provides immediate feedback and explanations for each setting
+ * Adapted for Glassmorphism design
  */
 export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
     settings,
@@ -70,39 +71,62 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
         }
     };
 
+    const getVisibilityIcon = (visibility: string) => {
+        switch (visibility) {
+            case 'public':
+                return '🌍';
+            case 'friends':
+                return '👥';
+            case 'private':
+                return '🔒';
+            default:
+                return '•';
+        }
+    };
+
     return (
-        <div className={`privacy-settings space-y-6 ${className}`}>
+        <div className={`privacy-settings space-y-8 ${className}`}>
             <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Privacy Settings</h3>
-                <p className="text-sm text-gray-600 mb-6">
+                <h3 className="text-xl font-medium text-[var(--text-primary)] mb-2">Privacy Settings</h3>
+                <p className="text-sm text-[var(--text-secondary)]">
                     Control who can see your profile information and activity.
                 </p>
             </div>
 
             {/* Profile Visibility */}
-            <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
+            <div className="space-y-4">
+                <label className="block text-sm font-medium text-[var(--text-primary)] uppercase tracking-wider">
                     Profile Visibility
                 </label>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {(['public', 'friends', 'private'] as const).map((visibility) => (
-                        <label key={visibility} className="flex items-start space-x-3">
-                            <input
-                                type="radio"
-                                name="profileVisibility"
-                                value={visibility}
-                                checked={localSettings.profileVisibility === visibility}
-                                onChange={(e) => handleSettingChange('profileVisibility', e.target.value)}
-                                disabled={isLoading || isUpdating}
-                                className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                            />
-                            <div className="flex-1">
-                                <div className="text-sm font-medium text-gray-900 capitalize">
-                                    {visibility}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                    {getVisibilityDescription(visibility)}
-                                </div>
+                        <label
+                            key={visibility}
+                            className={`
+                                relative flex flex-col p-4 cursor-pointer rounded-xl border transition-all duration-300
+                                ${localSettings.profileVisibility === visibility
+                                    ? 'bg-[var(--accent-primary-alpha)] border-[var(--accent-primary)] shadow-lg scale-[1.02]'
+                                    : 'bg-[var(--bg-surface-translucent)] border-[var(--border-subtle)] hover:bg-[var(--glass-bg)] hover:border-[var(--glass-border)]'
+                                }
+                            `}
+                        >
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-2xl">{getVisibilityIcon(visibility)}</span>
+                                <input
+                                    type="radio"
+                                    name="profileVisibility"
+                                    value={visibility}
+                                    checked={localSettings.profileVisibility === visibility}
+                                    onChange={(e) => handleSettingChange('profileVisibility', e.target.value)}
+                                    disabled={isLoading || isUpdating}
+                                    className="h-4 w-4 text-[var(--accent-primary)] focus:ring-[var(--accent-primary)]"
+                                />
+                            </div>
+                            <div className="text-base font-semibold text-[var(--text-primary)] capitalize mb-1">
+                                {visibility}
+                            </div>
+                            <div className="text-xs text-[var(--text-secondary)] leading-tight">
+                                {getVisibilityDescription(visibility)}
                             </div>
                         </label>
                     ))}
@@ -110,94 +134,127 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
             </div>
 
             {/* Granular Settings */}
-            {localSettings.profileVisibility !== 'private' && (
-                <div className="space-y-4 pt-4 border-t border-gray-200">
-                    <h4 className="text-sm font-medium text-gray-900">
+            <div className={`
+                transition-all duration-500 ease-in-out overflow-hidden
+                ${localSettings.profileVisibility === 'private' ? 'max-h-0 opacity-50' : 'max-h-[500px] opacity-100'}
+            `}>
+                <div className="pt-6 border-t border-[var(--border-subtle)]">
+                    <h4 className="text-sm font-medium text-[var(--text-primary)] uppercase tracking-wider mb-4">
                         What others can see
                     </h4>
 
-                    {/* Show Bio */}
-                    <label className="flex items-center justify-between">
-                        <div>
-                            <div className="text-sm text-gray-900">Bio</div>
-                            <div className="text-xs text-gray-500">
-                                Your personal description
+                    <div className="space-y-3">
+                        {/* Show Bio */}
+                        <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
+                            <div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">Bio</div>
+                                <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
+                                    Your personal description
+                                </div>
                             </div>
-                        </div>
-                        <input
-                            type="checkbox"
-                            checked={localSettings.showBio}
-                            onChange={(e) => handleSettingChange('showBio', e.target.checked)}
-                            disabled={isLoading || isUpdating}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                    </label>
+                            <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
+                                <input
+                                    type="checkbox"
+                                    checked={localSettings.showBio}
+                                    onChange={(e) => handleSettingChange('showBio', e.target.checked)}
+                                    disabled={isLoading || isUpdating}
+                                    className="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out checked:translate-x-full checked:border-[var(--accent-primary)] focus:outline-none ring-0 focus:ring-0 peer"
+                                    style={{ top: '4px', left: '4px' }}
+                                />
+                                <div className={`
+                                    toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-200
+                                    ${localSettings.showBio ? 'bg-[var(--accent-primary)]' : 'bg-gray-300 dark:bg-gray-600'}
+                                `}></div>
+                            </div>
+                        </label>
 
-                    {/* Show Stats */}
-                    <label className="flex items-center justify-between">
-                        <div>
-                            <div className="text-sm text-gray-900">Activity Statistics</div>
-                            <div className="text-xs text-gray-500">
-                                Message count, games played, streaks
+                        {/* Show Stats */}
+                        <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
+                            <div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">Activity Statistics</div>
+                                <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
+                                    Message count, games played, streaks
+                                </div>
                             </div>
-                        </div>
-                        <input
-                            type="checkbox"
-                            checked={localSettings.showStats}
-                            onChange={(e) => handleSettingChange('showStats', e.target.checked)}
-                            disabled={isLoading || isUpdating}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                    </label>
+                            <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
+                                <input
+                                    type="checkbox"
+                                    checked={localSettings.showStats}
+                                    onChange={(e) => handleSettingChange('showStats', e.target.checked)}
+                                    disabled={isLoading || isUpdating}
+                                    className="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out checked:translate-x-full checked:border-[var(--accent-primary)] focus:outline-none ring-0 focus:ring-0"
+                                    style={{ top: '4px', left: '4px' }}
+                                />
+                                <div className={`
+                                    toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-200
+                                    ${localSettings.showStats ? 'bg-[var(--accent-primary)]' : 'bg-gray-300 dark:bg-gray-600'}
+                                `}></div>
+                            </div>
+                        </label>
 
-                    {/* Show Achievements */}
-                    <label className="flex items-center justify-between">
-                        <div>
-                            <div className="text-sm text-gray-900">Achievements</div>
-                            <div className="text-xs text-gray-500">
-                                Badges and accomplishments
+                        {/* Show Achievements */}
+                        <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
+                            <div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">Achievements</div>
+                                <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
+                                    Badges and accomplishments
+                                </div>
                             </div>
-                        </div>
-                        <input
-                            type="checkbox"
-                            checked={localSettings.showAchievements}
-                            onChange={(e) => handleSettingChange('showAchievements', e.target.checked)}
-                            disabled={isLoading || isUpdating}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                    </label>
+                            <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
+                                <input
+                                    type="checkbox"
+                                    checked={localSettings.showAchievements}
+                                    onChange={(e) => handleSettingChange('showAchievements', e.target.checked)}
+                                    disabled={isLoading || isUpdating}
+                                    className="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out checked:translate-x-full checked:border-[var(--accent-primary)] focus:outline-none ring-0 focus:ring-0"
+                                    style={{ top: '4px', left: '4px' }}
+                                />
+                                <div className={`
+                                    toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-200
+                                    ${localSettings.showAchievements ? 'bg-[var(--accent-primary)]' : 'bg-gray-300 dark:bg-gray-600'}
+                                `}></div>
+                            </div>
+                        </label>
 
-                    {/* Show Last Active */}
-                    <label className="flex items-center justify-between">
-                        <div>
-                            <div className="text-sm text-gray-900">Last Active</div>
-                            <div className="text-xs text-gray-500">
-                                When you were last online
+                        {/* Show Last Active */}
+                        <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
+                            <div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">Last Active</div>
+                                <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
+                                    When you were last online
+                                </div>
                             </div>
-                        </div>
-                        <input
-                            type="checkbox"
-                            checked={localSettings.showLastActive}
-                            onChange={(e) => handleSettingChange('showLastActive', e.target.checked)}
-                            disabled={isLoading || isUpdating}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                    </label>
+                            <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
+                                <input
+                                    type="checkbox"
+                                    checked={localSettings.showLastActive}
+                                    onChange={(e) => handleSettingChange('showLastActive', e.target.checked)}
+                                    disabled={isLoading || isUpdating}
+                                    className="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out checked:translate-x-full checked:border-[var(--accent-primary)] focus:outline-none ring-0 focus:ring-0"
+                                    style={{ top: '4px', left: '4px' }}
+                                />
+                                <div className={`
+                                    toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-200
+                                    ${localSettings.showLastActive ? 'bg-[var(--accent-primary)]' : 'bg-gray-300 dark:bg-gray-600'}
+                                `}></div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
-            )}
+            </div>
 
-            {/* Privacy Notice */}
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+            {/* Privacy Notice with Glass effect */}
+            <div className="glass-panel p-4 border-l-4 border-l-[var(--accent-info)]">
                 <div className="flex">
-                    <div className="text-blue-400 mr-3">
-                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="text-[var(--accent-info)] mr-3">
+                        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <div className="text-sm text-blue-800">
-                        <p className="font-medium mb-1">Privacy Information</p>
+                    <div className="text-sm text-[var(--text-secondary)]">
+                        <p className="font-medium mb-1 text-[var(--text-primary)]">Privacy Information</p>
                         <p>
-                            Your avatar and display name are always visible to maintain a social experience. 
+                            Your avatar and display name are always visible to maintain a social experience.
                             Other information can be controlled with these settings.
                         </p>
                     </div>
@@ -205,38 +262,38 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between pt-6 border-t border-[var(--border-subtle)]">
                 <div className="flex space-x-3">
                     <button
                         onClick={handleSave}
                         disabled={!hasChanges || isUpdating || isLoading}
-                        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                            hasChanges && !isUpdating && !isLoading
-                                ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
+                        className={`
+                            px-6 py-2.5 text-sm font-medium rounded-xl shadow-lg transition-all
+                            ${hasChanges && !isUpdating && !isLoading
+                                ? 'bg-[var(--accent-primary)] text-white hover:brightness-110 hover:scale-105'
+                                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border border-[var(--border-subtle)] cursor-not-allowed'}
+                        `}
                     >
                         {isUpdating ? 'Saving...' : 'Save Changes'}
                     </button>
+
+                    {hasChanges && (
+                        <div className="text-xs text-amber-600 bg-amber-50/80 backdrop-blur-sm border border-amber-200 px-3 py-2 rounded-md flex items-center">
+                            Unsaved
+                        </div>
+                    )}
                 </div>
 
                 {hasChanges && (
                     <button
                         onClick={handleReset}
                         disabled={isUpdating || isLoading}
-                        className="px-3 py-1 text-xs text-gray-600 hover:text-gray-800 underline disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] underline disabled:opacity-50"
                     >
                         Reset Changes
                     </button>
                 )}
             </div>
-
-            {/* Change indicator */}
-            {hasChanges && (
-                <div className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">
-                    You have unsaved privacy changes
-                </div>
-            )}
         </div>
     );
 };

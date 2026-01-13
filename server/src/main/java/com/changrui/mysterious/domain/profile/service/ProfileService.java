@@ -46,12 +46,12 @@ public class ProfileService {
         if (request.bio() != null && !request.bio().trim().isEmpty()) {
             profile.setBio(request.bio().trim());
         }
-        
+
         // Set public/private status
         if (request.isPublic() != null) {
             profile.setPublic(request.isPublic());
         }
-        
+
         profile = profileRepository.save(profile);
 
         // Create default privacy settings
@@ -70,22 +70,22 @@ public class ProfileService {
      */
     public ProfileResponse getProfile(String userId, String requesterId) {
         UserProfile profile = profileRepository.findByUserId(userId)
-            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
 
         PrivacySettings privacy = privacyRepository.findByUserId(userId).orElse(null);
         ActivityStats stats = activityRepository.findByUserId(userId).orElse(null);
 
         boolean isOwner = userId.equals(requesterId);
-        
+
         // Check if profile is accessible
-        // Note: Admin access is handled by middleware, so if we reach here, access is already granted
+        // Note: Admin access is handled by middleware, so if we reach here, access is
+        // already granted
         if (!isOwner && !profile.isPublic()) {
             throw new NotFoundException("Profile not found for user: " + userId);
         }
 
-        return isOwner ? 
-            ProfileResponse.ownerFrom(profile, privacy, stats) :
-            ProfileResponse.publicFrom(profile, privacy, stats);
+        return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats)
+                : ProfileResponse.publicFrom(profile, privacy, stats);
     }
 
     /**
@@ -93,22 +93,21 @@ public class ProfileService {
      */
     public ProfileResponse getProfile(String userId, String requesterId, boolean isAdminAccess) {
         UserProfile profile = profileRepository.findByUserId(userId)
-            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
 
         PrivacySettings privacy = privacyRepository.findByUserId(userId).orElse(null);
         ActivityStats stats = activityRepository.findByUserId(userId).orElse(null);
 
         boolean isOwner = userId.equals(requesterId);
-        
+
         // Check if profile is accessible
         if (!isOwner && !profile.isPublic() && !isAdminAccess) {
             throw new NotFoundException("Profile not found for user: " + userId);
         }
 
         // Admin and owner get full access, others get public view
-        return (isOwner || isAdminAccess) ? 
-            ProfileResponse.ownerFrom(profile, privacy, stats) :
-            ProfileResponse.publicFrom(profile, privacy, stats);
+        return (isOwner || isAdminAccess) ? ProfileResponse.ownerFrom(profile, privacy, stats)
+                : ProfileResponse.publicFrom(profile, privacy, stats);
     }
 
     /**
@@ -122,17 +121,17 @@ public class ProfileService {
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)
-            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
 
-        // Update fields
+        // Update fields - display names don't need to be unique
         if (request.displayName() != null && !request.displayName().trim().isEmpty()) {
             profile.setDisplayName(request.displayName().trim());
         }
-        
+
         if (request.bio() != null) {
             profile.setBio(request.bio().trim().isEmpty() ? null : request.bio().trim());
         }
-        
+
         if (request.avatarUrl() != null) {
             profile.setAvatarUrl(request.avatarUrl().trim().isEmpty() ? null : request.avatarUrl().trim());
         }
@@ -156,31 +155,31 @@ public class ProfileService {
         }
 
         PrivacySettings privacy = privacyRepository.findByUserId(userId)
-            .orElse(new PrivacySettings(userId));
+                .orElse(new PrivacySettings(userId));
 
         // Update fields
         if (request.profileVisibility() != null) {
             privacy.setProfileVisibility(request.profileVisibility());
-            
+
             // Update profile public flag
             UserProfile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+                    .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
             profile.setPublic("public".equals(request.profileVisibility()));
             profileRepository.save(profile);
         }
-        
+
         if (request.showBio() != null) {
             privacy.setShowBio(request.showBio());
         }
-        
+
         if (request.showStats() != null) {
             privacy.setShowStats(request.showStats());
         }
-        
+
         if (request.showAchievements() != null) {
             privacy.setShowAchievements(request.showAchievements());
         }
-        
+
         if (request.showLastActive() != null) {
             privacy.setShowLastActive(request.showLastActive());
         }
@@ -197,18 +196,17 @@ public class ProfileService {
         }
 
         List<UserProfile> profiles = profileRepository.searchByDisplayNameOrBio(query.trim());
-        
+
         return profiles.stream()
-            .map(profile -> {
-                PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
-                ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
-                boolean isOwner = profile.getUserId().equals(requesterId);
-                
-                return isOwner ? 
-                    ProfileResponse.ownerFrom(profile, privacy, stats) :
-                    ProfileResponse.publicFrom(profile, privacy, stats);
-            })
-            .collect(Collectors.toList());
+                .map(profile -> {
+                    PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
+                    ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
+                    boolean isOwner = profile.getUserId().equals(requesterId);
+
+                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats)
+                            : ProfileResponse.publicFrom(profile, privacy, stats);
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -216,18 +214,17 @@ public class ProfileService {
      */
     public List<ProfileResponse> getPublicProfiles(String requesterId) {
         List<UserProfile> profiles = profileRepository.findPublicProfiles();
-        
+
         return profiles.stream()
-            .map(profile -> {
-                PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
-                ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
-                boolean isOwner = profile.getUserId().equals(requesterId);
-                
-                return isOwner ? 
-                    ProfileResponse.ownerFrom(profile, privacy, stats) :
-                    ProfileResponse.publicFrom(profile, privacy, stats);
-            })
-            .collect(Collectors.toList());
+                .map(profile -> {
+                    PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
+                    ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
+                    boolean isOwner = profile.getUserId().equals(requesterId);
+
+                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats)
+                            : ProfileResponse.publicFrom(profile, privacy, stats);
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -247,7 +244,7 @@ public class ProfileService {
         // Delete related data
         privacyRepository.findByUserId(userId).ifPresent(privacyRepository::delete);
         activityRepository.findByUserId(userId).ifPresent(activityRepository::delete);
-        
+
         // Delete profile
         profileRepository.deleteById(userId);
     }
