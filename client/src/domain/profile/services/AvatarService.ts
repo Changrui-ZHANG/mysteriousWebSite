@@ -231,27 +231,41 @@ export class AvatarService {
                 const x = (targetSize - scaledWidth) / 2;
                 const y = (targetSize - scaledHeight) / 2;
 
-                // Fill background with white (for transparent images)
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, targetSize, targetSize);
+                // Determine output format based on original file type
+                const originalType = file.type;
+                const outputType = ['image/png', 'image/webp'].includes(originalType) ? originalType : 'image/jpeg';
+                const outputQuality = outputType === 'image/jpeg' ? 0.9 : undefined;
+
+                // For JPEG, fill background with white (for transparent images)
+                // For PNG/WebP, preserve transparency
+                if (outputType === 'image/jpeg') {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, targetSize, targetSize);
+                }
 
                 // Draw the resized image
                 ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
-                // Convert back to file
+                // Convert back to file with original format
                 canvas.toBlob((blob) => {
                     if (!blob) {
                         reject(new Error('Failed to process image'));
                         return;
                     }
 
-                    const processedFile = new File([blob], file.name, {
-                        type: 'image/jpeg', // Always convert to JPEG for consistency
+                    // Preserve original filename but update extension if needed
+                    const originalName = file.name;
+                    const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+                    const newExtension = outputType.split('/')[1];
+                    const newFileName = `${nameWithoutExt}.${newExtension}`;
+
+                    const processedFile = new File([blob], newFileName, {
+                        type: outputType,
                         lastModified: Date.now()
                     });
 
                     resolve(processedFile);
-                }, 'image/jpeg', 0.9); // 90% quality
+                }, outputType, outputQuality);
             };
 
             img.onerror = () => {

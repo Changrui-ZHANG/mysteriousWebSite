@@ -4,7 +4,7 @@ import { useProfile } from './hooks/useProfile';
 import { useActivityStats } from './hooks/useActivityStats';
 import { ProfileCard } from './components/ProfileCard';
 import { ProfileForm } from './components/ProfileForm';
-import { AvatarUpload } from './components/AvatarUpload';
+import { AvatarUploadWithCropping } from './components/AvatarUploadWithCropping';
 import { PrivacySettings } from './components/PrivacySettings';
 import { ErrorDisplay, ConnectionStatus } from '../../shared/components';
 import type { UpdateProfileRequest } from './types';
@@ -222,7 +222,7 @@ export const ProfilePage: React.FC = () => {
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Picture</h3>
                                             {user?.userId && (
-                                                <AvatarUpload
+                                                <AvatarUploadWithCropping
                                                     userId={user.userId}
                                                     currentAvatarUrl={profile?.avatarUrl}
                                                     onUploadComplete={handleAvatarUpload}

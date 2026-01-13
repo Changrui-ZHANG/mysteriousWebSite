@@ -88,3 +88,8 @@ export interface ProfileSearchResult {
     total: number;
     hasMore: boolean;
 }
+
+// Re-export cropping types for convenience
+export * from './components/cropping/types';
+export * from './hooks/cropping/types';
+export * from './utils/cropping/types';
