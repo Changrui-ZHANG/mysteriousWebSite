@@ -3,6 +3,8 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence } from 'framer-motion'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Navbar } from './shared/layouts/Navbar'
 import { VisualEffect, LiquidDecoration, ScrollProgress, ErrorBoundary, SplashScreen } from './shared/components'
 import { MaintenancePage, TermsPage, PrivacyPage } from './shared/pages'
@@ -24,6 +26,24 @@ const ProfilePage = React.lazy(() => import('./domain/profile').then(m => ({ def
 const ApiTestPage = React.lazy(() => import('./domain/profile/components/ApiTestPage').then(m => ({ default: m.ApiTestPage })));
 
 import './App.css'
+
+// Create a QueryClient instance
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            gcTime: 10 * 60 * 1000, // 10 minutes
+            retry: 3,
+            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: true,
+        },
+        mutations: {
+            retry: 1,
+            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
+        },
+    },
+});
 
 interface RouteConfig {
     path: string;
@@ -145,15 +165,18 @@ function AppContent() {
 
 function App() {
     return (
-        <AuthProvider>
-            <SettingsProvider>
-                <ToastProvider>
-                    <Router>
-                        <AppContent />
-                    </Router>
-                </ToastProvider>
-            </SettingsProvider>
-        </AuthProvider>
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <SettingsProvider>
+                    <ToastProvider>
+                        <Router>
+                            <AppContent />
+                        </Router>
+                    </ToastProvider>
+                </SettingsProvider>
+            </AuthProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
     )
 }
 

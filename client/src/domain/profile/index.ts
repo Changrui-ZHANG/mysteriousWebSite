@@ -10,8 +10,14 @@ export * from './services';
 // Repositories
 export * from './repositories';
 
-// Hooks
+// Hooks (legacy - being phased out)
 export * from './hooks';
+
+// TanStack Query hooks (new)
+export * from './queries';
+
+// Zustand stores (global state)
+export * from './stores';
 
 // Schemas
 export * from './schemas';
@@ -31,7 +37,5 @@ export type {
     ProfileDirectoryFilters
 } from './types';
 
-// Real-time and optimistic updates
+// Real-time hooks (remaining legacy)
 export { useRealTimeProfile } from './hooks/useRealTimeProfile';
-export { useOptimisticUpdates } from './hooks/useOptimisticUpdates';
-export { RealTimeStatus, RealTimeStatusCompact, RealTimeStatusPanel } from './components/RealTimeStatus';

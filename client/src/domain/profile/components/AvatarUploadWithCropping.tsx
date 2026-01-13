@@ -4,7 +4,8 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { useAvatarUpload } from '../hooks/useAvatarUpload';
+import { useAvatarUpload } from '../queries/avatarMutations';
+import { useModalActions, useModalState, useNotificationActions, useLoadingActions, useLoadingState } from '../stores/uiStore';
 import { AvatarCropper } from './cropping/AvatarCropper';
 import { CropResult } from './cropping/types';
 
@@ -30,9 +31,15 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     enableCropping = true
 }) => {
     const [isDragOver, setIsDragOver] = useState(false);
-    const [showCropper, setShowCropper] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Global UI state
+    const showCropper = useModalState('avatarCropper');
+    const { openModal, closeModal } = useModalActions();
+    const { addSuccessNotification, addErrorNotification } = useNotificationActions();
+    const { setLoading } = useLoadingActions();
+    const isUploading = useLoadingState('avatarUpload');
 
     // Early return if no userId to prevent hook initialization errors
     if (!userId) {
@@ -46,10 +53,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     }
 
     const {
-        isUploading,
-        uploadProgress,
         error,
-        previewUrl,
         uploadAvatar,
         deleteAvatar,
         validateFile,
@@ -58,9 +62,25 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         clearError
     } = useAvatarUpload({
         userId,
-        onUploadComplete,
-        onUploadError
+        onUploadComplete: (avatarUrl) => {
+            addSuccessNotification(
+                'Avatar Updated',
+                'Your profile picture has been successfully updated.'
+            );
+            onUploadComplete?.(avatarUrl);
+        },
+        onUploadError: (error) => {
+            addErrorNotification(
+                'Upload Failed',
+                error
+            );
+            onUploadError?.(error);
+        }
     });
+
+    // Track upload progress locally since TanStack Query handles it via callback
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const displayUrl = currentAvatarUrl || previewUrl;
 
@@ -80,11 +100,18 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         if (enableCropping) {
             // Show cropper for user to crop the image
             setSelectedFile(file);
-            setShowCropper(true);
+            openModal('avatarCropper');
         } else {
             // Direct upload without cropping (legacy behavior)
-            createPreview(file);
-            await uploadAvatar(file);
+            const preview = createPreview(file);
+            setPreviewUrl(preview);
+            
+            setLoading('avatarUpload', true);
+            try {
+                await uploadAvatar(file, (progress) => setUploadProgress(progress));
+            } finally {
+                setLoading('avatarUpload', false);
+            }
         }
     };
 
@@ -93,7 +120,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      */
     const handleCropComplete = async (cropResult: CropResult) => {
         try {
-            setShowCropper(false);
+            closeModal('avatarCropper');
             
             // Create a new File object from the cropped blob
             const croppedFile = new File(
@@ -104,12 +131,18 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
             // Create preview from crop result
             if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
+                clearPreview(previewUrl);
             }
-            createPreview(croppedFile);
+            const preview = createPreview(croppedFile);
+            setPreviewUrl(preview);
 
             // Upload the cropped image
-            await uploadAvatar(croppedFile);
+            setLoading('avatarUpload', true);
+            try {
+                await uploadAvatar(croppedFile, (progress) => setUploadProgress(progress));
+            } finally {
+                setLoading('avatarUpload', false);
+            }
             
             // Clean up
             setSelectedFile(null);
@@ -118,7 +151,10 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             }
         } catch (error) {
             console.error('Failed to upload cropped image:', error);
-            onUploadError?.('Failed to upload cropped image');
+            addErrorNotification(
+                'Upload Failed',
+                'Failed to upload cropped image'
+            );
         }
     };
 
@@ -126,7 +162,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      * Handle crop cancellation
      */
     const handleCropCancel = () => {
-        setShowCropper(false);
+        closeModal('avatarCropper');
         setSelectedFile(null);
     };
 
@@ -163,15 +199,29 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
     const handleDelete = async () => {
         try {
+            setLoading('avatarUpload', true);
             await deleteAvatar();
-            clearPreview();
+            if (previewUrl) {
+                clearPreview(previewUrl);
+                setPreviewUrl(null);
+            }
+            
+            addSuccessNotification(
+                'Avatar Removed',
+                'Your profile picture has been removed.'
+            );
         } catch (error) {
-            // Error is handled by the hook
+            // Error is handled by the hook and global notifications
+        } finally {
+            setLoading('avatarUpload', false);
         }
     };
 
     const handleCancelPreview = () => {
-        clearPreview();
+        if (previewUrl) {
+            clearPreview(previewUrl);
+            setPreviewUrl(null);
+        }
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }

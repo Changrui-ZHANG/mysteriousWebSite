@@ -122,10 +122,13 @@ export class ProfileService {
             );
         }
 
-        const profile = await this.repository.findByUserId(userId, viewerId);
+        // Use userId as viewerId if not provided (user viewing their own profile)
+        const effectiveViewerId = viewerId || userId;
+
+        const profile = await this.repository.findByUserId(userId, effectiveViewerId);
         
         // Business logic: Apply privacy filtering
-        return this.applyPrivacyFiltering(profile, viewerId);
+        return this.applyPrivacyFiltering(profile, effectiveViewerId);
     }
 
     /**

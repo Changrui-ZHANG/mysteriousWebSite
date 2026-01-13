@@ -43,6 +43,28 @@ function unwrapApiResponse<T>(response: ApiResponse<T>): T {
 }
 
 /**
+ * Get authentication headers for API requests
+ */
+function getAuthHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {};
+    
+    // Try to get user from localStorage
+    try {
+        const storedUser = localStorage.getItem('messageWall_user');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            if (user?.userId) {
+                headers['X-Requester-Id'] = user.userId;
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to get user from localStorage for auth headers:', error);
+    }
+    
+    return headers;
+}
+
+/**
  * Generic fetch wrapper with error handling and ApiResponse unwrapping
  */
 export async function fetchJson<T>(
@@ -50,7 +72,34 @@ export async function fetchJson<T>(
     options?: RequestInit
 ): Promise<T> {
     try {
-        const response = await fetch(url, options);
+        // Merge auth headers with existing headers
+        const authHeaders = getAuthHeaders();
+        const existingHeaders = options?.headers || {};
+        
+        // Convert Headers object to plain object if needed
+        let headersObj: Record<string, string> = {};
+        if (existingHeaders instanceof Headers) {
+            existingHeaders.forEach((value, key) => {
+                headersObj[key] = value;
+            });
+        } else if (Array.isArray(existingHeaders)) {
+            // Handle array format [['key', 'value'], ...]
+            existingHeaders.forEach(([key, value]) => {
+                headersObj[key] = value;
+            });
+        } else {
+            headersObj = { ...existingHeaders };
+        }
+        
+        const headers = {
+            ...authHeaders,
+            ...headersObj,
+        };
+
+        const response = await fetch(url, {
+            ...options,
+            headers,
+        });
 
         if (!response.ok) {
             let errorData;
@@ -100,9 +149,13 @@ export async function postJson<T>(
     url: string,
     data: unknown
 ): Promise<T> {
+    const authHeaders = getAuthHeaders();
     return fetchJson<T>(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            ...authHeaders
+        },
         body: JSON.stringify(data)
     });
 }
@@ -114,9 +167,13 @@ export async function putJson<T>(
     url: string,
     data: unknown
 ): Promise<T> {
+    const authHeaders = getAuthHeaders();
     return fetchJson<T>(url, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            ...authHeaders
+        },
         body: JSON.stringify(data)
     });
 }
@@ -125,8 +182,10 @@ export async function putJson<T>(
  * DELETE request
  */
 export async function deleteJson<T>(url: string): Promise<T> {
+    const authHeaders = getAuthHeaders();
     return fetchJson<T>(url, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: authHeaders
     });
 }
 

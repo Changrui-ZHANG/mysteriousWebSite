@@ -25,11 +25,23 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
      * Find profile by user ID
      */
     async findByUserId(userId: string, requesterId?: string): Promise<UserProfile> {
-        const url = requesterId 
-            ? `${API_ENDPOINTS.PROFILES.GET(userId)}?requesterId=${encodeURIComponent(requesterId)}`
-            : API_ENDPOINTS.PROFILES.GET(userId);
-        const backendProfile = await fetchJson<any>(url);
-        return transformBackendProfile(backendProfile);
+        try {
+            const url = requesterId 
+                ? `${API_ENDPOINTS.PROFILES.GET(userId)}?requesterId=${encodeURIComponent(requesterId)}`
+                : API_ENDPOINTS.PROFILES.GET(userId);
+            
+            const backendProfile = await fetchJson<any>(url);
+            return transformBackendProfile(backendProfile);
+        } catch (error) {
+            console.error('ProfileRepository: Error fetching profile', { userId, requesterId, error });
+            
+            // Si c'est une erreur 403 et que l'utilisateur essaie de voir son propre profil
+            if (error instanceof Error && error.message.includes('403') && userId === requesterId) {
+                console.warn('ProfileRepository: 403 error for own profile, this might be an auth configuration issue');
+            }
+            
+            throw error;
+        }
     }
 
     /**

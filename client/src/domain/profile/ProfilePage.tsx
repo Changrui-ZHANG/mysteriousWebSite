@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../shared/contexts/AuthContext';
-import { useProfile } from './hooks/useProfile';
-import { useActivityStats } from './hooks/useActivityStats';
+import { useProfileWithStats, useUpdateProfileMutation, useUpdatePrivacyMutation } from './queries/profileQueries';
 import { ProfileCard } from './components/ProfileCard';
 import { ProfileForm } from './components/ProfileForm';
 import { AvatarUploadWithCropping } from './components/AvatarUploadWithCropping';
 import { PrivacySettings } from './components/PrivacySettings';
-import { ErrorDisplay, ConnectionStatus } from '../../shared/components';
+import { NotificationCenter } from './components/NotificationCenter';
+import { ErrorDisplay } from '../../shared/components';
+import { useHasUnsavedChanges } from './stores/uiStore';
 import type { UpdateProfileRequest } from './types';
 
 type TabType = 'overview' | 'edit' | 'privacy' | 'activity';
@@ -19,46 +20,23 @@ export const ProfilePage: React.FC = () => {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<TabType>('overview');
     
+    // TanStack Query hooks for profile and stats
     const {
         profile,
+        stats,
         isLoading,
         error,
-        updateProfile,
-        updatePrivacySettings,
-        refreshProfile,
-        hasProfile,
-        canRetry,
-        retryLoad,
-        // Nouveau : état de connexion pour éviter les boucles d'erreur
-        connectionState,
-        connectionError,
-        isRetrying,
-        canRetryConnection,
-        retryConnection,
-        clearConnectionError
-    } = useProfile({ 
-        userId: user?.userId,
-        viewerId: user?.userId 
-    });
+        refetchProfile,
+        refetchStats,
+        hasProfile
+    } = useProfileWithStats(user?.userId, user?.userId);
 
-    const {
-        stats,
-        achievements,
-        isLoading: statsLoading,
-        refreshStats,
-        canRetry: canRetryStats,
-        retryLoad: retryStatsLoad,
-        // Nouveau : état de connexion pour les stats
-        connectionState: statsConnectionState,
-        connectionError: statsConnectionError,
-        isRetrying: statsIsRetrying,
-        canRetryConnection: statsCanRetryConnection,
-        retryConnection: statsRetryConnection,
-        clearConnectionError: statsClearConnectionError
-    } = useActivityStats({ 
-        userId: user?.userId || '',
-        autoRefresh: true 
-    });
+    // Mutations for profile updates
+    const updateProfileMutation = useUpdateProfileMutation();
+    const updatePrivacyMutation = useUpdatePrivacyMutation();
+    
+    // Global UI state
+    const hasUnsavedChanges = useHasUnsavedChanges();
 
     if (!user) {
         return (
@@ -78,16 +56,39 @@ export const ProfilePage: React.FC = () => {
     }
 
     const handleProfileUpdate = async (data: UpdateProfileRequest) => {
-        await updateProfile(data);
-        await refreshProfile();
-        await refreshStats();
-        setActiveTab('overview');
+        if (!user?.userId) return;
+        
+        try {
+            await updateProfileMutation.mutateAsync({
+                userId: user.userId,
+                data,
+                requesterId: user.userId
+            });
+            setActiveTab('overview');
+        } catch (error) {
+            // Error is handled by the mutation
+            console.error('Profile update failed:', error);
+        }
+    };
+
+    const handlePrivacyUpdate = async (settings: any) => {
+        if (!user?.userId) return;
+        
+        try {
+            await updatePrivacyMutation.mutateAsync({
+                userId: user.userId,
+                settings,
+                requesterId: user.userId
+            });
+        } catch (error) {
+            // Error is handled by the mutation
+            console.error('Privacy update failed:', error);
+        }
     };
 
     const handleAvatarUpload = async (_avatarUrl: string) => {
-        // L'avatar a déjà été mis à jour par le backend lors de l'upload
-        // Il suffit de rafraîchir le profil pour récupérer les nouvelles données
-        await refreshProfile();
+        // TanStack Query will automatically update the cache via optimistic updates
+        // No need to manually refetch
     };
 
     const tabs = [
@@ -99,42 +100,20 @@ export const ProfilePage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+            {/* Global Notifications */}
+            <NotificationCenter />
+            
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
                     <p className="text-gray-600">Manage your profile information and privacy settings</p>
+                    {hasUnsavedChanges && (
+                        <div className="mt-2 text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-md inline-block">
+                            ⚠️ You have unsaved changes
+                        </div>
+                    )}
                 </div>
-
-                {/* Connection Status - NOUVEAU pour éviter les boucles d'erreur */}
-                {(connectionError || isRetrying) && (
-                    <div className="mb-6">
-                        <ConnectionStatus
-                            connectionState={connectionState}
-                            lastError={connectionError}
-                            isRetrying={isRetrying}
-                            retryCount={0}
-                            onRetry={canRetryConnection ? retryConnection : undefined}
-                            onDismiss={clearConnectionError}
-                            className="max-w-2xl mx-auto"
-                        />
-                    </div>
-                )}
-
-                {/* Stats Connection Status */}
-                {activeTab === 'activity' && (statsConnectionError || statsIsRetrying) && (
-                    <div className="mb-6">
-                        <ConnectionStatus
-                            connectionState={statsConnectionState}
-                            lastError={statsConnectionError}
-                            isRetrying={statsIsRetrying}
-                            retryCount={0}
-                            onRetry={statsCanRetryConnection ? statsRetryConnection : undefined}
-                            onDismiss={statsClearConnectionError}
-                            className="max-w-2xl mx-auto"
-                        />
-                    </div>
-                )}
 
                 {/* Tab Navigation */}
                 <div className="bg-white rounded-lg shadow-sm mb-6">
@@ -171,13 +150,48 @@ export const ProfilePage: React.FC = () => {
                     {/* Error State */}
                     {error && (
                         <div className="p-8">
-                            <ErrorDisplay
-                                error={error}
-                                onRetry={refreshProfile}
-                                onRetryWithBackoff={canRetry ? retryLoad : undefined}
-                                canRetry={canRetry}
-                                showDetails={true}
-                            />
+                            {error.message?.includes('403') || error.message?.includes('Forbidden') ? (
+                                <div className="text-center">
+                                    <div className="text-amber-400 mb-4">
+                                        <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-2">Problème d'authentification</h3>
+                                    <p className="text-gray-600 mb-4">
+                                        Il semble y avoir un problème temporaire avec l'authentification. 
+                                        {user?.userId && (
+                                            <span className="block mt-2 text-sm">
+                                                Vous êtes connecté en tant que : <strong>{user.username || user.userId}</strong>
+                                            </span>
+                                        )}
+                                    </p>
+                                    <div className="space-x-4">
+                                        <button
+                                            onClick={() => refetchProfile()}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                        >
+                                            Réessayer
+                                        </button>
+                                        <button
+                                            onClick={() => window.location.reload()}
+                                            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                                        >
+                                            Actualiser la page
+                                        </button>
+                                    </div>
+                                    <div className="mt-4 text-xs text-gray-500">
+                                        Si le problème persiste, il s'agit probablement d'un problème de configuration côté serveur.
+                                    </div>
+                                </div>
+                            ) : (
+                                <ErrorDisplay
+                                    error={error.message || 'Failed to load profile'}
+                                    onRetry={refetchProfile}
+                                    canRetry={true}
+                                    showDetails={true}
+                                />
+                            )}
                         </div>
                     )}
 
@@ -250,7 +264,7 @@ export const ProfilePage: React.FC = () => {
                                         {profile?.privacySettings ? (
                                             <PrivacySettings
                                                 settings={profile.privacySettings}
-                                                onUpdate={updatePrivacySettings}
+                                                onUpdate={handlePrivacyUpdate}
                                             />
                                         ) : (
                                             <div className="text-center py-12">
@@ -271,7 +285,7 @@ export const ProfilePage: React.FC = () => {
                             {activeTab === 'activity' && (
                                 <div className="p-6">
                                     <div className="max-w-4xl mx-auto">
-                                        {statsLoading ? (
+                                        {isLoading ? (
                                             <div className="text-center py-12">
                                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
                                                 <p className="text-gray-600">Loading activity stats...</p>
@@ -302,13 +316,13 @@ export const ProfilePage: React.FC = () => {
                                                 </div>
 
                                                 {/* Achievements */}
-                                                {achievements.length > 0 && (
+                                                {profile?.achievements && profile.achievements.length > 0 && (
                                                     <div>
                                                         <h3 className="text-lg font-medium text-gray-900 mb-4">
-                                                            Achievements ({achievements.length})
+                                                            Achievements ({profile.achievements.length})
                                                         </h3>
                                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                            {achievements.map((achievement) => (
+                                                            {profile.achievements.map((achievement) => (
                                                                 <div
                                                                     key={achievement.id}
                                                                     className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg"
@@ -340,8 +354,8 @@ export const ProfilePage: React.FC = () => {
                                             <div className="text-center py-12">
                                                 <ErrorDisplay
                                                     error="No activity data available"
-                                                    onRetry={canRetryStats ? retryStatsLoad : undefined}
-                                                    canRetry={canRetryStats}
+                                                    onRetry={refetchStats}
+                                                    canRetry={true}
                                                     className="max-w-md mx-auto"
                                                 />
                                             </div>
