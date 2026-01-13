@@ -9,5 +9,6 @@
     <include file="db/changelog/changes/002-add-notes.xml"/>
     <include file="db/changelog/changes/002-cleanup-online-users.xml"/>
     <include file="db/changelog/changes/003-add-profile-tables.xml"/>
+    <include file="db/changelog/changes/004-add-gender-to-profile.xml"/>
 
 </databaseChangeLog>

@@ -8,6 +8,7 @@ interface BackendProfileResponse {
     displayName: string;
     bio?: string;
     avatarUrl?: string;
+    gender?: string;
     joinDate: string;
     lastActive: string;
     isPublic: boolean;
@@ -49,6 +50,10 @@ export function transformBackendProfile(backendProfile: BackendProfileResponse):
     const activityStats: ActivityStats | undefined = backendProfile.activityStats ? {
         totalMessages: backendProfile.activityStats.totalMessages,
         totalGamesPlayed: backendProfile.activityStats.totalGamesPlayed,
+        gamesPlayed: backendProfile.activityStats.totalGamesPlayed, // For compatibility
+        wins: Math.floor(backendProfile.activityStats.totalGamesPlayed * 0.6), // Mock value
+        rank: 'Silver', // Mock value
+        level: Math.floor(backendProfile.activityStats.totalMessages / 10) + 1, // Mock value
         bestScores,
         currentStreak: backendProfile.activityStats.currentStreak,
         longestStreak: backendProfile.activityStats.longestStreak,
@@ -69,6 +74,7 @@ export function transformBackendProfile(backendProfile: BackendProfileResponse):
         displayName: backendProfile.displayName,
         bio: backendProfile.bio,
         avatarUrl: backendProfile.avatarUrl,
+        gender: backendProfile.gender,
         joinDate: new Date(backendProfile.joinDate),
         lastActive: new Date(backendProfile.lastActive),
         isPublic: backendProfile.isPublic,

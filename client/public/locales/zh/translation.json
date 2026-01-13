@@ -949,5 +949,102 @@
     "preloader": {
         "welcome": "欢迎",
         "loading": "加载中"
+    },
+    "profile": {
+        "title": "用户信息",
+        "tabs": {
+            "overview": "概览",
+            "edit": "编辑",
+            "privacy": "隐私",
+            "activity": "活动"
+        },
+        "card": {
+            "bio": "个人简介",
+            "stats": "数据统计",
+            "achievements": "成就",
+            "joined": "注册于",
+            "messages": "留言",
+            "games": "游戏",
+            "days": "天",
+            "streak": "连续登录"
+        },
+        "form": {
+            "title": "编辑个人资料",
+            "display_name": "显示名称",
+            "bio": "个人简介",
+            "bio_placeholder": "介绍一下你自己...",
+            "save": "保存更改",
+            "reset": "重置更改",
+            "saving": "保存中...",
+            "unsaved": "未保存",
+            "success": "个人资料更新成功！",
+            "error_exists": "显示名称已存在",
+            "cancel_confirm": "您确定要放弃所做的更改吗？"
+        },
+        "avatar": {
+            "title": "头像",
+            "upload": "上传新头像",
+            "change": "更改",
+            "error": "头像上传失败",
+            "cropping": "裁剪头像",
+            "crop_desc": "选择您想要作为头像的区域",
+            "preview": "预览",
+            "quality_check": "质量检查",
+            "size": "尺寸",
+            "drag": "拖动以移动",
+            "resize": "调整边缘大小",
+            "square": "方形输出",
+            "save": "保存头像",
+            "select_crop": "选择裁剪区域",
+            "quality": {
+                "high": "画质极佳",
+                "medium": "画质良好",
+                "low": "可能出现像素化"
+            },
+            "confirm": "确认",
+            "cancel": "取消"
+        },
+        "privacy": {
+            "title": "隐私设置",
+            "subtitle": "控制谁可以查看您的个人资料信息和活动。",
+            "notice_title": "隐私说明",
+            "notice_text": "您的头像和显示名称始终可见，以维持社交体验。其他信息可以通过这些设置进行控制。",
+            "visibility_title": "个人资料可见性",
+            "visibility": {
+                "public": "公开",
+                "friends": "仅好友",
+                "private": "仅自己",
+                "public_desc": "任何人都可以查看您的资料",
+                "friends_desc": "只有好友可以查看您的资料",
+                "private_desc": "只有您可以查看您的资料"
+            },
+            "granular_title": "他人可见内容",
+            "show_bio": "个人简介",
+            "show_bio_desc": "您的个人描述",
+            "show_stats": "活动统计",
+            "show_stats_desc": "留言数、游戏次数、连续登录天数",
+            "show_achievements": "成就",
+            "show_achievements_desc": "勋章与成就",
+            "show_last_active": "最后在线",
+            "show_last_active_desc": "您最后一次在线的时间",
+            "save": "保存更改",
+            "saving": "保存中...",
+            "reset": "重置更改",
+            "success": "隐私设置更新成功！"
+        },
+        "errors": {
+            "failed_load": "加载个人资料数据失败",
+            "access_required": "需要访问权限",
+            "login_required": "请登录后查看您的个人资料。",
+            "return_home": "返回首页",
+            "coming_soon": "即将推出",
+            "activity_soon": "详细的活动历史记录即将在此处提供。"
+        },
+        "gender": {
+            "title": "性别",
+            "male": "男性",
+            "female": "女性",
+            "not_specified": "未填写"
+        }
     }
 }

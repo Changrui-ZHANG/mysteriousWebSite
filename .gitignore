@@ -39,3 +39,9 @@ _bmad/*
 #.trae/
 #.windsurf/
 #.mcp.json
+
+uploads/avatars/*
+!uploads/avatars/default-G.jpeg
+!uploads/avatars/default-B.jpeg
+!uploads/avatars/default-G1.jpeg
+!uploads/avatars/default-B1.jpeg

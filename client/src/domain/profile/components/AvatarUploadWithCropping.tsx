@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAvatarUpload } from '../queries/avatarMutations';
 import { useModalActions, useModalState, useNotificationActions, useLoadingActions, useLoadingState } from '../stores/uiStore';
 import { AvatarCropper } from './cropping/AvatarCropper';
@@ -31,6 +32,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     className = '',
     enableCropping = true
 }) => {
+    const { t } = useTranslation();
     const [isDragOver, setIsDragOver] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +49,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         return (
             <div className={`avatar-upload ${className}`}>
                 <div className="text-center text-[var(--text-muted)] py-8">
-                    <p>User ID required for avatar upload</p>
+                    <p>{t('profile.errors.access_required')}</p>
                 </div>
             </div>
         );
@@ -65,14 +67,14 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         userId,
         onUploadComplete: (avatarUrl) => {
             addSuccessNotification(
-                'Avatar Updated',
-                'Your profile picture has been successfully updated.'
+                t('profile.avatar.title'),
+                t('profile.form.success')
             );
             onUploadComplete?.(avatarUrl);
         },
         onUploadError: (error) => {
             addErrorNotification(
-                'Upload Failed',
+                t('profile.avatar.error'),
                 error
             );
             onUploadError?.(error);
@@ -153,8 +155,8 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         } catch (error) {
             console.error('Failed to upload cropped image:', error);
             addErrorNotification(
-                'Upload Failed',
-                'Failed to upload cropped image'
+                t('profile.avatar.error'),
+                t('profile.avatar.error')
             );
         }
     };
@@ -172,6 +174,8 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         if (file) {
             handleFileSelect(file);
         }
+        // Reset the input value so the same file can be selected again
+        e.target.value = '';
     };
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -208,8 +212,8 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             }
 
             addSuccessNotification(
-                'Avatar Removed',
-                'Your profile picture has been removed.'
+                t('profile.avatar.title'),
+                t('profile.form.success')
             );
         } catch (error) {
             // Error is handled by the hook and global notifications
@@ -236,7 +240,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                     <div className="relative group">
                         <img
                             src={displayUrl || '/default-avatar.png'}
-                            alt="Avatar"
+                            alt={t('profile.avatar.title')}
                             className="w-20 h-20 rounded-full object-cover border-2 border-[var(--glass-border)] shadow-md group-hover:scale-105 transition-transform"
                         />
                         {isUploading && (
@@ -250,11 +254,10 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                     <div className="flex-1">
                         <h4 className="text-sm font-medium text-[var(--text-primary)] mb-1">
-                            Profile Picture
+                            {t('profile.avatar.title')}
                         </h4>
                         <p className="text-xs text-[var(--text-muted)] mb-2">
-                            JPG, PNG or WebP. Max size 5MB.
-                            {enableCropping && ' You can crop after selecting.'}
+                            {t('profile.avatar.upload')}
                         </p>
 
                         {previewUrl && (
@@ -264,7 +267,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                                     className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline"
                                     disabled={isUploading}
                                 >
-                                    Cancel Preview
+                                    {t('profile.avatar.cancel')}
                                 </button>
                             </div>
                         )}
@@ -297,7 +300,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                     {isUploading ? (
                         <div className="space-y-2">
-                            <div className="text-sm text-[var(--text-secondary)]">Uploading...</div>
+                            <div className="text-sm text-[var(--text-secondary)]">{t('profile.form.saving')}</div>
                             <div className="w-full bg-[var(--bg-surface)] rounded-full h-2 overflow-hidden">
                                 <div
                                     className="bg-[var(--accent-primary)] h-2 rounded-full transition-all duration-300"
@@ -314,13 +317,12 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                             </div>
                             <div className="text-sm text-[var(--text-muted)]">
                                 <span className="font-medium text-[var(--accent-primary)] hover:underline">
-                                    Click to upload
+                                    {t('profile.avatar.upload')}
                                 </span>
-                                {' '}or drag and drop
                             </div>
                             {enableCropping && (
                                 <div className="text-xs text-[var(--accent-secondary)] flex items-center justify-center mt-1">
-                                    <span className="mr-1">✂️</span> Cropping enabled
+                                    <span className="mr-1">✂️</span> {t('profile.avatar.cropping')}
                                 </div>
                             )}
                         </div>
@@ -334,7 +336,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                             onClick={handleDelete}
                             className="text-sm text-red-500 hover:text-red-600 underline transition-colors"
                         >
-                            Remove Avatar
+                            {t('common.delete')}
                         </button>
                     </div>
                 )}
@@ -371,7 +373,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                             className="rounded border-[var(--border-subtle)] text-[var(--accent-primary)] focus:ring-[var(--accent-primary)]"
                             disabled={isUploading}
                         />
-                        <span>Enable cropping</span>
+                        <span>{t('profile.avatar.cropping')}</span>
                     </label>
                 </div>
             </div>

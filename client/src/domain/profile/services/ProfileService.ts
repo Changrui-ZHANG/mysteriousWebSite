@@ -354,6 +354,10 @@ export class ProfileService {
                 activityStats: profile.activityStats ? {
                     totalMessages: 0,
                     totalGamesPlayed: 0,
+                    gamesPlayed: 0,
+                    wins: 0,
+                    rank: 'Private',
+                    level: 1,
                     bestScores: {},
                     currentStreak: 0,
                     longestStreak: 0,

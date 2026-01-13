@@ -25,6 +25,9 @@ public class UserProfile {
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
+    @Column(name = "gender", length = 10)
+    private String gender;
+
     @Column(name = "join_date", nullable = false)
     private LocalDateTime joinDate;
 
@@ -87,6 +90,14 @@ public class UserProfile {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public LocalDateTime getJoinDate() {

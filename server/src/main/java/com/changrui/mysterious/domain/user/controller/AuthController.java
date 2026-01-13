@@ -24,6 +24,9 @@ public class AuthController {
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private com.changrui.mysterious.domain.profile.service.ProfileService profileService;
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> register(@Valid @RequestBody RegisterDTO dto) {
         if (userRepository.findByUsername(dto.username()).isPresent()) {
@@ -32,6 +35,20 @@ public class AuthController {
 
         AppUser newUser = new AppUser(dto.username(), dto.password(), dto.password());
         userRepository.save(newUser);
+
+        // Create profile automatically
+        try {
+            com.changrui.mysterious.domain.profile.dto.CreateProfileRequest profileRequest = new com.changrui.mysterious.domain.profile.dto.CreateProfileRequest(
+                    newUser.getId(),
+                    dto.username(),
+                    null, // bio
+                    true, // isPublic
+                    dto.gender());
+            profileService.createProfile(profileRequest);
+        } catch (Exception e) {
+            // Log error but don't fail registration
+            System.err.println("Failed to create profile for user " + newUser.getId() + ": " + e.getMessage());
+        }
 
         AuthResponseDTO response = new AuthResponseDTO(
                 newUser.getId(),

@@ -25,6 +25,10 @@ export const ProfileCardTest: React.FC = () => {
         activityStats: {
             totalMessages: 14,
             totalGamesPlayed: 6,
+            gamesPlayed: 6,
+            wins: 4,
+            rank: 'Silver',
+            level: 2,
             bestScores: {},
             currentStreak: 0,
             longestStreak: 0,
@@ -36,31 +40,31 @@ export const ProfileCardTest: React.FC = () => {
     return (
         <div className="p-4 space-y-4">
             <h2 className="text-xl font-bold">Profile Card Test</h2>
-            
+
             <div className="grid gap-4">
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Own Profile View</h3>
-                    <ProfileCard 
+                    <ProfileCard
                         profile={mockProfile}
                         isOwnProfile={true}
                         onEdit={() => console.log('Edit clicked')}
                         className="max-w-md"
                     />
                 </div>
-                
+
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Public Profile View</h3>
-                    <ProfileCard 
+                    <ProfileCard
                         profile={mockProfile}
                         isOwnProfile={false}
                         onViewProfile={() => console.log('View clicked')}
                         className="max-w-md"
                     />
                 </div>
-                
+
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Profile with Null Data</h3>
-                    <ProfileCard 
+                    <ProfileCard
                         profile={{
                             ...mockProfile,
                             bio: undefined,

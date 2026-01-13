@@ -987,5 +987,102 @@
     "preloader": {
         "welcome": "WELCOME",
         "loading": "LOADING"
+    },
+    "profile": {
+        "title": "User Profile",
+        "tabs": {
+            "overview": "Overview",
+            "edit": "Edit",
+            "privacy": "Privacy",
+            "activity": "Activity"
+        },
+        "card": {
+            "bio": "Bio",
+            "stats": "Statistics",
+            "achievements": "Achievements",
+            "joined": "Joined",
+            "messages": "Messages",
+            "games": "Games",
+            "days": "Days",
+            "streak": "Streak"
+        },
+        "form": {
+            "title": "Edit Profile",
+            "display_name": "Display Name",
+            "bio": "Bio",
+            "bio_placeholder": "Tell us about yourself...",
+            "save": "Save Changes",
+            "reset": "Reset Changes",
+            "saving": "Saving...",
+            "unsaved": "Unsaved",
+            "success": "Profile updated successfully!",
+            "error_exists": "Display name already exists",
+            "cancel_confirm": "Are you sure you want to discard your changes?"
+        },
+        "avatar": {
+            "title": "Avatar",
+            "upload": "Upload New Avatar",
+            "change": "Change",
+            "error": "Failed to upload avatar",
+            "cropping": "Crop your avatar",
+            "crop_desc": "Select the area you want to use as your avatar",
+            "preview": "Preview",
+            "quality_check": "Quality Check",
+            "size": "Size",
+            "drag": "Drag to move",
+            "resize": "Resize corners",
+            "square": "Square output",
+            "save": "Save Avatar",
+            "select_crop": "Select crop area",
+            "quality": {
+                "high": "Excellent quality",
+                "medium": "Good quality",
+                "low": "May appear pixelated"
+            },
+            "confirm": "Confirm",
+            "cancel": "Cancel"
+        },
+        "privacy": {
+            "title": "Privacy Settings",
+            "subtitle": "Control who can see your profile information and activity.",
+            "notice_title": "Privacy Information",
+            "notice_text": "Your avatar and display name are always visible to maintain a social experience. Other information can be controlled with these settings.",
+            "visibility_title": "Profile Visibility",
+            "visibility": {
+                "public": "Public",
+                "friends": "Friends",
+                "private": "Private",
+                "public_desc": "Anyone can view your profile",
+                "friends_desc": "Only friends can view your profile",
+                "private_desc": "Only you can view your profile"
+            },
+            "granular_title": "What others can see",
+            "show_bio": "Bio",
+            "show_bio_desc": "Your personal description",
+            "show_stats": "Activity Statistics",
+            "show_stats_desc": "Message count, games played, streaks",
+            "show_achievements": "Achievements",
+            "show_achievements_desc": "Badges and accomplishments",
+            "show_last_active": "Last Active",
+            "show_last_active_desc": "When you were last online",
+            "save": "Save Changes",
+            "saving": "Saving...",
+            "reset": "Reset Changes",
+            "success": "Privacy settings updated successfully!"
+        },
+        "errors": {
+            "failed_load": "Failed to load profile data",
+            "access_required": "Profile Access Required",
+            "login_required": "Please log in to view your profile.",
+            "return_home": "Return to Home",
+            "coming_soon": "Coming Soon",
+            "activity_soon": "Detailed activity history will be available here soon."
+        },
+        "gender": {
+            "title": "Gender",
+            "male": "Man",
+            "female": "Woman",
+            "not_specified": "None"
+        }
     }
 }

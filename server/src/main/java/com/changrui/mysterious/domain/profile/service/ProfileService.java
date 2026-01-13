@@ -47,6 +47,21 @@ public class ProfileService {
             profile.setBio(request.bio().trim());
         }
 
+        // Set gender
+        if (request.gender() != null && !request.gender().trim().isEmpty()) {
+            profile.setGender(request.gender().trim().toUpperCase());
+
+            // Set default avatar based on gender if none provided
+            if (profile.getAvatarUrl() == null || profile.getAvatarUrl().isEmpty()) {
+                if ("H".equalsIgnoreCase(request.gender()) || "M".equalsIgnoreCase(request.gender())
+                        || "B".equalsIgnoreCase(request.gender())) {
+                    profile.setAvatarUrl("/api/avatars/files/default-B.jpeg");
+                } else if ("F".equalsIgnoreCase(request.gender()) || "G".equalsIgnoreCase(request.gender())) {
+                    profile.setAvatarUrl("/api/avatars/files/default-G.jpeg");
+                }
+            }
+        }
+
         // Set public/private status
         if (request.isPublic() != null) {
             profile.setPublic(request.isPublic());
@@ -134,6 +149,10 @@ public class ProfileService {
 
         if (request.avatarUrl() != null) {
             profile.setAvatarUrl(request.avatarUrl().trim().isEmpty() ? null : request.avatarUrl().trim());
+        }
+
+        if (request.gender() != null) {
+            profile.setGender(request.gender().trim().isEmpty() ? null : request.gender().trim().toUpperCase());
         }
 
         profile = profileRepository.save(profile);

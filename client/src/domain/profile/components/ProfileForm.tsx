@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { ErrorDisplay } from '../../../shared/components';
 import { RealTimeStatus } from './RealTimeStatus';
 import { useUpdateProfileMutation } from '../queries/profileQueries';
@@ -31,12 +32,14 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
     isLoading = false,
     className = ''
 }) => {
+    const { t } = useTranslation();
     const {
         register,
         handleSubmit,
         formState: { errors, isDirty, isSubmitting },
         reset,
         watch,
+        setValue,
         setError,
         clearErrors
     } = useForm<ProfileFormData>({
@@ -44,6 +47,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
         defaultValues: {
             displayName: profile?.displayName || '',
             bio: profile?.bio || '',
+            gender: profile?.gender || '',
         },
         mode: 'onChange', // Real-time validation
     });
@@ -67,6 +71,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             reset({
                 displayName: profile.displayName || '',
                 bio: profile.bio || '',
+                gender: profile.gender || '',
             });
             setUnsavedChanges(false);
         }
@@ -102,8 +107,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             // Show success notification
             addSuccessNotification(
-                'Profile Updated',
-                'Your profile has been successfully updated.'
+                t('profile.form.success'),
+                ''
             );
 
             // Call the parent onSubmit callback for any additional handling
@@ -117,7 +122,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             // Show error notification
             addErrorNotification(
-                'Update Failed',
+                t('common.unknown_error'),
                 errorMessage
             );
         }
@@ -127,6 +132,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
         reset({
             displayName: profile?.displayName || '',
             bio: profile?.bio || '',
+            gender: profile?.gender || '',
         });
         clearErrors();
         setUnsavedChanges(false);
@@ -134,7 +140,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
     const handleCancel = () => {
         if (hasUnsavedChanges) {
-            const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
+            const confirmCancel = window.confirm(t('profile.form.cancel_confirm'));
             if (!confirmCancel) return;
         }
 
@@ -155,7 +161,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             {/* Submit Error Display */}
             {errors.root?.submit && (
                 <ErrorDisplay
-                    error={errors.root.submit.message || 'An error occurred'}
+                    error={errors.root.submit.message || t('common.unknown_error')}
                     onRetry={retrySubmit}
                     canRetry={true}
                     className="mb-4"
@@ -165,7 +171,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             {/* Display Name */}
             <div>
                 <label htmlFor="displayName" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Display Name *
+                    {t('profile.form.display_name')} *
                 </label>
                 <input
                     type="text"
@@ -176,7 +182,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent
                         ${errors.displayName ? 'border-red-400 focus:ring-red-400' : ''}
                     `}
-                    placeholder="Enter your display name"
+                    placeholder={t('profile.form.display_name')}
                     maxLength={30}
                     disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
                 />
@@ -192,10 +198,43 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                 </div>
             </div>
 
+            {/* Gender */}
+            <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    {t('profile.gender.title')}
+                </label>
+                <div className="flex space-x-4">
+                    <button
+                        type="button"
+                        onClick={() => setValue('gender', 'H', { shouldDirty: true })}
+                        disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${watch('gender') === 'H' ? 'bg-[var(--accent-primary)]/20 border-[var(--accent-primary)] text-[var(--text-primary)]' : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)]'}`}
+                    >
+                        ♂️ {t('profile.gender.male')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setValue('gender', 'F', { shouldDirty: true })}
+                        disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${watch('gender') === 'F' ? 'bg-[var(--accent-secondary)]/20 border-[var(--accent-secondary)] text-[var(--text-primary)]' : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)]'}`}
+                    >
+                        ♀️ {t('profile.gender.female')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setValue('gender', '', { shouldDirty: true })}
+                        disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${!watch('gender') ? 'bg-[var(--bg-surface-translucent)] border-[var(--text-muted)] text-[var(--text-primary)]' : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)]'}`}
+                    >
+                        {t('profile.gender.not_specified')}
+                    </button>
+                </div>
+            </div>
+
             {/* Bio */}
             <div>
                 <label htmlFor="bio" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Bio
+                    {t('profile.form.bio')}
                 </label>
                 <textarea
                     id="bio"
@@ -206,7 +245,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent resize-vertical
                         ${errors.bio ? 'border-red-400 focus:ring-red-400' : ''}
                     `}
-                    placeholder="Tell others about yourself..."
+                    placeholder={t('profile.form.bio_placeholder')}
                     maxLength={500}
                     disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
                 />
@@ -231,7 +270,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
                         className="glass-panel px-6 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)] hover:text-[var(--text-primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Cancel
+                        {t('common.cancel')}
                     </button>
 
                     <button
@@ -244,7 +283,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                                 : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border border-[var(--border-subtle)] cursor-not-allowed'}
                         `}
                     >
-                        {isSubmitting || updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
+                        {isSubmitting || updateProfileMutation.isPending ? t('profile.form.saving') : t('profile.form.save')}
                     </button>
                 </div>
 
@@ -256,11 +295,11 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                             disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
                             className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline mr-4 disabled:opacity-50"
                         >
-                            Reset Changes
+                            {t('profile.form.reset')}
                         </button>
                         {hasUnsavedChanges && (
                             <span className="text-xs text-amber-600 bg-amber-50/80 backdrop-blur-sm border border-amber-200 px-3 py-1.5 rounded-full font-medium sm:hidden">
-                                Unsaved changes
+                                {t('profile.form.unsaved')}
                             </span>
                         )}
                     </div>
@@ -271,7 +310,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             <div className="flex items-center justify-between">
                 {hasUnsavedChanges && (
                     <div className="hidden sm:block text-xs text-amber-600 bg-amber-50/80 backdrop-blur-sm border border-amber-200 px-3 py-2 rounded-md font-medium">
-                        ⚠️ You have unsaved changes
+                        ⚠️ {t('profile.form.unsaved')}
                     </div>
                 )}
 
@@ -287,7 +326,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             {/* TanStack Query mutation status indicator */}
             {updateProfileMutation.isPending && (
                 <div className="text-xs text-[var(--accent-primary)] bg-blue-50/80 backdrop-blur-sm px-3 py-2 rounded-md font-medium text-center">
-                    Saving changes...
+                    {t('profile.form.saving')}
                 </div>
             )}
         </form>

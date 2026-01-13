@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactDOM from 'react-dom';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -32,6 +33,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
     onCancel,
     options = {}
 }) => {
+    const { t } = useTranslation();
     const {
         outputSize = 256,
         minCropSize = 50,
@@ -221,18 +223,18 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
 
     // Calculate quality indicator
     const getQualityInfo = () => {
-        if (!completedCrop) return { quality: 'unknown', message: 'Select crop area', color: 'text-[var(--text-muted)]' };
+        if (!completedCrop) return { quality: 'unknown', message: t('profile.avatar.select_crop'), color: 'text-[var(--text-muted)]' };
 
         const cropPixels = completedCrop.width * completedCrop.height;
         const outputPixels = outputSize * outputSize;
         const ratio = cropPixels / outputPixels;
 
         if (ratio >= 2) {
-            return { quality: 'high', message: 'Excellent quality', color: 'text-[var(--accent-success)]' };
+            return { quality: 'high', message: t('profile.avatar.quality.high'), color: 'text-[var(--accent-success)]' };
         } else if (ratio >= 1) {
-            return { quality: 'medium', message: 'Good quality', color: 'text-[var(--accent-warning)]' };
+            return { quality: 'medium', message: t('profile.avatar.quality.medium'), color: 'text-[var(--accent-warning)]' };
         } else {
-            return { quality: 'low', message: 'May appear pixelated', color: 'text-[var(--accent-error)]' };
+            return { quality: 'low', message: t('profile.avatar.quality.low'), color: 'text-[var(--accent-error)]' };
         }
     };
 
@@ -247,10 +249,10 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                 <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-surface-translucent)] shrink-0 z-20">
                     <div>
                         <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
-                            Crop Avatar
+                            {t('profile.avatar.cropping')}
                         </h2>
                         <p className="text-sm text-[var(--text-secondary)] mt-1 hidden sm:block">
-                            Select the area you want to use as your avatar
+                            {t('profile.avatar.crop_desc')}
                         </p>
                     </div>
 
@@ -258,7 +260,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                         onClick={onCancel}
                         disabled={isProcessing}
                         className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-50 rounded-full hover:bg-[var(--bg-surface)]"
-                        title="Cancel cropping"
+                        title={t('profile.avatar.cancel')}
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -323,7 +325,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
 
                         {/* Preview */}
                         <div className="mb-6 flex flex-col items-center">
-                            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4 uppercase tracking-wider">Preview</h3>
+                            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4 uppercase tracking-wider">{t('profile.avatar.preview')}</h3>
                             <div className="relative inline-block group">
                                 <canvas
                                     ref={previewCanvasRef}
@@ -337,11 +339,11 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                         {/* Quality info */}
                         <div className="mb-4 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
                             <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3 flex items-center">
-                                <span className="mr-2">🔍</span> Quality Check
+                                <span className="mr-2">🔍</span> {t('profile.avatar.quality_check')}
                             </h4>
                             <div className="flex items-center space-x-2 mb-2">
                                 <div className={`w-3 h-3 rounded-full ${qualityInfo.quality === 'high' ? 'bg-green-500' :
-                                        qualityInfo.quality === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
+                                    qualityInfo.quality === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
                                     }`}></div>
                                 <span className={`text-sm font-bold ${qualityInfo.color}`}>
                                     {qualityInfo.message}
@@ -350,7 +352,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                             {completedCrop && (
                                 <div className="space-y-1 text-xs text-[var(--text-muted)] mt-2 pt-2 border-t border-[var(--border-subtle)]">
                                     <div className="flex justify-between">
-                                        <span>Size:</span>
+                                        <span>{t('profile.avatar.size')}:</span>
                                         <span className="font-mono">{Math.round(completedCrop.width)}×{Math.round(completedCrop.height)}</span>
                                     </div>
                                 </div>
@@ -359,11 +361,11 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
 
                         {/* Instructions */}
                         <div className="p-4 rounded-xl bg-[var(--accent-info-light)] border border-[var(--accent-info-border)]">
-                            <h4 className="text-sm font-bold text-[var(--accent-info)] mb-2">Tips</h4>
+                            <h4 className="text-sm font-bold text-[var(--accent-info)] mb-2">{t('profile.privacy.notice_title')}</h4>
                             <ul className="text-xs text-[var(--text-secondary)] space-y-1.5 list-disc list-inside">
-                                <li>Drag to move</li>
-                                <li>Resize corners</li>
-                                <li>Square output</li>
+                                <li>{t('profile.avatar.drag')}</li>
+                                <li>{t('profile.avatar.resize')}</li>
+                                <li>{t('profile.avatar.square')}</li>
                             </ul>
                         </div>
                     </div>
@@ -373,7 +375,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                 <div className="px-4 py-3 sm:px-6 sm:py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface-translucent)] flex items-center justify-between shrink-0 z-20">
                     <div className="hidden sm:flex items-center space-x-2">
                         {isProcessing && (
-                            <span className="text-xs font-medium text-[var(--accent-primary)] animate-pulse">Processing...</span>
+                            <span className="text-xs font-medium text-[var(--accent-primary)] animate-pulse">{t('profile.form.saving')}</span>
                         )}
                     </div>
 
@@ -383,7 +385,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                             disabled={isProcessing}
                             className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors disabled:opacity-50 text-center"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                         <button
                             onClick={handleApplyCrop}
@@ -395,7 +397,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                                 transition-all transform active:scale-95 text-center
                             `}
                         >
-                            {isProcessing ? 'Saving...' : 'Save Avatar'}
+                            {isProcessing ? t('profile.form.saving') : t('profile.avatar.save')}
                         </button>
                     </div>
                 </div>

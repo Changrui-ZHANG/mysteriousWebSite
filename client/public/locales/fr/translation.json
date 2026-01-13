@@ -978,5 +978,102 @@
     "preloader": {
         "welcome": "BIENVENUE",
         "loading": "CHARGEMENT"
+    },
+    "profile": {
+        "title": "Profil Utilisateur",
+        "tabs": {
+            "overview": "Aperçu",
+            "edit": "Modifier",
+            "privacy": "Confidentialité",
+            "activity": "Activité"
+        },
+        "card": {
+            "bio": "Bio",
+            "stats": "Statistiques",
+            "achievements": "Succès",
+            "joined": "Rejoint le",
+            "messages": "Messages",
+            "games": "Jeux",
+            "days": "Jours",
+            "streak": "Série"
+        },
+        "form": {
+            "title": "Modifier le Profil",
+            "display_name": "Nom d'Affichage",
+            "bio": "Bio",
+            "bio_placeholder": "Parlez-nous de vous...",
+            "save": "Enregistrer",
+            "reset": "Réinitialiser",
+            "saving": "Enregistrement...",
+            "unsaved": "Non enregistré",
+            "success": "Profil mis à jour avec succès !",
+            "error_exists": "Ce nom d'affichage existe déjà",
+            "cancel_confirm": "Êtes-vous sûr de vouloir annuler vos modifications ?"
+        },
+        "avatar": {
+            "title": "Avatar",
+            "upload": "Charger un nouvel avatar",
+            "change": "Changer",
+            "error": "Échec du chargement de l'avatar",
+            "cropping": "Redimensionner votre avatar",
+            "crop_desc": "Sélectionnez la zone que vous souhaitez utiliser comme avatar",
+            "preview": "Aperçu",
+            "quality_check": "Vérification de la qualité",
+            "size": "Taille",
+            "drag": "Glisser pour déplacer",
+            "resize": "Redimensionner les coins",
+            "square": "Format carré",
+            "save": "Enregistrer l'avatar",
+            "select_crop": "Sélectionnez zone de recadrage",
+            "quality": {
+                "high": "Excellente qualité",
+                "medium": "Bonne qualité",
+                "low": "Peut paraître pixélisé"
+            },
+            "confirm": "Confirmer",
+            "cancel": "Annuler"
+        },
+        "privacy": {
+            "title": "Paramètres de Confidentialité",
+            "subtitle": "Contrôlez qui peut voir les informations et l'activité de votre profil.",
+            "notice_title": "Informations sur la Confidentialité",
+            "notice_text": "Votre avatar et votre nom d'affichage sont toujours visibles pour maintenir une expérience sociale. Les autres informations peuvent être contrôlées avec ces paramètres.",
+            "visibility_title": "Visibilité du Profil",
+            "visibility": {
+                "public": "Public",
+                "friends": "Amis",
+                "private": "Privé",
+                "public_desc": "Tout le monde peut voir votre profil",
+                "friends_desc": "Seuls vos amis peuvent voir votre profil",
+                "private_desc": "Vous seul pouvez voir votre profil"
+            },
+            "granular_title": "Ce que les autres peuvent voir",
+            "show_bio": "Bio",
+            "show_bio_desc": "Votre description personnelle",
+            "show_stats": "Statistiques d'activité",
+            "show_stats_desc": "Compteur de messages, jeux joués, séries",
+            "show_achievements": "Succès",
+            "show_achievements_desc": "Badges et accomplissements",
+            "show_last_active": "Dernière activité",
+            "show_last_active_desc": "Quand vous étiez en ligne pour la dernière fois",
+            "save": "Enregistrer",
+            "saving": "Enregistrement...",
+            "reset": "Réinitialiser",
+            "success": "Paramètres de confidentialité mis à jour avec succès !"
+        },
+        "errors": {
+            "failed_load": "Échec du chargement des données du profil",
+            "access_required": "Accès Profil Requis",
+            "login_required": "Veuillez vous connecter pour voir votre profil.",
+            "return_home": "Retour à l'Accueil",
+            "coming_soon": "Bientôt disponible",
+            "activity_soon": "L'historique détaillé de l'activité sera disponible ici bientôt."
+        },
+        "gender": {
+            "title": "Genre",
+            "male": "Homme",
+            "female": "Femme",
+            "not_specified": "Non renseigné"
+        }
     }
 }

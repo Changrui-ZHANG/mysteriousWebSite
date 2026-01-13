@@ -5,9 +5,9 @@
 
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-    DisplayNameSchema, 
-    PrivacySettingsSchema 
+import {
+    DisplayNameSchema,
+    PrivacySettingsSchema
 } from './profileSchemas';
 
 /**
@@ -17,6 +17,7 @@ import {
 export const ProfileFormSchema = z.object({
     displayName: DisplayNameSchema,
     bio: z.string().optional(),
+    gender: z.string().optional().nullable(),
 });
 
 export type ProfileFormData = z.infer<typeof ProfileFormSchema>;
@@ -28,6 +29,7 @@ export type ProfileFormData = z.infer<typeof ProfileFormSchema>;
 export const CreateProfileFormSchema = z.object({
     displayName: DisplayNameSchema,
     bio: z.string().optional(),
+    gender: z.string().optional().nullable(),
     privacySettings: PrivacySettingsSchema.partial().optional(),
 });
 
@@ -53,11 +55,13 @@ export const privacyFormResolver = zodResolver(PrivacyFormSchema);
 export const defaultProfileFormValues: Partial<ProfileFormData> = {
     displayName: '',
     bio: '',
+    gender: '',
 };
 
 export const defaultCreateProfileFormValues: Partial<CreateProfileFormData> = {
     displayName: '',
     bio: '',
+    gender: '',
     privacySettings: {
         profileVisibility: 'public',
         showBio: true,
@@ -91,6 +95,7 @@ export const transformProfileFormData = (data: ProfileFormData) => {
     return {
         displayName: data.displayName.trim(),
         bio: data.bio?.trim() || undefined,
+        gender: data.gender || undefined,
     };
 };
 
@@ -98,6 +103,7 @@ export const transformCreateProfileFormData = (data: CreateProfileFormData) => {
     return {
         displayName: data.displayName.trim(),
         bio: data.bio?.trim() || undefined,
+        gender: data.gender || undefined,
         privacySettings: data.privacySettings,
     };
 };

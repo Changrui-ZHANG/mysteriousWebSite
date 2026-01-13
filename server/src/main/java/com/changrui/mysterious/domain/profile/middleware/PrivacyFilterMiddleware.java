@@ -12,7 +12,8 @@ import java.util.Optional;
 
 /**
  * Middleware for privacy filtering and access control.
- * Automatically enforces privacy rules and filters response data based on requester permissions.
+ * Automatically enforces privacy rules and filters response data based on
+ * requester permissions.
  */
 @Component
 public class PrivacyFilterMiddleware {
@@ -27,18 +28,18 @@ public class PrivacyFilterMiddleware {
      * Privacy levels for profile access
      */
     public enum PrivacyLevel {
-        OWNER,      // Full access to own profile
-        ADMIN,      // Admin access to any profile
-        PUBLIC,     // Public access with privacy filtering
-        DENIED      // No access allowed
+        OWNER, // Full access to own profile
+        ADMIN, // Admin access to any profile
+        PUBLIC, // Public access with privacy filtering
+        DENIED // No access allowed
     }
 
     /**
      * Determine the privacy level for a requester accessing a profile.
      * 
      * @param profileUserId The user ID of the profile being accessed
-     * @param requesterId The ID of the user making the request
-     * @param adminCode Admin code from request headers (if any)
+     * @param requesterId   The ID of the user making the request
+     * @param adminCode     Admin code from request headers (if any)
      * @return The privacy level for this access attempt
      */
     public PrivacyLevel determinePrivacyLevel(String profileUserId, String requesterId, String adminCode) {
@@ -73,8 +74,8 @@ public class PrivacyFilterMiddleware {
      * Check if a requester can access a specific profile field.
      * 
      * @param privacySettings The privacy settings for the profile
-     * @param fieldName The name of the field being accessed
-     * @param privacyLevel The privacy level of the requester
+     * @param fieldName       The name of the field being accessed
+     * @param privacyLevel    The privacy level of the requester
      * @return true if access is allowed, false otherwise
      */
     public boolean canAccessField(PrivacySettings privacySettings, String fieldName, PrivacyLevel privacyLevel) {
@@ -112,6 +113,7 @@ public class PrivacyFilterMiddleware {
             case "avatar_url":
             case "joindate":
             case "join_date":
+            case "gender":
             case "userid":
             case "user_id":
                 // These fields are always visible for public profiles
@@ -125,9 +127,9 @@ public class PrivacyFilterMiddleware {
     /**
      * Filter a profile object based on privacy settings and requester permissions.
      * 
-     * @param profile The profile to filter
+     * @param profile         The profile to filter
      * @param privacySettings The privacy settings for the profile
-     * @param privacyLevel The privacy level of the requester
+     * @param privacyLevel    The privacy level of the requester
      * @return A filtered profile object
      */
     public UserProfile filterProfile(UserProfile profile, PrivacySettings privacySettings, PrivacyLevel privacyLevel) {
@@ -150,6 +152,7 @@ public class PrivacyFilterMiddleware {
         filteredProfile.setUserId(profile.getUserId());
         filteredProfile.setDisplayName(profile.getDisplayName());
         filteredProfile.setAvatarUrl(profile.getAvatarUrl());
+        filteredProfile.setGender(profile.getGender());
         filteredProfile.setJoinDate(profile.getJoinDate());
         filteredProfile.setPublic(profile.isPublic());
         filteredProfile.setCreatedAt(profile.getCreatedAt());
@@ -171,9 +174,9 @@ public class PrivacyFilterMiddleware {
      * Check if a requester can perform a specific operation on a profile.
      * 
      * @param profileUserId The user ID of the profile
-     * @param requesterId The ID of the user making the request
-     * @param operation The operation being attempted
-     * @param adminCode Admin code from request headers (if any)
+     * @param requesterId   The ID of the user making the request
+     * @param operation     The operation being attempted
+     * @param adminCode     Admin code from request headers (if any)
      * @throws UnauthorizedException if the operation is not allowed
      */
     public void validateOperation(String profileUserId, String requesterId, String operation, String adminCode) {
@@ -218,21 +221,20 @@ public class PrivacyFilterMiddleware {
     /**
      * Create a privacy audit log entry.
      * 
-     * @param operation The operation performed
-     * @param profileUserId The profile being accessed
-     * @param requesterId The user making the request
-     * @param privacyLevel The privacy level granted
+     * @param operation      The operation performed
+     * @param profileUserId  The profile being accessed
+     * @param requesterId    The user making the request
+     * @param privacyLevel   The privacy level granted
      * @param fieldsAccessed The fields that were accessed
-     * @param success Whether the operation was successful
+     * @param success        Whether the operation was successful
      */
-    public void logPrivacyAccess(String operation, String profileUserId, String requesterId, 
-                               PrivacyLevel privacyLevel, String fieldsAccessed, boolean success) {
-        
+    public void logPrivacyAccess(String operation, String profileUserId, String requesterId,
+            PrivacyLevel privacyLevel, String fieldsAccessed, boolean success) {
+
         String logMessage = String.format(
-            "Privacy Access: %s | Profile: %s | Requester: %s | Level: %s | Fields: %s | Success: %s",
-            operation, profileUserId, requesterId, privacyLevel, fieldsAccessed, success
-        );
-        
+                "Privacy Access: %s | Profile: %s | Requester: %s | Level: %s | Fields: %s | Success: %s",
+                operation, profileUserId, requesterId, privacyLevel, fieldsAccessed, success);
+
         // In production, this would go to a privacy audit log
         System.out.println("[PRIVACY AUDIT] " + logMessage);
     }
@@ -240,17 +242,17 @@ public class PrivacyFilterMiddleware {
     /**
      * Check if a profile is visible in search results based on privacy settings.
      * 
-     * @param profile The profile to check
+     * @param profile         The profile to check
      * @param privacySettings The privacy settings for the profile
-     * @param requesterId The ID of the user performing the search
-     * @param adminCode Admin code from request headers (if any)
+     * @param requesterId     The ID of the user performing the search
+     * @param adminCode       Admin code from request headers (if any)
      * @return true if the profile should be included in search results
      */
-    public boolean isVisibleInSearch(UserProfile profile, PrivacySettings privacySettings, 
-                                   String requesterId, String adminCode) {
-        
+    public boolean isVisibleInSearch(UserProfile profile, PrivacySettings privacySettings,
+            String requesterId, String adminCode) {
+
         PrivacyLevel privacyLevel = determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
-        
+
         // Denied profiles are not visible in search
         if (privacyLevel == PrivacyLevel.DENIED) {
             return false;
@@ -259,7 +261,7 @@ public class PrivacyFilterMiddleware {
         // Check profile visibility setting
         if (privacySettings != null) {
             String visibility = privacySettings.getProfileVisibility();
-            
+
             switch (visibility.toLowerCase()) {
                 case "private":
                     return privacyLevel == PrivacyLevel.OWNER || privacyLevel == PrivacyLevel.ADMIN;
@@ -279,52 +281,53 @@ public class PrivacyFilterMiddleware {
     /**
      * Filter a list of profiles for search results based on privacy settings.
      * 
-     * @param profiles The list of profiles to filter
+     * @param profiles    The list of profiles to filter
      * @param requesterId The ID of the user performing the search
-     * @param adminCode Admin code from request headers (if any)
+     * @param adminCode   Admin code from request headers (if any)
      * @return A filtered list of profiles
      */
-    public java.util.List<UserProfile> filterSearchResults(java.util.List<UserProfile> profiles, 
-                                                          String requesterId, String adminCode) {
-        
+    public java.util.List<UserProfile> filterSearchResults(java.util.List<UserProfile> profiles,
+            String requesterId, String adminCode) {
+
         return profiles.stream()
-            .filter(profile -> {
-                // For search results, we need to check privacy settings
-                // This is a simplified version - in practice, you'd batch load privacy settings
-                PrivacyLevel privacyLevel = determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
-                return privacyLevel != PrivacyLevel.DENIED;
-            })
-            .map(profile -> {
-                // Apply basic filtering for search results
-                PrivacyLevel privacyLevel = determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
-                if (privacyLevel == PrivacyLevel.OWNER || privacyLevel == PrivacyLevel.ADMIN) {
-                    return profile;
-                } else {
-                    // Return minimal profile info for search results
-                    UserProfile searchResult = new UserProfile();
-                    searchResult.setUserId(profile.getUserId());
-                    searchResult.setDisplayName(profile.getDisplayName());
-                    searchResult.setAvatarUrl(profile.getAvatarUrl());
-                    searchResult.setJoinDate(profile.getJoinDate());
-                    searchResult.setPublic(profile.isPublic());
-                    return searchResult;
-                }
-            })
-            .collect(java.util.stream.Collectors.toList());
+                .filter(profile -> {
+                    // For search results, we need to check privacy settings
+                    // This is a simplified version - in practice, you'd batch load privacy settings
+                    PrivacyLevel privacyLevel = determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
+                    return privacyLevel != PrivacyLevel.DENIED;
+                })
+                .map(profile -> {
+                    // Apply basic filtering for search results
+                    PrivacyLevel privacyLevel = determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
+                    if (privacyLevel == PrivacyLevel.OWNER || privacyLevel == PrivacyLevel.ADMIN) {
+                        return profile;
+                    } else {
+                        // Return minimal profile info for search results
+                        UserProfile searchResult = new UserProfile();
+                        searchResult.setUserId(profile.getUserId());
+                        searchResult.setDisplayName(profile.getDisplayName());
+                        searchResult.setAvatarUrl(profile.getAvatarUrl());
+                        searchResult.setGender(profile.getGender());
+                        searchResult.setJoinDate(profile.getJoinDate());
+                        searchResult.setPublic(profile.isPublic());
+                        return searchResult;
+                    }
+                })
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
      * Validate that a requester can access profile statistics.
      * 
-     * @param profileUserId The profile user ID
-     * @param requesterId The requester ID
+     * @param profileUserId   The profile user ID
+     * @param requesterId     The requester ID
      * @param privacySettings The privacy settings
-     * @param adminCode Admin code from request headers
+     * @param adminCode       Admin code from request headers
      * @return true if statistics access is allowed
      */
-    public boolean canAccessStatistics(String profileUserId, String requesterId, 
-                                     PrivacySettings privacySettings, String adminCode) {
-        
+    public boolean canAccessStatistics(String profileUserId, String requesterId,
+            PrivacySettings privacySettings, String adminCode) {
+
         PrivacyLevel privacyLevel = determinePrivacyLevel(profileUserId, requesterId, adminCode);
         return canAccessField(privacySettings, "stats", privacyLevel);
     }
@@ -332,15 +335,15 @@ public class PrivacyFilterMiddleware {
     /**
      * Validate that a requester can access profile achievements.
      * 
-     * @param profileUserId The profile user ID
-     * @param requesterId The requester ID
+     * @param profileUserId   The profile user ID
+     * @param requesterId     The requester ID
      * @param privacySettings The privacy settings
-     * @param adminCode Admin code from request headers
+     * @param adminCode       Admin code from request headers
      * @return true if achievements access is allowed
      */
-    public boolean canAccessAchievements(String profileUserId, String requesterId, 
-                                       PrivacySettings privacySettings, String adminCode) {
-        
+    public boolean canAccessAchievements(String profileUserId, String requesterId,
+            PrivacySettings privacySettings, String adminCode) {
+
         PrivacyLevel privacyLevel = determinePrivacyLevel(profileUserId, requesterId, adminCode);
         return canAccessField(privacySettings, "achievements", privacyLevel);
     }

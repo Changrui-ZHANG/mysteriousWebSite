@@ -16,6 +16,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModal
     const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [gender, setGender] = useState<string>('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -27,7 +28,11 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModal
         try {
             const endpoint = authMode === 'login' ? API_ENDPOINTS.AUTH.LOGIN : API_ENDPOINTS.AUTH.REGISTER;
 
-            const data = await postJson<{ userId: string; username: string; message: string }>(endpoint, { username, password });
+            const payload = authMode === 'login'
+                ? { username, password }
+                : { username, password, gender: gender || null };
+
+            const data = await postJson<{ userId: string; username: string; message: string }>(endpoint, payload);
 
             if (authMode === 'login') {
                 onLoginSuccess({ userId: data.userId, username: data.username });
@@ -37,6 +42,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModal
             } else {
                 setAuthMode('login');
                 setSuccess(t('auth.success_register'));
+                setGender('');
             }
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : t('auth.failed');
@@ -133,6 +139,32 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModal
                                             required
                                         />
                                     </div>
+
+                                    {authMode === 'register' && (
+                                        <div className="flex space-x-4">
+                                            <button
+                                                type="button"
+                                                onClick={() => setGender('H')}
+                                                className={`flex-1 py-3 rounded-xl border transition-all ${gender === 'H' ? 'bg-accent-primary/20 border-accent-primary text-white' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'}`}
+                                            >
+                                                {t('profile.gender.male')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setGender('F')}
+                                                className={`flex-1 py-3 rounded-xl border transition-all ${gender === 'F' ? 'bg-accent-secondary/20 border-accent-secondary text-white' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'}`}
+                                            >
+                                                {t('profile.gender.female')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setGender('')}
+                                                className={`flex-1 py-3 rounded-xl border transition-all ${gender === '' ? 'bg-white/10 border-white/20 text-white' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'}`}
+                                            >
+                                                {t('profile.gender.not_specified')}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Submit Button */}

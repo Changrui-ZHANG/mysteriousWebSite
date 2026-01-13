@@ -1,11 +1,14 @@
 import React from 'react';
 import { RealTimeStatusCompact } from './RealTimeStatus';
+import { useTranslation } from 'react-i18next';
 import type { UserProfile } from '../types';
 
 interface ProfileCardProps {
     profile: UserProfile;
+    stats?: import('../types').ActivityStats | null;
     isOwnProfile?: boolean;
     onEdit?: () => void;
+    onEditClick?: () => void;
     onViewProfile?: () => void;
     className?: string;
 }
@@ -21,10 +24,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     onViewProfile,
     className = ''
 }) => {
+    const { t, i18n } = useTranslation();
     const {
         displayName,
         bio,
         avatarUrl,
+        gender,
         joinDate,
         lastActive,
         activityStats,
@@ -34,7 +39,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
     const formatDate = (date: Date | string) => {
         const dateObj = typeof date === 'string' ? new Date(date) : date;
-        return new Intl.DateTimeFormat('en-US', {
+        return new Intl.DateTimeFormat(i18n.language, {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
@@ -52,7 +57,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         return (
             <div className={`profile-card rounded-lg p-6 ${className}`}>
                 <div className="text-center text-[var(--text-muted)]">
-                    Profile not available
+                    {t('common.unknown_error')}
                 </div>
             </div>
         );
@@ -81,13 +86,21 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                         </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-[var(--text-secondary)] mb-1.5 sm:mb-2">
-                        Member since {formatDate(joinDate)}
-                    </p>
+                    <div className="flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-1 mb-1.5 sm:mb-2 text-xs sm:text-sm text-[var(--text-secondary)]">
+                        <p>
+                            {t('profile.card.joined')} {formatDate(joinDate)}
+                        </p>
+                        {profile.gender && (
+                            <p className="flex items-center">
+                                <span className="w-1 h-1 rounded-full bg-[var(--text-muted)] mx-2 hidden sm:inline-block"></span>
+                                {profile.gender === 'H' ? '♂️ ' + t('profile.gender.male') : '♀️ ' + t('profile.gender.female')}
+                            </p>
+                        )}
+                    </div>
 
                     {shouldShowLastActive && lastActive && (
                         <p className="text-[10px] sm:text-xs text-[var(--text-muted)] mb-2 sm:mb-3">
-                            Last active: {formatDate(lastActive)}
+                            {t('profile.privacy.show_last_active')}: {formatDate(lastActive)}
                         </p>
                     )}
 
@@ -108,7 +121,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                             onClick={onEdit}
                             className="glass-panel px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-surface-translucent)] transition-colors w-full sm:w-auto"
                         >
-                            <span className="mr-2">✏️</span> Edit
+                            <span className="mr-2">✏️</span> {t('profile.tabs.edit')}
                         </button>
                     )}
 
@@ -117,7 +130,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                             onClick={onViewProfile}
                             className="glass-panel px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-surface-translucent)] transition-colors w-full sm:w-auto"
                         >
-                            View
+                            {t('nav.more')}
                         </button>
                     )}
                 </div>
@@ -129,22 +142,22 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             {/* Activity Stats */}
             {shouldShowStats && activityStats && (
                 <div className="mb-4 sm:mb-6">
-                    <h4 className="text-xs sm:text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 sm:mb-4">Top Stats</h4>
+                    <h4 className="text-xs sm:text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 sm:mb-4">{t('profile.card.stats')}</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-sm">
                         <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">Messages</span>
+                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('profile.card.messages')}</span>
                             <span className="block text-base sm:text-lg font-bold text-[var(--accent-primary)]">{activityStats.totalMessages || 0}</span>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">Games</span>
+                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('profile.card.games')}</span>
                             <span className="block text-base sm:text-lg font-bold text-[var(--accent-success)]">{activityStats.totalGamesPlayed || 0}</span>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">Streak</span>
-                            <span className="block text-base sm:text-lg font-bold text-[var(--accent-warning)]">{activityStats.currentStreak || 0} days</span>
+                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('profile.card.streak')}</span>
+                            <span className="block text-base sm:text-lg font-bold text-[var(--accent-warning)]">{activityStats.currentStreak || 0} {t('profile.card.days')}</span>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">Hours</span>
+                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('game.time')}</span>
                             <span className="block text-base sm:text-lg font-bold text-[var(--accent-secondary)]">{Math.round((activityStats.timeSpent || 0) / 60)}h</span>
                         </div>
                     </div>
@@ -155,7 +168,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             {shouldShowAchievements && achievements && achievements.length > 0 && (
                 <div>
                     <h4 className="text-xs sm:text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 sm:mb-4">
-                        Recent Badges
+                        {t('profile.card.achievements')}
                     </h4>
                     <div className="flex flex-wrap gap-2 sm:gap-3">
                         {achievements.slice(0, 6).map((achievement) => (
@@ -186,7 +199,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 <div className="mt-4 sm:mt-6 pt-4 border-t border-[var(--border-subtle)]">
                     <p className="text-[10px] sm:text-xs text-[var(--text-muted)] flex items-center justify-center">
                         <span className="mr-2">🔒</span>
-                        Limited profile visibility
+                        {t('profile.privacy.subtitle')}
                     </p>
                 </div>
             )}

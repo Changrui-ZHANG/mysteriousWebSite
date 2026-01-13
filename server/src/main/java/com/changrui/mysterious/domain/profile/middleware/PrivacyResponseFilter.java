@@ -18,8 +18,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * Response body advice that automatically filters privacy-sensitive data from API responses.
- * Applies privacy rules based on the requester's permissions and profile privacy settings.
+ * Response body advice that automatically filters privacy-sensitive data from
+ * API responses.
+ * Applies privacy rules based on the requester's permissions and profile
+ * privacy settings.
  */
 @ControllerAdvice(basePackages = "com.changrui.mysterious.domain.profile.controller")
 public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
@@ -34,16 +36,14 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         // Apply to all profile controller responses
         Method method = returnType.getMethod();
-        return method != null && (
-            method.isAnnotationPresent(FilterPrivateFields.class) ||
-            method.getDeclaringClass().getPackage().getName().contains("profile.controller")
-        );
+        return method != null && (method.isAnnotationPresent(FilterPrivateFields.class) ||
+                method.getDeclaringClass().getPackage().getName().contains("profile.controller"));
     }
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-                                Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                ServerHttpRequest request, ServerHttpResponse response) {
+            Class<? extends HttpMessageConverter<?>> selectedConverterType,
+            ServerHttpRequest request, ServerHttpResponse response) {
 
         // Only process successful responses
         if (body == null) {
@@ -53,7 +53,7 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
         // Extract privacy context from request attributes (set by interceptor)
         String requesterId = extractFromRequest(request, "requesterId");
         String adminCode = extractAdminCode(request);
-        
+
         // Apply privacy filtering based on response type
         if (body instanceof ApiResponse) {
             return filterApiResponse((ApiResponse<?>) body, requesterId, adminCode);
@@ -71,7 +71,7 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
      */
     private ApiResponse<?> filterApiResponse(ApiResponse<?> apiResponse, String requesterId, String adminCode) {
         Object data = apiResponse.data();
-        
+
         if (data instanceof ProfileResponse) {
             ProfileResponse filtered = filterProfileResponse((ProfileResponse) data, requesterId, adminCode);
             return ApiResponse.success(apiResponse.message(), filtered);
@@ -82,25 +82,26 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
             UserProfile filtered = filterUserProfile((UserProfile) data, requesterId, adminCode);
             return ApiResponse.success(apiResponse.message(), filtered);
         }
-        
+
         return apiResponse;
     }
 
     /**
      * Filter ProfileResponse objects based on privacy settings.
      */
-    private ProfileResponse filterProfileResponse(ProfileResponse profileResponse, String requesterId, String adminCode) {
+    private ProfileResponse filterProfileResponse(ProfileResponse profileResponse, String requesterId,
+            String adminCode) {
         if (profileResponse == null) {
             return null;
         }
 
         String profileUserId = profileResponse.userId();
-        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = 
-            privacyFilterMiddleware.determinePrivacyLevel(profileUserId, requesterId, adminCode);
+        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = privacyFilterMiddleware.determinePrivacyLevel(profileUserId,
+                requesterId, adminCode);
 
         // Owner and admin get unfiltered response
-        if (privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.OWNER || 
-            privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.ADMIN) {
+        if (privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.OWNER ||
+                privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.ADMIN) {
             return profileResponse;
         }
 
@@ -113,17 +114,20 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
         // Note: This is a simplified version. In practice, you'd need to reconstruct
         // the ProfileResponse with filtered data based on privacy settings.
         return new ProfileResponse(
-            profileResponse.userId(),
-            profileResponse.displayName(),
-            shouldShowField("bio", profileUserId, requesterId, adminCode) ? profileResponse.bio() : null,
-            profileResponse.avatarUrl(),
-            profileResponse.joinDate(),
-            shouldShowField("lastActive", profileUserId, requesterId, adminCode) ? profileResponse.lastActive() : null,
-            profileResponse.isPublic(),
-            profileResponse.privacySettings(), // Privacy settings are always shown to help understand filtering
-            shouldShowField("stats", profileUserId, requesterId, adminCode) ? profileResponse.activityStats() : null,
-            shouldShowField("achievements", profileUserId, requesterId, adminCode) ? profileResponse.achievements() : null
-        );
+                profileResponse.userId(),
+                profileResponse.displayName(),
+                shouldShowField("bio", profileUserId, requesterId, adminCode) ? profileResponse.bio() : null,
+                profileResponse.avatarUrl(),
+                profileResponse.gender(),
+                profileResponse.joinDate(),
+                shouldShowField("lastActive", profileUserId, requesterId, adminCode) ? profileResponse.lastActive()
+                        : null,
+                profileResponse.isPublic(),
+                profileResponse.privacySettings(), // Privacy settings are always shown to help understand filtering
+                shouldShowField("stats", profileUserId, requesterId, adminCode) ? profileResponse.activityStats()
+                        : null,
+                shouldShowField("achievements", profileUserId, requesterId, adminCode) ? profileResponse.achievements()
+                        : null);
     }
 
     /**
@@ -134,8 +138,8 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
             return null;
         }
 
-        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = 
-            privacyFilterMiddleware.determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
+        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = privacyFilterMiddleware
+                .determinePrivacyLevel(profile.getUserId(), requesterId, adminCode);
 
         // Use middleware to filter the profile
         return privacyFilterMiddleware.filterProfile(profile, null, privacyLevel);
@@ -153,14 +157,14 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
         Object firstItem = list.get(0);
         if (firstItem instanceof ProfileResponse) {
             return list.stream()
-                .map(item -> filterProfileResponse((ProfileResponse) item, requesterId, adminCode))
-                .filter(item -> item != null) // Remove null (denied) items
-                .collect(java.util.stream.Collectors.toList());
+                    .map(item -> filterProfileResponse((ProfileResponse) item, requesterId, adminCode))
+                    .filter(item -> item != null) // Remove null (denied) items
+                    .collect(java.util.stream.Collectors.toList());
         } else if (firstItem instanceof UserProfile) {
             return list.stream()
-                .map(item -> filterUserProfile((UserProfile) item, requesterId, adminCode))
-                .filter(item -> item != null) // Remove null (denied) items
-                .collect(java.util.stream.Collectors.toList());
+                    .map(item -> filterUserProfile((UserProfile) item, requesterId, adminCode))
+                    .filter(item -> item != null) // Remove null (denied) items
+                    .collect(java.util.stream.Collectors.toList());
         }
 
         return list;
@@ -170,17 +174,18 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
      * Check if a specific field should be shown based on privacy settings.
      */
     private boolean shouldShowField(String fieldName, String profileUserId, String requesterId, String adminCode) {
-        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = 
-            privacyFilterMiddleware.determinePrivacyLevel(profileUserId, requesterId, adminCode);
+        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = privacyFilterMiddleware.determinePrivacyLevel(profileUserId,
+                requesterId, adminCode);
 
         // Owner and admin can see all fields
-        if (privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.OWNER || 
-            privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.ADMIN) {
+        if (privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.OWNER ||
+                privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.ADMIN) {
             return true;
         }
 
         // For public access, we need to check privacy settings
-        // This is a simplified check - in practice, you'd load the actual privacy settings
+        // This is a simplified check - in practice, you'd load the actual privacy
+        // settings
         return privacyLevel == PrivacyFilterMiddleware.PrivacyLevel.PUBLIC;
     }
 
@@ -211,7 +216,8 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
         }
 
         // Try to get from headers
-        List<String> headerValues = request.getHeaders().get("X-" + key.substring(0, 1).toUpperCase() + key.substring(1));
+        List<String> headerValues = request.getHeaders()
+                .get("X-" + key.substring(0, 1).toUpperCase() + key.substring(1));
         if (headerValues != null && !headerValues.isEmpty()) {
             return headerValues.get(0);
         }

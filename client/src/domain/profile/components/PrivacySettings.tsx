@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { PrivacySettings as PrivacySettingsType } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface PrivacySettingsProps {
     settings: PrivacySettingsType;
@@ -19,6 +20,7 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
     isLoading = false,
     className = ''
 }) => {
+    const { t } = useTranslation();
     const [localSettings, setLocalSettings] = useState<PrivacySettingsType>(settings);
     const [hasChanges, setHasChanges] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -59,16 +61,7 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
     };
 
     const getVisibilityDescription = (visibility: string) => {
-        switch (visibility) {
-            case 'public':
-                return 'Anyone can view your profile';
-            case 'friends':
-                return 'Only friends can view your profile';
-            case 'private':
-                return 'Only you can view your profile';
-            default:
-                return '';
-        }
+        return t(`profile.privacy.visibility.${visibility}_desc`);
     };
 
     const getVisibilityIcon = (visibility: string) => {
@@ -87,16 +80,16 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
     return (
         <div className={`privacy-settings space-y-8 ${className}`}>
             <div>
-                <h3 className="text-xl font-medium text-[var(--text-primary)] mb-2">Privacy Settings</h3>
+                <h3 className="text-xl font-medium text-[var(--text-primary)] mb-2">{t('profile.privacy.title')}</h3>
                 <p className="text-sm text-[var(--text-secondary)]">
-                    Control who can see your profile information and activity.
+                    {t('profile.privacy.subtitle')}
                 </p>
             </div>
 
             {/* Profile Visibility */}
             <div className="space-y-4">
                 <label className="block text-sm font-medium text-[var(--text-primary)] uppercase tracking-wider">
-                    Profile Visibility
+                    {t('profile.privacy.visibility_title')}
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {(['public', 'friends', 'private'] as const).map((visibility) => (
@@ -123,7 +116,7 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                                 />
                             </div>
                             <div className="text-base font-semibold text-[var(--text-primary)] capitalize mb-1">
-                                {visibility}
+                                {t(`profile.privacy.visibility.${visibility}`)}
                             </div>
                             <div className="text-xs text-[var(--text-secondary)] leading-tight">
                                 {getVisibilityDescription(visibility)}
@@ -140,16 +133,16 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
             `}>
                 <div className="pt-6 border-t border-[var(--border-subtle)]">
                     <h4 className="text-sm font-medium text-[var(--text-primary)] uppercase tracking-wider mb-4">
-                        What others can see
+                        {t('profile.privacy.granular_title')}
                     </h4>
 
                     <div className="space-y-3">
                         {/* Show Bio */}
                         <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
                             <div>
-                                <div className="text-sm font-medium text-[var(--text-primary)]">Bio</div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">{t('profile.privacy.show_bio')}</div>
                                 <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
-                                    Your personal description
+                                    {t('profile.privacy.show_bio_desc')}
                                 </div>
                             </div>
                             <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
@@ -171,9 +164,9 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                         {/* Show Stats */}
                         <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
                             <div>
-                                <div className="text-sm font-medium text-[var(--text-primary)]">Activity Statistics</div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">{t('profile.privacy.show_stats')}</div>
                                 <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
-                                    Message count, games played, streaks
+                                    {t('profile.privacy.show_stats_desc')}
                                 </div>
                             </div>
                             <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
@@ -195,9 +188,9 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                         {/* Show Achievements */}
                         <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
                             <div>
-                                <div className="text-sm font-medium text-[var(--text-primary)]">Achievements</div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">{t('profile.privacy.show_achievements')}</div>
                                 <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
-                                    Badges and accomplishments
+                                    {t('profile.privacy.show_achievements_desc')}
                                 </div>
                             </div>
                             <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
@@ -219,9 +212,9 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                         {/* Show Last Active */}
                         <label className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--bg-surface-translucent)] transition-colors cursor-pointer group">
                             <div>
-                                <div className="text-sm font-medium text-[var(--text-primary)]">Last Active</div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">{t('profile.privacy.show_last_active')}</div>
                                 <div className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
-                                    When you were last online
+                                    {t('profile.privacy.show_last_active_desc')}
                                 </div>
                             </div>
                             <div className="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
@@ -252,10 +245,9 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                         </svg>
                     </div>
                     <div className="text-sm text-[var(--text-secondary)]">
-                        <p className="font-medium mb-1 text-[var(--text-primary)]">Privacy Information</p>
+                        <p className="font-medium mb-1 text-[var(--text-primary)]">{t('profile.privacy.notice_title')}</p>
                         <p>
-                            Your avatar and display name are always visible to maintain a social experience.
-                            Other information can be controlled with these settings.
+                            {t('profile.privacy.notice_text')}
                         </p>
                     </div>
                 </div>
@@ -274,12 +266,12 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                                 : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border border-[var(--border-subtle)] cursor-not-allowed'}
                         `}
                     >
-                        {isUpdating ? 'Saving...' : 'Save Changes'}
+                        {isUpdating ? t('profile.privacy.saving') : t('profile.privacy.save')}
                     </button>
 
                     {hasChanges && (
                         <div className="text-xs text-amber-600 bg-amber-50/80 backdrop-blur-sm border border-amber-200 px-3 py-2 rounded-md flex items-center">
-                            Unsaved
+                            {t('profile.form.unsaved')}
                         </div>
                     )}
                 </div>
@@ -290,7 +282,7 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
                         disabled={isUpdating || isLoading}
                         className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] underline disabled:opacity-50"
                     >
-                        Reset Changes
+                        {t('profile.privacy.reset')}
                     </button>
                 )}
             </div>

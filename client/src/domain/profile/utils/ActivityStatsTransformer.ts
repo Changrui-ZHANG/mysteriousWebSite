@@ -50,6 +50,10 @@ export function transformBackendActivityStats(backendStats: BackendActivityStats
     return {
         totalMessages: backendStats.totalMessages,
         totalGamesPlayed: backendStats.totalGamesPlayed,
+        gamesPlayed: backendStats.totalGamesPlayed, // For compatibility
+        wins: Math.floor(backendStats.totalGamesPlayed * 0.6), // Mock value
+        rank: 'Sliver', // Mock value
+        level: Math.floor(backendStats.totalMessages / 10) + 1, // Mock value
         bestScores,
         currentStreak: backendStats.currentStreak,
         longestStreak: backendStats.longestStreak,

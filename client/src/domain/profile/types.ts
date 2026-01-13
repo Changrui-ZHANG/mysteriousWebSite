@@ -3,6 +3,7 @@ export interface UserProfile {
     displayName: string;
     bio?: string;
     avatarUrl?: string;
+    gender?: string | null;
     joinDate: Date | string; // Backend sends string, frontend converts to Date
     lastActive: Date | string; // Backend sends string, frontend converts to Date
     isPublic: boolean;
@@ -22,6 +23,10 @@ export interface PrivacySettings {
 export interface ActivityStats {
     totalMessages: number;
     totalGamesPlayed: number;
+    gamesPlayed: number; // For compatibility
+    wins: number;
+    rank: string;
+    level: number;
     bestScores: Record<string, number> | string; // Can be JSON string from backend
     currentStreak: number;
     longestStreak: number;
@@ -41,6 +46,7 @@ export interface Achievement {
 export interface CreateProfileRequest {
     displayName: string;
     bio?: string;
+    gender?: string | null;
     privacySettings?: Partial<PrivacySettings>;
 }
 
@@ -48,6 +54,7 @@ export interface UpdateProfileRequest {
     displayName?: string;
     bio?: string;
     avatarUrl?: string;
+    gender?: string | null;
     privacySettings?: Partial<PrivacySettings>;
 }
 
@@ -91,5 +98,4 @@ export interface ProfileSearchResult {
 
 // Re-export cropping types for convenience
 export * from './components/cropping/types';
-export * from './hooks/cropping/types';
-export * from './utils/cropping/types';
+// Removed redundant/invalid re-exports to fix build errors
