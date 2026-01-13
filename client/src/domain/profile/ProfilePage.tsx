@@ -77,9 +77,14 @@ export const ProfilePage: React.FC = () => {
         }
     };
 
-    const handleUpdatePrivacy = async (key: string, value: boolean) => {
+    const handleUpdatePrivacy = async (settings: import('./types').PrivacySettings) => {
+        if (!user?.userId) return;
         try {
-            await updatePrivacyMutation.mutateAsync({ [key]: value });
+            await updatePrivacyMutation.mutateAsync({
+                userId: user.userId,
+                settings,
+                requesterId: user.userId
+            });
         } catch (err) {
             console.error('Failed to update privacy settings:', err);
         }
@@ -223,10 +228,16 @@ export const ProfilePage: React.FC = () => {
                         </div>
                     )}
 
-                    {!isLoading && activeTab === 'privacy' && (
+                    {!isLoading && activeTab === 'privacy' && profile && (
                         <div className="max-w-4xl mx-auto animate-fade-in-up">
                             <PrivacySettings
-                                settings={profile?.preferences?.privacy || {}}
+                                settings={profile.privacySettings || {
+                                    profileVisibility: 'public',
+                                    showBio: true,
+                                    showStats: true,
+                                    showAchievements: true,
+                                    showLastActive: true
+                                }}
                                 onUpdate={handleUpdatePrivacy}
                             />
                         </div>
