@@ -62,29 +62,29 @@ public class AvatarService {
         try {
             // Process and resize image
             BufferedImage processedImage = processAvatarImage(file);
-            
+
             // Generate secure filename using middleware
             String secureFilename = fileUploadMiddleware.generateSecureFilename(
-                file.getOriginalFilename(), userId);
-            
+                    file.getOriginalFilename(), userId);
+
             // Ensure upload directory exists
             Path uploadPath = Paths.get(uploadDir);
             Files.createDirectories(uploadPath);
-            
+
             // Save processed image
             Path filePath = uploadPath.resolve(secureFilename);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processedImage, "jpg", baos);
             Files.write(filePath, baos.toByteArray());
-            
+
             // Generate URL
             String avatarUrl = baseUrl + "/" + secureFilename;
-            
+
             // Update profile with new avatar URL
             updateAvatarUrl(userId, avatarUrl, requesterId);
-            
+
             return avatarUrl;
-            
+
         } catch (IOException e) {
             throw new BadRequestException("Failed to process avatar image: " + e.getMessage());
         }
@@ -95,40 +95,40 @@ public class AvatarService {
      */
     private BufferedImage processAvatarImage(MultipartFile file) throws IOException {
         BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
-        
+
         if (originalImage == null) {
             throw new BadRequestException("Invalid image file");
         }
-        
+
         // Create 256x256 image
         BufferedImage resizedImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = resizedImage.createGraphics();
-        
+
         // Enable high-quality rendering
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
+
         // Fill background with white
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, 256, 256);
-        
+
         // Calculate scaling to maintain aspect ratio
         int originalWidth = originalImage.getWidth();
         int originalHeight = originalImage.getHeight();
         double scale = Math.min(256.0 / originalWidth, 256.0 / originalHeight);
-        
+
         int scaledWidth = (int) (originalWidth * scale);
         int scaledHeight = (int) (originalHeight * scale);
-        
+
         // Center the image
         int x = (256 - scaledWidth) / 2;
         int y = (256 - scaledHeight) / 2;
-        
+
         // Draw the scaled image
         g2d.drawImage(originalImage, x, y, scaledWidth, scaledHeight, null);
         g2d.dispose();
-        
+
         return resizedImage;
     }
 
@@ -143,7 +143,7 @@ public class AvatarService {
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)
-            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
 
         profile.setAvatarUrl(avatarUrl);
         profileRepository.save(profile);
@@ -160,7 +160,7 @@ public class AvatarService {
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)
-            .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
+                .orElseThrow(() -> new NotFoundException("Profile not found for user: " + userId));
 
         profile.setAvatarUrl(null);
         profileRepository.save(profile);
@@ -170,15 +170,10 @@ public class AvatarService {
      * Get default avatar options
      */
     public List<String> getDefaultAvatars() {
-        // Return a list of default avatar URLs
-        // These could be stored in the database or configuration
         return Arrays.asList(
-            "/avatars/default/avatar1.png",
-            "/avatars/default/avatar2.png",
-            "/avatars/default/avatar3.png",
-            "/avatars/default/avatar4.png",
-            "/avatars/default/avatar5.png"
-        );
+                "/avatars/default-B.jpeg",
+                "/avatars/default-G.jpeg",
+                "/avatars/default-avatar.png");
     }
 
     /**

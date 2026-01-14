@@ -14,7 +14,8 @@ import java.util.List;
 
 /**
  * Middleware for secure file upload handling.
- * Provides file validation, security checks, and malware scanning for uploaded files.
+ * Provides file validation, security checks, and malware scanning for uploaded
+ * files.
  */
 @Component
 public class FileUploadMiddleware {
@@ -32,17 +33,15 @@ public class FileUploadMiddleware {
     private boolean enableMalwareScanning;
 
     private static final List<String> DANGEROUS_EXTENSIONS = Arrays.asList(
-        "exe", "bat", "cmd", "com", "pif", "scr", "vbs", "js", "jar", "php", "asp", "jsp"
-    );
+            "exe", "bat", "cmd", "com", "pif", "scr", "vbs", "js", "jar", "php", "asp", "jsp");
 
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList(
-        "image/jpeg", "image/png", "image/webp", "image/gif"
-    );
+            "image/jpeg", "image/png", "image/webp", "image/gif");
 
     /**
      * Validate uploaded file for security and format compliance.
      * 
-     * @param file The uploaded file to validate
+     * @param file     The uploaded file to validate
      * @param fileType The expected file type (e.g., "avatar", "document")
      * @throws BadRequestException if validation fails
      */
@@ -76,8 +75,7 @@ public class FileUploadMiddleware {
     private void validateFileSize(MultipartFile file) {
         if (file.getSize() > maxFileSize) {
             throw new BadRequestException(
-                String.format("File size exceeds maximum allowed size of %d bytes", maxFileSize)
-            );
+                    String.format("File size exceeds maximum allowed size of %d bytes", maxFileSize));
         }
 
         if (file.getSize() == 0) {
@@ -90,7 +88,7 @@ public class FileUploadMiddleware {
      */
     private void validateFileName(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-        
+
         if (originalFilename == null || originalFilename.trim().isEmpty()) {
             throw new BadRequestException("Invalid file name");
         }
@@ -118,7 +116,7 @@ public class FileUploadMiddleware {
      */
     private void validateMimeType(MultipartFile file) {
         String contentType = file.getContentType();
-        
+
         if (contentType == null) {
             throw new BadRequestException("File content type is required");
         }
@@ -135,7 +133,7 @@ public class FileUploadMiddleware {
         try {
             // Verify it's actually an image by trying to read it
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
-            
+
             if (image == null) {
                 throw new BadRequestException("File is not a valid image");
             }
@@ -143,9 +141,8 @@ public class FileUploadMiddleware {
             // Check image dimensions
             if (image.getWidth() > maxImageDimension || image.getHeight() > maxImageDimension) {
                 throw new BadRequestException(
-                    String.format("Image dimensions exceed maximum allowed size of %dx%d pixels", 
-                                maxImageDimension, maxImageDimension)
-                );
+                        String.format("Image dimensions exceed maximum allowed size of %dx%d pixels",
+                                maxImageDimension, maxImageDimension));
             }
 
             // Check for minimum dimensions (avoid tiny images)
@@ -156,7 +153,7 @@ public class FileUploadMiddleware {
             // Validate file extension matches content
             String extension = getFileExtension(file.getOriginalFilename()).toLowerCase();
             List<String> allowedExtensions = Arrays.asList(allowedImageTypes.split(","));
-            
+
             if (!allowedExtensions.contains(extension)) {
                 throw new BadRequestException("Image file extension not allowed: " + extension);
             }
@@ -170,8 +167,12 @@ public class FileUploadMiddleware {
      * Perform security checks on uploaded file.
      */
     private void performSecurityChecks(MultipartFile file) {
-        // Check for embedded scripts or malicious content
-        checkForEmbeddedScripts(file);
+        // Only check for embedded scripts in non-image files to avoid false positives
+        // in binary data
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
+            checkForEmbeddedScripts(file);
+        }
 
         // Placeholder for malware scanning
         if (enableMalwareScanning) {
@@ -192,8 +193,8 @@ public class FileUploadMiddleware {
 
             // Check for common script patterns
             String[] dangerousPatterns = {
-                "<script", "javascript:", "vbscript:", "onload=", "onerror=", 
-                "<?php", "<%", "<jsp:", "eval(", "exec("
+                    "<script", "javascript:", "vbscript:", "onload=", "onerror=",
+                    "<?php", "<%", "<jsp:", "eval(", "exec("
             };
 
             for (String pattern : dangerousPatterns) {
@@ -213,18 +214,18 @@ public class FileUploadMiddleware {
     private void performMalwareScan(MultipartFile file) {
         // TODO: Integrate with malware scanning service
         // This is a placeholder for future implementation
-        
+
         // Example integration points:
         // - ClamAV for open-source scanning
         // - VirusTotal API for cloud-based scanning
         // - Commercial antivirus solutions
-        
+
         // For now, log that scanning would occur
         System.out.println("[SECURITY] Malware scan placeholder for file: " + file.getOriginalFilename());
-        
+
         // Simulate scan result (in production, this would be real)
         boolean scanResult = true; // Assume clean for placeholder
-        
+
         if (!scanResult) {
             throw new BadRequestException("File failed malware scan");
         }
@@ -242,7 +243,7 @@ public class FileUploadMiddleware {
 
             // Check magic bytes for common image formats
             String extension = getFileExtension(file.getOriginalFilename()).toLowerCase();
-            
+
             switch (extension) {
                 case "jpg":
                 case "jpeg":
@@ -251,14 +252,14 @@ public class FileUploadMiddleware {
                     }
                     break;
                 case "png":
-                    if (!(fileBytes[0] == (byte) 0x89 && fileBytes[1] == 0x50 && 
-                          fileBytes[2] == 0x4E && fileBytes[3] == 0x47)) {
+                    if (!(fileBytes[0] == (byte) 0x89 && fileBytes[1] == 0x50 &&
+                            fileBytes[2] == 0x4E && fileBytes[3] == 0x47)) {
                         throw new BadRequestException("File header does not match PNG format");
                     }
                     break;
                 case "webp":
-                    if (!(fileBytes[0] == 0x52 && fileBytes[1] == 0x49 && 
-                          fileBytes[2] == 0x46 && fileBytes[3] == 0x46)) {
+                    if (!(fileBytes[0] == 0x52 && fileBytes[1] == 0x49 &&
+                            fileBytes[2] == 0x46 && fileBytes[3] == 0x46)) {
                         throw new BadRequestException("File header does not match WebP format");
                     }
                     break;
@@ -275,11 +276,11 @@ public class FileUploadMiddleware {
         if (filename == null) {
             return "";
         }
-        
+
         // Remove path separators and dangerous characters
         return filename.replaceAll("[^a-zA-Z0-9._-]", "")
-                      .replaceAll("\\.{2,}", ".") // Remove multiple dots
-                      .trim();
+                .replaceAll("\\.{2,}", ".") // Remove multiple dots
+                .trim();
     }
 
     /**
@@ -289,7 +290,7 @@ public class FileUploadMiddleware {
         if (filename == null) {
             return "";
         }
-        
+
         int lastDotIndex = filename.lastIndexOf('.');
         if (lastDotIndex == -1) {
             return "";
@@ -303,11 +304,11 @@ public class FileUploadMiddleware {
     public String generateSecureFilename(String originalFilename, String userId) {
         String extension = getFileExtension(originalFilename);
         String sanitizedName = sanitizeFileName(originalFilename);
-        
+
         // Create secure filename with timestamp and user ID
         long timestamp = System.currentTimeMillis();
-        return String.format("%s_%d_%s.%s", userId, timestamp, 
-                           sanitizedName.replaceAll("\\.[^.]*$", ""), extension);
+        return String.format("%s_%d_%s.%s", userId, timestamp,
+                sanitizedName.replaceAll("\\.[^.]*$", ""), extension);
     }
 
     /**
@@ -315,7 +316,7 @@ public class FileUploadMiddleware {
      */
     public boolean isFileTypeAllowed(String filename, String operation) {
         String extension = getFileExtension(filename).toLowerCase();
-        
+
         switch (operation.toLowerCase()) {
             case "avatar":
                 return Arrays.asList(allowedImageTypes.split(",")).contains(extension);

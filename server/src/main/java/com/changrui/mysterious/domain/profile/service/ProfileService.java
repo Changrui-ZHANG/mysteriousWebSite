@@ -55,11 +55,16 @@ public class ProfileService {
             if (profile.getAvatarUrl() == null || profile.getAvatarUrl().isEmpty()) {
                 if ("H".equalsIgnoreCase(request.gender()) || "M".equalsIgnoreCase(request.gender())
                         || "B".equalsIgnoreCase(request.gender())) {
-                    profile.setAvatarUrl("/api/avatars/files/default-B.jpeg");
+                    profile.setAvatarUrl("/avatars/default-B.jpeg");
                 } else if ("F".equalsIgnoreCase(request.gender()) || "G".equalsIgnoreCase(request.gender())) {
-                    profile.setAvatarUrl("/api/avatars/files/default-G.jpeg");
+                    profile.setAvatarUrl("/avatars/default-G.jpeg");
                 }
             }
+        }
+
+        // Final neutral fallback if still null
+        if (profile.getAvatarUrl() == null || profile.getAvatarUrl().isEmpty()) {
+            profile.setAvatarUrl("/avatars/default-avatar.png");
         }
 
         // Set public/private status

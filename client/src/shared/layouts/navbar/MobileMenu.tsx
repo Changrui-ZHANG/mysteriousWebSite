@@ -147,7 +147,7 @@ export function MobileMenu({
                                         <div className="flex flex-col items-center">
                                             <div className="w-16 h-16 rounded-2xl border-2 border-accent-primary/20 p-1 mb-3 bg-white/5">
                                                 <img
-                                                    src={syncedAvatarUrl || '/default-avatar.png'}
+                                                    src={syncedAvatarUrl || '/avatars/default-avatar.png'}
                                                     alt={user.username}
                                                     className="w-full h-full object-cover rounded-xl"
                                                 />

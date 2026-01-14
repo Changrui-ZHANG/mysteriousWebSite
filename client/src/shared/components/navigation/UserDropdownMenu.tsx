@@ -124,9 +124,13 @@ export const UserDropdownMenu: React.FC<UserDropdownMenuProps> = memo(({
             <div className="flex items-center space-x-3">
               <div className="shrink-0 w-12 h-12 rounded-xl border border-white/10 overflow-hidden shadow-inner bg-accent-primary/10">
                 <img
-                  src={user.avatarUrl || '/default-avatar.png'}
+                  src={user.avatarUrl || '/avatars/default-avatar.png'}
                   alt={user.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/avatars/default-avatar.png';
+                  }}
                 />
               </div>
               <div className="grow overflow-hidden">

@@ -37,8 +37,8 @@ export const AvatarButton: React.FC<AvatarButtonProps> = memo(({
         relative w-10 h-10 rounded-full overflow-hidden
         transition-all duration-200 ease-in-out
         focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-transparent
-        ${isActive 
-          ? 'ring-2 ring-white/50 shadow-lg scale-105' 
+        ${isActive
+          ? 'ring-2 ring-white/50 shadow-lg scale-105'
           : 'ring-1 ring-white/20 hover:ring-white/40 hover:shadow-md hover:scale-105'
         }
       `}
@@ -48,16 +48,16 @@ export const AvatarButton: React.FC<AvatarButtonProps> = memo(({
     >
       {/* Avatar image or default placeholder */}
       <img
-        src={avatarUrl || '/default-avatar.png'}
+        src={avatarUrl || '/avatars/default-avatar.png'}
         alt={`${userName}'s avatar`}
         className="w-full h-full object-cover"
         onError={(e) => {
           // Fallback to default avatar on error
           const target = e.target as HTMLImageElement;
-          target.src = '/default-avatar.png';
+          target.src = '/avatars/default-avatar.png';
         }}
       />
-      
+
       {/* Active state indicator */}
       {isActive && (
         <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]" />

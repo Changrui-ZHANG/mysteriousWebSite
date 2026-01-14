@@ -125,11 +125,15 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         try {
             closeModal('avatarCropper');
 
+            // Determine extension based on blob type
+            const extension = cropResult.croppedImageBlob.type.split('/')[1] || 'jpg';
+            const fileName = (selectedFile?.name || 'avatar').replace(/\.[^/.]+$/, "") + "." + extension;
+
             // Create a new File object from the cropped blob
             const croppedFile = new File(
                 [cropResult.croppedImageBlob],
-                selectedFile?.name || 'cropped-avatar.jpg',
-                { type: 'image/jpeg' }
+                fileName,
+                { type: cropResult.croppedImageBlob.type }
             );
 
             // Create preview from crop result
@@ -239,9 +243,13 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                 <div className="flex items-center space-x-4 mb-4">
                     <div className="relative group">
                         <img
-                            src={displayUrl || '/default-avatar.png'}
+                            src={displayUrl || '/avatars/default-avatar.png'}
                             alt={t('profile.avatar.title')}
                             className="w-20 h-20 rounded-full object-cover border-2 border-[var(--glass-border)] shadow-md group-hover:scale-105 transition-transform"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = '/avatars/default-avatar.png';
+                            }}
                         />
                         {isUploading && (
                             <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">

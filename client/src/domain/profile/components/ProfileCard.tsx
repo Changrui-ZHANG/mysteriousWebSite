@@ -68,9 +68,13 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
                 <div className="shrink-0 relative">
                     <img
-                        src={avatarUrl || '/default-avatar.png'}
+                        src={avatarUrl || '/avatars/default-avatar.png'}
                         alt={`${displayName}'s avatar`}
                         className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-[var(--bg-surface)] shadow-lg transition-all"
+                        onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/avatars/default-avatar.png';
+                        }}
                     />
                     <div className="absolute inset-0 rounded-full ring-2 ring-[var(--accent-primary)] ring-offset-2 ring-offset-transparent opacity-50"></div>
                 </div>

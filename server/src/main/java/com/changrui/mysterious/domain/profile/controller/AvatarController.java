@@ -39,7 +39,7 @@ public class AvatarController {
             @PathVariable String userId,
             @RequestParam("avatar") @ValidateFileUpload(fileType = "avatar", maxSize = 5242880) MultipartFile file,
             @RequestParam String requesterId) {
-        
+
         String avatarUrl = avatarService.uploadAvatar(userId, file, requesterId);
         return ResponseEntity.ok(ApiResponse.success(avatarUrl, "Avatar uploaded successfully"));
     }
@@ -53,7 +53,7 @@ public class AvatarController {
             @PathVariable String userId,
             @RequestBody String avatarUrl,
             @RequestParam String requesterId) {
-        
+
         avatarService.updateAvatarUrl(userId, avatarUrl, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Avatar updated successfully"));
     }
@@ -66,7 +66,7 @@ public class AvatarController {
     public ResponseEntity<ApiResponse<Void>> deleteAvatar(
             @PathVariable String userId,
             @RequestParam String requesterId) {
-        
+
         avatarService.deleteAvatar(userId, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Avatar deleted successfully"));
     }
@@ -81,19 +81,31 @@ public class AvatarController {
     }
 
     /**
-     * Serve avatar files
+     * Serve avatar files from the uploads directory
      */
     @GetMapping("/files/{filename}")
     public ResponseEntity<Resource> serveAvatarFile(@PathVariable String filename) {
         try {
+            // Basic security check for filename to prevent path traversal
+            if (filename.contains("..") || filename.contains("/") || filename.contains("\\")) {
+                return ResponseEntity.badRequest().build();
+            }
+
             Path filePath = Paths.get("uploads/avatars").resolve(filename);
             Resource resource = new UrlResource(filePath.toUri());
-            
+
             if (resource.exists() && resource.isReadable()) {
+                MediaType mediaType = MediaType.IMAGE_JPEG;
+                if (filename.toLowerCase().endsWith(".png")) {
+                    mediaType = MediaType.IMAGE_PNG;
+                } else if (filename.toLowerCase().endsWith(".webp")) {
+                    mediaType = MediaType.parseMediaType("image/webp");
+                }
+
                 return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
-                    .body(resource);
+                        .contentType(mediaType)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                        .body(resource);
             } else {
                 return ResponseEntity.notFound().build();
             }
