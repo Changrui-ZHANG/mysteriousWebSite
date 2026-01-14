@@ -1,15 +1,23 @@
 /**
  * AvatarUploadWithCropping - Enhanced avatar upload with integrated cropping
- * Combines the existing avatar upload functionality with the new cropping system
+ * Orchestrates the avatar upload flow using focused sub-components
+ * Refactored to use AvatarDropzone, AvatarPreview, and AvatarUploadProgress
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAvatarUpload } from '../queries/avatarMutations';
-import { useModalActions, useModalState, useNotificationActions, useLoadingActions, useLoadingState } from '../stores/uiStore';
+import { useModalActions, useIsModalOpen } from '../stores/modalStore';
+import { useNotificationActions } from '../stores/notificationStore';
+import { useLoadingActions, useIsLoading } from '../stores/loadingStore';
 import { AvatarCropper } from './cropping/AvatarCropper';
+import { AvatarDropzone, AvatarPreview, AvatarUploadProgress } from './avatar';
 import { CropResult } from './cropping/types';
 import { logError } from '../utils/logger';
+
+// Constants
+const ACCEPTED_FORMATS = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 interface AvatarUploadWithCroppingProps {
     userId: string;
@@ -22,7 +30,7 @@ interface AvatarUploadWithCroppingProps {
 
 /**
  * Enhanced AvatarUpload component with integrated cropping functionality
- * Provides seamless transition from file selection to cropping to upload
+ * Orchestrates file selection, cropping, and upload using focused sub-components
  * Adapted for Glassmorphism design
  */
 export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> = ({
@@ -34,16 +42,16 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     enableCropping = true
 }) => {
     const { t } = useTranslation();
-    const [isDragOver, setIsDragOver] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     // Global UI state
-    const showCropper = useModalState('avatarCropper');
+    const showCropper = useIsModalOpen('avatarCropper');
     const { openModal, closeModal } = useModalActions();
     const { addSuccessNotification, addErrorNotification } = useNotificationActions();
     const { setLoading } = useLoadingActions();
-    const isUploading = useLoadingState('avatarUpload');
+    const isUploading = useIsLoading('avatarUpload');
 
     // Early return if no userId to prevent hook initialization errors
     if (!userId) {
@@ -81,10 +89,6 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             onUploadError?.(error);
         }
     });
-
-    // Track upload progress locally since TanStack Query handles it via callback
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const displayUrl = currentAvatarUrl || previewUrl;
 
@@ -124,7 +128,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      */
     const handleCropComplete = async (cropResult: CropResult) => {
         try {
-            closeModal('avatarCropper');
+            closeModal();
 
             // Determine extension based on blob type
             const extension = cropResult.croppedImageBlob.type.split('/')[1] || 'jpg';
@@ -170,41 +174,8 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      * Handle crop cancellation
      */
     const handleCropCancel = () => {
-        closeModal('avatarCropper');
+        closeModal();
         setSelectedFile(null);
-    };
-
-    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            handleFileSelect(file);
-        }
-        // Reset the input value so the same file can be selected again
-        e.target.value = '';
-    };
-
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragOver(true);
-    };
-
-    const handleDragLeave = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragOver(false);
-    };
-
-    const handleDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragOver(false);
-
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            handleFileSelect(file);
-        }
-    };
-
-    const handleClick = () => {
-        fileInputRef.current?.click();
     };
 
     const handleDelete = async () => {
@@ -227,139 +198,62 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
         }
     };
 
-    const handleCancelPreview = () => {
+    const handleCancelUpload = () => {
         if (previewUrl) {
             clearPreview(previewUrl);
             setPreviewUrl(null);
         }
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
+        setSelectedFile(null);
+        setUploadProgress(0);
     };
 
     return (
         <>
             <div className={`avatar-upload ${className}`}>
-                {/* Avatar Display */}
-                <div className="flex items-center space-x-4 mb-4">
-                    <div className="relative group">
-                        <img
-                            src={displayUrl || '/avatars/default-avatar.png'}
-                            alt={t('profile.avatar.title')}
-                            className="w-20 h-20 rounded-full object-cover border-2 border-(--glass-border) shadow-md group-hover:scale-105 transition-transform"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/avatars/default-avatar.png';
-                            }}
-                        />
-                        {isUploading && (
-                            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                <div className="text-white text-xs font-medium">
-                                    {uploadProgress}%
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex-1">
-                        <h4 className="text-sm font-medium text-(--text-primary) mb-1">
-                            {t('profile.avatar.title')}
-                        </h4>
-                        <p className="text-xs text-(--text-muted) mb-2">
-                            {t('profile.avatar.upload')}
-                        </p>
-
-                        {previewUrl && (
-                            <div className="flex space-x-2">
-                                <button
-                                    onClick={handleCancelPreview}
-                                    className="text-xs text-(--text-secondary) hover:text-(--text-primary) underline"
-                                    disabled={isUploading}
-                                >
-                                    {t('profile.avatar.cancel')}
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Upload Area */}
-                <div
-                    className={`
-                        border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer 
-                        ${isDragOver
-                            ? 'border-(--accent-primary) bg-(--accent-primary-alpha) scale-[1.02]'
-                            : 'border-(--border-subtle) hover:border-(--accent-primary) hover:bg-(--bg-surface-translucent)'
-                        } 
-                        ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
-                    `}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={handleClick}
-                >
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={handleFileInputChange}
-                        className="hidden"
-                        disabled={isUploading}
+                {/* Show preview if we have an avatar */}
+                {displayUrl && !isUploading && (
+                    <AvatarPreview
+                        imageUrl={displayUrl}
+                        onRemove={handleDelete}
+                        isUploading={false}
                     />
+                )}
 
-                    {isUploading ? (
-                        <div className="space-y-2">
-                            <div className="text-sm text-(--text-secondary)">{t('profile.form.saving')}</div>
-                            <div className="w-full bg-(--bg-surface) rounded-full h-2 overflow-hidden">
-                                <div
-                                    className="bg-(--accent-primary) h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${uploadProgress}%` }}
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            <div className="text-(--text-muted)">
-                                <svg className="mx-auto h-8 w-8 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                </svg>
-                            </div>
-                            <div className="text-sm text-(--text-muted)">
-                                <span className="font-medium text-(--accent-primary) hover:underline">
-                                    {t('profile.avatar.upload')}
-                                </span>
-                            </div>
-                            {enableCropping && (
-                                <div className="text-xs text-(--accent-secondary) flex items-center justify-center mt-1">
-                                    <span className="mr-1">✂️</span> {t('profile.avatar.cropping')}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
+                {/* Show upload progress during upload */}
+                {isUploading && selectedFile && (
+                    <AvatarUploadProgress
+                        progress={uploadProgress}
+                        fileName={selectedFile.name}
+                        onCancel={handleCancelUpload}
+                    />
+                )}
 
-                {/* Actions */}
-                {(currentAvatarUrl || previewUrl) && !isUploading && (
-                    <div className="mt-4 flex justify-center">
-                        <button
-                            onClick={handleDelete}
-                            className="text-sm text-red-500 hover:text-red-600 underline transition-colors"
-                        >
-                            {t('common.delete')}
-                        </button>
-                    </div>
+                {/* Show dropzone when not uploading */}
+                {!isUploading && (
+                    <AvatarDropzone
+                        onFileSelect={handleFileSelect}
+                        accept={ACCEPTED_FORMATS}
+                        maxSize={MAX_FILE_SIZE}
+                        disabled={isUploading}
+                        enableCropping={enableCropping}
+                    />
                 )}
 
                 {/* Error Display */}
                 {error && (
-                    <div className="mt-4 p-3 bg-red-50/50 border border-red-200 rounded-lg backdrop-blur-sm">
+                    <div 
+                        className="mt-4 p-3 bg-red-50/50 border border-red-200 rounded-lg backdrop-blur-sm"
+                        role="alert"
+                        aria-live="polite"
+                    >
                         <div className="flex">
-                            <div className="text-sm text-red-700 break-words">
+                            <div className="text-sm text-red-700 wrap-break-word">
                                 {error}
                             </div>
                             <button
                                 onClick={clearError}
                                 className="ml-auto text-red-400 hover:text-red-600"
+                                aria-label={t('common.close')}
                             >
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -368,23 +262,6 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                         </div>
                     </div>
                 )}
-
-                {/* Cropping toggle */}
-                <div className="mt-4 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    <label className="flex items-center space-x-2 text-xs text-(--text-muted) cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={enableCropping}
-                            onChange={() => {
-                                // This would be controlled by parent component
-                                // For now, just show the current state
-                            }}
-                            className="rounded border-(--border-subtle) text-(--accent-primary) focus:ring-(--accent-primary)"
-                            disabled={isUploading}
-                        />
-                        <span>{t('profile.avatar.cropping')}</span>
-                    </label>
-                </div>
             </div>
 
             {/* Cropper Modal */}

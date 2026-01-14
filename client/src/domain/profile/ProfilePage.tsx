@@ -10,7 +10,7 @@ import { PrivacySettings } from './components/PrivacySettings';
 import { NotificationCenter } from './components/NotificationCenter';
 import { ErrorDisplay } from '../../shared/components';
 import { GlassCard, LiquidBackground } from '../../shared/components/GlassCard';
-import { useHasUnsavedChanges } from './stores/uiStore';
+import { useHasUnsavedChanges } from './stores/editingStore';
 import { logError } from './utils/logger';
 import type { UpdateProfileRequest } from './types';
 

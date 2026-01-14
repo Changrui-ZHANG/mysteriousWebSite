@@ -8,6 +8,17 @@ import {
 } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
 import { requireUserId } from '../utils/validation';
+import {
+    applyPrivacyFiltering,
+    isProfileAccessible as checkProfileAccessibility
+} from '../utils/privacyFiltering';
+import {
+    sanitizeCreateProfileData,
+    sanitizeUpdateProfileData,
+    sanitizeSearchQuery,
+    sanitizeDirectoryFilters,
+    applyResultLimit
+} from '../utils/dataSanitization';
 import type {
     UserProfile,
     CreateProfileRequest,
@@ -46,18 +57,7 @@ export class ProfileService {
         }
 
         // Business logic: Sanitize and set defaults
-        const sanitizedData: CreateProfileRequest = {
-            displayName: data.displayName.trim(),
-            bio: data.bio?.trim() || undefined,
-            privacySettings: {
-                profileVisibility: 'public',
-                showBio: true,
-                showStats: true,
-                showAchievements: true,
-                showLastActive: true,
-                ...data.privacySettings
-            }
-        };
+        const sanitizedData = sanitizeCreateProfileData(data);
 
         // Check for duplicate display names (business rule)
         await this.validateUniqueDisplayName(sanitizedData.displayName);
@@ -85,11 +85,7 @@ export class ProfileService {
         }
 
         // Business logic: Sanitize data
-        const sanitizedData: UpdateProfileRequest = {
-            ...data,
-            displayName: data.displayName?.trim(),
-            bio: data.bio?.trim()
-        };
+        const sanitizedData = sanitizeUpdateProfileData(data);
 
         return this.repository.updateProfile(userId, sanitizedData, requesterId);
     }
@@ -107,7 +103,7 @@ export class ProfileService {
         const profile = await this.repository.findByUserId(userId, effectiveViewerId);
 
         // Business logic: Apply privacy filtering
-        return this.applyPrivacyFiltering(profile, effectiveViewerId);
+        return applyPrivacyFiltering(profile, effectiveViewerId);
     }
 
     /**
@@ -126,19 +122,13 @@ export class ProfileService {
         }
 
         // Business logic: Sanitize and apply limits
-        const sanitizedQuery: ProfileSearchQuery = {
-            ...query,
-            query: query.query?.trim(),
-            limit: Math.min(query.limit || 20, 50), // Max 50 results
-            offset: Math.max(query.offset || 0, 0),
-            includePrivate: false // Always false for non-admin users
-        };
+        const sanitizedQuery = sanitizeSearchQuery(query);
 
         const result = await this.repository.searchProfiles(sanitizedQuery);
 
         // Apply privacy filtering to results
         const filteredProfiles = result.profiles.map(profile =>
-            this.applyPrivacyFiltering(profile, viewerId)
+            applyPrivacyFiltering(profile, viewerId)
         );
 
         return {
@@ -163,17 +153,13 @@ export class ProfileService {
         }
 
         // Business logic: Apply limits and defaults
-        const sanitizedFilters: ProfileDirectoryFilters = {
-            ...filters,
-            limit: Math.min(filters.limit, 100), // Max 100 results
-            offset: Math.max(filters.offset, 0)
-        };
+        const sanitizedFilters = sanitizeDirectoryFilters(filters);
 
         const result = await this.repository.getProfileDirectory(sanitizedFilters);
 
         // Apply privacy filtering
         const filteredProfiles = result.profiles.map(profile =>
-            this.applyPrivacyFiltering(profile, viewerId)
+            applyPrivacyFiltering(profile, viewerId)
         );
 
         return {
@@ -220,20 +206,22 @@ export class ProfileService {
      * Get recently active profiles
      */
     async getRecentlyActiveProfiles(limit: number = 10, viewerId?: string): Promise<UserProfile[]> {
-        const profiles = await this.repository.getRecentlyActiveProfiles(Math.min(limit, 50));
+        const sanitizedLimit = applyResultLimit(limit, 50);
+        const profiles = await this.repository.getRecentlyActiveProfiles(sanitizedLimit);
 
         // Apply privacy filtering
-        return profiles.map(profile => this.applyPrivacyFiltering(profile, viewerId));
+        return profiles.map(profile => applyPrivacyFiltering(profile, viewerId));
     }
 
     /**
      * Get most active profiles (by message count)
      */
     async getMostActiveProfiles(limit: number = 10, viewerId?: string): Promise<UserProfile[]> {
-        const profiles = await this.repository.getMostActiveProfiles(Math.min(limit, 50));
+        const sanitizedLimit = applyResultLimit(limit, 50);
+        const profiles = await this.repository.getMostActiveProfiles(sanitizedLimit);
 
         // Apply privacy filtering
-        return profiles.map(profile => this.applyPrivacyFiltering(profile, viewerId));
+        return profiles.map(profile => applyPrivacyFiltering(profile, viewerId));
     }
 
     /**
@@ -242,14 +230,7 @@ export class ProfileService {
     async isProfileAccessible(userId: string, viewerId?: string): Promise<boolean> {
         try {
             const profile = await this.repository.findByUserId(userId);
-
-            // Business logic: Check privacy settings
-            const privacySettings = profile.privacySettings;
-            if (privacySettings?.profileVisibility === 'private' && userId !== viewerId) {
-                return false;
-            }
-
-            return true;
+            return checkProfileAccessibility(profile, viewerId);
         } catch {
             return false;
         }
@@ -293,57 +274,5 @@ export class ProfileService {
             // If search fails, allow the operation to continue
             // The backend will handle uniqueness constraints
         }
-    }
-
-    /**
-     * Apply privacy filtering to a profile based on viewer permissions
-     */
-    private applyPrivacyFiltering(profile: UserProfile, viewerId?: string): UserProfile {
-        // If viewing own profile, return full profile
-        if (profile.userId === viewerId) {
-            return profile;
-        }
-
-        // Get privacy settings with defaults
-        const privacySettings = profile.privacySettings || {
-            profileVisibility: 'public' as const,
-            showBio: true,
-            showStats: true,
-            showAchievements: true,
-            showLastActive: true
-        };
-
-        // If profile is private, return minimal info
-        if (privacySettings.profileVisibility === 'private') {
-            return {
-                ...profile,
-                bio: undefined,
-                activityStats: profile.activityStats ? {
-                    totalMessages: 0,
-                    totalGamesPlayed: 0,
-                    gamesPlayed: 0,
-                    wins: 0,
-                    rank: 'Private',
-                    level: 1,
-                    bestScores: {},
-                    currentStreak: 0,
-                    longestStreak: 0,
-                    timeSpent: 0
-                } : undefined,
-                achievements: [],
-                lastActive: new Date(0) // Epoch time to indicate hidden
-            };
-        }
-
-        // Apply granular privacy settings
-        const filteredProfile: UserProfile = {
-            ...profile,
-            bio: privacySettings.showBio ? profile.bio : undefined,
-            activityStats: privacySettings.showStats ? profile.activityStats : undefined,
-            achievements: privacySettings.showAchievements ? (profile.achievements || []) : [],
-            lastActive: privacySettings.showLastActive ? profile.lastActive : new Date(0)
-        };
-
-        return filteredProfile;
     }
 }

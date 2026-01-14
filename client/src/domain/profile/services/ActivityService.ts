@@ -1,22 +1,37 @@
-import { fetchJson, postJson } from '../../../shared/api/httpClient';
-import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
+import { requireUserId } from '../utils/validation';
+import type { ActivityStats, ActivityUpdate, Achievement } from '../types';
+import { ActivityTrackingService } from './ActivityTrackingService';
+import { ActivityStatsService } from './ActivityStatsService';
+import { AchievementService } from './AchievementService';
 import { validateActivityUpdate } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
-import { transformBackendActivityStats, transformBackendAchievements } from '../utils/ActivityStatsTransformer';
-import { requireUserId } from '../utils/validation';
-import { logWarn } from '../utils/logger';
-import type { ActivityStats, ActivityUpdate, Achievement } from '../types';
 
 /**
- * Service for activity tracking and achievement management
- * Handles activity recording, statistics calculation, and achievement unlocking
+ * @deprecated Use ActivityTrackingService, ActivityStatsService, and AchievementService instead
+ * 
+ * Legacy service for activity tracking and achievement management
+ * This class is maintained for backward compatibility but delegates to the new focused services
+ * 
+ * Migration guide:
+ * - For recording activities: Use ActivityTrackingService
+ * - For stats and calculations: Use ActivityStatsService
+ * - For achievements: Use AchievementService
  */
 export class ActivityService {
+    private trackingService: ActivityTrackingService;
+    private statsService: ActivityStatsService;
+    private achievementService: AchievementService;
+
+    constructor() {
+        this.trackingService = new ActivityTrackingService();
+        this.statsService = new ActivityStatsService();
+        this.achievementService = new AchievementService(this.statsService);
+    }
+
     /**
-     * Update activity statistics for a user
+     * @deprecated Use ActivityTrackingService.recordMessageActivity() or other specific methods
      */
     async updateActivityStats(userId: string, activity: ActivityUpdate): Promise<void> {
-        // Use centralized validation
         requireUserId(userId);
 
         // Validate activity data
@@ -30,169 +45,97 @@ export class ActivityService {
             );
         }
 
-        // Business logic: Process different activity types
-        const processedActivity = this.processActivityUpdate(activity);
-
-        try {
-            // Send to appropriate endpoint based on activity type with query parameters
-            if (activity.type === 'message') {
-                const params = new URLSearchParams({
-                    userId: userId
-                });
-                await postJson(`${API_ENDPOINTS.ACTIVITY.MESSAGE}?${params.toString()}`, {});
-            } else if (activity.type === 'game') {
-                const params = new URLSearchParams({
-                    userId: userId,
-                    gameType: processedActivity.gameType || '',
-                    score: (processedActivity.score || 0).toString()
-                });
-                await postJson(`${API_ENDPOINTS.ACTIVITY.GAME}?${params.toString()}`, {});
-            }
-
-            // Check for new achievements after activity update
-            await this.checkAndUnlockAchievements(userId);
-        } catch (error) {
-            throw new AppError(
-                'Failed to update activity stats',
-                ERROR_CODES.OPERATION_FAILED,
-                'Échec de la mise à jour des statistiques d\'activité',
-                error
-            );
+        // Delegate to appropriate tracking service method
+        switch (activity.type) {
+            case 'message':
+                await this.trackingService.recordMessageActivity(
+                    userId,
+                    activity.metadata?.messageCount || 1
+                );
+                break;
+            case 'game':
+                await this.trackingService.recordGameActivity(
+                    userId,
+                    activity.gameType || '',
+                    activity.score || 0,
+                    activity.metadata
+                );
+                break;
+            case 'login':
+                await this.trackingService.recordLoginActivity(userId);
+                break;
+            case 'profile_view':
+                await this.trackingService.recordProfileView(
+                    userId,
+                    activity.metadata?.profileId || ''
+                );
+                break;
         }
+
+        // Check for new achievements after activity update
+        await this.achievementService.checkAndUnlockAchievements(userId);
     }
 
     /**
-     * Get activity statistics for a user
+     * @deprecated Use ActivityStatsService.getActivityStats()
      */
     async getActivityStats(userId: string): Promise<ActivityStats> {
-        // Use centralized validation
-        requireUserId(userId);
-
-        try {
-            const backendStats = await fetchJson<any>(API_ENDPOINTS.PROFILES.STATS(userId));
-            return transformBackendActivityStats(backendStats);
-        } catch (error) {
-            throw new AppError(
-                'Failed to get activity stats',
-                ERROR_CODES.OPERATION_FAILED,
-                'Échec de la récupération des statistiques d\'activité',
-                error
-            );
-        }
+        return this.statsService.getActivityStats(userId);
     }
 
     /**
-     * Check for and unlock new achievements
+     * @deprecated Use AchievementService.checkAchievements()
      */
     async checkAchievements(userId: string): Promise<Achievement[]> {
-        // Use centralized validation
-        requireUserId(userId);
-
-        try {
-            // Get current stats
-            const stats = await this.getActivityStats(userId);
-            
-            // Check for new achievements based on stats
-            const newAchievements = await this.evaluateAchievements(userId, stats);
-            
-            return newAchievements;
-        } catch (error) {
-            throw new AppError(
-                'Failed to check achievements',
-                ERROR_CODES.OPERATION_FAILED,
-                'Échec de la vérification des succès',
-                error
-            );
-        }
+        return this.achievementService.checkAchievements(userId);
     }
 
     /**
-     * Get all achievements for a user
+     * @deprecated Use AchievementService.getAchievements()
      */
     async getAchievements(userId: string): Promise<Achievement[]> {
-        // Use centralized validation
-        requireUserId(userId);
-
-        try {
-            const backendAchievements = await fetchJson<any[]>(API_ENDPOINTS.PROFILES.ACHIEVEMENTS(userId));
-            return transformBackendAchievements(backendAchievements);
-        } catch (error) {
-            throw new AppError(
-                'Failed to get achievements',
-                ERROR_CODES.OPERATION_FAILED,
-                'Échec de la récupération des succès',
-                error
-            );
-        }
+        return this.achievementService.getAchievements(userId);
     }
 
     /**
-     * Record message activity
+     * @deprecated Use ActivityTrackingService.recordMessageActivity()
      */
     async recordMessageActivity(userId: string, messageCount: number = 1): Promise<void> {
-        const activity: ActivityUpdate = {
-            type: 'message',
-            metadata: { messageCount }
-        };
-
-        await this.updateActivityStats(userId, activity);
+        await this.trackingService.recordMessageActivity(userId, messageCount);
+        await this.achievementService.checkAndUnlockAchievements(userId);
     }
 
     /**
-     * Record game activity
+     * @deprecated Use ActivityTrackingService.recordGameActivity()
      */
     async recordGameActivity(userId: string, gameType: string, score: number, metadata?: Record<string, any>): Promise<void> {
-        const activity: ActivityUpdate = {
-            type: 'game',
-            gameType,
-            score,
-            metadata
-        };
-
-        await this.updateActivityStats(userId, activity);
+        await this.trackingService.recordGameActivity(userId, gameType, score, metadata);
+        await this.achievementService.checkAndUnlockAchievements(userId);
     }
 
     /**
-     * Record login activity
+     * @deprecated Use ActivityTrackingService.recordLoginActivity()
      */
     async recordLoginActivity(userId: string): Promise<void> {
-        const activity: ActivityUpdate = {
-            type: 'login',
-            metadata: { timestamp: Date.now() }
-        };
-
-        await this.updateActivityStats(userId, activity);
+        await this.trackingService.recordLoginActivity(userId);
     }
 
     /**
-     * Record profile view activity
+     * @deprecated Use ActivityTrackingService.recordProfileView()
      */
     async recordProfileViewActivity(viewerId: string, profileId: string): Promise<void> {
-        const activity: ActivityUpdate = {
-            type: 'profile_view',
-            metadata: { profileId, timestamp: Date.now() }
-        };
-
-        await this.updateActivityStats(viewerId, activity);
+        await this.trackingService.recordProfileView(viewerId, profileId);
     }
 
     /**
-     * Calculate streak information
+     * @deprecated Use ActivityStatsService.calculateStreak()
      */
     async calculateStreak(userId: string): Promise<{ currentStreak: number; longestStreak: number }> {
-        try {
-            const stats = await this.getActivityStats(userId);
-            return {
-                currentStreak: stats.currentStreak,
-                longestStreak: stats.longestStreak
-            };
-        } catch (error) {
-            return { currentStreak: 0, longestStreak: 0 };
-        }
+        return this.statsService.calculateStreak(userId);
     }
 
     /**
-     * Get activity summary for a time period
+     * @deprecated Use ActivityStatsService.getActivitySummary()
      */
     async getActivitySummary(userId: string, days: number = 7): Promise<{
         messagesThisPeriod: number;
@@ -200,216 +143,13 @@ export class ActivityService {
         averageDaily: number;
         mostActiveDay: string;
     }> {
-        // This would typically fetch from a dedicated analytics endpoint
-        // For now, return basic stats
-        try {
-            const stats = await this.getActivityStats(userId);
-            
-            // Simple calculation - in a real app, this would be more sophisticated
-            const averageDaily = Math.round((stats.totalMessages + stats.totalGamesPlayed) / days);
-            
-            return {
-                messagesThisPeriod: Math.min(stats.totalMessages, stats.totalMessages), // Placeholder
-                gamesThisPeriod: Math.min(stats.totalGamesPlayed, stats.totalGamesPlayed), // Placeholder
-                averageDaily,
-                mostActiveDay: 'Today' // Placeholder
-            };
-        } catch (error) {
-            return {
-                messagesThisPeriod: 0,
-                gamesThisPeriod: 0,
-                averageDaily: 0,
-                mostActiveDay: 'None'
-            };
-        }
-    }
-
-    // Private helper methods
-
-    /**
-     * Process activity update with business logic
-     */
-    private processActivityUpdate(activity: ActivityUpdate): ActivityUpdate {
-        const processed = { ...activity };
-
-        // Business logic based on activity type
-        switch (activity.type) {
-            case 'message':
-                // Ensure message count is positive
-                if (processed.metadata?.messageCount) {
-                    processed.metadata.messageCount = Math.max(1, processed.metadata.messageCount);
-                }
-                break;
-
-            case 'game':
-                // Ensure score is non-negative
-                if (processed.score !== undefined) {
-                    processed.score = Math.max(0, processed.score);
-                }
-                break;
-
-            case 'login':
-                // Add session tracking
-                processed.metadata = {
-                    ...processed.metadata,
-                    sessionId: this.generateSessionId(),
-                    timestamp: Date.now()
-                };
-                break;
-
-            case 'profile_view':
-                // Add view tracking
-                processed.metadata = {
-                    ...processed.metadata,
-                    timestamp: Date.now()
-                };
-                break;
-        }
-
-        return processed;
+        return this.statsService.getActivitySummary(userId, days);
     }
 
     /**
-     * Check and unlock achievements based on current stats
-     */
-    private async checkAndUnlockAchievements(userId: string): Promise<Achievement[]> {
-        try {
-            const stats = await this.getActivityStats(userId);
-            return await this.evaluateAchievements(userId, stats);
-        } catch (error) {
-            // Don't fail the main operation if achievement checking fails
-            logWarn('Achievement checking failed', { userId, error });
-            return [];
-        }
-    }
-
-    /**
-     * Evaluate achievements based on current statistics
-     */
-    private async evaluateAchievements(userId: string, stats: ActivityStats): Promise<Achievement[]> {
-        const newAchievements: Achievement[] = [];
-        const currentAchievements = await this.getAchievements(userId).catch(() => []);
-        const achievementIds = new Set(currentAchievements.map(a => a.id));
-
-        // Define achievement thresholds and check them
-        const achievementChecks = [
-            // Messaging achievements
-            {
-                id: 'first_message',
-                name: 'First Message',
-                description: 'Send your first message',
-                category: 'messaging' as const,
-                condition: stats.totalMessages >= 1
-            },
-            {
-                id: 'chatty',
-                name: 'Chatty',
-                description: 'Send 100 messages',
-                category: 'messaging' as const,
-                condition: stats.totalMessages >= 100
-            },
-            {
-                id: 'conversation_master',
-                name: 'Conversation Master',
-                description: 'Send 1000 messages',
-                category: 'messaging' as const,
-                condition: stats.totalMessages >= 1000
-            },
-
-            // Gaming achievements
-            {
-                id: 'first_game',
-                name: 'First Game',
-                description: 'Play your first game',
-                category: 'gaming' as const,
-                condition: stats.totalGamesPlayed >= 1
-            },
-            {
-                id: 'gamer',
-                name: 'Gamer',
-                description: 'Play 50 games',
-                category: 'gaming' as const,
-                condition: stats.totalGamesPlayed >= 50
-            },
-            {
-                id: 'gaming_legend',
-                name: 'Gaming Legend',
-                description: 'Play 500 games',
-                category: 'gaming' as const,
-                condition: stats.totalGamesPlayed >= 500
-            },
-
-            // Time-based achievements
-            {
-                id: 'dedicated',
-                name: 'Dedicated',
-                description: 'Spend 10 hours in the app',
-                category: 'time' as const,
-                condition: stats.timeSpent >= 600 // 10 hours in minutes
-            },
-            {
-                id: 'streak_week',
-                name: 'Week Streak',
-                description: 'Maintain a 7-day activity streak',
-                category: 'time' as const,
-                condition: stats.currentStreak >= 7
-            },
-            {
-                id: 'streak_month',
-                name: 'Month Streak',
-                description: 'Maintain a 30-day activity streak',
-                category: 'time' as const,
-                condition: stats.currentStreak >= 30
-            },
-
-            // Social achievements
-            {
-                id: 'social_butterfly',
-                name: 'Social Butterfly',
-                description: 'Be active in both messaging and gaming',
-                category: 'social' as const,
-                condition: stats.totalMessages >= 10 && stats.totalGamesPlayed >= 10
-            }
-        ];
-
-        // Check each achievement
-        for (const check of achievementChecks) {
-            if (check.condition && !achievementIds.has(check.id)) {
-                const achievement: Achievement = {
-                    id: check.id,
-                    name: check.name,
-                    description: check.description,
-                    iconUrl: `/icons/achievements/${check.id}.png`,
-                    unlockedAt: new Date(),
-                    category: check.category
-                };
-                newAchievements.push(achievement);
-            }
-        }
-
-        return newAchievements;
-    }
-
-    /**
-     * Generate a session ID for tracking
-     */
-    private generateSessionId(): string {
-        return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    }
-
-    /**
-     * Initialize default achievements (admin function)
+     * @deprecated Use AchievementService.initializeDefaultAchievements()
      */
     async initializeDefaultAchievements(): Promise<void> {
-        try {
-            await postJson<void>(API_ENDPOINTS.ACTIVITY.INIT_ACHIEVEMENTS, {});
-        } catch (error) {
-            throw new AppError(
-                'Failed to initialize achievements',
-                ERROR_CODES.OPERATION_FAILED,
-                'Échec de l\'initialisation des succès',
-                error
-            );
-        }
+        return this.achievementService.initializeDefaultAchievements();
     }
 }

@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ErrorDisplay } from '../../../shared/components';
 import { RealTimeStatus } from './RealTimeStatus';
 import { useUpdateProfileMutation } from '../queries/profileQueries';
-import { useEditingActions, useHasUnsavedChanges, useNotificationActions } from '../stores/uiStore';
+import { useEditingActions, useHasUnsavedChanges } from '../stores/editingStore';
+import { useNotificationActions } from '../stores/notificationStore';
 import {
     ProfileFormData,
     profileFormResolver,
@@ -57,7 +58,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
     // Global UI state
     const hasUnsavedChanges = useHasUnsavedChanges();
-    const { setEditingProfile, setUnsavedChanges, resetEditingState } = useEditingActions();
+    const { startEditing, markUnsavedChanges, resetEditingState } = useEditingActions();
     const { addSuccessNotification, addErrorNotification } = useNotificationActions();
 
     // Watch form values for character counts
@@ -73,22 +74,22 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                 bio: profile.bio || '',
                 gender: profile.gender || '',
             });
-            setUnsavedChanges(false);
+            markUnsavedChanges(false);
         }
-    }, [profile, reset, setUnsavedChanges]);
+    }, [profile, reset, markUnsavedChanges]);
 
     // Track form changes for unsaved changes indicator
     useEffect(() => {
-        setUnsavedChanges(isDirty);
-    }, [isDirty, setUnsavedChanges]);
+        markUnsavedChanges(isDirty);
+    }, [isDirty, markUnsavedChanges]);
 
     // Set editing state when component mounts/unmounts
     useEffect(() => {
-        setEditingProfile(true);
+        startEditing('profile');
         return () => {
             resetEditingState();
         };
-    }, [setEditingProfile, resetEditingState]);
+    }, [startEditing, resetEditingState]);
 
     const onFormSubmit = handleSubmit(async (data: ProfileFormData) => {
         if (!profile) return;
@@ -115,7 +116,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             await onSubmit(updateData);
 
             // Reset editing state
-            setUnsavedChanges(false);
+            markUnsavedChanges(false);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
             setError('root.submit', { message: errorMessage });
@@ -135,7 +136,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             gender: profile?.gender || '',
         });
         clearErrors();
-        setUnsavedChanges(false);
+        markUnsavedChanges(false);
     };
 
     const handleCancel = () => {

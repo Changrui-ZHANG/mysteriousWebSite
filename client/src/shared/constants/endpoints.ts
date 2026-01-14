@@ -121,6 +121,9 @@ export const API_ENDPOINTS = {
     ACTIVITY: {
         MESSAGE: `${API_BASE}/activity/message`,
         GAME: `${API_BASE}/activity/game`,
-        INIT_ACHIEVEMENTS: `${API_BASE}/activity/achievements/init`
+        LOGIN: `${API_BASE}/activity/login`,
+        PROFILE_VIEW: `${API_BASE}/activity/profile-view`,
+        INIT_ACHIEVEMENTS: `${API_BASE}/activity/achievements/init`,
+        UNLOCK_ACHIEVEMENT: `${API_BASE}/activity/achievements/unlock`
     }
 } as const;

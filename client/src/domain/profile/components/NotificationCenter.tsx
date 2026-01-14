@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useNotifications, useNotificationActions, type Notification } from '../stores/uiStore';
+import { useNotifications, useNotificationActions, type Notification } from '../stores/notificationStore';
 
 interface NotificationItemProps {
     notification: Notification;
