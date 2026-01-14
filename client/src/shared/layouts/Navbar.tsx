@@ -11,6 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { AdminSiteControls } from '../../domain/user/AdminSiteControls';
 import { DesktopMenu, MobileMenu } from './navbar/index';
 import { useSettings } from '../contexts/SettingsContext';
+import { useAvatarSync } from '../hooks/useAvatarSync';
 
 interface NavbarProps {
 }
@@ -23,6 +24,12 @@ export function Navbar({ }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [loginCode, setLoginCode] = useState('');
     const [showSiteControls, setShowSiteControls] = useState(false);
+    
+    // Sync avatar updates to AuthContext
+    useAvatarSync({
+        userId: user?.userId || '',
+        initialAvatarUrl: user?.avatarUrl
+    });
 
     // Lock background scroll when mobile menu is open
     useEffect(() => {
@@ -61,6 +68,25 @@ export function Navbar({ }: NavbarProps) {
     return (
         <>
             <nav className="fixed top-5 left-1/2 -translate-x-1/2 z-[1000] px-6 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl flex items-center gap-6 text-primary transition-all duration-500 hover:bg-white/[0.06] hover:border-white/20 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none w-max max-w-[95vw]">
+                {/* Mobile Avatar - Left side */}
+                {user && (
+                    <Link 
+                        to="/profile" 
+                        className="lg:hidden w-10 h-10 rounded-full border-2 border-accent-primary/30 bg-surface overflow-hidden hover:border-accent-primary transition-all active:scale-95 shrink-0 relative z-50"
+                        aria-label={t('nav.profile')}
+                    >
+                        <img
+                            src={user.avatarUrl || '/avatars/default-avatar.png'}
+                            alt={user.username}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = '/avatars/default-avatar.png';
+                            }}
+                        />
+                    </Link>
+                )}
+
                 <Link to="/" className="text-lg md:text-xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity z-50 relative shrink-0">
                     {getPageTitle()}
                 </Link>

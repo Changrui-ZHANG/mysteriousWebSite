@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { profileKeys } from '../../domain/profile/queries/queryKeys';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AvatarSyncOptions {
   userId: string;
@@ -16,9 +17,11 @@ interface AvatarSyncOptions {
 /**
  * Hook to keep avatar in sync across the application
  * Listens to React Query cache updates for avatar changes
+ * Also updates AuthContext to persist avatar in localStorage
  */
 export const useAvatarSync = ({ userId, initialAvatarUrl }: AvatarSyncOptions) => {
   const queryClient = useQueryClient();
+  const { updateUserAvatar } = useAuth();
 
   // Try to get the most up-to-date value from the cache immediately
   const getCachedAvatar = () => {
@@ -52,7 +55,13 @@ export const useAvatarSync = ({ userId, initialAvatarUrl }: AvatarSyncOptions) =
 
         if (isAvatarUpdate) {
           const data = event.query.state.data as { avatarUrl?: string } | undefined;
-          setAvatarUrl(data?.avatarUrl);
+          const newAvatarUrl = data?.avatarUrl;
+          setAvatarUrl(newAvatarUrl);
+          
+          // Update AuthContext to persist in localStorage
+          if (newAvatarUrl) {
+            updateUserAvatar(newAvatarUrl);
+          }
         }
 
         // Also check profile detail updates which may include avatar
@@ -63,13 +72,19 @@ export const useAvatarSync = ({ userId, initialAvatarUrl }: AvatarSyncOptions) =
 
         if (isProfileUpdate) {
           const data = event.query.state.data as { avatarUrl?: string } | undefined;
-          setAvatarUrl(data?.avatarUrl);
+          const newAvatarUrl = data?.avatarUrl;
+          setAvatarUrl(newAvatarUrl);
+          
+          // Update AuthContext to persist in localStorage
+          if (newAvatarUrl) {
+            updateUserAvatar(newAvatarUrl);
+          }
         }
       }
     });
 
     return () => unsubscribe();
-  }, [queryClient, userId]);
+  }, [queryClient, userId, updateUserAvatar]);
 
   return avatarUrl;
 };

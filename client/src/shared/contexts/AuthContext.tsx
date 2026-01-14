@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { STORAGE_KEYS } from '../constants/authStorage';
 import { fetchJson, postJson } from '../api/httpClient';
 import i18n from '../../i18n';
+import { resolveAvatarUrl } from '../utils/avatarUtils';
 
 interface User {
     userId: string;
@@ -19,6 +20,7 @@ interface AuthContextType {
     isAuthModalOpen: boolean;
     login: (user: User) => void;
     logout: () => void;
+    updateUserAvatar: (avatarUrl: string) => void;
     changeLanguage: (lng: string) => Promise<void>;
     adminLogin: (code: string) => Promise<boolean>;
     adminLogout: () => void;
@@ -80,8 +82,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     const login = (newUser: User) => {
-        setUser(newUser);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
+        // Resolve avatar URL to absolute path
+        const userWithResolvedAvatar = {
+            ...newUser,
+            avatarUrl: resolveAvatarUrl(newUser.avatarUrl)
+        };
+        
+        setUser(userWithResolvedAvatar);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userWithResolvedAvatar));
 
         // Load user language preference
         fetchJson<{ language: string }>(`/api/users/${newUser.userId}/language`)
@@ -97,6 +105,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = () => {
         setUser(null);
         localStorage.removeItem(STORAGE_KEYS.USER);
+    };
+
+    const updateUserAvatar = (avatarUrl: string) => {
+        if (user) {
+            // Resolve avatar URL to absolute path
+            const resolvedAvatarUrl = resolveAvatarUrl(avatarUrl);
+            const updatedUser = { ...user, avatarUrl: resolvedAvatarUrl };
+            setUser(updatedUser);
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+        }
     };
 
     const changeLanguage = async (lng: string) => {
@@ -167,6 +185,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isAuthModalOpen,
         login,
         logout,
+        updateUserAvatar,
         adminLogin,
         adminLogout,
         changeLanguage,

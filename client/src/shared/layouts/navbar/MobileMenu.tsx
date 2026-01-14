@@ -51,7 +51,9 @@ export function MobileMenu({
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const { resolvedTheme, toggleTheme } = useThemeManager();
-    const syncedAvatarUrl = useAvatarSync({
+    
+    // Sync avatar updates to AuthContext
+    useAvatarSync({
         userId: user?.userId || '',
         initialAvatarUrl: user?.avatarUrl
     });
@@ -102,7 +104,7 @@ export function MobileMenu({
                             </span>
                             <button
                                 onClick={onClose}
-                                className="w-10 h-10 rounded-full bg-inset border border-default flex items-center justify-center hover:bg-surface transition-all active:scale-95 text-secondary hover:text-primary"
+                                className="w-10 h-10 rounded-full bg-inset border border-default flex items-center justify-center hover:bg-surface transition-all active:scale-95 text-secondary hover:text-primary focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
                                 aria-label={t('common.close')}
                             >
                                 <FaTimes className="w-4 h-4" />
@@ -140,47 +142,9 @@ export function MobileMenu({
                             {/* Divider */}
                             <div className="mx-8 my-6 h-px bg-gradient-to-r from-transparent via-default to-transparent opacity-50" />
 
-                            {/* Auth Section */}
-                            <div className="px-4">
-                                {user ? (
-                                    <div className="p-4 rounded-2xl bg-inset border border-default space-y-4">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 rounded-2xl border-2 border-accent-primary/20 p-1 mb-3 bg-white/5">
-                                                <img
-                                                    src={syncedAvatarUrl || '/avatars/default-avatar.png'}
-                                                    alt={user.username}
-                                                    className="w-full h-full object-cover rounded-xl"
-                                                />
-                                            </div>
-                                            <p className="text-[10px] text-muted uppercase tracking-widest font-bold mb-1">
-                                                {t('auth.signed_in_as')}
-                                            </p>
-                                            <p className="font-black text-accent-primary text-lg tracking-tight">
-                                                {user.username}
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => onLogout?.()}
-                                            className="w-full py-3 rounded-xl border border-accent-danger/30 text-accent-danger flex items-center justify-center gap-2 hover:bg-accent-danger/10 transition-all text-sm font-bold active:scale-95"
-                                        >
-                                            <FaSignOutAlt className="w-3.5 h-3.5" />
-                                            {t('auth.logout')}
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={() => { onOpenLogin(); onClose(); }}
-                                        className="w-full py-4 rounded-2xl bg-accent-success text-white flex items-center justify-center gap-3 shadow-lg shadow-accent-success/20 font-black text-base hover:shadow-accent-success/40 transition-all active:scale-95"
-                                    >
-                                        <FaUser className="w-4 h-4" />
-                                        {t('auth.login')}
-                                    </button>
-                                )}
-                            </div>
-
                             {/* Admin Section */}
                             {isAdmin && (
-                                <div className="px-4 mt-4">
+                                <div className="px-4 mb-4">
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => { onClose(); onShowSiteControls(); }}
@@ -202,7 +166,7 @@ export function MobileMenu({
 
                             {/* Admin Login (if not admin) */}
                             {!isAdmin && (
-                                <div className="px-4 mt-4">
+                                <div className="px-4 mb-4">
                                     <div className="p-5 rounded-2xl bg-inset border border-default shadow-inner">
                                         <p className="text-[10px] text-center text-muted uppercase tracking-tighter font-black mb-3 opacity-60">
                                             {t('auth.admin_access')}
@@ -236,7 +200,7 @@ export function MobileMenu({
                             )}
                         </div>
 
-                        {/* Footer with settings */}
+                        {/* Footer with settings - Above auth section */}
                         <div className="p-6 border-t border-default space-y-5 bg-inset/30">
                             {/* Language Selector */}
                             <div className="flex justify-center items-center gap-4">
@@ -262,6 +226,57 @@ export function MobileMenu({
                                 )}
                             </button>
                         </div>
+
+                        {/* Fixed Auth Section at Bottom */}
+                        {user && (
+                            <div className="border-t border-default bg-inset/30 p-4">
+                                <div className="flex items-center gap-4 p-4 rounded-2xl bg-inset border border-default">
+                                    {/* Avatar cliquable */}
+                                    <Link
+                                        to="/profile"
+                                        onClick={onClose}
+                                        className="w-16 h-16 rounded-2xl border-2 border-accent-primary/20 p-1 bg-white/5 hover:border-accent-primary/40 transition-all active:scale-95 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
+                                        aria-label={t('nav.profile')}
+                                    >
+                                        <img
+                                            src={user.avatarUrl || '/avatars/default-avatar.png'}
+                                            alt={user.username}
+                                            className="w-full h-full object-cover rounded-xl"
+                                        />
+                                    </Link>
+                                    
+                                    {/* User info and logout */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] text-muted uppercase tracking-widest font-bold mb-1">
+                                            {t('auth.signed_in_as')}
+                                        </p>
+                                        <p className="font-black text-accent-primary text-base tracking-tight truncate mb-2">
+                                            {user.username}
+                                        </p>
+                                        <button
+                                            onClick={() => onLogout?.()}
+                                            className="w-full py-2 rounded-lg border border-accent-danger/30 text-accent-danger flex items-center justify-center gap-2 hover:bg-accent-danger/10 transition-all text-xs font-bold active:scale-95"
+                                        >
+                                            <FaSignOutAlt className="w-3 h-3" />
+                                            {t('auth.logout')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Login button if not authenticated */}
+                        {!user && (
+                            <div className="border-t border-default bg-inset/30 p-4">
+                                <button
+                                    onClick={() => { onOpenLogin(); onClose(); }}
+                                    className="w-full py-4 rounded-2xl bg-accent-success text-white flex items-center justify-center gap-3 shadow-lg shadow-accent-success/20 font-black text-base hover:shadow-accent-success/40 transition-all active:scale-95"
+                                >
+                                    <FaUser className="w-4 h-4" />
+                                    {t('auth.login')}
+                                </button>
+                            </div>
+                        )}
                     </motion.div>
                 </motion.div>
             )}
