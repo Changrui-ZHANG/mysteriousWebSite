@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, MotionProps } from 'framer-motion';
 
 
-type AccentColor = 'purple' | 'cyan' | 'amber' | 'blue' | 'green';
+type AccentColor = 'purple' | 'cyan' | 'amber' | 'blue' | 'green' | 'red';
 
 interface GlassCardProps extends MotionProps {
     children: React.ReactNode;
@@ -26,6 +26,7 @@ const accentColorMap: Record<AccentColor, string> = {
     amber: 'glass-card--warning',
     blue: 'glass-card--primary',
     green: 'glass-card--success',
+    red: 'glass-card--danger',
 };
 
 /**
