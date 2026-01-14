@@ -1,6 +1,7 @@
 import { AvatarRepository } from '../repositories/AvatarRepository';
 import { validateFileUpload } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
+import { requireUserId } from '../utils/validation';
 
 /**
  * Service for avatar image processing and management
@@ -17,21 +18,9 @@ export class AvatarService {
      * Upload and process avatar with validation and resizing
      */
     async uploadAvatar(userId: string, file: File, requesterId: string, onProgress?: (progress: number) => void): Promise<string> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
-
-        if (!requesterId) {
-            throw new AppError(
-                'Requester ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID du demandeur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
+        requireUserId(requesterId);
 
         // Validate file using schema
         const validation = validateFileUpload({ file });
@@ -83,21 +72,9 @@ export class AvatarService {
      * Delete user's avatar
      */
     async deleteAvatar(userId: string, requesterId: string): Promise<void> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
-
-        if (!requesterId) {
-            throw new AppError(
-                'Requester ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID du demandeur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
+        requireUserId(requesterId);
 
         try {
             await this.repository.deleteFile(userId, requesterId);
@@ -131,13 +108,8 @@ export class AvatarService {
      * Get user's current avatar URL with fallback
      */
     async getAvatarUrl(userId: string, fallbackToDefault: boolean = true): Promise<string | null> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         return this.repository.getAvatarUrl(userId, fallbackToDefault);
     }

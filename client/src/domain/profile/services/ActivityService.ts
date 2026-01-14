@@ -3,6 +3,8 @@ import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { validateActivityUpdate } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
 import { transformBackendActivityStats, transformBackendAchievements } from '../utils/ActivityStatsTransformer';
+import { requireUserId } from '../utils/validation';
+import { logWarn } from '../utils/logger';
 import type { ActivityStats, ActivityUpdate, Achievement } from '../types';
 
 /**
@@ -14,13 +16,8 @@ export class ActivityService {
      * Update activity statistics for a user
      */
     async updateActivityStats(userId: string, activity: ActivityUpdate): Promise<void> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         // Validate activity data
         const validation = validateActivityUpdate(activity);
@@ -68,13 +65,8 @@ export class ActivityService {
      * Get activity statistics for a user
      */
     async getActivityStats(userId: string): Promise<ActivityStats> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         try {
             const backendStats = await fetchJson<any>(API_ENDPOINTS.PROFILES.STATS(userId));
@@ -93,13 +85,8 @@ export class ActivityService {
      * Check for and unlock new achievements
      */
     async checkAchievements(userId: string): Promise<Achievement[]> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         try {
             // Get current stats
@@ -123,13 +110,8 @@ export class ActivityService {
      * Get all achievements for a user
      */
     async getAchievements(userId: string): Promise<Achievement[]> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         try {
             const backendAchievements = await fetchJson<any[]>(API_ENDPOINTS.PROFILES.ACHIEVEMENTS(userId));
@@ -296,7 +278,7 @@ export class ActivityService {
             return await this.evaluateAchievements(userId, stats);
         } catch (error) {
             // Don't fail the main operation if achievement checking fails
-            console.warn('Achievement checking failed:', error);
+            logWarn('Achievement checking failed', { userId, error });
             return [];
         }
     }

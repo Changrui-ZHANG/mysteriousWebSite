@@ -2,6 +2,7 @@ import { BaseService } from '../../../shared/services/BaseService';
 import { fetchJson, postJson, putJson, deleteJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { transformBackendProfile, transformBackendProfiles } from '../utils/ProfileTransformer';
+import { logError, logWarn } from '../utils/logger';
 import type { 
     UserProfile, 
     CreateProfileRequest, 
@@ -33,11 +34,11 @@ export class ProfileRepository extends BaseService<UserProfile, CreateProfileReq
             const backendProfile = await fetchJson<any>(url);
             return transformBackendProfile(backendProfile);
         } catch (error) {
-            console.error('ProfileRepository: Error fetching profile', { userId, requesterId, error });
+            logError('ProfileRepository: Error fetching profile', error, { userId, requesterId });
             
             // Si c'est une erreur 403 et que l'utilisateur essaie de voir son propre profil
             if (error instanceof Error && error.message.includes('403') && userId === requesterId) {
-                console.warn('ProfileRepository: 403 error for own profile, this might be an auth configuration issue');
+                logWarn('ProfileRepository: 403 error for own profile, this might be an auth configuration issue');
             }
             
             throw error;

@@ -7,6 +7,7 @@ import {
     validateProfileDirectoryFilters
 } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
+import { requireUserId } from '../utils/validation';
 import type {
     UserProfile,
     CreateProfileRequest,
@@ -68,21 +69,9 @@ export class ProfileService {
      * Update an existing profile with validation
      */
     async updateProfile(userId: string, data: UpdateProfileRequest, requesterId: string): Promise<UserProfile> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
-
-        if (!requesterId) {
-            throw new AppError(
-                'Requester ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID du demandeur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
+        requireUserId(requesterId);
 
         // Validate input data
         const validation = validateUpdateProfile(data);
@@ -109,13 +98,8 @@ export class ProfileService {
      * Get a profile by user ID with privacy enforcement
      */
     async getProfile(userId: string, viewerId?: string): Promise<UserProfile> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         // Use userId as viewerId if not provided (user viewing their own profile)
         const effectiveViewerId = viewerId || userId;
@@ -202,21 +186,9 @@ export class ProfileService {
      * Update privacy settings with validation
      */
     async updatePrivacySettings(userId: string, settings: PrivacySettings, requesterId: string): Promise<void> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
-
-        if (!requesterId) {
-            throw new AppError(
-                'Requester ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID du demandeur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
+        requireUserId(requesterId);
 
         // Validate privacy settings
         const validation = validatePrivacySettings(settings);
@@ -236,13 +208,8 @@ export class ProfileService {
      * Delete a profile (soft delete with privacy considerations)
      */
     async deleteProfile(userId: string): Promise<void> {
-        if (!userId) {
-            throw new AppError(
-                'User ID is required',
-                ERROR_CODES.INVALID_INPUT,
-                'ID utilisateur requis'
-            );
-        }
+        // Use centralized validation
+        requireUserId(userId);
 
         // Business logic: Could implement soft delete here
         // For now, delegate to repository

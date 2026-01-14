@@ -25,6 +25,10 @@
     "include": [
         "src"
     ],
+    "exclude": [
+        "src/domain/profile/utils/refactoring",
+        "src/domain/profile/scripts"
+    ],
     "references": [
         {
             "path": "./tsconfig.node.json"

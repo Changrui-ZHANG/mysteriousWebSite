@@ -55,7 +55,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     if (!profile) {
         return (
             <div className={`profile-card rounded-lg p-6 ${className}`}>
-                <div className="text-center text-[var(--text-muted)]">
+                <div className="text-center text-(--text-muted)">
                     {t('common.unknown_error')}
                 </div>
             </div>
@@ -70,18 +70,18 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     <img
                         src={avatarUrl || '/avatars/default-avatar.png'}
                         alt={`${displayName}'s avatar`}
-                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-[var(--bg-surface)] shadow-lg transition-all"
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-(--bg-surface) shadow-lg transition-all"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = '/avatars/default-avatar.png';
                         }}
                     />
-                    <div className="absolute inset-0 rounded-full ring-2 ring-[var(--accent-primary)] ring-offset-2 ring-offset-transparent opacity-50"></div>
+                    <div className="absolute inset-0 rounded-full ring-2 ring-(--accent-primary) ring-offset-2 ring-offset-transparent opacity-50"></div>
                 </div>
 
                 <div className="grow text-center sm:text-left">
                     <div className="flex flex-col sm:flex-row items-center sm:items-baseline space-y-1 sm:space-y-0 sm:space-x-3 mb-1">
-                        <h3 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
+                        <h3 className="text-xl sm:text-2xl font-bold text-(--text-primary)">
                             {displayName}
                         </h3>
                         <div className="scale-90 sm:scale-100 origin-center sm:origin-left">
@@ -89,20 +89,20 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-1 mb-1.5 sm:mb-2 text-xs sm:text-sm text-[var(--text-secondary)]">
+                    <div className="flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-1 mb-1.5 sm:mb-2 text-xs sm:text-sm text-(--text-secondary)">
                         <p>
                             {t('profile.card.joined')} {formatDate(joinDate)}
                         </p>
                         {profile.gender && (
                             <p className="flex items-center">
-                                <span className="w-1 h-1 rounded-full bg-[var(--text-muted)] mx-2 hidden sm:inline-block"></span>
+                                <span className="w-1 h-1 rounded-full bg-(--text-muted) mx-2 hidden sm:inline-block"></span>
                                 {profile.gender === 'H' ? '♂️ ' + t('profile.gender.male') : '♀️ ' + t('profile.gender.female')}
                             </p>
                         )}
                     </div>
 
                     {shouldShowLastActive && lastActive && (
-                        <p className="text-[10px] sm:text-xs text-[var(--text-muted)] mb-2 sm:mb-3">
+                        <p className="text-[10px] sm:text-xs text-(--text-muted) mb-2 sm:mb-3">
                             {t('profile.privacy.show_last_active')}: {formatDate(lastActive)}
                         </p>
                     )}
@@ -110,7 +110,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     {/* Bio */}
                     {shouldShowBio && bio && (
                         <div className="max-w-md mx-auto sm:mx-0">
-                            <p className="text-[var(--text-secondary)] text-xs sm:text-sm leading-relaxed italic">
+                            <p className="text-(--text-secondary) text-xs sm:text-sm leading-relaxed italic">
                                 "{bio}"
                             </p>
                         </div>
@@ -122,7 +122,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     {isOwnProfile && onEdit && (
                         <button
                             onClick={onEdit}
-                            className="glass-panel px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-surface-translucent)] transition-colors w-full sm:w-auto"
+                            className="glass-panel px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-(--text-primary) hover:bg-(--bg-surface-translucent) transition-colors w-full sm:w-auto"
                         >
                             <span className="mr-2">✏️</span> {t('profile.tabs.edit')}
                         </button>
@@ -131,7 +131,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                     {!isOwnProfile && onViewProfile && (
                         <button
                             onClick={onViewProfile}
-                            className="glass-panel px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-surface-translucent)] transition-colors w-full sm:w-auto"
+                            className="glass-panel px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-(--text-primary) hover:bg-(--bg-surface-translucent) transition-colors w-full sm:w-auto"
                         >
                             {t('nav.more')}
                         </button>
@@ -140,28 +140,28 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             </div>
 
             {/* Separator */}
-            <div className="h-px bg-gradient-to-r from-transparent via-[var(--border-subtle)] to-transparent my-4 sm:my-6"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-(--border-subtle) to-transparent my-4 sm:my-6"></div>
 
             {/* Activity Stats */}
             {shouldShowStats && activityStats && (
                 <div className="mb-4 sm:mb-6">
-                    <h4 className="text-xs sm:text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 sm:mb-4">{t('profile.card.stats')}</h4>
+                    <h4 className="text-xs sm:text-sm font-medium text-(--text-muted) uppercase tracking-wider mb-3 sm:mb-4">{t('profile.card.stats')}</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-sm">
-                        <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('profile.card.messages')}</span>
-                            <span className="block text-base sm:text-lg font-bold text-[var(--accent-primary)]">{activityStats.totalMessages || 0}</span>
+                        <div className="p-2 sm:p-3 rounded-lg bg-(--bg-surface-translucent) border border-(--border-subtle)">
+                            <span className="block text-(--text-muted) text-[10px] sm:text-xs mb-1">{t('profile.card.messages')}</span>
+                            <span className="block text-base sm:text-lg font-bold text-(--accent-primary)">{activityStats.totalMessages || 0}</span>
                         </div>
-                        <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('profile.card.games')}</span>
-                            <span className="block text-base sm:text-lg font-bold text-[var(--accent-success)]">{activityStats.totalGamesPlayed || 0}</span>
+                        <div className="p-2 sm:p-3 rounded-lg bg-(--bg-surface-translucent) border border-(--border-subtle)">
+                            <span className="block text-(--text-muted) text-[10px] sm:text-xs mb-1">{t('profile.card.games')}</span>
+                            <span className="block text-base sm:text-lg font-bold text-(--accent-success)">{activityStats.totalGamesPlayed || 0}</span>
                         </div>
-                        <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('profile.card.streak')}</span>
-                            <span className="block text-base sm:text-lg font-bold text-[var(--accent-warning)]">{activityStats.currentStreak || 0} {t('profile.card.days')}</span>
+                        <div className="p-2 sm:p-3 rounded-lg bg-(--bg-surface-translucent) border border-(--border-subtle)">
+                            <span className="block text-(--text-muted) text-[10px] sm:text-xs mb-1">{t('profile.card.streak')}</span>
+                            <span className="block text-base sm:text-lg font-bold text-(--accent-warning)">{activityStats.currentStreak || 0} {t('profile.card.days')}</span>
                         </div>
-                        <div className="p-2 sm:p-3 rounded-lg bg-[var(--bg-surface-translucent)] border border-[var(--border-subtle)]">
-                            <span className="block text-[var(--text-muted)] text-[10px] sm:text-xs mb-1">{t('game.time')}</span>
-                            <span className="block text-base sm:text-lg font-bold text-[var(--accent-secondary)]">{Math.round((activityStats.timeSpent || 0) / 60)}h</span>
+                        <div className="p-2 sm:p-3 rounded-lg bg-(--bg-surface-translucent) border border-(--border-subtle)">
+                            <span className="block text-(--text-muted) text-[10px] sm:text-xs mb-1">{t('game.time')}</span>
+                            <span className="block text-base sm:text-lg font-bold text-(--accent-secondary)">{Math.round((activityStats.timeSpent || 0) / 60)}h</span>
                         </div>
                     </div>
                 </div>
@@ -170,7 +170,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             {/* Achievements */}
             {shouldShowAchievements && achievements && achievements.length > 0 && (
                 <div>
-                    <h4 className="text-xs sm:text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 sm:mb-4">
+                    <h4 className="text-xs sm:text-sm font-medium text-(--text-muted) uppercase tracking-wider mb-3 sm:mb-4">
                         {t('profile.card.achievements')}
                     </h4>
                     <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -199,8 +199,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
             {/* Privacy indicator */}
             {!isOwnProfile && privacySettings?.profileVisibility !== 'public' && (
-                <div className="mt-4 sm:mt-6 pt-4 border-t border-[var(--border-subtle)]">
-                    <p className="text-[10px] sm:text-xs text-[var(--text-muted)] flex items-center justify-center">
+                <div className="mt-4 sm:mt-6 pt-4 border-t border-(--border-subtle)">
+                    <p className="text-[10px] sm:text-xs text-(--text-muted) flex items-center justify-center">
                         <span className="mr-2">🔒</span>
                         {t('profile.privacy.subtitle')}
                     </p>

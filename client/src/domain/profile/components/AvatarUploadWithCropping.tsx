@@ -9,6 +9,7 @@ import { useAvatarUpload } from '../queries/avatarMutations';
 import { useModalActions, useModalState, useNotificationActions, useLoadingActions, useLoadingState } from '../stores/uiStore';
 import { AvatarCropper } from './cropping/AvatarCropper';
 import { CropResult } from './cropping/types';
+import { logError } from '../utils/logger';
 
 interface AvatarUploadWithCroppingProps {
     userId: string;
@@ -48,7 +49,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
     if (!userId) {
         return (
             <div className={`avatar-upload ${className}`}>
-                <div className="text-center text-[var(--text-muted)] py-8">
+                <div className="text-center text-(--text-muted) py-8">
                     <p>{t('profile.errors.access_required')}</p>
                 </div>
             </div>
@@ -157,7 +158,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                 URL.revokeObjectURL(cropResult.croppedImageUrl);
             }
         } catch (error) {
-            console.error('Failed to upload cropped image:', error);
+            logError('Failed to upload cropped image', error);
             addErrorNotification(
                 t('profile.avatar.error'),
                 t('profile.avatar.error')
@@ -245,7 +246,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                         <img
                             src={displayUrl || '/avatars/default-avatar.png'}
                             alt={t('profile.avatar.title')}
-                            className="w-20 h-20 rounded-full object-cover border-2 border-[var(--glass-border)] shadow-md group-hover:scale-105 transition-transform"
+                            className="w-20 h-20 rounded-full object-cover border-2 border-(--glass-border) shadow-md group-hover:scale-105 transition-transform"
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.src = '/avatars/default-avatar.png';
@@ -261,10 +262,10 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                     </div>
 
                     <div className="flex-1">
-                        <h4 className="text-sm font-medium text-[var(--text-primary)] mb-1">
+                        <h4 className="text-sm font-medium text-(--text-primary) mb-1">
                             {t('profile.avatar.title')}
                         </h4>
-                        <p className="text-xs text-[var(--text-muted)] mb-2">
+                        <p className="text-xs text-(--text-muted) mb-2">
                             {t('profile.avatar.upload')}
                         </p>
 
@@ -272,7 +273,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                             <div className="flex space-x-2">
                                 <button
                                     onClick={handleCancelPreview}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline"
+                                    className="text-xs text-(--text-secondary) hover:text-(--text-primary) underline"
                                     disabled={isUploading}
                                 >
                                     {t('profile.avatar.cancel')}
@@ -287,8 +288,8 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                     className={`
                         border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer 
                         ${isDragOver
-                            ? 'border-[var(--accent-primary)] bg-[var(--accent-primary-alpha)] scale-[1.02]'
-                            : 'border-[var(--border-subtle)] hover:border-[var(--accent-primary)] hover:bg-[var(--bg-surface-translucent)]'
+                            ? 'border-(--accent-primary) bg-(--accent-primary-alpha) scale-[1.02]'
+                            : 'border-(--border-subtle) hover:border-(--accent-primary) hover:bg-(--bg-surface-translucent)'
                         } 
                         ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
@@ -308,28 +309,28 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                     {isUploading ? (
                         <div className="space-y-2">
-                            <div className="text-sm text-[var(--text-secondary)]">{t('profile.form.saving')}</div>
-                            <div className="w-full bg-[var(--bg-surface)] rounded-full h-2 overflow-hidden">
+                            <div className="text-sm text-(--text-secondary)">{t('profile.form.saving')}</div>
+                            <div className="w-full bg-(--bg-surface) rounded-full h-2 overflow-hidden">
                                 <div
-                                    className="bg-[var(--accent-primary)] h-2 rounded-full transition-all duration-300"
+                                    className="bg-(--accent-primary) h-2 rounded-full transition-all duration-300"
                                     style={{ width: `${uploadProgress}%` }}
                                 />
                             </div>
                         </div>
                     ) : (
                         <div className="space-y-2">
-                            <div className="text-[var(--text-muted)]">
+                            <div className="text-(--text-muted)">
                                 <svg className="mx-auto h-8 w-8 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
                             </div>
-                            <div className="text-sm text-[var(--text-muted)]">
-                                <span className="font-medium text-[var(--accent-primary)] hover:underline">
+                            <div className="text-sm text-(--text-muted)">
+                                <span className="font-medium text-(--accent-primary) hover:underline">
                                     {t('profile.avatar.upload')}
                                 </span>
                             </div>
                             {enableCropping && (
-                                <div className="text-xs text-[var(--accent-secondary)] flex items-center justify-center mt-1">
+                                <div className="text-xs text-(--accent-secondary) flex items-center justify-center mt-1">
                                     <span className="mr-1">✂️</span> {t('profile.avatar.cropping')}
                                 </div>
                             )}
@@ -370,7 +371,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                 {/* Cropping toggle */}
                 <div className="mt-4 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    <label className="flex items-center space-x-2 text-xs text-[var(--text-muted)] cursor-pointer">
+                    <label className="flex items-center space-x-2 text-xs text-(--text-muted) cursor-pointer">
                         <input
                             type="checkbox"
                             checked={enableCropping}
@@ -378,7 +379,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                                 // This would be controlled by parent component
                                 // For now, just show the current state
                             }}
-                            className="rounded border-[var(--border-subtle)] text-[var(--accent-primary)] focus:ring-[var(--accent-primary)]"
+                            className="rounded border-(--border-subtle) text-(--accent-primary) focus:ring-(--accent-primary)"
                             disabled={isUploading}
                         />
                         <span>{t('profile.avatar.cropping')}</span>

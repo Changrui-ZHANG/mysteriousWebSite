@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import ReactDOM from 'react-dom';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { logError } from '../../utils/logger';
 
 interface AvatarCropperProps {
     imageFile: File;
@@ -215,7 +216,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
             }, outputType, outputQuality);
 
         } catch (error) {
-            console.error('Failed to generate cropped image:', error);
+            logError('Failed to generate cropped image', error);
         } finally {
             setIsProcessing(false);
         }
@@ -223,18 +224,18 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
 
     // Calculate quality indicator
     const getQualityInfo = () => {
-        if (!completedCrop) return { quality: 'unknown', message: t('profile.avatar.select_crop'), color: 'text-[var(--text-muted)]' };
+        if (!completedCrop) return { quality: 'unknown', message: t('profile.avatar.select_crop'), color: 'text-(--text-muted)' };
 
         const cropPixels = completedCrop.width * completedCrop.height;
         const outputPixels = outputSize * outputSize;
         const ratio = cropPixels / outputPixels;
 
         if (ratio >= 2) {
-            return { quality: 'high', message: t('profile.avatar.quality.high'), color: 'text-[var(--accent-success)]' };
+            return { quality: 'high', message: t('profile.avatar.quality.high'), color: 'text-(--accent-success)' };
         } else if (ratio >= 1) {
-            return { quality: 'medium', message: t('profile.avatar.quality.medium'), color: 'text-[var(--accent-warning)]' };
+            return { quality: 'medium', message: t('profile.avatar.quality.medium'), color: 'text-(--accent-warning)' };
         } else {
-            return { quality: 'low', message: t('profile.avatar.quality.low'), color: 'text-[var(--accent-error)]' };
+            return { quality: 'low', message: t('profile.avatar.quality.low'), color: 'text-(--accent-error)' };
         }
     };
 
@@ -243,15 +244,15 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
     // Use Portal to render outside of parent containers that might constrain size
     const content = (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-0 sm:p-4 animate-fade-in">
-            <div className="glass-panel w-full h-full sm:h-[90vh] sm:max-w-[95vw] flex flex-col shadow-2xl animate-scale-in border border-[var(--glass-border)] overflow-hidden rounded-none sm:rounded-2xl">
+            <div className="glass-panel w-full h-full sm:h-[90vh] sm:max-w-[95vw] flex flex-col shadow-2xl animate-scale-in border border-(--glass-border) overflow-hidden rounded-none sm:rounded-2xl">
 
                 {/* 1. HEADER - Compact on mobile */}
-                <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-surface-translucent)] shrink-0 z-20">
+                <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-(--border-subtle) flex items-center justify-between bg-(--bg-surface-translucent) shrink-0 z-20">
                     <div>
-                        <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
+                        <h2 className="text-lg sm:text-xl font-bold text-(--text-primary)">
                             {t('profile.avatar.cropping')}
                         </h2>
-                        <p className="text-sm text-[var(--text-secondary)] mt-1 hidden sm:block">
+                        <p className="text-sm text-(--text-secondary) mt-1 hidden sm:block">
                             {t('profile.avatar.crop_desc')}
                         </p>
                     </div>
@@ -259,7 +260,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                     <button
                         onClick={onCancel}
                         disabled={isProcessing}
-                        className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-50 rounded-full hover:bg-[var(--bg-surface)]"
+                        className="p-2 text-(--text-muted) hover:text-(--text-primary) transition-colors disabled:opacity-50 rounded-full hover:bg-(--bg-surface)"
                         title={t('profile.avatar.cancel')}
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,7 +273,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                 <div className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative z-0">
 
                     {/* Left panel - Image */}
-                    <div className="flex-1 relative bg-[var(--bg-test)] flex items-center justify-center p-2 sm:p-4 min-h-[50vh] lg:min-h-0 shrink-0">
+                    <div className="flex-1 relative bg-(--bg-test) flex items-center justify-center p-2 sm:p-4 min-h-[50vh] lg:min-h-0 shrink-0">
                         {imageSrc && (
                             <div className="relative inline-block w-full h-full flex items-center justify-center">
                                 {crop ? (
@@ -319,17 +320,17 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                     </div>
 
                     {/* Right panel - Sidebar - Visible on mobile below image */}
-                    <div className="w-full lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--border-subtle)] p-6 bg-[var(--bg-surface-translucent)] lg:overflow-y-auto z-10">
+                    <div className="w-full lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-(--border-subtle) p-6 bg-(--bg-surface-translucent) lg:overflow-y-auto z-10">
 
                         {/* Mobile handle/separator hint could go here */}
 
                         {/* Preview */}
                         <div className="mb-6 flex flex-col items-center">
-                            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4 uppercase tracking-wider">{t('profile.avatar.preview')}</h3>
+                            <h3 className="text-sm font-medium text-(--text-primary) mb-4 uppercase tracking-wider">{t('profile.avatar.preview')}</h3>
                             <div className="relative inline-block group">
                                 <canvas
                                     ref={previewCanvasRef}
-                                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-[var(--glass-border)] shadow-lg bg-[var(--bg-surface)]"
+                                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-(--glass-border) shadow-lg bg-(--bg-surface)"
                                     width={128}
                                     height={128}
                                 />
@@ -337,8 +338,8 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                         </div>
 
                         {/* Quality info */}
-                        <div className="mb-4 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
-                            <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3 flex items-center">
+                        <div className="mb-4 p-4 rounded-xl bg-(--bg-surface) border border-(--border-subtle)">
+                            <h4 className="text-sm font-medium text-(--text-primary) mb-3 flex items-center">
                                 <span className="mr-2">🔍</span> {t('profile.avatar.quality_check')}
                             </h4>
                             <div className="flex items-center space-x-2 mb-2">
@@ -350,7 +351,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                                 </span>
                             </div>
                             {completedCrop && (
-                                <div className="space-y-1 text-xs text-[var(--text-muted)] mt-2 pt-2 border-t border-[var(--border-subtle)]">
+                                <div className="space-y-1 text-xs text-(--text-muted) mt-2 pt-2 border-t border-(--border-subtle)">
                                     <div className="flex justify-between">
                                         <span>{t('profile.avatar.size')}:</span>
                                         <span className="font-mono">{Math.round(completedCrop.width)}×{Math.round(completedCrop.height)}</span>
@@ -360,9 +361,9 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                         </div>
 
                         {/* Instructions */}
-                        <div className="p-4 rounded-xl bg-[var(--accent-info-light)] border border-[var(--accent-info-border)]">
-                            <h4 className="text-sm font-bold text-[var(--accent-info)] mb-2">{t('profile.privacy.notice_title')}</h4>
-                            <ul className="text-xs text-[var(--text-secondary)] space-y-1.5 list-disc list-inside">
+                        <div className="p-4 rounded-xl bg-(--accent-info-light) border border-(--accent-info-border)">
+                            <h4 className="text-sm font-bold text-(--accent-info) mb-2">{t('profile.privacy.notice_title')}</h4>
+                            <ul className="text-xs text-(--text-secondary) space-y-1.5 list-disc list-inside">
                                 <li>{t('profile.avatar.drag')}</li>
                                 <li>{t('profile.avatar.resize')}</li>
                                 <li>{t('profile.avatar.square')}</li>
@@ -372,10 +373,10 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                 </div>
 
                 {/* 3. FOOTER - Compact */}
-                <div className="px-4 py-3 sm:px-6 sm:py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface-translucent)] flex items-center justify-between shrink-0 z-20">
+                <div className="px-4 py-3 sm:px-6 sm:py-4 border-t border-(--border-subtle) bg-(--bg-surface-translucent) flex items-center justify-between shrink-0 z-20">
                     <div className="hidden sm:flex items-center space-x-2">
                         {isProcessing && (
-                            <span className="text-xs font-medium text-[var(--accent-primary)] animate-pulse">{t('profile.form.saving')}</span>
+                            <span className="text-xs font-medium text-(--accent-primary) animate-pulse">{t('profile.form.saving')}</span>
                         )}
                     </div>
 
@@ -383,7 +384,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                         <button
                             onClick={onCancel}
                             disabled={isProcessing}
-                            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors disabled:opacity-50 text-center"
+                            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-surface) rounded-lg transition-colors disabled:opacity-50 text-center"
                         >
                             {t('common.cancel')}
                         </button>
@@ -392,7 +393,7 @@ export const AvatarCropper: React.FC<AvatarCropperProps> = ({
                             disabled={!completedCrop || isProcessing}
                             className={`
                                 flex-1 sm:flex-none px-6 py-2 text-sm font-medium text-white rounded-lg shadow-lg
-                                bg-[var(--accent-primary)] hover:brightness-110 hover:shadow-[var(--accent-primary)]/40
+                                bg-(--accent-primary) hover:brightness-110 hover:shadow-(--accent-primary)/40
                                 disabled:opacity-50 disabled:cursor-not-allowed
                                 transition-all transform active:scale-95 text-center
                             `}

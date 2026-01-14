@@ -170,7 +170,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             {/* Display Name */}
             <div>
-                <label htmlFor="displayName" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="displayName" className="block text-sm font-medium text-(--text-secondary) mb-2">
                     {t('profile.form.display_name')} *
                 </label>
                 <input
@@ -178,8 +178,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                     id="displayName"
                     {...register('displayName')}
                     className={`
-                        glass-input w-full px-4 py-3 rounded-xl placeholder-[var(--text-muted)] text-[var(--text-primary)]
-                        focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent
+                        glass-input w-full px-4 py-3 rounded-xl placeholder-(--text-muted) text-(--text-primary)
+                        focus:outline-none focus:ring-2 focus:ring-(--accent-primary) focus:border-transparent
                         ${errors.displayName ? 'border-red-400 focus:ring-red-400' : ''}
                     `}
                     placeholder={t('profile.form.display_name')}
@@ -192,7 +192,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                     </p>
                 )}
                 <div className="flex justify-end mt-1">
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-xs text-(--text-muted)">
                         {displayNameLength}/30 characters
                     </p>
                 </div>
@@ -200,7 +200,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             {/* Gender */}
             <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label className="block text-sm font-medium text-(--text-secondary) mb-2">
                     {t('profile.gender.title')}
                 </label>
                 <div className="flex space-x-4">
@@ -208,7 +208,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         type="button"
                         onClick={() => setValue('gender', 'H', { shouldDirty: true })}
                         disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                        className={`flex-1 py-3 rounded-xl border transition-all ${watch('gender') === 'H' ? 'bg-[var(--accent-primary)]/20 border-[var(--accent-primary)] text-[var(--text-primary)]' : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)]'}`}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${watch('gender') === 'H' ? 'bg-(--accent-primary)/20 border-(--accent-primary) text-(--text-primary)' : 'bg-(--bg-surface) border-(--border-subtle) text-(--text-secondary) hover:bg-(--bg-surface-translucent)'}`}
                     >
                         ♂️ {t('profile.gender.male')}
                     </button>
@@ -216,7 +216,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         type="button"
                         onClick={() => setValue('gender', 'F', { shouldDirty: true })}
                         disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                        className={`flex-1 py-3 rounded-xl border transition-all ${watch('gender') === 'F' ? 'bg-[var(--accent-secondary)]/20 border-[var(--accent-secondary)] text-[var(--text-primary)]' : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)]'}`}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${watch('gender') === 'F' ? 'bg-(--accent-secondary)/20 border-(--accent-secondary) text-(--text-primary)' : 'bg-(--bg-surface) border-(--border-subtle) text-(--text-secondary) hover:bg-(--bg-surface-translucent)'}`}
                     >
                         ♀️ {t('profile.gender.female')}
                     </button>
@@ -224,7 +224,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         type="button"
                         onClick={() => setValue('gender', '', { shouldDirty: true })}
                         disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                        className={`flex-1 py-3 rounded-xl border transition-all ${!watch('gender') ? 'bg-[var(--bg-surface-translucent)] border-[var(--text-muted)] text-[var(--text-primary)]' : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)]'}`}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${!watch('gender') ? 'bg-(--bg-surface-translucent) border-(--text-muted) text-(--text-primary)' : 'bg-(--bg-surface) border-(--border-subtle) text-(--text-secondary) hover:bg-(--bg-surface-translucent)'}`}
                     >
                         {t('profile.gender.not_specified')}
                     </button>
@@ -233,7 +233,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             {/* Bio */}
             <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="bio" className="block text-sm font-medium text-(--text-secondary) mb-2">
                     {t('profile.form.bio')}
                 </label>
                 <textarea
@@ -241,8 +241,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                     {...register('bio')}
                     rows={4}
                     className={`
-                        glass-input w-full px-4 py-3 rounded-xl placeholder-[var(--text-muted)] text-[var(--text-primary)]
-                        focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent resize-vertical
+                        glass-input w-full px-4 py-3 rounded-xl placeholder-(--text-muted) text-(--text-primary)
+                        focus:outline-none focus:ring-2 focus:ring-(--accent-primary) focus:border-transparent resize-vertical
                         ${errors.bio ? 'border-red-400 focus:ring-red-400' : ''}
                     `}
                     placeholder={t('profile.form.bio_placeholder')}
@@ -255,20 +255,20 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                     </p>
                 )}
                 <div className="flex justify-end mt-1">
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-xs text-(--text-muted)">
                         {bioLength}/500 characters
                     </p>
                 </div>
             </div>
 
             {/* Form Actions */}
-            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-[var(--border-subtle)] gap-4">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-(--border-subtle) gap-4">
                 <div className="flex flex-col-reverse sm:flex-row space-y-reverse space-y-3 sm:space-y-0 sm:space-x-3 gap-3 sm:gap-0">
                     <button
                         type="button"
                         onClick={handleCancel}
                         disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                        className="glass-panel px-6 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-translucent)] hover:text-[var(--text-primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="glass-panel px-6 py-2.5 text-sm font-medium text-(--text-secondary) hover:bg-(--bg-surface-translucent) hover:text-(--text-primary) transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {t('common.cancel')}
                     </button>
@@ -279,8 +279,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                         className={`
                             px-6 py-2.5 text-sm font-medium rounded-xl shadow-lg transition-all
                             ${canSubmit
-                                ? 'bg-[var(--accent-primary)] text-white hover:brightness-110 hover:scale-105 hover:shadow-xl'
-                                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border border-[var(--border-subtle)] cursor-not-allowed'}
+                                ? 'bg-(--accent-primary) text-white hover:brightness-110 hover:scale-105 hover:shadow-xl'
+                                : 'bg-(--bg-surface) text-(--text-muted) border border-(--border-subtle) cursor-not-allowed'}
                         `}
                     >
                         {isSubmitting || updateProfileMutation.isPending ? t('profile.form.saving') : t('profile.form.save')}
@@ -293,7 +293,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                             type="button"
                             onClick={handleReset}
                             disabled={isLoading || isSubmitting || updateProfileMutation.isPending}
-                            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline mr-4 disabled:opacity-50"
+                            className="text-xs text-(--text-muted) hover:text-(--text-secondary) underline mr-4 disabled:opacity-50"
                         >
                             {t('profile.form.reset')}
                         </button>
@@ -325,7 +325,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
 
             {/* TanStack Query mutation status indicator */}
             {updateProfileMutation.isPending && (
-                <div className="text-xs text-[var(--accent-primary)] bg-blue-50/80 backdrop-blur-sm px-3 py-2 rounded-md font-medium text-center">
+                <div className="text-xs text-(--accent-primary) bg-blue-50/80 backdrop-blur-sm px-3 py-2 rounded-md font-medium text-center">
                     {t('profile.form.saving')}
                 </div>
             )}
