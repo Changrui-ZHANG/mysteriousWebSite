@@ -5,10 +5,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
+import { FaUser, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
 import { LanguageButton } from './LanguageButton';
+import { UserAvatarMenu } from '../../components/navigation';
 
 interface DesktopMenuProps {
     onOpenLogin: () => void;
@@ -98,12 +99,15 @@ export function DesktopMenu({
 
             {/* Auth Section */}
             {user ? (
-                <div className="flex items-center gap-3">
-                    <span className="font-bold text-accent-primary text-xs truncate max-w-[100px]">{user.username}</span>
-                    <button onClick={onLogout} className="hover:text-red-400 transition-colors" title={t('auth.logout')}>
-                        <FaSignOutAlt className="w-3.5 h-3.5" />
-                    </button>
-                </div>
+                <UserAvatarMenu
+                    user={{
+                        id: user.userId,
+                        name: user.username,
+                        email: '', // Email not available in current User type
+                        avatarUrl: user.avatarUrl
+                    }}
+                    onLogout={onLogout || (() => { })}
+                />
             ) : (
                 <button onClick={onOpenLogin} className="flex items-center gap-2 hover:text-accent-primary transition-colors text-xs uppercase tracking-wider font-bold">
                     <FaUser className="w-3 h-3" />

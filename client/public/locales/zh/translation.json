@@ -47,6 +47,12 @@
             "en": "English",
             "fr": "Français",
             "zh": "中文"
+        },
+        "user_menu": {
+            "view_profile": "个人资料",
+            "settings": "设置",
+            "logout": "退出登录",
+            "signed_in_as": "当前登录为"
         }
     },
     "dashboard": {

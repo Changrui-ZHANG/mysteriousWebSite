@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
 import { LanguageButton } from './LanguageButton';
+import { useAvatarSync } from '../../hooks/useAvatarSync';
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -50,6 +51,10 @@ export function MobileMenu({
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const { resolvedTheme, toggleTheme } = useThemeManager();
+    const syncedAvatarUrl = useAvatarSync({
+        userId: user?.userId || '',
+        initialAvatarUrl: user?.avatarUrl
+    });
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -139,7 +144,14 @@ export function MobileMenu({
                             <div className="px-4">
                                 {user ? (
                                     <div className="p-4 rounded-2xl bg-inset border border-default space-y-4">
-                                        <div className="text-center">
+                                        <div className="flex flex-col items-center">
+                                            <div className="w-16 h-16 rounded-2xl border-2 border-accent-primary/20 p-1 mb-3 bg-white/5">
+                                                <img
+                                                    src={syncedAvatarUrl || '/default-avatar.png'}
+                                                    alt={user.username}
+                                                    className="w-full h-full object-cover rounded-xl"
+                                                />
+                                            </div>
                                             <p className="text-[10px] text-muted uppercase tracking-widest font-bold mb-1">
                                                 {t('auth.signed_in_as')}
                                             </p>

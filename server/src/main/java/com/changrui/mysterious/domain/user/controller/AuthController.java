@@ -36,7 +36,7 @@ public class AuthController {
         AppUser newUser = new AppUser(dto.username(), dto.password(), dto.password());
         userRepository.save(newUser);
 
-        // Create profile automatically
+        String avatarUrl = null;
         try {
             com.changrui.mysterious.domain.profile.dto.CreateProfileRequest profileRequest = new com.changrui.mysterious.domain.profile.dto.CreateProfileRequest(
                     newUser.getId(),
@@ -44,7 +44,9 @@ public class AuthController {
                     null, // bio
                     true, // isPublic
                     dto.gender());
-            profileService.createProfile(profileRequest);
+            com.changrui.mysterious.domain.profile.dto.ProfileResponse pr = profileService
+                    .createProfile(profileRequest);
+            avatarUrl = pr.avatarUrl();
         } catch (Exception e) {
             // Log error but don't fail registration
             System.err.println("Failed to create profile for user " + newUser.getId() + ": " + e.getMessage());
@@ -53,6 +55,7 @@ public class AuthController {
         AuthResponseDTO response = new AuthResponseDTO(
                 newUser.getId(),
                 newUser.getUsername(),
+                avatarUrl,
                 "User registered successfully");
 
         return ResponseEntity.ok(ApiResponse.success("User registered successfully", response));
@@ -83,9 +86,19 @@ public class AuthController {
             throw new ValidationException("Invalid credentials");
         }
 
+        String avatarUrl = null;
+        try {
+            com.changrui.mysterious.domain.profile.dto.ProfileResponse pr = profileService.getProfile(user.getId(),
+                    user.getId());
+            avatarUrl = pr.avatarUrl();
+        } catch (Exception e) {
+            // Silently fail if profile not found
+        }
+
         AuthResponseDTO response = new AuthResponseDTO(
                 user.getId(),
                 user.getUsername(),
+                avatarUrl,
                 "Login successful");
 
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));

@@ -57,6 +57,12 @@
             "en": "English",
             "fr": "Français",
             "zh": "中文"
+        },
+        "user_menu": {
+            "view_profile": "View Profile",
+            "settings": "Settings",
+            "logout": "Logout",
+            "signed_in_as": "Signed in as"
         }
     },
     "dashboard": {

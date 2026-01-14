@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useProfileWithStats, useUpdateProfileMutation, useUpdatePrivacyMutation } from './queries/profileQueries';
@@ -21,7 +22,26 @@ type TabType = 'overview' | 'edit' | 'privacy' | 'activity';
 export const ProfilePage: React.FC = () => {
     const { user } = useAuth();
     const { t } = useTranslation();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>('overview');
+
+    // Sync state with URL query parameter
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab') as TabType;
+        if (tab && ['overview', 'edit', 'privacy', 'activity'].includes(tab)) {
+            setActiveTab(tab);
+        } else if (!tab) {
+            setActiveTab('overview');
+        }
+    }, [location.search]);
+
+    const handleTabChange = (tab: TabType) => {
+        setActiveTab(tab);
+        // Optional: Update URL without full navigation if desired
+        // navigate(`/profile?tab=${tab}`, { replace: true });
+    };
 
     // TanStack Query hooks for profile and stats
     const {

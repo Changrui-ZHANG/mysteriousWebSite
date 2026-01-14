@@ -8,7 +8,7 @@ import { API_ENDPOINTS } from '../../shared/constants/endpoints';
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onLoginSuccess: (user: { userId: string; username: string }) => void;
+    onLoginSuccess: (user: { userId: string; username: string; avatarUrl?: string }) => void;
 }
 
 export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
@@ -32,10 +32,10 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModal
                 ? { username, password }
                 : { username, password, gender: gender || null };
 
-            const data = await postJson<{ userId: string; username: string; message: string }>(endpoint, payload);
+            const data = await postJson<{ userId: string; username: string; avatarUrl?: string; message: string }>(endpoint, payload);
 
             if (authMode === 'login') {
-                onLoginSuccess({ userId: data.userId, username: data.username });
+                onLoginSuccess({ userId: data.userId, username: data.username, avatarUrl: data.avatarUrl });
                 onClose();
                 setUsername('');
                 setPassword('');
