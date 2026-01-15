@@ -192,8 +192,8 @@ export function MobileMenu({
                                         aria-label={t('nav.profile')}
                                     >
                                         <UserAvatar
-                                            userId={user.userId || user.id}
-                                            alt={user.username || user.name}
+                                            userId={user.userId}
+                                            alt={user.username}
                                             size={44}
                                             className="rounded-lg"
                                         />

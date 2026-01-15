@@ -17,11 +17,11 @@ export function useAvatar(userId?: string): UseAvatarResult {
     const { user: authUser } = useAuth();
 
     // Determine if we're looking for the current logged-in user
-    const isCurrentUser = !!authUser && (userId === authUser.id || userId === authUser.userId || !userId);
+    const isCurrentUser = !!authUser && (userId === authUser.userId || !userId);
 
     // Query profile for the most up-to-date data
     // We only enable the query if we have a userId or if we are the current user
-    const actualId = userId || authUser?.id || authUser?.userId;
+    const actualId = userId || authUser?.userId;
     const { data: profile, isLoading, isError } = useProfileQuery(actualId);
 
     const avatarUrl = useMemo(() => {

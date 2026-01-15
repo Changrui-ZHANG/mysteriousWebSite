@@ -65,8 +65,8 @@ export function Navbar({ }: NavbarProps) {
                         aria-label={t('nav.profile')}
                     >
                         <UserAvatar
-                            userId={user.id || user.userId}
-                            alt={user.username || user.name}
+                            userId={user.userId}
+                            alt={user.username}
                             size="md"
                         />
                     </Link>

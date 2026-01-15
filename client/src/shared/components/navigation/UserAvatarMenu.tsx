@@ -91,7 +91,7 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
 
   // Memoize user data for dropdown menu  // Prepare user data for dropdown
   const menuUserData = useMemo(() => ({
-    id: user.id || user.userId,
+    id: user.id,
     name: user.name,
     email: user.email,
     avatarUrl: user.avatarUrl
@@ -105,7 +105,7 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
       aria-label="User profile menu"
     >
       <AvatarButton
-        userId={user.id || user.userId}
+        userId={user.id}
         userName={user.name}
         isActive={isOpen}
         isLoading={false}
