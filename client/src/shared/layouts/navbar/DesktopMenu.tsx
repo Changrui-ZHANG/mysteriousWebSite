@@ -81,7 +81,7 @@ export function DesktopMenu({
                     {/* Invisible bridge to prevent hover gap */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 w-full h-3 bg-transparent z-40" />
                     {/* Horizontal submenu with same navbar style */}
-                    <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
+                    <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-dropdown after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
                         {moreLinks.map(link => (
                             <Link
                                 key={link.to}
@@ -132,7 +132,7 @@ export function DesktopMenu({
                     <>
                         <button onClick={() => setShowAdminInput(!showAdminInput)} className="hover:scale-110 transition-transform" title={t('auth.admin_access')}>🔐</button>
                         {showAdminInput && (
-                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-2 bg-elevated border border-accent-info/50 backdrop-blur-xl">
+                            <form onSubmit={submitAdminCode} className="absolute top-full right-0 mt-2 p-2 rounded-lg shadow-xl z-dropdown flex gap-2 bg-elevated border border-accent-info/50 backdrop-blur-xl">
                                 <input
                                     type="password"
                                     value={loginCode}

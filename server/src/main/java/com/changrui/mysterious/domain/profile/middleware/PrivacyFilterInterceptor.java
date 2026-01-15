@@ -18,7 +18,8 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
     private PrivacyFilterMiddleware privacyFilterMiddleware;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         // Extract profile user ID from path
         String profileUserId = extractProfileUserId(request);
         if (profileUserId == null) {
@@ -33,50 +34,51 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
         try {
             // Validate the operation
             privacyFilterMiddleware.validateOperation(profileUserId, requesterId, operation, adminCode);
-            
+
             // Store privacy context for use in controller
             request.setAttribute("profileUserId", profileUserId);
             request.setAttribute("requesterId", requesterId);
             request.setAttribute("adminCode", adminCode);
             request.setAttribute("operation", operation);
-            
+
             // Determine and store privacy level
-            PrivacyFilterMiddleware.PrivacyLevel privacyLevel = 
-                privacyFilterMiddleware.determinePrivacyLevel(profileUserId, requesterId, adminCode);
+            PrivacyFilterMiddleware.PrivacyLevel privacyLevel = privacyFilterMiddleware
+                    .determinePrivacyLevel(profileUserId, requesterId, adminCode);
             request.setAttribute("privacyLevel", privacyLevel);
 
             // Log the access attempt
-            privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId, privacyLevel, "request", true);
-            
+            privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId, privacyLevel, "request",
+                    true);
+
             return true; // Continue to controller
-            
+
         } catch (Exception e) {
             // Log failed access attempt
-            privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId, 
-                PrivacyFilterMiddleware.PrivacyLevel.DENIED, "request", false);
+            privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId,
+                    PrivacyFilterMiddleware.PrivacyLevel.DENIED, "request", false);
             throw e; // Re-throw to be handled by exception handler
         }
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, 
-                          Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
+            Object handler, ModelAndView modelAndView) throws Exception {
         // Log successful response
         String profileUserId = (String) request.getAttribute("profileUserId");
         String requesterId = (String) request.getAttribute("requesterId");
         String operation = (String) request.getAttribute("operation");
-        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = 
-            (PrivacyFilterMiddleware.PrivacyLevel) request.getAttribute("privacyLevel");
+        PrivacyFilterMiddleware.PrivacyLevel privacyLevel = (PrivacyFilterMiddleware.PrivacyLevel) request
+                .getAttribute("privacyLevel");
 
         if (profileUserId != null && response.getStatus() < 400) {
-            privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId, 
-                privacyLevel, "response", true);
+            privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId,
+                    privacyLevel, "response", true);
         }
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, 
-                              Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+            Object handler, Exception ex) throws Exception {
         // Log any exceptions that occurred
         if (ex != null) {
             String profileUserId = (String) request.getAttribute("profileUserId");
@@ -84,8 +86,8 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
             String operation = (String) request.getAttribute("operation");
 
             if (profileUserId != null) {
-                privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId, 
-                    PrivacyFilterMiddleware.PrivacyLevel.DENIED, "exception", false);
+                privacyFilterMiddleware.logPrivacyAccess(operation, profileUserId, requesterId,
+                        PrivacyFilterMiddleware.PrivacyLevel.DENIED, "exception", false);
             }
         }
     }
@@ -95,7 +97,7 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
      */
     private String extractProfileUserId(HttpServletRequest request) {
         String path = request.getRequestURI();
-        
+
         // Handle different profile endpoint patterns
         if (path.matches(".*/api/profiles/[^/]+/?.*")) {
             String[] pathParts = path.split("/");
@@ -110,7 +112,7 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
                 }
             }
         }
-        
+
         // Handle avatar endpoints
         if (path.matches(".*/api/avatars/[^/]+/?.*")) {
             String[] pathParts = path.split("/");
@@ -125,7 +127,7 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -135,12 +137,12 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
     private String extractRequesterId(HttpServletRequest request) {
         // Try request parameter first
         String requesterId = request.getParameter("requesterId");
-        
+
         if (requesterId == null || requesterId.trim().isEmpty()) {
             // Try header as fallback
             requesterId = request.getHeader("X-Requester-Id");
         }
-        
+
         return (requesterId != null && !requesterId.trim().isEmpty()) ? requesterId.trim() : null;
     }
 
@@ -150,12 +152,12 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
     private String determineOperation(HttpServletRequest request) {
         String method = request.getMethod().toUpperCase();
         String path = request.getRequestURI();
-        
+
         // Admin endpoints
         if (path.contains("/admin/")) {
             return method.equals("GET") ? "admin_view" : "admin_modify";
         }
-        
+
         // Regular operations
         switch (method) {
             case "GET":

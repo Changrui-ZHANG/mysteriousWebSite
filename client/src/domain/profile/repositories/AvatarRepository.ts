@@ -17,6 +17,7 @@ export class AvatarRepository {
         const response = await fetch(url, {
             method: 'POST', // FIXED: Changed from PUT to POST
             body: formData,
+            credentials: 'include', // Include cookies for authentication
         });
 
         if (!response.ok) {
@@ -81,6 +82,7 @@ export class AvatarRepository {
 
             const url = `${API_ENDPOINTS.AVATARS.UPLOAD(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
             xhr.open('POST', url);
+            xhr.withCredentials = true; // Include cookies for authentication
             xhr.send(formData);
         });
     }

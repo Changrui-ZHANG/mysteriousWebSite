@@ -13,8 +13,9 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
-import { LanguageButton } from './LanguageButton';
+import { CompactLanguageSelector } from './CompactLanguageSelector';
 import { useAvatarSync } from '../../hooks/useAvatarSync';
+import { resolveAvatarUrl } from '../../utils/avatarUtils';
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -51,7 +52,7 @@ export function MobileMenu({
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const { resolvedTheme, toggleTheme } = useThemeManager();
-    
+
     // Sync avatar updates to AuthContext
     useAvatarSync({
         userId: user?.userId || '',
@@ -78,7 +79,7 @@ export function MobileMenu({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="fixed inset-0 h-[100dvh] lg:hidden z-50 overflow-hidden"
+                    className="fixed inset-0 h-[100dvh] lg:hidden z-modal overflow-hidden"
                 >
                     {/* Backdrop Overlay - Uses theme overlay color */}
                     <motion.div
@@ -97,18 +98,42 @@ export function MobileMenu({
                         transition={{ type: "spring", damping: 30, stiffness: 300 }}
                         className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-surface-translucent backdrop-blur-surface border-l border-default shadow-xl flex flex-col text-primary"
                     >
-                        {/* Header with close button */}
-                        <div className="flex items-center justify-between p-6 border-b border-default">
-                            <span className="font-heading font-bold text-lg tracking-tight uppercase opacity-80">
+                        {/* Header with compact controls */}
+                        <div className="flex items-center justify-between p-4 border-b border-default">
+                            <span className="font-heading font-bold text-base tracking-tight uppercase opacity-80">
                                 {t('nav.menu')}
                             </span>
-                            <button
-                                onClick={onClose}
-                                className="w-10 h-10 rounded-full bg-inset border border-default flex items-center justify-center hover:bg-surface transition-all active:scale-95 text-secondary hover:text-primary focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
-                                aria-label={t('common.close')}
-                            >
-                                <FaTimes className="w-4 h-4" />
-                            </button>
+
+                            {/* Compact controls */}
+                            <div className="flex items-center gap-2">
+                                {/* Language selector - compact dropdown */}
+                                <CompactLanguageSelector
+                                    currentLang={i18n.language}
+                                    onChange={changeLanguage}
+                                />
+
+                                {/* Theme toggle - icon only */}
+                                <button
+                                    onClick={toggleTheme}
+                                    className="w-9 h-9 rounded-lg bg-inset border border-default flex items-center justify-center hover:bg-surface transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
+                                    aria-label={resolvedTheme === 'dark' ? t('navbar.theme.light') : t('navbar.theme.dark')}
+                                >
+                                    {resolvedTheme === 'dark' ? (
+                                        <FaSun className="w-4 h-4 text-amber-400" />
+                                    ) : (
+                                        <FaMoon className="w-4 h-4 text-indigo-400" />
+                                    )}
+                                </button>
+
+                                {/* Close button */}
+                                <button
+                                    onClick={onClose}
+                                    className="w-9 h-9 rounded-lg bg-inset border border-default flex items-center justify-center hover:bg-surface transition-all active:scale-95 text-secondary hover:text-primary focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
+                                    aria-label={t('common.close')}
+                                >
+                                    <FaTimes className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Scrollable Content */}
@@ -164,13 +189,51 @@ export function MobileMenu({
                                 </div>
                             )}
 
-                            {/* Admin Login (if not admin) */}
-                            {!isAdmin && (
-                                <div className="px-4 mb-4">
-                                    <div className="p-5 rounded-2xl bg-inset border border-default shadow-inner">
-                                        <p className="text-[10px] text-center text-muted uppercase tracking-tighter font-black mb-3 opacity-60">
-                                            {t('auth.admin_access')}
+
+                        </div>
+
+                        {/* Compact Auth Section at Bottom */}
+                        {user && (
+                            <div className="border-t border-default bg-inset/30 p-3">
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-inset border border-default">
+                                    {/* Avatar - smaller */}
+                                    <Link
+                                        to="/profile"
+                                        onClick={onClose}
+                                        className="w-12 h-12 rounded-xl border-2 border-accent-primary/20 p-0.5 bg-white/5 hover:border-accent-primary/40 transition-all active:scale-95 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
+                                        aria-label={t('nav.profile')}
+                                    >
+                                        <img
+                                            src={resolveAvatarUrl(user.avatarUrl)}
+                                            alt={user.username}
+                                            className="w-full h-full object-cover rounded-lg"
+                                        />
+                                    </Link>
+
+                                    {/* User info - compact */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs font-bold text-accent-primary truncate">
+                                            {user.username}
                                         </p>
+                                        <p className="text-[10px] text-muted">
+                                            {t('auth.signed_in')}
+                                        </p>
+                                    </div>
+
+                                    {/* Logout button - to the right */}
+                                    <button
+                                        onClick={() => onLogout?.()}
+                                        className="px-4 py-2 rounded-lg border border-accent-danger/30 text-accent-danger flex items-center gap-2 hover:bg-accent-danger/10 transition-all text-xs font-bold active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent-danger focus:ring-offset-2 shrink-0"
+                                    >
+                                        <FaSignOutAlt className="w-3.5 h-3.5" />
+                                        {t('auth.logout')}
+                                    </button>
+                                </div>
+
+                                {/* Admin Access - Ultra discreet */}
+                                <div className="mt-2 flex items-center gap-2 text-[10px] text-muted/50">
+                                    <span className="uppercase tracking-wider font-medium shrink-0">Admin</span>
+                                    {!isAdmin ? (
                                         <form
                                             onSubmit={async (e) => {
                                                 e.preventDefault();
@@ -179,98 +242,42 @@ export function MobileMenu({
                                                     if (success) setLoginCode('');
                                                 }
                                             }}
-                                            className="flex gap-2"
+                                            className="flex items-center gap-1 flex-1"
                                         >
                                             <input
                                                 type="password"
                                                 value={loginCode}
                                                 onChange={(e) => setLoginCode(e.target.value)}
-                                                className="flex-1 px-4 py-3 bg-surface border border-default rounded-xl focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/10 outline-none text-center font-mono text-sm transition-all"
-                                                placeholder={t('admin.code_placeholder')}
+                                                className="flex-1 px-2 py-0.5 bg-surface/30 border border-default/30 rounded text-center font-mono text-[10px] focus:border-accent-primary/30 focus:ring-1 focus:ring-accent-primary/10 outline-none transition-all placeholder:text-muted/30"
+                                                placeholder="code"
                                             />
                                             <button
                                                 type="submit"
-                                                className="px-5 py-3 bg-accent-info text-inverse rounded-xl font-black hover:bg-accent-primary transition-all active:scale-95 shadow-lg shadow-accent-info/20"
+                                                className="w-5 h-5 flex items-center justify-center bg-accent-info/60 text-white rounded hover:bg-accent-info transition-all active:scale-90 shrink-0"
+                                                title={t('auth.admin_access')}
                                             >
-                                                →
+                                                🔐
                                             </button>
                                         </form>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Footer with settings - Above auth section */}
-                        <div className="p-6 border-t border-default space-y-5 bg-inset/30">
-                            {/* Language Selector */}
-                            <div className="flex justify-center items-center gap-4">
-                                <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
-                                <div className="w-px h-4 bg-default" />
-                                <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
-                                <div className="w-px h-4 bg-default" />
-                                <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
-                            </div>
-
-                            {/* Theme Toggle Button */}
-                            <button
-                                onClick={toggleTheme}
-                                className="flex items-center justify-between w-full p-4 transition-all duration-300 border bg-white/5 border-white/10 rounded-2xl active:scale-95 group"
-                            >
-                                <span className="font-bold text-primary">
-                                    {resolvedTheme === 'dark' ? t('navbar.theme.light') : t('navbar.theme.dark')}
-                                </span>
-                                {resolvedTheme === 'dark' ? (
-                                    <FaSun className="text-2xl text-amber-400 group-hover:rotate-90 transition-transform duration-500" />
-                                ) : (
-                                    <FaMoon className="text-2xl text-indigo-400 group-hover:-rotate-12 transition-transform duration-500" />
-                                )}
-                            </button>
-                        </div>
-
-                        {/* Fixed Auth Section at Bottom */}
-                        {user && (
-                            <div className="border-t border-default bg-inset/30 p-4">
-                                <div className="flex items-center gap-4 p-4 rounded-2xl bg-inset border border-default">
-                                    {/* Avatar cliquable */}
-                                    <Link
-                                        to="/profile"
-                                        onClick={onClose}
-                                        className="w-16 h-16 rounded-2xl border-2 border-accent-primary/20 p-1 bg-white/5 hover:border-accent-primary/40 transition-all active:scale-95 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
-                                        aria-label={t('nav.profile')}
-                                    >
-                                        <img
-                                            src={user.avatarUrl || '/avatars/default-avatar.png'}
-                                            alt={user.username}
-                                            className="w-full h-full object-cover rounded-xl"
-                                        />
-                                    </Link>
-                                    
-                                    {/* User info and logout */}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[10px] text-muted uppercase tracking-widest font-bold mb-1">
-                                            {t('auth.signed_in_as')}
-                                        </p>
-                                        <p className="font-black text-accent-primary text-base tracking-tight truncate mb-2">
-                                            {user.username}
-                                        </p>
+                                    ) : (
                                         <button
-                                            onClick={() => onLogout?.()}
-                                            className="w-full py-2 rounded-lg border border-accent-danger/30 text-accent-danger flex items-center justify-center gap-2 hover:bg-accent-danger/10 transition-all text-xs font-bold active:scale-95"
+                                            onClick={() => onAdminLogout?.()}
+                                            className="w-5 h-5 flex items-center justify-center bg-accent-secondary/60 text-white rounded hover:bg-accent-secondary transition-all active:scale-90 ml-auto shrink-0"
+                                            title={t('auth.logout')}
                                         >
-                                            <FaSignOutAlt className="w-3 h-3" />
-                                            {t('auth.logout')}
+                                            🔓
                                         </button>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         )}
 
                         {/* Login button if not authenticated */}
                         {!user && (
-                            <div className="border-t border-default bg-inset/30 p-4">
+                            <div className="border-t border-default bg-inset/30 p-3">
                                 <button
                                     onClick={() => { onOpenLogin(); onClose(); }}
-                                    className="w-full py-4 rounded-2xl bg-accent-success text-white flex items-center justify-center gap-3 shadow-lg shadow-accent-success/20 font-black text-base hover:shadow-accent-success/40 transition-all active:scale-95"
+                                    className="w-full py-3.5 rounded-xl bg-white/5 backdrop-blur-md border border-accent-success/30 text-accent-success flex items-center justify-center gap-3 font-bold text-base hover:bg-accent-success/10 hover:border-accent-success/50 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent-success focus:ring-offset-2 shadow-lg shadow-accent-success/10 hover:shadow-accent-success/20"
                                 >
                                     <FaUser className="w-4 h-4" />
                                     {t('auth.login')}

@@ -137,6 +137,7 @@
         "success_register": "注册成功！请登录。",
         "failed": "认证失败",
         "confirm_logout": "确定要注销吗？",
+        "signed_in": "已登录",
         "login_required": "需要登录",
         "login_required_description": "您必须登录才能访问此功能。",
         "admin_code": "管理员代码",

@@ -73,6 +73,7 @@ public class AvatarService {
 
             // Save processed image
             Path filePath = uploadPath.resolve(secureFilename);
+            System.out.println("[DEBUG] Saving avatar to: " + filePath.toAbsolutePath());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processedImage, "jpg", baos);
             Files.write(filePath, baos.toByteArray());

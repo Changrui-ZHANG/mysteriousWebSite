@@ -2,6 +2,7 @@ import { AvatarRepository } from '../repositories/AvatarRepository';
 import { validateFileUpload } from '../schemas/profileSchemas';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
 import { requireUserId } from '../utils/validation';
+import { logAvatarUpload } from '../utils/diagnosticLogger';
 
 /**
  * Service for avatar image processing and management
@@ -18,13 +19,31 @@ export class AvatarService {
      * Upload and process avatar with validation and resizing
      */
     async uploadAvatar(userId: string, file: File, requesterId: string, onProgress?: (progress: number) => void): Promise<string> {
+        logAvatarUpload('upload-start', 'AvatarService', {
+            userId,
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.type
+        });
+
         // Use centralized validation
         requireUserId(userId);
         requireUserId(requesterId);
 
         // Validate file using schema
+        logAvatarUpload('validation', 'AvatarService', {
+            fileName: file.name,
+            validating: true
+        });
+
         const validation = validateFileUpload({ file });
         if (!validation.success) {
+            logAvatarUpload('error', 'AvatarService', {
+                phase: 'validation',
+                fileName: file.name,
+                error: 'Schema validation failed',
+                details: validation.error
+            });
             throw new AppError(
                 'Invalid file',
                 ERROR_CODES.VALIDATION_ERROR,
@@ -36,6 +55,12 @@ export class AvatarService {
         // Additional validation using repository
         const repoValidation = this.repository.validateImageFileSync(file);
         if (!repoValidation.isValid) {
+            logAvatarUpload('error', 'AvatarService', {
+                phase: 'validation',
+                fileName: file.name,
+                error: 'Repository validation failed',
+                errors: repoValidation.errors
+            });
             throw new AppError(
                 'File validation failed',
                 ERROR_CODES.VALIDATION_ERROR,
@@ -44,21 +69,64 @@ export class AvatarService {
             );
         }
 
+        logAvatarUpload('validation', 'AvatarService', {
+            fileName: file.name,
+            success: true
+        });
+
         // Business logic: Process image before upload
+        logAvatarUpload('file-conversion', 'AvatarService', {
+            fileName: file.name,
+            action: 'processing image'
+        });
+
         const processedFile = await this.processImageForUpload(file);
+
+        logAvatarUpload('file-conversion', 'AvatarService', {
+            originalSize: file.size,
+            processedSize: processedFile.size,
+            originalType: file.type,
+            processedType: processedFile.type,
+            success: true
+        });
 
         // Upload with progress tracking
         try {
+            logAvatarUpload('upload-start', 'AvatarService.repository', {
+                userId,
+                fileName: processedFile.name,
+                fileSize: processedFile.size
+            });
+
             const avatarUrl = await this.repository.uploadFileWithProgress(
                 userId, 
                 processedFile, 
                 requesterId,
-                onProgress
+                (progress) => {
+                    logAvatarUpload('upload-progress', 'AvatarService', {
+                        progress,
+                        fileName: processedFile.name
+                    });
+                    onProgress?.(progress);
+                }
             );
+
+            logAvatarUpload('upload-complete', 'AvatarService', {
+                userId,
+                avatarUrl,
+                fileName: processedFile.name
+            });
 
             // Business logic: Could add post-processing here (e.g., generate thumbnails)
             return avatarUrl;
         } catch (error) {
+            logAvatarUpload('error', 'AvatarService', {
+                phase: 'upload',
+                userId,
+                fileName: processedFile.name,
+                error: error instanceof Error ? error.message : 'Unknown error'
+            }, error instanceof Error ? error : undefined);
+
             throw new AppError(
                 'Avatar upload failed',
                 ERROR_CODES.OPERATION_FAILED,

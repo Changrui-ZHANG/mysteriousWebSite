@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { AvatarButton } from './AvatarButton';
 import { UserDropdownMenu } from './UserDropdownMenu';
 import { useAvatarSync } from '../../hooks/useAvatarSync';
+import { resolveAvatarUrl } from '../../utils/avatarUtils';
 import type { UserAvatarMenuProps } from './types';
 
 export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
@@ -119,7 +120,7 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
         setAvatarLoadError(true);
         console.error('Failed to load avatar:', syncedAvatarUrl);
       };
-      img.src = syncedAvatarUrl;
+      img.src = resolveAvatarUrl(syncedAvatarUrl);
     }
   }, [syncedAvatarUrl, user.avatarUrl]);
 
@@ -127,7 +128,7 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
   const menuUserData = useMemo(() => ({
     name: user.name,
     email: user.email,
-    avatarUrl: syncedAvatarUrl
+    avatarUrl: resolveAvatarUrl(syncedAvatarUrl)
   }), [user.name, user.email, syncedAvatarUrl]);
 
   return (

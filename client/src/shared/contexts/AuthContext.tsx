@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             ...newUser,
             avatarUrl: resolveAvatarUrl(newUser.avatarUrl)
         };
-        
+
         setUser(userWithResolvedAvatar);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userWithResolvedAvatar));
 

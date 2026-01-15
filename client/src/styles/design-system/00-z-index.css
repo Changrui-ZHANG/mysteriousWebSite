@@ -1,0 +1,87 @@
+/* ============================================
+   00. Z-INDEX SYSTEM - Layering Hierarchy
+   ============================================ */
+
+/**
+ * Centralized z-index management system
+ * 
+ * This file defines the z-index layering hierarchy for the entire application.
+ * Always use these CSS variables instead of arbitrary z-index values.
+ * 
+ * Hierarchy (bottom to top):
+ * - Base (0): Normal document flow
+ * - Dropdown (50): Language selectors, simple dropdowns
+ * - Sticky (100): Sticky headers, floating elements
+ * - Navbar (200): Fixed navigation bar
+ * - Overlay (300): Modal backdrops, overlays
+ * - Modal (400): Dialogs, mobile menu, drawers
+ * - Popover (500): User menus, context menus
+ * - Tooltip (600): Tooltips, hints
+ * - Notification (700): Toast notifications, alerts
+ */
+
+:root {
+    /* Base layer - Normal flow */
+    --z-base: 0;
+
+    /* Dropdown layer - Simple dropdowns */
+    --z-dropdown: 50;
+
+    /* Sticky layer - Sticky elements */
+    --z-sticky: 100;
+
+    /* Navbar layer - Fixed navigation */
+    --z-navbar: 200;
+
+    /* Overlay layer - Backdrops */
+    --z-overlay: 300;
+
+    /* Modal layer - Dialogs, mobile menu */
+    --z-modal: 400;
+
+    /* Popover layer - Contextual menus */
+    --z-popover: 500;
+
+    /* Tooltip layer - Hints and tooltips */
+    --z-tooltip: 600;
+
+    /* Notification layer - Alerts and toasts */
+    --z-notification: 700;
+}
+
+/* Utility classes for z-index */
+.z-base {
+    z-index: var(--z-base);
+}
+
+.z-dropdown {
+    z-index: var(--z-dropdown);
+}
+
+.z-sticky {
+    z-index: var(--z-sticky);
+}
+
+.z-navbar {
+    z-index: var(--z-navbar);
+}
+
+.z-overlay {
+    z-index: var(--z-overlay);
+}
+
+.z-modal {
+    z-index: var(--z-modal);
+}
+
+.z-popover {
+    z-index: var(--z-popover);
+}
+
+.z-tooltip {
+    z-index: var(--z-tooltip);
+}
+
+.z-notification {
+    z-index: var(--z-notification);
+}

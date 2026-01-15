@@ -1,50 +1,44 @@
 /**
- * Avatar utility functions
- * Handles avatar URL resolution and fallbacks
+ * Utility functions for handling avatar URLs
+ * Ensures consistent avatar display across the application
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const DEFAULT_AVATAR = '/avatars/default-avatar.png';
 
 /**
- * Resolves avatar URL to absolute URL
- * Handles relative paths, absolute paths, and null/undefined
+ * Resolves the avatar URL to ensure it's a valid path
+ * Handles null/undefined, relative paths, and full URLs
  * 
- * @param avatarUrl - Avatar URL from backend (can be relative or absolute)
- * @returns Absolute avatar URL or default avatar path
+ * @param url - The raw avatar URL from user data
+ * @returns The resolved, usable avatar URL
  */
-export function resolveAvatarUrl(avatarUrl?: string | null): string {
-    // If no avatar URL, return default
-    if (!avatarUrl || avatarUrl.trim() === '') {
-        return '/avatars/default-avatar.png';
+export const resolveAvatarUrl = (url: string | undefined | null): string => {
+    // If no URL provided, return default
+    if (!url) {
+        return DEFAULT_AVATAR;
     }
 
-    // If already an absolute URL (http:// or https://), return as-is
-    if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
-        return avatarUrl;
+    // If it's already a full URL (http/https), return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
     }
 
-    // If it's a relative path starting with /, prepend API base URL
-    if (avatarUrl.startsWith('/')) {
-        return `${API_BASE_URL}${avatarUrl}`;
+    // If it's a data URI (base64), return as is
+    if (url.startsWith('data:')) {
+        return url;
     }
 
-    // Otherwise, assume it's a relative path and prepend API base URL with /
-    return `${API_BASE_URL}/${avatarUrl}`;
-}
+    // If it's already an absolute path starting with /, return as is
+    if (url.startsWith('/')) {
+        return url;
+    }
 
-/**
- * Gets the default avatar URL
- */
-export function getDefaultAvatarUrl(): string {
-    return '/avatars/default-avatar.png';
-}
+    // If it's one of our known default avatar filenames (e.g. default-avatar.png)
+    if (url.startsWith('default-')) {
+        return `/avatars/${url}`;
+    }
 
-/**
- * Checks if an avatar URL is a default avatar
- */
-export function isDefaultAvatar(avatarUrl?: string | null): boolean {
-    if (!avatarUrl) return true;
-    return avatarUrl.includes('default-avatar') || 
-           avatarUrl.includes('default-B') || 
-           avatarUrl.includes('default-G');
-}
+    // Otherwise, assume it's a filename uploaded to the server
+    // These should be served via the AvatarController at /api/avatars/files/
+    return `/api/avatars/files/${url}`;
+};

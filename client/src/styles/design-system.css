@@ -10,6 +10,7 @@
 
 
 /* ============================================ */
+@import './design-system/00-z-index.css';
 @import './design-system/01-tokens.css';
 @import './design-system/02-themes.css';
 @import './design-system/03-base.css';

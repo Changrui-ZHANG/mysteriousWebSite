@@ -1,90 +1,52 @@
-/**
- * useAvatarSync Hook
- * Synchronizes avatar updates between navbar and profile page
- * Profile Access Improvement Feature
- */
-
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { profileKeys } from '../../domain/profile/queries/queryKeys';
 import { useAuth } from '../contexts/AuthContext';
 
-interface AvatarSyncOptions {
-  userId: string;
-  initialAvatarUrl?: string;
+interface UseAvatarSyncProps {
+    userId: string;
+    initialAvatarUrl?: string;
 }
 
-/**
- * Hook to keep avatar in sync across the application
- * Listens to React Query cache updates for avatar changes
- * Also updates AuthContext to persist avatar in localStorage
- */
-export const useAvatarSync = ({ userId, initialAvatarUrl }: AvatarSyncOptions) => {
-  const queryClient = useQueryClient();
-  const { updateUserAvatar } = useAuth();
+export function useAvatarSync({ userId, initialAvatarUrl }: UseAvatarSyncProps) {
+    const { updateUserAvatar } = useAuth();
+    const queryClient = useQueryClient();
+    const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
 
-  // Try to get the most up-to-date value from the cache immediately
-  const getCachedAvatar = () => {
-    const detailData = queryClient.getQueryData<{ avatarUrl?: string }>(profileKeys.detail(userId));
-    if (detailData !== undefined) return detailData.avatarUrl;
+    useEffect(() => {
+        if (!userId) return;
 
-    const avatarData = queryClient.getQueryData<{ avatarUrl?: string }>(profileKeys.avatar(userId));
-    if (avatarData !== undefined) return avatarData.avatarUrl;
+        // Subscribe to query cache updates
+        const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+            // Check for profile updates
+            if (event.type === 'updated' && Array.isArray(event.query.queryKey)) {
+                const key = event.query.queryKey;
+                // Match ['profiles', 'detail', userId] or similar keys
+                if ((key[0] === 'profiles' || key[0] === 'profile' || key[0] === 'user') && key.includes(userId)) {
+                    const data = event.query.state.data as { avatarUrl?: string } | undefined;
+                    const newAvatarUrl = data?.avatarUrl;
 
-    return initialAvatarUrl;
-  };
+                    if (newAvatarUrl) {
+                        setAvatarUrl(newAvatarUrl);
+                        updateUserAvatar(newAvatarUrl);
+                    }
+                }
+            }
+        });
 
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(getCachedAvatar);
+        return () => {
+            unsubscribe();
+        };
+    }, [userId, queryClient, updateUserAvatar]);
 
-  // Update internal state when initialAvatarUrl changes (e.g. after login)
-  useEffect(() => {
-    if (initialAvatarUrl) {
-      setAvatarUrl(initialAvatarUrl);
-    }
-  }, [initialAvatarUrl]);
-
-  useEffect(() => {
-    // Subscribe to avatar query updates
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-      if (event?.type === 'updated') {
-        const queryKey = event.query.queryKey;
-
-        // Check if this is an avatar update for our user
-        const avatarKey = profileKeys.avatar(userId);
-        const isAvatarUpdate = JSON.stringify(queryKey) === JSON.stringify(avatarKey);
-
-        if (isAvatarUpdate) {
-          const data = event.query.state.data as { avatarUrl?: string } | undefined;
-          const newAvatarUrl = data?.avatarUrl;
-          setAvatarUrl(newAvatarUrl);
-          
-          // Update AuthContext to persist in localStorage
-          if (newAvatarUrl) {
-            updateUserAvatar(newAvatarUrl);
-          }
+    // Keep local state in sync with initial prop if it changes and we haven't detected an update yet
+    useEffect(() => {
+        if (initialAvatarUrl) {
+            // We only update if strict equality fails, but we want the source of truth to be the sync
+            // However, if initial changes (e.g. from parent re-render), we should respect it UNLESS we have a newer one?
+            // Actually, let's just default to initial if state is empty.
+            setAvatarUrl(prev => prev || initialAvatarUrl);
         }
+    }, [initialAvatarUrl]);
 
-        // Also check profile detail updates which may include avatar
-        const profileKey = profileKeys.detail(userId);
-        const isProfileUpdate = queryKey[0] === profileKey[0] &&
-          queryKey[1] === profileKey[1] &&
-          queryKey[2] === userId;
-
-        if (isProfileUpdate) {
-          const data = event.query.state.data as { avatarUrl?: string } | undefined;
-          const newAvatarUrl = data?.avatarUrl;
-          setAvatarUrl(newAvatarUrl);
-          
-          // Update AuthContext to persist in localStorage
-          if (newAvatarUrl) {
-            updateUserAvatar(newAvatarUrl);
-          }
-        }
-      }
-    });
-
-    return () => unsubscribe();
-  }, [queryClient, userId, updateUserAvatar]);
-
-  return avatarUrl;
-};
+    return avatarUrl || initialAvatarUrl;
+}

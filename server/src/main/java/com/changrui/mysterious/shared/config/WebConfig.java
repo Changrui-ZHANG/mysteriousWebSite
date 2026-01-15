@@ -17,38 +17,38 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private ProfileAuthInterceptor profileAuthInterceptor;
+        @Autowired
+        private ProfileAuthInterceptor profileAuthInterceptor;
 
-    @Autowired
-    private FileUploadInterceptor fileUploadInterceptor;
+        @Autowired
+        private FileUploadInterceptor fileUploadInterceptor;
 
-    @Autowired
-    private PrivacyFilterInterceptor privacyFilterInterceptor;
+        @Autowired
+        private PrivacyFilterInterceptor privacyFilterInterceptor;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
-    }
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                                .allowedOrigins("*")
+                                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                                .allowedHeaders("*");
+        }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        // Add privacy filter interceptor first (highest priority)
-        registry.addInterceptor(privacyFilterInterceptor)
-                .addPathPatterns("/api/profiles/**", "/api/avatars/**")
-                .order(1);
-        
-        // Add file upload security interceptor for all file upload endpoints
-        registry.addInterceptor(fileUploadInterceptor)
-                .addPathPatterns("/api/avatars/**", "/api/profiles/**/upload")
-                .order(2);
-        
-        // Add profile authentication interceptor for all profile endpoints
-        registry.addInterceptor(profileAuthInterceptor)
-                .addPathPatterns("/api/profiles/**")
-                .order(3);
-    }
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+                // Add privacy filter interceptor first (highest priority)
+                registry.addInterceptor(privacyFilterInterceptor)
+                                .addPathPatterns("/api/profiles/**")
+                                .order(1);
+
+                // Add file upload security interceptor for all file upload endpoints
+                registry.addInterceptor(fileUploadInterceptor)
+                                .addPathPatterns("/api/avatars/**", "/api/profiles/**/upload")
+                                .order(2);
+
+                // Add profile authentication interceptor for all profile endpoints
+                registry.addInterceptor(profileAuthInterceptor)
+                                .addPathPatterns("/api/profiles/**")
+                                .order(3);
+        }
 }

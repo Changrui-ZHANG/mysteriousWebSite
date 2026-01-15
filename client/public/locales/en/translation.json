@@ -147,6 +147,7 @@
         "success_register": "Registration successful! Please login.",
         "failed": "Authentication failed",
         "confirm_logout": "Are you sure you want to logout?",
+        "signed_in": "Signed in",
         "login_required": "Login Required",
         "login_required_description": "You must be logged in to access this feature.",
         "admin_code": "Admin Code",

@@ -147,6 +147,7 @@
         "success_register": "Inscription réussie ! Veuillez vous connecter.",
         "failed": "Échec de l'authentification",
         "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
+        "signed_in": "Connecté",
         "login_required": "Connexion requise",
         "login_required_description": "Vous devez être connecté pour accéder à cette fonctionnalité.",
         "admin_code": "Code Admin",

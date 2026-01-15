@@ -14,6 +14,7 @@ import { AvatarCropper } from './cropping/AvatarCropper';
 import { AvatarDropzone, AvatarPreview, AvatarUploadProgress } from './avatar';
 import { CropResult } from './cropping/types';
 import { logError } from '../utils/logger';
+import { logAvatarUpload } from '../utils/diagnosticLogger';
 
 // Constants
 const ACCEPTED_FORMATS = ['image/jpeg', 'image/png', 'image/webp'];
@@ -96,17 +97,44 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      * Handle file selection - either start cropping or upload directly
      */
     const handleFileSelect = async (file: File) => {
+        logAvatarUpload('file-select', 'AvatarUploadWithCropping', {
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.type,
+            enableCropping
+        });
+
         clearError();
 
         // Validate file first
+        logAvatarUpload('validation', 'AvatarUploadWithCropping', {
+            fileName: file.name,
+            validating: true
+        });
+
         const validation = await validateFile(file);
 
+        logAvatarUpload('validation', 'AvatarUploadWithCropping', {
+            fileName: file.name,
+            isValid: validation.isValid,
+            errors: validation.errors
+        });
+
         if (!validation.isValid) {
+            logAvatarUpload('error', 'AvatarUploadWithCropping', {
+                phase: 'validation',
+                fileName: file.name,
+                errors: validation.errors
+            });
             return; // Error is handled by the hook
         }
 
         if (enableCropping) {
             // Show cropper for user to crop the image
+            logAvatarUpload('crop-start', 'AvatarUploadWithCropping', {
+                fileName: file.name,
+                openingModal: true
+            });
             setSelectedFile(file);
             openModal('avatarCropper');
         } else {
@@ -127,12 +155,35 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
      * Handle crop completion - upload the cropped image
      */
     const handleCropComplete = async (cropResult: CropResult) => {
+        logAvatarUpload('crop-complete', 'AvatarUploadWithCropping', {
+            blobSize: cropResult.croppedImageBlob.size,
+            blobType: cropResult.croppedImageBlob.type,
+            hasUrl: !!cropResult.croppedImageUrl
+        });
+
         try {
             closeModal();
+
+            // Validate blob
+            if (!cropResult.croppedImageBlob || cropResult.croppedImageBlob.size === 0) {
+                const error = new Error('Invalid crop result: empty blob');
+                logAvatarUpload('error', 'AvatarUploadWithCropping', {
+                    phase: 'crop-complete',
+                    error: 'Empty blob received from cropper'
+                }, error);
+                throw error;
+            }
 
             // Determine extension based on blob type
             const extension = cropResult.croppedImageBlob.type.split('/')[1] || 'jpg';
             const fileName = (selectedFile?.name || 'avatar').replace(/\.[^/.]+$/, "") + "." + extension;
+
+            logAvatarUpload('file-conversion', 'AvatarUploadWithCropping', {
+                originalFileName: selectedFile?.name,
+                newFileName: fileName,
+                blobSize: cropResult.croppedImageBlob.size,
+                blobType: cropResult.croppedImageBlob.type
+            });
 
             // Create a new File object from the cropped blob
             const croppedFile = new File(
@@ -140,6 +191,13 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
                 fileName,
                 { type: cropResult.croppedImageBlob.type }
             );
+
+            logAvatarUpload('file-conversion', 'AvatarUploadWithCropping', {
+                success: true,
+                fileName: croppedFile.name,
+                fileSize: croppedFile.size,
+                fileType: croppedFile.type
+            });
 
             // Create preview from crop result
             if (previewUrl) {
@@ -149,9 +207,27 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             setPreviewUrl(preview);
 
             // Upload the cropped image
+            logAvatarUpload('upload-start', 'AvatarUploadWithCropping', {
+                fileName: croppedFile.name,
+                fileSize: croppedFile.size,
+                fileType: croppedFile.type,
+                userId
+            });
+
             setLoading('avatarUpload', true);
             try {
-                await uploadAvatar(croppedFile, (progress) => setUploadProgress(progress));
+                await uploadAvatar(croppedFile, (progress) => {
+                    logAvatarUpload('upload-progress', 'AvatarUploadWithCropping', {
+                        progress,
+                        fileName: croppedFile.name
+                    });
+                    setUploadProgress(progress);
+                });
+
+                logAvatarUpload('upload-complete', 'AvatarUploadWithCropping', {
+                    fileName: croppedFile.name,
+                    success: true
+                });
             } finally {
                 setLoading('avatarUpload', false);
             }
@@ -163,6 +239,12 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
             }
         } catch (error) {
             logError('Failed to upload cropped image', error);
+            logAvatarUpload('error', 'AvatarUploadWithCropping', {
+                phase: 'upload',
+                fileName: selectedFile?.name,
+                error: error instanceof Error ? error.message : 'Unknown error'
+            }, error instanceof Error ? error : undefined);
+            
             addErrorNotification(
                 t('profile.avatar.error'),
                 t('profile.avatar.error')
@@ -241,7 +323,7 @@ export const AvatarUploadWithCropping: React.FC<AvatarUploadWithCroppingProps> =
 
                 {/* Error Display */}
                 {error && (
-                    <div 
+                    <div
                         className="mt-4 p-3 bg-red-50/50 border border-red-200 rounded-lg backdrop-blur-sm"
                         role="alert"
                         aria-live="polite"
