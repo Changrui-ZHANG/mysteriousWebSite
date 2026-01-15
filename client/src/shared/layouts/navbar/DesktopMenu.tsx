@@ -67,26 +67,28 @@ export function DesktopMenu({
                     <Link
                         key={link.to}
                         to={link.to}
-                        className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
+                        className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
                     >
                         {link.label}
                     </Link>
                 ))}
 
-                {/* Dropdown for More Links - Horizontal Liquid Glass Style */}
-                <div className="relative group">
+                {/* "More" Trigger with Integrated Sub-bar */}
+                <div className="relative group/more h-full flex items-center">
                     <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/profile', '/notes', '/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
-                        {t('nav.more')} <FaChevronDown className="text-[10px] transition-transform duration-300 group-hover:rotate-180" />
+                        {t('nav.more')} <FaChevronDown className="text-[10px] transition-transform duration-300 group-hover/more:rotate-180" />
                     </button>
-                    {/* Invisible bridge to prevent hover gap */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-full h-3 bg-transparent z-40" />
-                    {/* Horizontal submenu with same navbar style */}
-                    <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-dropdown after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none">
+
+                    {/* Invisible hover bridge */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[200%] h-4 bg-transparent z-40" />
+
+                    {/* Integrated Sub-bar - Horizontal row below the main nav */}
+                    <div className="absolute top-[calc(100%+14px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/20 bg-elevated/95 backdrop-blur-3xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-300 transform translate-y-2 group-hover/more:translate-y-0 z-dropdown after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2)] after:pointer-events-none whitespace-nowrap min-w-max">
                         {moreLinks.map(link => (
                             <Link
                                 key={link.to}
                                 to={link.to}
-                                className={`relative z-10 px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
+                                className={`relative z-10 px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/10 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
                             >
                                 {link.label}
                             </Link>
@@ -95,7 +97,7 @@ export function DesktopMenu({
                 </div>
             </div>
 
-            <div className="w-px h-4 bg-white/10" />
+            <div className="w-px h-4 bg-white/10 shrink-0" />
 
             {/* Auth Section */}
             {user ? (

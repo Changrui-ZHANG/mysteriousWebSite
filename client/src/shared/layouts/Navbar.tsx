@@ -56,7 +56,7 @@ export function Navbar({ }: NavbarProps) {
 
     return (
         <>
-            <nav className="fixed top-5 left-1/2 -translate-x-1/2 z-navbar px-6 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl flex items-center gap-6 text-primary transition-all duration-500 hover:bg-white/[0.06] hover:border-white/20 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none w-max max-w-[95vw]">
+            <nav className="fixed top-5 left-1/2 -translate-x-1/2 z-navbar px-6 py-2 rounded-full border border-white/20 bg-surface-translucent/80 backdrop-blur-3xl shadow-2xl flex items-center gap-6 text-primary transition-all duration-500 hover:bg-white/[0.08] hover:border-white/30 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2)] after:pointer-events-none w-max max-w-[95vw]">
                 {/* Mobile Avatar - Left side */}
                 {user && (
                     <Link
