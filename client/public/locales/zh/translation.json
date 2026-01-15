@@ -963,7 +963,8 @@
             "overview": "概览",
             "edit": "编辑",
             "privacy": "隐私",
-            "activity": "活动"
+            "activity": "活动",
+            "achievements": "成就"
         },
         "card": {
             "bio": "个人简介",
@@ -973,7 +974,13 @@
             "messages": "留言",
             "games": "游戏",
             "days": "天",
-            "streak": "连续登录"
+            "streak": "连续登录",
+            "longest_streak": "最高连续",
+            "time_spent": "在线时长",
+            "level": "等级"
+        },
+        "achievements": {
+            "empty": "尚未获得成就。继续探索吧！"
         },
         "form": {
             "title": "编辑个人资料",

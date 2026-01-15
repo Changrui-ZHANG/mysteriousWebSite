@@ -127,7 +127,7 @@ export function CV({ }: CVProps) {
         <div
             ref={containerRef}
             data-theme={isPaperTheme ? 'paper' : undefined}
-            className="page-container overflow-x-hidden"
+            className="page-container relative overflow-x-hidden pt-16"
         >
             {/* Paper Theme Toggle Button */}
             <button
@@ -207,7 +207,7 @@ export function CV({ }: CVProps) {
             )}
 
             {/* 1. Hero Cover */}
-            <header className="h-[110vh] flex flex-col items-center justify-center relative overflow-hidden px-6 z-10">
+            <header className="h-screen flex flex-col items-center justify-center relative overflow-hidden px-6 z-10">
                 <div className="relative z-10 text-center space-y-8">
                     <div
                         className={`inline-block px-6 py-2 rounded-full text-xs font-mono tracking-[0.3em] uppercase ${isPaperTheme ? 'text-letterpress-strong paper-border-sm' : 'border border-amber-800 bg-amber-900/10'}`}

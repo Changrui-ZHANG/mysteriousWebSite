@@ -22,7 +22,7 @@ html {
 body {
     background-color: var(--bg-page);
     color: var(--text-primary);
-    transition: background-color var(--transition-slow), color var(--transition-slow);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 h1,

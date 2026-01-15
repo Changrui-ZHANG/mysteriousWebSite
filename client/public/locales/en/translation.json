@@ -1001,7 +1001,8 @@
             "overview": "Overview",
             "edit": "Edit",
             "privacy": "Privacy",
-            "activity": "Activity"
+            "activity": "Activity",
+            "achievements": "Achievements"
         },
         "card": {
             "bio": "Bio",
@@ -1011,7 +1012,13 @@
             "messages": "Messages",
             "games": "Games",
             "days": "Days",
-            "streak": "Streak"
+            "streak": "Streak",
+            "longest_streak": "Longest Streak",
+            "time_spent": "Time Spent",
+            "level": "Level"
+        },
+        "achievements": {
+            "empty": "No achievements unlocked yet. Keep exploring!"
         },
         "form": {
             "title": "Edit Profile",

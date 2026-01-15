@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { STORAGE_KEYS, TIMING } from '../constants/config';
 
 export type Theme = 'light' | 'dark' | 'system' | 'paper';
@@ -33,14 +33,14 @@ export function useThemeManager() {
 
         // Prevent transitions during theme change to avoid flicker
         if (preventTransition) {
-            root.style.setProperty('--theme-transition', 'none');
+            root.classList.add('no-transitions');
         }
 
         // Apply theme attributes and classes
         root.setAttribute('data-theme', themeValue);
         root.className = root.className.replace(/\b(light|dark)\b/g, '');
         root.classList.add(effectiveTheme);
-        
+
         body.className = body.className.replace(/\b(light|dark)\b/g, '');
         body.classList.add(effectiveTheme);
 
@@ -48,9 +48,12 @@ export function useThemeManager() {
 
         // Re-enable transitions after DOM update
         if (preventTransition) {
-            setTimeout(() => {
-                root.style.removeProperty('--theme-transition');
-            }, TIMING.THEME_TRANSITION_DURATION);
+            // Using requestAnimationFrame to ensure the theme change is processed BEFORE removing the lockout
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    root.classList.remove('no-transitions');
+                }, 10);
+            });
         }
     }, [resolveTheme]);
 
@@ -66,9 +69,13 @@ export function useThemeManager() {
         setTheme(nextTheme);
     }, [resolvedTheme, setTheme]);
 
+    // Ref to skip transition on first render without triggering re-render
+    const isInitialRender = useRef(true);
+
     // Apply theme changes immediately before paint
     useLayoutEffect(() => {
-        applyTheme(theme, true);
+        applyTheme(theme, isInitialRender.current);
+        isInitialRender.current = false;
     }, [theme, applyTheme]);
 
     // Listen for system theme changes when in system mode

@@ -8,7 +8,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { FaUser, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
-import { LanguageButton } from './LanguageButton';
 import { UserAvatarMenu } from '../../components/navigation';
 
 interface DesktopMenuProps {
@@ -83,7 +82,7 @@ export function DesktopMenu({
                     <div className="absolute top-full left-1/2 -translate-x-1/2 w-[200%] h-4 bg-transparent z-40" />
 
                     {/* Integrated Sub-bar - Horizontal row below the main nav */}
-                    <div className="absolute top-[calc(100%+14px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/20 bg-elevated/95 backdrop-blur-3xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-300 transform translate-y-2 group-hover/more:translate-y-0 z-dropdown after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2)] after:pointer-events-none whitespace-nowrap min-w-max">
+                    <div className="absolute top-[calc(100%+14px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/20 bg-elevated/95 backdrop-blur-3xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-[opacity,transform,visibility,background-color,border-color] duration-300 transform translate-y-2 group-hover/more:translate-y-0 z-dropdown after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2)] after:pointer-events-none whitespace-nowrap min-w-max">
                         {moreLinks.map(link => (
                             <Link
                                 key={link.to}
@@ -152,11 +151,35 @@ export function DesktopMenu({
 
             <div className="w-[1px] h-[20px] bg-current opacity-20" />
 
-            {/* Language Buttons */}
-            <div className="flex gap-3">
-                <LanguageButton lang="en" label="EN" flagCode="gb" currentLang={i18n.language} onClick={changeLanguage} />
-                <LanguageButton lang="fr" label="FR" flagCode="fr" currentLang={i18n.language} onClick={changeLanguage} />
-                <LanguageButton lang="zh" label="ZH" flagCode="cn" currentLang={i18n.language} onClick={changeLanguage} />
+            {/* Language Switcher - Compact Dropdown */}
+            <div className="relative group/lang">
+                <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/10 transition-all text-secondary hover:text-primary">
+                    <img
+                        src={`https://flagcdn.com/w40/${i18n.language === 'en' ? 'gb' : i18n.language === 'fr' ? 'fr' : 'cn'}.png`}
+                        alt={i18n.language.toUpperCase()}
+                        className="w-4 h-auto rounded-[1px] shadow-sm"
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-tighter">{i18n.language}</span>
+                    <FaChevronDown className="text-[8px] opacity-50 group-hover/lang:rotate-180 transition-transform duration-300" />
+                </button>
+
+                {/* Dropdown Menu */}
+                <div className="absolute top-full right-0 mt-2 p-1.5 rounded-xl border border-white/20 bg-elevated/95 backdrop-blur-3xl shadow-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-[opacity,transform,visibility,background-color,border-color] duration-300 transform translate-y-2 group-hover/lang:translate-y-0 z-dropdown flex flex-col gap-1 min-w-[80px]">
+                    {[
+                        { lang: 'en', label: 'EN', flag: 'gb' },
+                        { lang: 'fr', label: 'FR', flag: 'fr' },
+                        { lang: 'zh', label: 'ZH', flag: 'cn' }
+                    ].map((item) => (
+                        <button
+                            key={item.lang}
+                            onClick={() => changeLanguage(item.lang)}
+                            className={`flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all ${i18n.language === item.lang ? 'bg-accent-primary/20 text-accent-primary' : 'text-secondary hover:bg-white/10 hover:text-primary'}`}
+                        >
+                            <img src={`https://flagcdn.com/w40/${item.flag}.png`} alt={item.label} className="w-4 h-auto rounded-[1px]" />
+                            <span className="text-xs font-bold uppercase">{item.label}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div className="w-[1px] h-[20px] bg-current opacity-20" />

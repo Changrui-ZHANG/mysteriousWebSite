@@ -992,7 +992,8 @@
             "overview": "Aperçu",
             "edit": "Modifier",
             "privacy": "Confidentialité",
-            "activity": "Activité"
+            "activity": "Activité",
+            "achievements": "Succès"
         },
         "card": {
             "bio": "Bio",
@@ -1002,7 +1003,13 @@
             "messages": "Messages",
             "games": "Jeux",
             "days": "Jours",
-            "streak": "Série"
+            "streak": "Série",
+            "longest_streak": "Meilleure Série",
+            "time_spent": "Temps passé",
+            "level": "Niveau"
+        },
+        "achievements": {
+            "empty": "Aucun succès débloqué pour le moment. Continuez à explorer !"
         },
         "form": {
             "title": "Modifier le Profil",
