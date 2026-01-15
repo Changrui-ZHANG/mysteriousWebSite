@@ -1,9 +1,10 @@
 /**
- * Utility functions for handling avatar URLs
- * Ensures consistent avatar display across the application
+ * Checks if a given URL is a default avatar
  */
-
-const DEFAULT_AVATAR = '/avatars/default-avatar.png';
+export const isDefaultAvatar = (url: string | undefined | null): boolean => {
+    if (!url) return true;
+    return url.includes('default-');
+};
 
 /**
  * Resolves the avatar URL to ensure it's a valid path
@@ -13,32 +14,29 @@ const DEFAULT_AVATAR = '/avatars/default-avatar.png';
  * @returns The resolved, usable avatar URL
  */
 export const resolveAvatarUrl = (url: string | undefined | null): string => {
-    // If no URL provided, return default
+    // 1. If no URL provided, return empty
     if (!url) {
-        return DEFAULT_AVATAR;
+        return '';
     }
 
-    // If it's already a full URL (http/https), return as is
-    if (url.startsWith('http://') || url.startsWith('https://')) {
+    // 2. Security/Reliability check: If the string looks like a message rather than a filename 
+    // (e.g., contains spaces, is unusually long, or contains success keywords), return empty.
+    try {
+        const decodedUrl = decodeURIComponent(url);
+        if (decodedUrl.includes(' ') || url.length > 255 || decodedUrl.toLowerCase().includes('success')) {
+            return '';
+        }
+    } catch (e) {
+        return '';
+    }
+
+    // 3. If it's already a full URL (http/https), a data URI, or an absolute path (/), return as is
+    // The backend is responsible for providing the full correct path.
+    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('/')) {
         return url;
     }
 
-    // If it's a data URI (base64), return as is
-    if (url.startsWith('data:')) {
-        return url;
-    }
-
-    // If it's already an absolute path starting with /, return as is
-    if (url.startsWith('/')) {
-        return url;
-    }
-
-    // If it's one of our known default avatar filenames (e.g. default-avatar.png)
-    if (url.startsWith('default-')) {
-        return `/avatars/${url}`;
-    }
-
-    // Otherwise, assume it's a filename uploaded to the server
-    // These should be served via the AvatarController at /api/avatars/files/
-    return `/api/avatars/files/${url}`;
+    // 4. Otherwise, it's an unrecognized format.
+    // Frontend does not try to reconstruct paths.
+    return '';
 };

@@ -1,8 +1,3 @@
-/**
- * MobileMenu - Mobile navigation overlay with Liquid Glass aesthetic
- * Theme-aware implementation supporting Light, Dark, and Paper themes.
- */
-
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,8 +9,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
 import { CompactLanguageSelector } from './CompactLanguageSelector';
-import { useAvatarSync } from '../../hooks/useAvatarSync';
-import { resolveAvatarUrl } from '../../utils/avatarUtils';
+import { UserAvatar } from '../../components/UserAvatar';
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -52,12 +46,6 @@ export function MobileMenu({
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const { resolvedTheme, toggleTheme } = useThemeManager();
-
-    // Sync avatar updates to AuthContext
-    useAvatarSync({
-        userId: user?.userId || '',
-        initialAvatarUrl: user?.avatarUrl
-    });
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -200,13 +188,14 @@ export function MobileMenu({
                                     <Link
                                         to="/profile"
                                         onClick={onClose}
-                                        className="w-12 h-12 rounded-xl border-2 border-accent-primary/20 p-0.5 bg-white/5 hover:border-accent-primary/40 transition-all active:scale-95 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
+                                        className="w-12 h-12 rounded-xl border-2 border-accent-primary/20 bg-white/5 hover:border-accent-primary/40 transition-all active:scale-95 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2"
                                         aria-label={t('nav.profile')}
                                     >
-                                        <img
-                                            src={resolveAvatarUrl(user.avatarUrl)}
-                                            alt={user.username}
-                                            className="w-full h-full object-cover rounded-lg"
+                                        <UserAvatar
+                                            userId={user.userId || user.id}
+                                            alt={user.username || user.name}
+                                            size={44}
+                                            className="rounded-lg"
                                         />
                                     </Link>
 

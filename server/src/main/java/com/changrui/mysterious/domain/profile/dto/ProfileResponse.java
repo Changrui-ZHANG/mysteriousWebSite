@@ -27,26 +27,27 @@ public record ProfileResponse(
     /**
      * Create response for profile owner (full access)
      */
-    public static ProfileResponse ownerFrom(UserProfile profile, PrivacySettings privacy, ActivityStats stats) {
+    public static ProfileResponse ownerFrom(UserProfile profile, PrivacySettings privacy, ActivityStats stats,
+            List<AchievementDto> achievements) {
         return new ProfileResponse(
                 profile.getUserId(),
                 profile.getDisplayName(),
                 profile.getBio(),
-                profile.getAvatarUrl(),
+                profile.getResolvedAvatarUrl(),
                 profile.getGender(),
                 profile.getJoinDate(),
                 profile.getLastActive(),
                 profile.isPublic(),
                 privacy != null ? PrivacySettingsDto.from(privacy) : null,
                 stats != null ? ActivityStatsDto.from(stats) : null,
-                new ArrayList<>() // TODO: Load user achievements
-        );
+                achievements != null ? achievements : new ArrayList<>());
     }
 
     /**
      * Create response for public view (filtered by privacy settings)
      */
-    public static ProfileResponse publicFrom(UserProfile profile, PrivacySettings privacy, ActivityStats stats) {
+    public static ProfileResponse publicFrom(UserProfile profile, PrivacySettings privacy, ActivityStats stats,
+            List<AchievementDto> achievements) {
         // Default privacy settings if none exist
         boolean showBio = privacy == null || privacy.isShowBio();
         boolean showStats = privacy == null || privacy.isShowStats();
@@ -57,15 +58,15 @@ public record ProfileResponse(
                 profile.getUserId(),
                 profile.getDisplayName(),
                 showBio ? profile.getBio() : null,
-                profile.getAvatarUrl(),
+                profile.getResolvedAvatarUrl(),
                 profile.getGender(),
                 profile.getJoinDate(),
                 showLastActive ? profile.getLastActive() : null,
                 profile.isPublic(),
                 privacy != null ? PrivacySettingsDto.from(privacy) : null,
                 showStats && stats != null ? ActivityStatsDto.from(stats) : null,
-                showAchievements ? new ArrayList<>() : null // TODO: Load user achievements
-        );
+                showAchievements && achievements != null ? achievements
+                        : (showAchievements ? new ArrayList<>() : null));
     }
 
     /**

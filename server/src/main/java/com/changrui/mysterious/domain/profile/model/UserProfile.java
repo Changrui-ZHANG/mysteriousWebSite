@@ -145,4 +145,20 @@ public class UserProfile {
         this.updatedAt = LocalDateTime.now();
         this.lastActive = LocalDateTime.now();
     }
+
+    /**
+     * Gets the resolved avatar URL, falling back to defaults based on gender if
+     * necessary.
+     */
+    public String getResolvedAvatarUrl() {
+        if (avatarUrl == null || avatarUrl.trim().isEmpty()) {
+            if ("H".equalsIgnoreCase(gender) || "M".equalsIgnoreCase(gender) || "B".equalsIgnoreCase(gender)) {
+                return "/avatars/default-B.jpeg";
+            } else if ("F".equalsIgnoreCase(gender) || "G".equalsIgnoreCase(gender)) {
+                return "/avatars/default-G.jpeg";
+            }
+            return "/avatars/default-avatar.png";
+        }
+        return avatarUrl;
+    }
 }

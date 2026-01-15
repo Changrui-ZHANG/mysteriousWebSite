@@ -99,8 +99,8 @@ export class AvatarService {
             });
 
             const avatarUrl = await this.repository.uploadFileWithProgress(
-                userId, 
-                processedFile, 
+                userId,
+                processedFile,
                 requesterId,
                 (progress) => {
                     logAvatarUpload('upload-progress', 'AvatarService', {
@@ -170,16 +170,6 @@ export class AvatarService {
                 error
             );
         }
-    }
-
-    /**
-     * Get user's current avatar URL with fallback
-     */
-    async getAvatarUrl(userId: string, fallbackToDefault: boolean = true): Promise<string | null> {
-        // Use centralized validation
-        requireUserId(userId);
-
-        return this.repository.getAvatarUrl(userId, fallbackToDefault);
     }
 
     /**
@@ -332,7 +322,7 @@ export class AvatarService {
         try {
             // Check image dimensions
             const dimensions = await this.getImageDimensions(file);
-            
+
             // Business rule: Minimum dimensions
             if (dimensions.width < 32 || dimensions.height < 32) {
                 errors.push('Image must be at least 32x32 pixels');

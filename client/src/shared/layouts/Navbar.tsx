@@ -1,8 +1,3 @@
-/**
- * Navbar - Main navigation component
- * Refactored to use sub-components for desktop and mobile menus
- */
-
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
@@ -11,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { AdminSiteControls } from '../../domain/user/AdminSiteControls';
 import { DesktopMenu, MobileMenu } from './navbar/index';
 import { useSettings } from '../contexts/SettingsContext';
-import { useAvatarSync } from '../hooks/useAvatarSync';
+import { UserAvatar } from '../components/UserAvatar';
 
 interface NavbarProps {
 }
@@ -24,12 +19,6 @@ export function Navbar({ }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [loginCode, setLoginCode] = useState('');
     const [showSiteControls, setShowSiteControls] = useState(false);
-
-    // Sync avatar updates to AuthContext
-    useAvatarSync({
-        userId: user?.userId || '',
-        initialAvatarUrl: user?.avatarUrl
-    });
 
     // Lock background scroll when mobile menu is open
     useEffect(() => {
@@ -75,14 +64,10 @@ export function Navbar({ }: NavbarProps) {
                         className="lg:hidden w-10 h-10 rounded-full border-2 border-accent-primary/30 bg-surface overflow-hidden hover:border-accent-primary transition-all active:scale-95 shrink-0 relative"
                         aria-label={t('nav.profile')}
                     >
-                        <img
-                            src={user.avatarUrl || '/avatars/default-avatar.png'}
-                            alt={user.username}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/avatars/default-avatar.png';
-                            }}
+                        <UserAvatar
+                            userId={user.id || user.userId}
+                            alt={user.username || user.name}
+                            size="md"
                         />
                     </Link>
                 )}

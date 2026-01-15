@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { resolveAvatarUrl } from '../../../../shared/utils/avatarUtils';
+import { UserAvatar } from '../../../../shared/components/UserAvatar';
 
 interface AvatarPreviewProps {
     imageUrl: string;
@@ -28,17 +28,11 @@ export const AvatarPreview: React.FC<AvatarPreviewProps> = ({
             {/* Avatar Display */}
             <div className="flex items-center space-x-4">
                 <div className="relative group">
-                    <img
-                        src={resolveAvatarUrl(imageUrl)}
+                    <UserAvatar
+                        src={imageUrl}
                         alt={t('profile.avatar.title')}
-                        className="w-20 h-20 rounded-full object-cover border-2 border-(--glass-border) shadow-md group-hover:scale-105 transition-transform"
-                        onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            const fallbackUrl = '/avatars/default-avatar.png';
-                            if (target.src !== new URL(fallbackUrl, window.location.href).href) {
-                                target.src = fallbackUrl;
-                            }
-                        }}
+                        size="xl"
+                        className="border-2 border-(--glass-border) shadow-md group-hover:scale-105 transition-transform"
                     />
                     {isUploading && (
                         <div

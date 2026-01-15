@@ -30,6 +30,14 @@ interface BackendProfileResponse {
         timeSpent: number;
         lastUpdated: string;
     } | null;
+    achievements?: Array<{
+        id: string;
+        name: string;
+        description: string;
+        iconUrl: string;
+        category: 'messaging' | 'gaming' | 'social' | 'time';
+        unlockedAt: string;
+    }> | null;
 }
 
 /**
@@ -69,6 +77,12 @@ export function transformBackendProfile(backendProfile: BackendProfileResponse):
         showLastActive: backendProfile.privacySettings.showLastActive
     } : undefined;
 
+    // Transform achievements
+    const achievements = backendProfile.achievements ? backendProfile.achievements.map(a => ({
+        ...a,
+        unlockedAt: new Date(a.unlockedAt)
+    })) : [];
+
     return {
         userId: backendProfile.userId,
         displayName: backendProfile.displayName,
@@ -80,7 +94,7 @@ export function transformBackendProfile(backendProfile: BackendProfileResponse):
         isPublic: backendProfile.isPublic,
         privacySettings,
         activityStats,
-        achievements: [] // TODO: Add when backend supports achievements
+        achievements
     };
 }
 

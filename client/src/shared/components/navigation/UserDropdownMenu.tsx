@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaCog, FaSignOutAlt, FaChevronRight } from 'react-icons/fa';
+import { UserAvatar } from '../UserAvatar';
 import type { UserDropdownMenuProps } from './types';
 
 export const UserDropdownMenu: React.FC<UserDropdownMenuProps> = memo(({
@@ -122,15 +123,13 @@ export const UserDropdownMenu: React.FC<UserDropdownMenuProps> = memo(({
           {/* User Info Section */}
           <div className="relative px-5 py-4 border-b border-(--border-default) bg-(--bg-surface-alt)">
             <div className="flex items-center space-x-3">
-              <div className="shrink-0 w-12 h-12 rounded-xl border border-(--border-default) overflow-hidden shadow-inset bg-(--particle-primary)">
-                <img
-                  src={user.avatarUrl || '/avatars/default-avatar.png'}
+              <div className="shrink-0">
+                <UserAvatar
+                  userId={user.id}
+                  src={user.avatarUrl}
                   alt={user.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/avatars/default-avatar.png';
-                  }}
+                  size={48}
+                  className="rounded-xl border border-(--border-default) shadow-inset"
                 />
               </div>
               <div className="grow overflow-hidden">

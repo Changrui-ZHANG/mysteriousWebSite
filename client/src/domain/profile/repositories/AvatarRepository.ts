@@ -33,8 +33,8 @@ export class AvatarRepository {
      * Upload avatar with progress tracking
      */
     async uploadFileWithProgress(
-        userId: string, 
-        file: File, 
+        userId: string,
+        file: File,
         requesterId: string,
         onProgress?: (progress: number) => void
     ): Promise<string> {
@@ -107,7 +107,7 @@ export class AvatarRepository {
      */
     async validateImageFile(file: File): Promise<{ isValid: boolean; errors: string[] }> {
         const errors: string[] = [];
-        
+
         // Check file size (5MB limit)
         const maxSize = 5 * 1024 * 1024; // 5MB in bytes
         if (file.size > maxSize) {
@@ -131,11 +131,11 @@ export class AvatarRepository {
             reader.onload = (e) => {
                 const arr = new Uint8Array(e.target?.result as ArrayBuffer);
                 const header = Array.from(arr.slice(0, 4)).map(b => b.toString(16).padStart(2, '0')).join('');
-                
+
                 // Check file signatures
                 const isJPEG = header.startsWith('ffd8');
                 const isPNG = header.startsWith('89504e47');
-                const isWebP = arr.length >= 12 && 
+                const isWebP = arr.length >= 12 &&
                     String.fromCharCode(...arr.slice(0, 4)) === 'RIFF' &&
                     String.fromCharCode(...arr.slice(8, 12)) === 'WEBP';
 
@@ -160,7 +160,7 @@ export class AvatarRepository {
      */
     validateImageFileSync(file: File): { isValid: boolean; errors: string[] } {
         const errors: string[] = [];
-        
+
         // Check file size (5MB limit)
         const maxSize = 5 * 1024 * 1024; // 5MB in bytes
         if (file.size > maxSize) {
@@ -174,37 +174,6 @@ export class AvatarRepository {
         }
 
         return { isValid: errors.length === 0, errors };
-    }
-
-    /**
-     * Get avatar URL with fallback to default
-     */
-    async getAvatarUrl(userId: string, fallbackToDefault: boolean = true): Promise<string | null> {
-        try {
-            // Try to get user's current avatar from their profile
-            const response = await fetchJson<{ avatarUrl?: string }>(`/api/profiles/${userId}`);
-            
-            if (response.avatarUrl) {
-                return response.avatarUrl;
-            }
-
-            if (fallbackToDefault) {
-                const defaultAvatars = await this.getDefaultAvatars();
-                return defaultAvatars.length > 0 ? defaultAvatars[0] : null;
-            }
-
-            return null;
-        } catch (error) {
-            if (fallbackToDefault) {
-                try {
-                    const defaultAvatars = await this.getDefaultAvatars();
-                    return defaultAvatars.length > 0 ? defaultAvatars[0] : null;
-                } catch {
-                    return null;
-                }
-            }
-            return null;
-        }
     }
 
     /**

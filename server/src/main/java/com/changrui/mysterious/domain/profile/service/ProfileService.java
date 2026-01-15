@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,12 @@ public class ProfileService {
 
     @Autowired
     private ActivityStatsRepository activityRepository;
+
+    @Autowired
+    private AchievementRepository achievementRepository;
+
+    @Autowired
+    private UserAchievementRepository userAchievementRepository;
 
     @Autowired
     private ActivityService activityService;
@@ -82,7 +89,7 @@ public class ProfileService {
         ActivityStats stats = new ActivityStats(request.userId());
         stats = activityRepository.save(stats);
 
-        return ProfileResponse.ownerFrom(profile, privacy, stats);
+        return ProfileResponse.ownerFrom(profile, privacy, stats, new ArrayList<>());
     }
 
     /**
@@ -104,8 +111,10 @@ public class ProfileService {
             throw new NotFoundException("Profile not found for user: " + userId);
         }
 
-        return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats)
-                : ProfileResponse.publicFrom(profile, privacy, stats);
+        List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(userId);
+
+        return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
+                : ProfileResponse.publicFrom(profile, privacy, stats, achievements);
     }
 
     /**
@@ -125,9 +134,11 @@ public class ProfileService {
             throw new NotFoundException("Profile not found for user: " + userId);
         }
 
+        List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(userId);
+
         // Admin and owner get full access, others get public view
-        return (isOwner || isAdminAccess) ? ProfileResponse.ownerFrom(profile, privacy, stats)
-                : ProfileResponse.publicFrom(profile, privacy, stats);
+        return (isOwner || isAdminAccess) ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
+                : ProfileResponse.publicFrom(profile, privacy, stats, achievements);
     }
 
     /**
@@ -164,8 +175,9 @@ public class ProfileService {
 
         PrivacySettings privacy = privacyRepository.findByUserId(userId).orElse(null);
         ActivityStats stats = activityRepository.findByUserId(userId).orElse(null);
+        List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(userId);
 
-        return ProfileResponse.ownerFrom(profile, privacy, stats);
+        return ProfileResponse.ownerFrom(profile, privacy, stats, achievements);
     }
 
     /**
@@ -225,10 +237,11 @@ public class ProfileService {
                 .map(profile -> {
                     PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
                     ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
+                    List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(profile.getUserId());
                     boolean isOwner = profile.getUserId().equals(requesterId);
 
-                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats)
-                            : ProfileResponse.publicFrom(profile, privacy, stats);
+                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
+                            : ProfileResponse.publicFrom(profile, privacy, stats, achievements);
                 })
                 .collect(Collectors.toList());
     }
@@ -243,10 +256,11 @@ public class ProfileService {
                 .map(profile -> {
                     PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
                     ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
+                    List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(profile.getUserId());
                     boolean isOwner = profile.getUserId().equals(requesterId);
 
-                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats)
-                            : ProfileResponse.publicFrom(profile, privacy, stats);
+                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
+                            : ProfileResponse.publicFrom(profile, privacy, stats, achievements);
                 })
                 .collect(Collectors.toList());
     }
@@ -282,5 +296,20 @@ public class ProfileService {
             profile.setLastActive(LocalDateTime.now());
             profileRepository.save(profile);
         });
+    }
+
+    /**
+     * Helper to load and transform achievements for a user
+     */
+    private List<ProfileResponse.AchievementDto> getAchievementsForUser(String userId) {
+        List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
+        return userAchievements.stream()
+                .map(ua -> {
+                    Achievement achievement = achievementRepository.findById(ua.getAchievementId()).orElse(null);
+                    return achievement != null ? ProfileResponse.AchievementDto.from(achievement, ua.getUnlockedAt())
+                            : null;
+                })
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

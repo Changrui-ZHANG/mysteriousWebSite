@@ -4,11 +4,10 @@
  * Profile Access Improvement Feature
  */
 
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AvatarButton } from './AvatarButton';
 import { UserDropdownMenu } from './UserDropdownMenu';
-import { useAvatarSync } from '../../hooks/useAvatarSync';
 import { resolveAvatarUrl } from '../../utils/avatarUtils';
 import type { UserAvatarMenuProps } from './types';
 
@@ -21,18 +20,6 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
   const avatarRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const navigate = useNavigate();
-
-  // Sync avatar with profile page updates
-  // Avatar caching is handled by React Query (TanStack Query)
-  // which automatically caches query results including avatar URLs
-  const syncedAvatarUrl = useAvatarSync({
-    userId: user.id,
-    initialAvatarUrl: user.avatarUrl
-  });
-
-  // Track if avatar is loading
-  const [isAvatarLoading, setIsAvatarLoading] = useState(false);
-  const [avatarLoadError, setAvatarLoadError] = useState(false);
 
   const handleToggle = useCallback(() => {
     if (!isOpen) {
@@ -89,10 +76,8 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
     }
   }, [onLogout, navigate]);
 
-
-
   // Manage focus trap when menu is open
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isOpen) return;
 
     // Prevent body scroll when menu is open
@@ -104,32 +89,13 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
     };
   }, [isOpen]);
 
-  // Handle avatar loading state
-  useEffect(() => {
-    if (syncedAvatarUrl && syncedAvatarUrl !== user.avatarUrl) {
-      setIsAvatarLoading(true);
-      setAvatarLoadError(false);
-
-      // Preload the new avatar image
-      const img = new Image();
-      img.onload = () => {
-        setIsAvatarLoading(false);
-      };
-      img.onerror = () => {
-        setIsAvatarLoading(false);
-        setAvatarLoadError(true);
-        console.error('Failed to load avatar:', syncedAvatarUrl);
-      };
-      img.src = resolveAvatarUrl(syncedAvatarUrl);
-    }
-  }, [syncedAvatarUrl, user.avatarUrl]);
-
-  // Memoize user data for dropdown menu to prevent unnecessary re-renders
+  // Memoize user data for dropdown menu  // Prepare user data for dropdown
   const menuUserData = useMemo(() => ({
+    id: user.id || user.userId,
     name: user.name,
     email: user.email,
-    avatarUrl: resolveAvatarUrl(syncedAvatarUrl)
-  }), [user.name, user.email, syncedAvatarUrl]);
+    avatarUrl: user.avatarUrl
+  }), [user]);
 
   return (
     <div
@@ -139,10 +105,10 @@ export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
       aria-label="User profile menu"
     >
       <AvatarButton
-        avatarUrl={avatarLoadError ? undefined : syncedAvatarUrl}
+        userId={user.id || user.userId}
         userName={user.name}
         isActive={isOpen}
-        isLoading={isAvatarLoading}
+        isLoading={false}
         onClick={handleToggle}
         ariaLabel={`${user.name}'s profile menu`}
       />

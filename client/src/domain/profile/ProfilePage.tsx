@@ -265,14 +265,71 @@ export const ProfilePage: React.FC = () => {
                         </div>
                     )}
 
-                    {!isLoading && activeTab === 'activity' && (
-                        <GlassCard className="max-w-4xl mx-auto p-8 sm:p-12 text-center animate-fade-in-up">
-                            <div className="text-4xl sm:text-5xl mb-4">🚧</div>
-                            <h2 className="text-lg sm:text-xl font-bold text-(--text-primary) mb-2">{t('profile.errors.coming_soon')}</h2>
-                            <p className="text-xs sm:text-base text-(--text-secondary)">
-                                {t('profile.errors.activity_soon')}
-                            </p>
-                        </GlassCard>
+                    {!isLoading && activeTab === 'activity' && profile && (
+                        <div className="max-w-4xl mx-auto space-y-6 animate-fade-in-up">
+                            {/* Detailed Stats Card */}
+                            <GlassCard className="p-6">
+                                <h3 className="text-xl font-bold text-(--text-primary) mb-6 flex items-center gap-2">
+                                    <span className="text-2xl">📊</span> {t('profile.tabs.activity')}
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                    <div className="bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:border-(--accent-primary) transition-colors">
+                                        <div className="text-sm text-(--text-secondary) mb-1 uppercase tracking-wider">{t('profile.card.games')}</div>
+                                        <div className="text-3xl font-bold text-(--accent-primary)">{stats?.totalGamesPlayed || stats?.gamesPlayed || 0}</div>
+                                    </div>
+                                    <div className="bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:border-(--accent-success) transition-colors">
+                                        <div className="text-sm text-(--text-secondary) mb-1 uppercase tracking-wider">Messages</div>
+                                        <div className="text-3xl font-bold text-(--accent-success)">{stats?.totalMessages || 0}</div>
+                                    </div>
+                                    <div className="bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:border-(--accent-warning) transition-colors">
+                                        <div className="text-sm text-(--text-secondary) mb-1 uppercase tracking-wider">Streak</div>
+                                        <div className="text-3xl font-bold text-(--accent-warning)">{stats?.currentStreak || 0} <span className="text-sm font-medium">days</span></div>
+                                    </div>
+                                    <div className="bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:border-(--accent-info) transition-colors">
+                                        <div className="text-sm text-(--text-secondary) mb-1 uppercase tracking-wider">Time Spent</div>
+                                        <div className="text-3xl font-bold text-(--accent-info)">{Math.floor((stats?.timeSpent || 0) / 60)}h {(stats?.timeSpent || 0) % 60}m</div>
+                                    </div>
+                                    <div className="bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:border-(--accent-secondary) transition-colors">
+                                        <div className="text-sm text-(--text-secondary) mb-1 uppercase tracking-wider">Level</div>
+                                        <div className="text-3xl font-bold text-(--accent-secondary)">{stats?.level || 1}</div>
+                                    </div>
+                                    <div className="bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:border-(--accent-primary) transition-colors">
+                                        <div className="text-sm text-(--text-secondary) mb-1 uppercase tracking-wider">Longest Streak</div>
+                                        <div className="text-3xl font-bold text-(--accent-primary)">{stats?.longestStreak || 0}</div>
+                                    </div>
+                                </div>
+                            </GlassCard>
+
+                            {/* Achievements Card */}
+                            <GlassCard className="p-6">
+                                <h3 className="text-xl font-bold text-(--text-primary) mb-6 flex items-center gap-2">
+                                    <span className="text-2xl">🏆</span> {t('profile.tabs.achievements') || 'Achievements'}
+                                </h3>
+                                {profile.achievements && profile.achievements.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {profile.achievements.map((achievement) => (
+                                            <div key={achievement.id} className="flex items-center gap-4 bg-(--bg-surface-translucent) p-4 rounded-2xl border border-(--border-subtle) hover:bg-(--bg-surface-hover) transition-all">
+                                                <div className="w-12 h-12 flex-shrink-0 bg-(--accent-primary)/10 rounded-xl flex items-center justify-center text-2xl">
+                                                    {achievement.iconUrl ? <img src={achievement.iconUrl} alt="" className="w-full h-full object-cover rounded-xl" /> : '⭐'}
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold text-(--text-primary)">{achievement.name}</div>
+                                                    <div className="text-xs text-(--text-secondary) line-clamp-1">{achievement.description}</div>
+                                                    <div className="text-[10px] text-(--accent-primary) mt-1 font-medium">
+                                                        Unlocked {new Date(achievement.unlockedAt).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 bg-(--bg-surface-translucent) rounded-2xl border border-dashed border-(--border-subtle)">
+                                        <div className="text-4xl mb-4 opacity-50">🔒</div>
+                                        <p className="text-(--text-secondary)">{t('profile.achievements.empty') || "No achievements unlocked yet. Keep exploring!"}</p>
+                                    </div>
+                                )}
+                            </GlassCard>
+                        </div>
                     )}
                 </div>
             </div>

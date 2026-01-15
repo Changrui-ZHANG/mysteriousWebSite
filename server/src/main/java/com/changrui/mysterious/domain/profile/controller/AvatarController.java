@@ -41,7 +41,7 @@ public class AvatarController {
             @RequestParam String requesterId) {
 
         String avatarUrl = avatarService.uploadAvatar(userId, file, requesterId);
-        return ResponseEntity.ok(ApiResponse.success(avatarUrl, "Avatar uploaded successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Avatar uploaded successfully", avatarUrl));
     }
 
     /**

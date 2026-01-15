@@ -17,16 +17,18 @@ export interface UserAvatarMenuProps {
 }
 
 export interface AvatarButtonProps {
+  userId?: string;
   avatarUrl?: string;
   userName: string;
-  isActive: boolean;
-  isLoading: boolean;
-  onClick: () => void;
+  isActive?: boolean;
+  isLoading?: boolean;
+  onClick?: () => void;
   ariaLabel?: string;
 }
 
 export interface UserDropdownMenuProps {
   user: {
+    id: string;
     name: string;
     email: string;
     avatarUrl?: string;

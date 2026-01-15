@@ -37,13 +37,13 @@ public class ProfileController {
     public ResponseEntity<ApiResponse<ProfileResponse>> createProfile(
             @Valid @RequestBody CreateProfileRequest request,
             HttpServletRequest httpRequest) {
-        
+
         // Extract requester ID from request (handled by middleware)
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         ProfileResponse profile = profileService.createProfile(request);
         return ResponseEntity.ok(ApiResponse.success("Profile created successfully", profile));
     }
@@ -54,24 +54,23 @@ public class ProfileController {
      */
     @GetMapping("/{userId}")
     @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
-    @FilterPrivateFields(fields = {"bio", "lastActive", "stats", "achievements"})
+    @FilterPrivateFields(fields = { "bio", "lastActive", "stats", "achievements" })
     public ResponseEntity<ApiResponse<ProfileResponse>> getProfile(
             @PathVariable String userId,
             HttpServletRequest httpRequest) {
-        
+
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         // Check if admin access is being used
         String adminCode = httpRequest.getHeader("X-Admin-Code");
         boolean isAdminAccess = adminCode != null && !adminCode.trim().isEmpty();
-        
-        ProfileResponse profile = isAdminAccess ? 
-            profileService.getProfile(userId, requesterId, true) :
-            profileService.getProfile(userId, requesterId);
-            
+
+        ProfileResponse profile = isAdminAccess ? profileService.getProfile(userId, requesterId, true)
+                : profileService.getProfile(userId, requesterId);
+
         return ResponseEntity.ok(ApiResponse.success(profile));
     }
 
@@ -85,12 +84,12 @@ public class ProfileController {
             @PathVariable String userId,
             @Valid @RequestBody UpdateProfileRequest request,
             HttpServletRequest httpRequest) {
-        
+
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         ProfileResponse profile = profileService.updateProfile(userId, request, requesterId);
         return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", profile));
     }
@@ -104,12 +103,12 @@ public class ProfileController {
     public ResponseEntity<ApiResponse<Void>> deleteProfile(
             @PathVariable String userId,
             HttpServletRequest httpRequest) {
-        
+
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         profileService.deleteProfile(userId, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Profile deleted successfully"));
     }
@@ -120,16 +119,16 @@ public class ProfileController {
      */
     @GetMapping("/search")
     @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
-    @FilterPrivateFields(fields = {"bio", "lastActive", "stats", "achievements"})
+    @FilterPrivateFields(fields = { "bio", "lastActive", "stats", "achievements" })
     public ResponseEntity<ApiResponse<List<ProfileResponse>>> searchProfiles(
             @RequestParam String q,
             HttpServletRequest httpRequest) {
-        
+
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         List<ProfileResponse> profiles = profileService.searchProfiles(q, requesterId);
         return ResponseEntity.ok(ApiResponse.success(profiles));
     }
@@ -140,15 +139,15 @@ public class ProfileController {
      */
     @GetMapping("/directory")
     @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
-    @FilterPrivateFields(fields = {"bio", "lastActive", "stats", "achievements"})
+    @FilterPrivateFields(fields = { "bio", "lastActive", "stats", "achievements" })
     public ResponseEntity<ApiResponse<List<ProfileResponse>>> getPublicProfiles(
             HttpServletRequest httpRequest) {
-        
+
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         List<ProfileResponse> profiles = profileService.getPublicProfiles(requesterId);
         return ResponseEntity.ok(ApiResponse.success(profiles));
     }
@@ -163,12 +162,12 @@ public class ProfileController {
             @PathVariable String userId,
             @Valid @RequestBody UpdatePrivacyRequest request,
             HttpServletRequest httpRequest) {
-        
+
         String requesterId = httpRequest.getParameter("requesterId");
         if (requesterId == null) {
             requesterId = httpRequest.getHeader("X-Requester-Id");
         }
-        
+
         profileService.updatePrivacySettings(userId, request, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Privacy settings updated successfully"));
     }
@@ -181,7 +180,7 @@ public class ProfileController {
     @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> updateLastActive(
             @PathVariable String userId) {
-        
+
         profileService.updateLastActive(userId);
         return ResponseEntity.ok(ApiResponse.successMessage("Last active updated"));
     }
@@ -193,13 +192,13 @@ public class ProfileController {
     @GetMapping("/{userId}/basic")
     public ResponseEntity<ApiResponse<BasicProfileInfo>> getBasicProfileInfo(
             @PathVariable String userId) {
-        
+
         var profile = profileIntegrationService.getProfileForMessage(userId);
         if (profile == null) {
             return ResponseEntity.ok(ApiResponse.success(null));
         }
-        
-        var basicInfo = new BasicProfileInfo(profile.getDisplayName(), profile.getAvatarUrl());
+
+        var basicInfo = new BasicProfileInfo(profile.getDisplayName(), profile.getResolvedAvatarUrl());
         return ResponseEntity.ok(ApiResponse.success(basicInfo));
     }
 }

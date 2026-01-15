@@ -1,13 +1,9 @@
-/**
- * AvatarButton Component
- * Clickable avatar with visual states (hover, active, loading)
- * Profile Access Improvement Feature
- */
-
 import React, { memo } from 'react';
 import type { AvatarButtonProps } from './types';
+import { UserAvatar } from '../UserAvatar';
 
 export const AvatarButton: React.FC<AvatarButtonProps> = memo(({
+  userId,
   avatarUrl,
   userName,
   isActive,
@@ -24,8 +20,7 @@ export const AvatarButton: React.FC<AvatarButtonProps> = memo(({
         disabled
         aria-label="Loading profile"
       >
-        {/* Loading skeleton animation */}
-        <div className="w-full h-full rounded-full bg-gradient-to-r from-white/5 via-white/10 to-white/5 animate-pulse" />
+        <UserAvatar size="md" showSkeleton={true} />
       </button>
     );
   }
@@ -34,7 +29,7 @@ export const AvatarButton: React.FC<AvatarButtonProps> = memo(({
     <button
       onClick={onClick}
       className={`
-        relative w-10 h-10 rounded-full overflow-hidden
+        relative w-10 h-10 rounded-full
         transition-all duration-200 ease-in-out
         focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-transparent
         ${isActive
@@ -46,16 +41,11 @@ export const AvatarButton: React.FC<AvatarButtonProps> = memo(({
       aria-expanded={isActive}
       aria-haspopup="true"
     >
-      {/* Avatar image or default placeholder */}
-      <img
-        src={avatarUrl || '/avatars/default-avatar.png'}
+      <UserAvatar
+        userId={userId}
+        src={avatarUrl}
         alt={`${userName}'s avatar`}
-        className="w-full h-full object-cover"
-        onError={(e) => {
-          // Fallback to default avatar on error
-          const target = e.target as HTMLImageElement;
-          target.src = '/avatars/default-avatar.png';
-        }}
+        size="md"
       />
 
       {/* Active state indicator */}

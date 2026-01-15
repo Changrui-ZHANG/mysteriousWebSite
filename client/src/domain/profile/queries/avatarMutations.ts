@@ -1,13 +1,10 @@
-/**
- * Avatar mutation hooks using TanStack Query
- * Replaces custom useAvatarUpload hook with optimized mutations and progress tracking
- */
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AvatarService } from '../services/AvatarService';
 import { profileKeys } from './queryKeys';
 import type { UserProfile } from '../types';
 import { logAvatarUpload } from '../utils/diagnosticLogger';
+import { useAuth } from '../../../shared/contexts/AuthContext';
+import { resolveAvatarUrl } from '../../../shared/utils/avatarUtils';
 
 /**
  * Avatar service instance
@@ -20,6 +17,7 @@ const avatarService = new AvatarService();
  */
 export function useAvatarUploadMutation() {
     const queryClient = useQueryClient();
+    const { updateUserAvatar } = useAuth();
 
     return useMutation({
         mutationFn: async ({
@@ -108,6 +106,9 @@ export function useAvatarUploadMutation() {
                 hadPreview: !!context?.previewUrl
             });
 
+            // Update AuthContext immediately
+            updateUserAvatar(avatarUrl);
+
             // Clean up preview URL
             if (context?.previewUrl) {
                 avatarService.revokePreviewUrl(context.previewUrl);
@@ -191,6 +192,7 @@ export function useAvatarUploadMutation() {
  */
 export function useAvatarDeleteMutation() {
     const queryClient = useQueryClient();
+    const { updateUserAvatar } = useAuth();
 
     return useMutation({
         mutationFn: ({ userId, requesterId }: {
@@ -237,6 +239,10 @@ export function useAvatarDeleteMutation() {
 
         // Refetch on success or error
         onSettled: (_data, _error, { userId }) => {
+            if (!_error) {
+                // If deletion was successful, update AuthContext
+                updateUserAvatar('');
+            }
             queryClient.invalidateQueries({
                 queryKey: profileKeys.detail(userId)
             });
