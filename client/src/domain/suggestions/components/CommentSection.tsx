@@ -163,16 +163,18 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
                                     value={newComment}
                                     onChange={(e) => setNewComment(e.target.value)}
                                     placeholder={t('suggestions.add_comment')}
-                                    className="input w-full p-3 resize-none"
-                                    rows={2}
+                                    className="glass-input w-full p-4 resize-none transition-all"
+                                    rows={3}
                                 />
-                                <button
-                                    type="submit"
-                                    disabled={!newComment.trim()}
-                                    className="btn btn-primary mt-2 text-sm"
-                                >
-                                    {t('suggestions.post_comment')}
-                                </button>
+                                <div className="flex justify-end mt-3">
+                                    <button
+                                        type="submit"
+                                        disabled={!newComment.trim()}
+                                        className="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-accent-secondary text-white font-bold text-sm disabled:opacity-30 disabled:scale-100 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-orange-500/10"
+                                    >
+                                        {t('suggestions.post_comment')}
+                                    </button>
+                                </div>
                             </form>
                         )}
                     </motion.div>

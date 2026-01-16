@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { FaCheckCircle, FaLanguage, FaSpinner, FaReply, FaTrash } from 'react-icons/fa';
+import { FaCheckCircle, FaLanguage, FaSpinner, FaReply, FaTrash, FaUserSecret } from 'react-icons/fa';
+import { UserAvatar } from '../../../shared/components/UserAvatar';
 
 interface Message {
     id: string;
@@ -76,14 +77,22 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
             className={`flex gap-3 items-end ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${isHighlighted ? 'ring-2 ring-accent-primary/30 rounded-2xl' : ''}`}
         >
             {/* Avatar */}
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs flex-shrink-0 shadow-lg ${isOwn
-                ? 'bg-gradient-to-br from-accent-primary to-accent-info text-inverse'
-                : msg.isAnonymous
-                    ? 'bg-inset text-muted border border-default'
-                    : 'bg-gradient-to-br from-accent-secondary to-accent-primary text-inverse'
-                }`}>
-                {getInitials(msg.name, msg.isAnonymous)}
-            </div>
+            <UserAvatar
+                userId={msg.isAnonymous ? undefined : msg.userId}
+                size="sm"
+                className={`flex-shrink-0 shadow-lg ring-2 ${isOwn
+                    ? 'ring-accent-primary/20'
+                    : msg.isAnonymous
+                        ? 'ring-default/50 grayscale'
+                        : 'ring-accent-secondary/20'}`}
+                alt={msg.name}
+            >
+                {msg.isAnonymous && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-inset text-muted">
+                        <FaUserSecret className="text-xs" />
+                    </div>
+                )}
+            </UserAvatar>
 
             {/* Message Content */}
             <div className={`flex flex-col max-w-[75%] ${isOwn ? 'items-end' : 'items-start'}`}>

@@ -6,7 +6,7 @@ import { fetchJson, postJson } from '../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
 import { useAuth } from '../../shared/contexts/AuthContext';
 import { LoginRequired } from '../../shared/components';
-import { SuggestionCard } from './components';
+import { SuggestionCard } from './components/SuggestionCard';
 import type { Suggestion } from './types';
 
 interface SuggestionsPageProps {
@@ -178,15 +178,16 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                     <div className="space-y-4">
                         <AnimatePresence mode="popLayout">
                             {activeSuggestions.map((suggestion, index) => (
-                                <SuggestionCard
-                                    key={suggestion.id}
-                                    suggestion={suggestion}
-                                    index={index}
-                                    user={user ?? null}
-                                    isAdmin={isAdmin}
-                                    onUpdateStatus={updateStatus}
-                                    onDelete={deleteSuggestion}
-                                />
+                                <motion.div key={suggestion.id} layout>
+                                    <SuggestionCard
+                                        suggestion={suggestion}
+                                        index={index}
+                                        user={user ?? null}
+                                        isAdmin={isAdmin}
+                                        onUpdateStatus={updateStatus}
+                                        onDelete={deleteSuggestion}
+                                    />
+                                </motion.div>
                             ))}
                         </AnimatePresence>
                         {activeSuggestions.length === 0 && (
@@ -215,17 +216,18 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                         </div>
                         <AnimatePresence mode="popLayout">
                             {archivedSuggestions.map((suggestion, index) => (
-                                <SuggestionCard
-                                    key={suggestion.id}
-                                    suggestion={suggestion}
-                                    index={index}
-                                    isArchived={true}
-                                    user={user ?? null}
-                                    isAdmin={isAdmin}
-                                    onUpdateStatus={updateStatus}
-                                    onDelete={deleteSuggestion}
-                                    onReopen={handleReopen}
-                                />
+                                <motion.div key={suggestion.id} layout>
+                                    <SuggestionCard
+                                        suggestion={suggestion}
+                                        index={index}
+                                        isArchived={true}
+                                        user={user ?? null}
+                                        isAdmin={isAdmin}
+                                        onUpdateStatus={updateStatus}
+                                        onDelete={deleteSuggestion}
+                                        onReopen={handleReopen}
+                                    />
+                                </motion.div>
                             ))}
                         </AnimatePresence>
                     </div>

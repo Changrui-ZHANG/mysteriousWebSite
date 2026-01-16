@@ -57,7 +57,7 @@ function AppContent() {
     const { login, isAdmin, isAuthModalOpen, closeAuthModal, adminLogin } = useAuth();
 
     // Global Settings State - now managed by SettingsContext
-    const { isEnabled, settings, isLoading: settingsLoading } = useSettings();
+    const { isEnabled, settings, isLoading: settingsLoading, hasError, error, refreshSettings } = useSettings();
 
     // Initial Load: i18n only
     useEffect(() => {
@@ -66,8 +66,6 @@ function AppContent() {
             i18n.changeLanguage(savedLanguage);
         }
     }, [i18n]);
-
-
 
     // Centralized route configuration
     const routes: RouteConfig[] = useMemo(() => [
@@ -103,17 +101,19 @@ function AppContent() {
 
     return (
         <div className="page-container relative font-sans">
-            {/* Optimized loading screen with smooth transition */}
+            {/* Optimized loading screen with smooth transition and error handling */}
             <AnimatePresence mode="wait">
-                {settingsLoading && (
-                    <SplashScreen 
+                {(settingsLoading || hasError) && (
+                    <SplashScreen
                         key="splash"
-                        isLoading={true} 
+                        isLoading={settingsLoading}
+                        error={error}
+                        onRetry={refreshSettings}
                     />
                 )}
             </AnimatePresence>
 
-            {!settingsLoading && (
+            {!settingsLoading && !hasError && (
                 <>
                     {!location.pathname.startsWith('/messages') && <ScrollProgress />}
 
@@ -139,7 +139,7 @@ function AppContent() {
                             )}
 
                             <div className="relative z-20">
-                                <ErrorBoundary>
+                                <ErrorBoundary key={location.pathname}>
                                     <Suspense fallback={<SplashScreen isLoading={true} />}>
                                         <Routes>
                                             {routes.map(route => (

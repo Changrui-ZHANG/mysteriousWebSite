@@ -79,12 +79,12 @@ export const API_ENDPOINTS = {
         DELETE: (id: string, userId: string) => `${API_BASE}/notes/${id}?userId=${userId}`
     },
 
-    // External APIs
+    // External APIs (Proxied through backend for CORS)
     EXTERNAL: {
         PUBLIC_HOLIDAYS: (year: number) =>
-            `https://calendrier.api.gouv.fr/jours-feries/metropole/${year}.json`,
-        SCHOOL_HOLIDAYS: (year: string) =>
-            `https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=2000&refine.annee_scolaire=${year}`
+            `${API_BASE}/calendar/proxy/holidays/${year}`,
+        SCHOOL_HOLIDAYS: (schoolYear: string) =>
+            `${API_BASE}/calendar/proxy/school-holidays/${schoolYear}`
     },
 
     // User Management (Super Admin)

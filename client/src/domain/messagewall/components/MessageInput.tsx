@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperPlane, FaTimes, FaCog } from 'react-icons/fa';
 import { useAuth } from '../../../shared/contexts/AuthContext';
+import { UserAvatar } from '../../../shared/components/UserAvatar';
 
 interface Message {
     id: string;
@@ -102,10 +103,11 @@ export function MessageInput({
                                 exit={{ opacity: 0, height: 0 }}
                                 className="flex items-center justify-between px-5 py-2.5 border-b border-default text-xs text-primary"
                             >
-                                <span className="flex items-center gap-2 opacity-70 truncate">
-                                    <span className="font-black uppercase tracking-wider opacity-50">{t('messages.replying_to')}</span>
+                                <span className="flex items-center gap-3 opacity-90 truncate">
+                                    <span className="font-black uppercase tracking-wider opacity-50 text-[9px]">{t('messages.replying_to')}</span>
+                                    <UserAvatar userId={replyingTo.userId} size="xs" className="ring-1 ring-accent-primary/30" />
                                     <span className="font-bold text-accent-primary">{replyingTo.name}</span>
-                                    <span className="italic truncate max-w-[150px]">"{replyingTo.message}"</span>
+                                    <span className="italic truncate max-w-[150px] opacity-70">"{replyingTo.message}"</span>
                                 </span>
                                 <button
                                     onClick={onCancelReply}
@@ -122,9 +124,11 @@ export function MessageInput({
 
                         {/* User Avatar or Name Toggle */}
                         {user ? (
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-info flex items-center justify-center text-inverse font-black text-sm shadow-lg">
-                                {user.username.charAt(0).toUpperCase()}
-                            </div>
+                            <UserAvatar
+                                userId={user.userId}
+                                size="md"
+                                className="ring-2 ring-accent-primary/20 shadow-lg"
+                            />
                         ) : (
                             <>
                                 <button
