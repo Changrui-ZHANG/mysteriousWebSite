@@ -169,17 +169,15 @@ export function Game(_props: GameProps) {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-4"
+                    className="mb-0 overflow-hidden"
                 >
-                    <div className="gaming-leaderboard backdrop-blur-xl border rounded-xl p-4 shadow-lg">
-                        <Leaderboard
-                            gameType={activeGame}
-                            refreshTrigger={refreshLeaderboard}
-                            isAdmin={isAdmin}
-                            isSuperAdmin={isSuperAdmin}
-                            horizontal={true}
-                        />
-                    </div>
+                    <Leaderboard
+                        gameType={activeGame}
+                        refreshTrigger={refreshLeaderboard}
+                        isAdmin={isAdmin}
+                        isSuperAdmin={isSuperAdmin}
+                        horizontal={true}
+                    />
                 </motion.div>
 
                 {/* Game Selector + GameWindow Row */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteRight, FaTrash } from 'react-icons/fa';
+import { UserAvatar } from '../../../shared/components/UserAvatar';
 import { fetchJson, postJson } from '../../../shared/api/httpClient';
 import type { SuggestionComment, SuggestionUser } from '../types';
 
@@ -76,10 +77,10 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
     };
 
     return (
-        <div className="mt-4 pt-4 border-t border-purple-500/20">
+        <div className="mt-6 pt-6 border-t border-default/50">
             <button
                 onClick={() => setShowComments(!showComments)}
-                className="text-sm font-bold text-purple-400 hover:text-purple-300 transition-colors mb-2 flex items-center gap-2"
+                className="text-sm font-black text-accent-secondary hover:text-accent-primary transition-colors mb-4 flex items-center gap-2 uppercase tracking-widest"
             >
                 {t('suggestions.comments')} ({showComments ? t('suggestions.hide_comments') : localCount > 0 ? localCount : '0'})
             </button>
@@ -93,29 +94,32 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
                         className="space-y-3 overflow-hidden"
                     >
                         {loadingComments ? (
-                            <div className="text-center py-4 opacity-60">{t('game.loading')}</div>
+                            <div className="text-center py-4 text-tertiary">{t('game.loading')}</div>
                         ) : comments.length === 0 ? (
-                            <div className="text-center py-4 opacity-60">{t('suggestions.no_comments')}</div>
+                            <div className="text-center py-4 text-tertiary">{t('suggestions.no_comments')}</div>
                         ) : (
                             comments.map((comment) => (
-                                <div key={comment.id} className="p-3 rounded-lg comment-box">
+                                <div key={comment.id} className="p-4 comment-box">
                                     {comment.quotedContent && (
-                                        <div className="mb-2 pl-3 border-l-2 border-purple-500/50 text-sm opacity-70 italic">
-                                            <span className="font-bold">{comment.quotedUsername}:</span> {comment.quotedContent}
+                                        <div className="mb-3 pl-4 border-l-2 border-accent-secondary/50 text-sm italic text-secondary">
+                                            <span className="font-bold text-accent-secondary">{comment.quotedUsername}:</span> {comment.quotedContent}
                                         </div>
                                     )}
                                     <div className="flex justify-between items-start">
-                                        <div className="flex-1">
-                                            <span className="font-bold text-purple-400 text-sm">{comment.username}</span>
-                                            <span className="text-xs opacity-60 ml-2">
-                                                {new Date(comment.timestamp).toLocaleString()}
-                                            </span>
-                                            <p className="mt-1 whitespace-pre-wrap">{comment.content}</p>
+                                        <div className="flex-1 flex gap-3">
+                                            <UserAvatar userId={comment.userId} size="sm" />
+                                            <div>
+                                                <span className="font-bold text-accent-secondary text-sm">{comment.username}</span>
+                                                <span className="text-[10px] text-tertiary ml-3 font-mono">
+                                                    {new Date(comment.timestamp).toLocaleString()}
+                                                </span>
+                                                <p className="mt-2 text-primary text-[14px] leading-relaxed">{comment.content}</p>
+                                            </div>
                                         </div>
                                         <div className="flex gap-2 ml-2">
                                             <button
                                                 onClick={() => handleQuote(comment)}
-                                                className="text-purple-400 hover:text-purple-300 transition-colors"
+                                                className="text-accent-secondary hover:text-accent-primary transition-colors"
                                                 title={t('suggestions.quote')}
                                             >
                                                 <FaQuoteRight className="w-3 h-3" />
@@ -123,7 +127,7 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
                                             {(isAdmin || comment.userId === user?.userId) && (
                                                 <button
                                                     onClick={() => handleDeleteComment(comment.id)}
-                                                    className="text-red-400 hover:text-red-300 transition-colors"
+                                                    className="text-accent-danger hover:text-red-400 transition-colors"
                                                     title={t('suggestions.delete_comment')}
                                                 >
                                                     <FaTrash className="w-3 h-3" />
@@ -138,15 +142,18 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
                         {user && (
                             <form onSubmit={handlePostComment} className="mt-4">
                                 {replyingTo && (
-                                    <div className="mb-2 p-2 rounded reply-indicator text-sm flex justify-between items-center">
-                                        <div>
-                                            <span className="opacity-70">{t('suggestions.replying_to')} </span>
-                                            <span className="font-bold text-purple-400">{replyingTo.username}</span>
+                                    <div className="mb-3 p-3 rounded-xl reply-indicator text-sm flex justify-between items-center border border-accent-secondary/30">
+                                        <div className="flex items-center gap-3">
+                                            <UserAvatar userId={replyingTo.userId} size="xs" />
+                                            <div>
+                                                <span className="text-secondary">{t('suggestions.replying_to')} </span>
+                                                <span className="font-bold text-accent-secondary">{replyingTo.username}</span>
+                                            </div>
                                         </div>
                                         <button
                                             type="button"
                                             onClick={() => setReplyingTo(null)}
-                                            className="text-red-400 hover:text-red-300 text-xs"
+                                            className="text-accent-danger hover:text-red-400 text-xs font-bold uppercase tracking-wider"
                                         >
                                             {t('common.cancel')}
                                         </button>

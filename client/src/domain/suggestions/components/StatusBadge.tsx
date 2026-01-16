@@ -8,9 +8,9 @@ export function StatusBadge({ status }: StatusBadgeProps) {
     const { t } = useTranslation();
 
     const badges = {
-        pending: { label: t('suggestions.status_pending'), color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50' },
-        reviewed: { label: t('suggestions.status_reviewed'), color: 'bg-blue-500/20 text-blue-400 border-blue-500/50' },
-        implemented: { label: t('suggestions.status_implemented'), color: 'bg-green-500/20 text-green-400 border-green-500/50' }
+        pending: { label: t('suggestions.status_pending'), color: 'bg-accent-warning/20 text-accent-warning border-accent-warning/30' },
+        reviewed: { label: t('suggestions.status_reviewed'), color: 'bg-accent-info/20 text-accent-info border-accent-info/30' },
+        implemented: { label: t('suggestions.status_implemented'), color: 'bg-accent-success/20 text-accent-success border-accent-success/30' }
     };
 
     const badge = badges[status] || badges.pending;

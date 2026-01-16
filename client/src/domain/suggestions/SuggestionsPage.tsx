@@ -105,13 +105,13 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                     animate={{ y: 0, opacity: 1 }}
                     className="text-center mb-10"
                 >
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-secondary to-accent-primary mx-auto mb-4 flex items-center justify-center shadow-2xl shadow-accent-secondary/30">
-                        <FaLightbulb className="text-2xl text-white" />
+                    <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-400 to-accent-secondary mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-amber-500/20 rotate-3">
+                        <FaLightbulb className="text-3xl text-white" />
                     </div>
-                    <h1 className="text-4xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-accent-secondary to-accent-primary">
+                    <h1 className="text-4xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-orange-500 to-accent-secondary tracking-tight">
                         {t('suggestions.title')}
                     </h1>
-                    <p className="text-white/50">
+                    <p className="text-secondary max-w-lg mx-auto leading-relaxed">
                         {t('suggestions.subtitle')}
                     </p>
                 </motion.div>
@@ -121,12 +121,12 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="relative rounded-[1.5rem] bg-white/[0.02] border border-white/10 backdrop-blur-2xl shadow-[0_16px_48px_-12px_rgba(0,0,0,0.3)] mb-10 overflow-hidden after:absolute after:inset-0 after:rounded-[1.5rem] after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.08)] after:pointer-events-none"
+                    className="liquid-glass-panel mb-12"
                 >
-                    <div className="p-8">
-                        <h2 className="text-xl font-black mb-6 flex items-center gap-3">
-                            <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
-                                <FaLightbulb className="text-white" />
+                    <div className="p-8 md:p-10">
+                        <h2 className="text-2xl font-black mb-8 flex items-center gap-4 text-primary">
+                            <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
+                                <FaLightbulb className="text-white text-xl" />
                             </span>
                             {t('suggestions.submit_new')}
                         </h2>
@@ -136,17 +136,17 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                                     value={newSuggestion}
                                     onChange={(e) => setNewSuggestion(e.target.value)}
                                     placeholder={t('suggestions.placeholder')}
-                                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-secondary/30 resize-none transition-all"
-                                    rows={4}
+                                    className="glass-input w-full px-6 py-5 resize-none transition-all text-lg"
+                                    rows={5}
                                     maxLength={1000}
                                 />
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-white/30 font-mono">{newSuggestion.length}/1000</span>
+                                <span className="text-sm text-tertiary font-mono font-medium">{newSuggestion.length}/1000</span>
                                 <button
                                     type="submit"
                                     disabled={loading || !newSuggestion.trim()}
-                                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-secondary to-accent-primary text-white font-bold text-sm disabled:opacity-30 disabled:scale-100 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-accent-secondary/20"
+                                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-accent-secondary text-white font-bold text-sm disabled:opacity-30 disabled:scale-100 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-orange-500/20"
                                 >
                                     <FaPaperPlane className="text-xs" />
                                     {loading ? t('suggestions.submitting') : t('suggestions.submit')}
@@ -158,14 +158,14 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                 </motion.div>
 
                 {/* Suggestions List Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-black">
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-2xl font-black text-primary tracking-tight">
                         {isAdmin ? t('suggestions.all_suggestions') : t('suggestions.your_suggestions')}
                     </h2>
                     {archivedSuggestions.length > 0 && (
                         <button
                             onClick={() => setShowArchive(!showArchive)}
-                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all border ${showArchive ? 'bg-accent-success/20 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'}`}
+                            className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all border ${showArchive ? 'bg-accent-success/20 border-accent-success/30 text-accent-success' : 'bg-surface-translucent border-default text-secondary hover:bg-surface-alt'}`}
                         >
                             <FaCheck className="text-[10px]" />
                             {showArchive ? t('suggestions.hide_archive') : `${t('suggestions.show_archive')} (${archivedSuggestions.length})`}
@@ -193,10 +193,10 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-center py-16 text-white/30"
+                                className="liquid-glass-card text-center py-20 text-tertiary"
                             >
-                                <FaLightbulb className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                                <p>{t('suggestions.no_suggestions')}</p>
+                                <FaLightbulb className="w-16 h-16 mx-auto mb-6 text-tertiary/40" />
+                                <p className="text-lg font-medium">{t('suggestions.no_suggestions')}</p>
                             </motion.div>
                         )}
                     </div>

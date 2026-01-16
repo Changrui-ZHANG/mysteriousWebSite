@@ -118,13 +118,18 @@
 /* ----- BORDER UTILITIES ----- */
 /* ----- GAMING COMPONENTS ----- */
 .gaming-leaderboard {
-    @apply relative overflow-hidden backdrop-blur-xl border border-default rounded-2xl shadow-xl transition-all duration-500 bg-surface-translucent;
+    @apply relative overflow-hidden backdrop-blur-xl border rounded-2xl transition-all duration-500;
+    background: var(--glory-bg);
+    border-color: var(--glory-border);
+    box-shadow: 0 4px 15px rgba(180, 83, 9, 0.05);
+    /* Very subtle golden shadow for light mode */
 }
 
 .dark .gaming-leaderboard {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
-    border-color: rgba(168, 85, 247, 0.3);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(168, 85, 247, 0.1);
+    background: var(--glory-bg);
+    border-color: rgba(251, 191, 36, 0.2);
+    box-shadow: inset 0 0 50px rgba(14, 12, 8, 0.5);
+    /* Deepen the inner glow in dark mode */
 }
 
 .gaming-leaderboard::before {
@@ -134,8 +139,8 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(to right, transparent, var(--accent-secondary), transparent);
-    opacity: 0.5;
+    background: linear-gradient(to right, transparent, var(--glory-gold), transparent);
+    opacity: 0.6;
 }
 
 /* ----- ACHIEVEMENT COMPONENTS ----- */

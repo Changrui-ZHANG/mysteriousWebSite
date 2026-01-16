@@ -44,19 +44,19 @@
 
 /* --- Glass Inputs --- */
 .glass-input {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-input-bg);
     border: 1px solid var(--border-default);
-    backdrop-filter: blur(4px);
-    border-radius: 0.5rem;
+    backdrop-filter: blur(8px);
+    border-radius: 0.75rem;
     color: var(--text-primary);
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-input:focus {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--glass-input-focus-bg);
     border-color: var(--accent-primary);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb, 59, 130, 246), 0.2);
 }
 
 /* --- Liquid Background Animation --- */

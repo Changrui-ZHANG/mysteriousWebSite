@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTrophy, FaCrown, FaMedal } from 'react-icons/fa';
+import { UserAvatar } from '../../../shared/components/UserAvatar';
 import { fetchJson, deleteJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { useAuth } from '../../../shared/contexts/AuthContext';
 
 interface Score {
     id: string;
+    userId?: string;
     username: string;
     score: number;
     timestamp: number;
@@ -197,28 +199,28 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
     // Horizontal layout for GameWindow integration
     if (horizontal) {
         return (
-            <div className="w-full gaming-leaderboard p-3 md:p-4 mt-6 mb-8 relative">
+            <div className="w-full gaming-leaderboard p-2 md:p-3 mt-2 mb-4 relative">
                 {/* Decorative background illustrations for "Rank" theme */}
-                <div className="absolute -bottom-6 -right-6 text-9xl text-accent-secondary/5 rotate-12 pointer-events-none select-none">
+                <div className="absolute -bottom-6 -right-6 text-9xl text-yellow-500/5 rotate-12 pointer-events-none select-none">
                     <FaTrophy />
                 </div>
-                <div className="absolute -top-4 -left-4 text-8xl text-accent-primary/5 -rotate-12 pointer-events-none select-none">
+                <div className="absolute -top-4 -left-4 text-8xl text-yellow-600/5 -rotate-12 pointer-events-none select-none">
                     <FaCrown />
                 </div>
 
                 {/* Decorative rank glow line */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-accent-secondary to-transparent"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent"></div>
 
                 <div className="relative z-10 w-full">
                     <div className="flex items-center justify-center gap-4 mb-4">
-                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent-primary/20 to-transparent"></div>
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent"></div>
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col items-center">
-                                <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-[0.2em] drop-shadow-lg">
-                                    <FaTrophy className="text-yellow-500 animate-pulse" />
+                                <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-[0.2em] drop-shadow-[0_0_10px_rgba(251,191,36,0.3)]">
+                                    <FaTrophy className="text-yellow-500 animate-pulse drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
                                     {t('game.leaderboard')}
-                                    <span className="ml-2 text-[10px] text-accent-secondary font-bold px-2 py-0.5 bg-accent-secondary/10 rounded-full border border-accent-secondary/20 animate-pulse">
-                                        RANKING
+                                    <span className="ml-2 text-[10px] text-white font-black px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full border border-white/20 shadow-[0_2px_10px_rgba(251,191,36,0.5)] tracking-tighter">
+                                        PRESTIGE
                                     </span>
                                 </h3>
                             </div>
@@ -246,7 +248,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                 </div>
                             )}
                         </div>
-                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent-secondary/20 to-transparent"></div>
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
                     </div>
 
                     {scores.length === 0 ? (
@@ -263,33 +265,38 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
 
                                 return (
                                     <div key={score.id} className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-500 cursor-default group hover:scale-105 ${index === 0 ? 'bg-gradient-to-r from-rank-1-from to-rank-1-to border-2 border-rank-1-border shadow-[0_10px_20px_rgba(250,204,21,0.15)]' :
-                                            isPersonalScore ? 'bg-gradient-to-r from-accent-primary/20 via-accent-secondary/10 to-accent-primary/20 border-2 border-accent-secondary shadow-[0_10px_25px_rgba(168,85,247,0.25)]' :
-                                                index === 1 ? 'bg-gradient-to-r from-rank-2-from to-rank-2-to border-2 border-rank-2-border shadow-md' :
-                                                    index === 2 ? 'bg-gradient-to-r from-rank-3-from to-rank-3-to border-2 border-rank-3-border shadow-md' :
-                                                        'bg-surface/40 backdrop-blur-md border border-default hover:border-accent-primary/40 hover:bg-surface/60'
+                                        isPersonalScore ? 'bg-gradient-to-r from-accent-primary/20 via-accent-secondary/10 to-accent-primary/20 border-2 border-accent-secondary shadow-[0_10px_25px_rgba(168,85,247,0.25)]' :
+                                            index === 1 ? 'bg-gradient-to-r from-rank-2-from to-rank-2-to border-2 border-rank-2-border shadow-md' :
+                                                index === 2 ? 'bg-gradient-to-r from-rank-3-from to-rank-3-to border-2 border-rank-3-border shadow-md' :
+                                                    'bg-surface/40 backdrop-blur-md border border-default hover:border-accent-primary/40 hover:bg-surface/60'
                                         }`}>
-                                        {/* Dynamic rank-themed shine effect */}
-                                        {index < 3 && (
-                                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                                        )}
-
                                         <div className="relative flex items-center gap-3">
-                                            {/* Rank */}
-                                            <div className="flex items-center gap-1.5">
-                                                {rankIcon}
-                                                <span className={`font-mono font-black text-sm ${index === 0 ? 'text-rank-1-text' :
+                                            {/* Avatar & Rank */}
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1">
+                                                    {rankIcon}
+                                                    <span className={`font-mono font-black text-sm ${index === 0 ? 'text-rank-1-text' :
                                                         index === 1 ? 'text-rank-2-text' :
                                                             index === 2 ? 'text-rank-3-text' :
                                                                 isPersonalScore ? 'text-accent-secondary' :
                                                                     'text-secondary'
-                                                    }`}>
-                                                    #{index + 1}
-                                                </span>
+                                                        }`}>
+                                                        #{index + 1}
+                                                    </span>
+                                                </div>
+                                                <UserAvatar
+                                                    userId={score.userId}
+                                                    size="sm"
+                                                    className={`ring-2 ${index === 0 ? 'ring-rank-1-border' :
+                                                        index === 1 ? 'ring-rank-2-border' :
+                                                            index === 2 ? 'ring-rank-3-border' :
+                                                                isPersonalScore ? 'ring-accent-secondary' : 'ring-border-default/50'}`}
+                                                />
                                             </div>
 
                                             {/* Username */}
                                             <span
-                                                className={`font-black text-sm whitespace-nowrap animate-shine animate-neon tracking-tight ${isPersonalScore ? 'text-primary' : 'text-primary'
+                                                className={`font-black text-sm whitespace-nowrap animate-shine animate-neon tracking-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)] ${isPersonalScore ? 'text-primary' : 'text-primary'
                                                     }`}
                                                 style={{
                                                     '--neon-color': index === 0 ? 'var(--rank-1-border)' :
@@ -303,11 +310,11 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                             </span>
 
                                             {/* Score */}
-                                            <span className={`font-mono font-black text-sm whitespace-nowrap px-2 py-0.5 rounded-lg bg-black/5 dark:bg-white/5 ${index === 0 ? 'text-rank-1-text' :
-                                                    index === 1 ? 'text-rank-2-text' :
-                                                        index === 2 ? 'text-rank-3-text' :
-                                                            isPersonalScore ? 'text-accent-info drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]' :
-                                                                'text-accent-info'
+                                            <span className={`font-mono font-black text-sm whitespace-nowrap px-2 py-0.5 rounded-lg bg-black/10 dark:bg-white/10 shadow-inner ${index === 0 ? 'text-rank-1-text' :
+                                                index === 1 ? 'text-rank-2-text' :
+                                                    index === 2 ? 'text-rank-3-text' :
+                                                        isPersonalScore ? 'text-accent-info drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]' :
+                                                            'text-accent-info'
                                                 }`}>
                                                 {score.score}{score.attempts ? `/${score.attempts}` : ''}
                                             </span>

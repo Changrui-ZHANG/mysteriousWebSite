@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { FaTrash, FaUndo } from 'react-icons/fa';
+import { UserAvatar } from '../../../shared/components/UserAvatar';
 import { StatusBadge } from './StatusBadge';
 import { CommentSection } from './CommentSection';
 import type { Suggestion, SuggestionUser } from '../types';
@@ -35,19 +36,21 @@ export function SuggestionCard({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 20, opacity: 0 }}
             transition={{ delay: index * 0.03 }}
-            className={`relative rounded-2xl bg-white/[0.02] border backdrop-blur-xl p-6 transition-all hover:bg-white/[0.04] after:absolute after:inset-0 after:rounded-2xl after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.05)] after:pointer-events-none ${isArchived ? 'border-accent-success/20 opacity-70' : 'border-white/10'}`}
+            className={`liquid-glass-card p-6 ${isArchived ? 'opacity-60 grayscale-[0.3]' : ''}`}
         >
             {/* Header */}
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm ${isArchived ? 'bg-accent-success/20 text-accent-success' : 'bg-gradient-to-br from-accent-secondary to-accent-primary text-white'}`}>
-                        {suggestion.username.charAt(0).toUpperCase()}
-                    </div>
+                    <UserAvatar
+                        userId={suggestion.userId}
+                        size="md"
+                        className={isArchived ? 'grayscale opacity-80' : 'ring-2 ring-accent-secondary/20'}
+                    />
                     <div>
-                        <span className={`font-bold text-sm ${isArchived ? 'text-accent-success' : 'text-white'}`}>
+                        <span className={`font-bold text-base ${isArchived ? 'text-accent-success' : 'text-primary'}`}>
                             {suggestion.username}
                         </span>
-                        <span className="text-[10px] text-white/30 ml-2 font-mono">
+                        <span className="text-[11px] text-tertiary ml-3 font-mono font-medium">
                             {new Date(suggestion.timestamp).toLocaleDateString()}
                         </span>
                     </div>
@@ -56,7 +59,7 @@ export function SuggestionCard({
             </div>
 
             {/* Content */}
-            <p className="text-white/80 leading-relaxed mb-5 whitespace-pre-wrap">
+            <p className="text-primary/90 leading-relaxed mb-6 whitespace-pre-wrap text-[15px]">
                 {suggestion.suggestion}
             </p>
 
