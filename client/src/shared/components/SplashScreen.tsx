@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { LiquidDecoration } from './ui/LiquidDecoration';
 
 interface SplashScreenProps {
     isLoading: boolean;
@@ -25,12 +24,6 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             transition={{ duration: 0.4, ease: "easeInOut" }}
             className="fixed inset-0 z-50 bg-page flex flex-col items-center justify-center p-6 overflow-hidden"
         >
-            {/* Liquid Glass Background Decorations - Static version */}
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-                <div className="absolute -top-20 -left-20 w-[500px] h-[500px] rounded-full bg-white/5 backdrop-blur-3xl border border-white/5" />
-                <div className="absolute -bottom-40 -right-20 w-[600px] h-[600px] rounded-full bg-white/5 backdrop-blur-3xl border border-white/5" />
-            </div>
-
             {/* Logo/Brand Section */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}

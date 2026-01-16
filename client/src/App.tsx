@@ -132,8 +132,6 @@ function AppContent() {
                             {location.pathname === '/' && (
                                 <div className="fixed top-0 left-0 w-full h-screen z-10 pointer-events-none">
                                     <VisualEffect />
-                                    <div className="aurora-blob w-[300px] h-[300px] top-[20%] left-[20%] bg-accent-secondary/50" style={{ animationDelay: '0s' }}></div>
-                                    <div className="aurora-blob w-[400px] h-[400px] bottom-[20%] right-[20%] bg-accent-info/50" style={{ animationDelay: '2s' }}></div>
                                     <LiquidDecoration className="top-[10%] right-[5%]" size="w-80 h-80" delay={0} />
                                 </div>
                             )}
