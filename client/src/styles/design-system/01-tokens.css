@@ -35,6 +35,22 @@
     --color-accent-danger: var(--accent-danger);
     --color-accent-info: var(--accent-info);
 
+    /* ----- RANKS ----- */
+    --color-rank-1-from: var(--rank-1-bg-from);
+    --color-rank-1-to: var(--rank-1-bg-to);
+    --color-rank-1-border: var(--rank-1-border);
+    --color-rank-1-text: var(--rank-1-text);
+
+    --color-rank-2-from: var(--rank-2-bg-from);
+    --color-rank-2-to: var(--rank-2-bg-to);
+    --color-rank-2-border: var(--rank-2-border);
+    --color-rank-2-text: var(--rank-2-text);
+
+    --color-rank-3-from: var(--rank-3-bg-from);
+    --color-rank-3-to: var(--rank-3-bg-to);
+    --color-rank-3-border: var(--rank-3-border);
+    --color-rank-3-text: var(--rank-3-text);
+
     /* ----- BACKDROP BLUR ----- */
     --backdrop-blur-surface: var(--filter-blur-surface);
     --backdrop-blur-xs: 2px;

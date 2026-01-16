@@ -61,11 +61,14 @@
     --glass-border: rgba(255, 255, 255, 0.5);
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
     --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
-    
+
     /* Liquid Background Colors */
-    --liquid-bg-1: #e0f2fe; /* Light Blue */
-    --liquid-bg-2: #f3e8ff; /* Light Purple */
-    --liquid-bg-3: #fce7f3; /* Light Pink */
+    --liquid-bg-1: #e0f2fe;
+    /* Light Blue */
+    --liquid-bg-2: #f3e8ff;
+    /* Light Purple */
+    --liquid-bg-3: #fce7f3;
+    /* Light Pink */
 
     /* Achievement colors */
     --achievement-bg-glow: rgba(234, 179, 8, 0.1);
@@ -77,6 +80,22 @@
     --achievement-text-score: rgb(120, 53, 15);
     --achievement-badge: rgb(234, 179, 8);
     --achievement-shadow: rgba(234, 179, 8, 0.2);
+
+    /* Ranking colors */
+    --rank-1-bg-from: rgba(254, 240, 138, 0.3);
+    --rank-1-bg-to: rgba(251, 191, 36, 0.3);
+    --rank-1-border: rgba(251, 191, 36, 0.6);
+    --rank-1-text: rgb(180, 83, 9);
+
+    --rank-2-bg-from: rgba(241, 245, 249, 0.5);
+    --rank-2-bg-to: rgba(148, 163, 184, 0.3);
+    --rank-2-border: rgba(148, 163, 184, 0.5);
+    --rank-2-text: rgb(71, 85, 105);
+
+    --rank-3-bg-from: rgba(255, 237, 213, 0.5);
+    --rank-3-bg-to: rgba(251, 146, 60, 0.3);
+    --rank-3-border: rgba(251, 146, 60, 0.5);
+    --rank-3-text: rgb(194, 65, 12);
 
     /* Login particles */
     --particle-primary: rgba(59, 130, 246, 0.1);
@@ -116,14 +135,18 @@
     --bg-effects-opacity: 0.15;
 
     --glass-bg: rgba(23, 23, 23, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08); /* Plus subtil en dark mode */
+    --glass-border: rgba(255, 255, 255, 0.08);
+    /* Plus subtil en dark mode */
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
 
-     /* Liquid Background Colors - Dark Mode */
-    --liquid-bg-1: #0c4a6e; /* Dark Blue */
-    --liquid-bg-2: #581c87; /* Dark Purple */
-    --liquid-bg-3: #831843; /* Dark Pink */
+    /* Liquid Background Colors - Dark Mode */
+    --liquid-bg-1: #0c4a6e;
+    /* Dark Blue */
+    --liquid-bg-2: #581c87;
+    /* Dark Purple */
+    --liquid-bg-3: #831843;
+    /* Dark Pink */
 
     /* Error component colors - dark theme */
     --error-bg: rgba(127, 29, 29, 0.4);
@@ -141,6 +164,22 @@
     --achievement-text-score: rgb(253, 224, 71);
     --achievement-badge: rgb(234, 179, 8);
     --achievement-shadow: rgba(234, 179, 8, 0.4);
+
+    /* Ranking colors - dark theme */
+    --rank-1-bg-from: rgba(234, 179, 8, 0.2);
+    --rank-1-bg-to: rgba(120, 53, 15, 0.2);
+    --rank-1-border: rgba(234, 179, 8, 0.5);
+    --rank-1-text: #fbbf24;
+
+    --rank-2-bg-from: rgba(148, 163, 184, 0.2);
+    --rank-2-bg-to: rgba(71, 85, 105, 0.2);
+    --rank-2-border: rgba(148, 163, 184, 0.4);
+    --rank-2-text: #e2e8f0;
+
+    --rank-3-bg-from: rgba(251, 146, 60, 0.2);
+    --rank-3-bg-to: rgba(120, 53, 15, 0.2);
+    --rank-3-border: rgba(251, 146, 60, 0.4);
+    --rank-3-text: #fdba74;
 
     /* Login particles */
     --particle-primary: rgba(59, 130, 246, 0.2);
@@ -183,4 +222,5 @@
     --paper-vignette-light: rgba(160, 100, 30, 0.2);
     --paper-vignette-subtle: rgba(180, 130, 50, 0.1);
 }
+
 /* ============================================ */

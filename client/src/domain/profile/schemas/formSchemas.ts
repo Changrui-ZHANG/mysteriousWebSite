@@ -94,8 +94,8 @@ export const getFormErrorMessage = (error: any): string => {
 export const transformProfileFormData = (data: ProfileFormData) => {
     return {
         displayName: data.displayName.trim(),
-        bio: data.bio?.trim() || undefined,
-        gender: data.gender || undefined,
+        bio: data.bio?.trim() ?? '',
+        gender: data.gender ?? '',
     };
 };
 

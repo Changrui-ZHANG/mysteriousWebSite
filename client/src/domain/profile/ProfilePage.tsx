@@ -62,7 +62,6 @@ export const ProfilePage: React.FC = () => {
                 data,
                 requesterId: user.userId
             });
-            setActiveTab('overview');
         } catch (err) {
             logError('Failed to update profile', err);
         }
@@ -214,7 +213,9 @@ export const ProfilePage: React.FC = () => {
                                             <AvatarUploadWithCropping
                                                 userId={profile.userId}
                                                 currentAvatarUrl={profile.avatarUrl}
-                                                onUploadComplete={() => refetchProfile()}
+                                                onUploadComplete={() => {
+                                                    refetchProfile();
+                                                }}
                                             />
                                             <p className="text-[10px] text-(--text-secondary) mt-4">
                                                 {t('profile.avatar.upload')}

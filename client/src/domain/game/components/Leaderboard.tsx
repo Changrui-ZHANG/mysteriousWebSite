@@ -197,117 +197,141 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
     // Horizontal layout for GameWindow integration
     if (horizontal) {
         return (
-            <div className="w-full">
-                <div className="flex items-center justify-center gap-4 mb-3">
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-                    <div className="flex items-center gap-3">
-                        <h3 className="text-sm font-bold text-gray-100 flex items-center gap-2 uppercase tracking-wider">
-                            <FaTrophy className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]" />
-                            {t('game.leaderboard')}
-                            <span className="text-xs text-purple-400 font-normal">({scores.length} {t('game.players')})</span>
-                        </h3>
-                        {/* Super Admin Buttons */}
-                        {isSuperAdmin && (
-                            <div className="flex items-center gap-2">
-                                {/* Cleanup Duplicates Button */}
-                                <button
-                                    onClick={handleCleanupDuplicates}
-                                    className="px-3 py-1 bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-400 hover:text-yellow-200 rounded-full transition-all duration-300 backdrop-blur-xl border border-yellow-500/30 hover:border-yellow-400/50 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-105 shadow-lg hover:shadow-yellow-500/20"
-                                    title={t('game.cleanup_duplicates')}
-                                >
-                                    🧹 Clean
-                                </button>
-                                {/* Clear All Button */}
-                                {scores.length > 0 && (
-                                    <button
-                                        onClick={handleClearAllScores}
-                                        className="px-3 py-1 bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-200 rounded-full transition-all duration-300 backdrop-blur-xl border border-red-500/30 hover:border-red-400/50 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-105 shadow-lg hover:shadow-red-500/20"
-                                        title={t('game.clear_all_scores')}
-                                    >
-                                        🗑️ Clear All
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+            <div className="w-full gaming-leaderboard p-3 md:p-4 mt-6 mb-8 relative">
+                {/* Decorative background illustrations for "Rank" theme */}
+                <div className="absolute -bottom-6 -right-6 text-9xl text-accent-secondary/5 rotate-12 pointer-events-none select-none">
+                    <FaTrophy />
+                </div>
+                <div className="absolute -top-4 -left-4 text-8xl text-accent-primary/5 -rotate-12 pointer-events-none select-none">
+                    <FaCrown />
                 </div>
 
-                {scores.length === 0 ? (
-                    <div className="text-center py-3 text-sm text-gray-400">
-                        {t('game.no_scores_yet')}
-                    </div>
-                ) : (
-                    <div className="flex flex-wrap gap-2 justify-center w-full overflow-x-hidden p-1">
-                        {scores.map((score, index) => {
-                            const isPersonalScore = user && score.username === user.username;
-                            const rankIcon = index === 0 ? <FaCrown className="text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" /> :
-                                index === 1 ? <FaMedal className="text-gray-300 drop-shadow-[0_0_4px_rgba(192,192,192,0.6)]" /> :
-                                    index === 2 ? <FaMedal className="text-orange-400 drop-shadow-[0_0_4px_rgba(251,146,60,0.6)]" /> : null;
+                {/* Decorative rank glow line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-accent-secondary to-transparent"></div>
 
-                            return (
-                                <div key={score.id} className={`relative flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 cursor-default ${isPersonalScore
-                                    ? 'bg-gradient-to-r from-purple-600/40 to-pink-600/40 border-2 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.5),inset_0_0_20px_rgba(168,85,247,0.1)]'
-                                    : index === 0 ? 'bg-gradient-to-r from-yellow-600/30 to-amber-600/30 border border-yellow-500/60 shadow-[0_0_15px_rgba(250,204,21,0.3)]' :
-                                        index === 1 ? 'bg-gradient-to-r from-gray-600/30 to-slate-600/30 border border-gray-400/60 shadow-[0_0_10px_rgba(156,163,175,0.2)]' :
-                                            index === 2 ? 'bg-gradient-to-r from-orange-600/30 to-amber-700/30 border border-orange-500/60 shadow-[0_0_10px_rgba(251,146,60,0.2)]' :
-                                                'bg-slate-800/70 border border-slate-600/50 hover:border-purple-500/40 hover:bg-slate-700/70'
-                                    }`}>
-                                    {/* Personal Score Glow Effect */}
-                                    {isPersonalScore && (
-                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg animate-pulse"></div>
+                <div className="relative z-10 w-full">
+                    <div className="flex items-center justify-center gap-4 mb-4">
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent-primary/20 to-transparent"></div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex flex-col items-center">
+                                <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-[0.2em] drop-shadow-lg">
+                                    <FaTrophy className="text-yellow-500 animate-pulse" />
+                                    {t('game.leaderboard')}
+                                    <span className="ml-2 text-[10px] text-accent-secondary font-bold px-2 py-0.5 bg-accent-secondary/10 rounded-full border border-accent-secondary/20 animate-pulse">
+                                        RANKING
+                                    </span>
+                                </h3>
+                            </div>
+                            {/* Super Admin Buttons */}
+                            {isSuperAdmin && (
+                                <div className="flex items-center gap-2">
+                                    {/* Cleanup Duplicates Button */}
+                                    <button
+                                        onClick={handleCleanupDuplicates}
+                                        className="px-3 py-1 bg-accent-warning/10 hover:bg-accent-warning/20 text-accent-warning rounded-full transition-all duration-300 backdrop-blur-xl border border-accent-warning/20 hover:border-accent-warning/40 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-105"
+                                        title={t('game.cleanup_duplicates')}
+                                    >
+                                        🧹 Clean
+                                    </button>
+                                    {/* Clear All Button */}
+                                    {scores.length > 0 && (
+                                        <button
+                                            onClick={handleClearAllScores}
+                                            className="px-3 py-1 bg-accent-danger/10 hover:bg-accent-danger/20 text-accent-danger rounded-full transition-all duration-300 backdrop-blur-xl border border-accent-danger/20 hover:border-accent-danger/40 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-105"
+                                            title={t('game.clear_all_scores')}
+                                        >
+                                            🗑️ Clear
+                                        </button>
                                     )}
-
-                                    <div className="relative flex items-center gap-3">
-                                        {/* Rank */}
-                                        <div className="flex items-center gap-1.5">
-                                            {rankIcon}
-                                            <span className={`font-mono font-bold text-sm ${isPersonalScore ? 'text-purple-300' :
-                                                index === 0 ? 'text-yellow-300' :
-                                                    index === 1 ? 'text-gray-300' :
-                                                        index === 2 ? 'text-orange-300' :
-                                                            'text-gray-400'
-                                                }`}>
-                                                #{index + 1}
-                                            </span>
-                                        </div>
-
-                                        {/* Username */}
-                                        <span className={`font-medium text-sm whitespace-nowrap ${isPersonalScore ? 'text-purple-100 font-bold' : 'text-gray-200'
-                                            }`}>
-                                            {score.username}
-                                            {isPersonalScore && <span className="ml-1.5 text-purple-400 animate-pulse">★</span>}
-                                        </span>
-
-                                        {/* Score */}
-                                        <span className={`font-mono font-bold text-sm whitespace-nowrap ${isPersonalScore ? 'text-cyan-300 drop-shadow-[0_0_6px_rgba(34,211,238,0.5)]' :
-                                            index === 0 ? 'text-yellow-300' :
-                                                index === 1 ? 'text-gray-200' :
-                                                    index === 2 ? 'text-orange-300' :
-                                                        'text-cyan-400'
-                                            }`}>
-                                            {score.score}{score.attempts ? `/${score.attempts}` : ''}
-                                        </span>
-
-                                        {/* Admin Delete Button */}
-                                        {(isSuperAdmin || isAdmin) && (
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleReset(score.id, score.username);
-                                                }}
-                                                className="ml-2 w-6 h-6 flex items-center justify-center bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-200 rounded-full transition-all duration-300 backdrop-blur-xl border border-red-500/30 hover:border-red-400/50 text-sm font-bold opacity-80 hover:opacity-100 hover:scale-110 shadow-lg hover:shadow-red-500/20"
-                                                title={t('game.reset_score')}
-                                            >
-                                                ×
-                                            </button>
-                                        )}
-                                    </div>
                                 </div>
-                            );
-                        })}
+                            )}
+                        </div>
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent-secondary/20 to-transparent"></div>
                     </div>
-                )}
+
+                    {scores.length === 0 ? (
+                        <div className="text-center py-6 text-sm text-secondary opacity-60 italic">
+                            {t('game.no_scores_yet')}
+                        </div>
+                    ) : (
+                        <div className="flex flex-wrap gap-3 justify-center w-full overflow-x-hidden p-1">
+                            {scores.map((score, index) => {
+                                const isPersonalScore = user && score.username === user.username;
+                                const rankIcon = index === 0 ? <FaCrown className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" /> :
+                                    index === 1 ? <FaMedal className="text-gray-300 drop-shadow-[0_0_6px_rgba(192,192,192,0.6)]" /> :
+                                        index === 2 ? <FaMedal className="text-orange-400 drop-shadow-[0_0_6px_rgba(251,146,60,0.6)]" /> : null;
+
+                                return (
+                                    <div key={score.id} className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-500 cursor-default group hover:scale-105 ${index === 0 ? 'bg-gradient-to-r from-rank-1-from to-rank-1-to border-2 border-rank-1-border shadow-[0_10px_20px_rgba(250,204,21,0.15)]' :
+                                            isPersonalScore ? 'bg-gradient-to-r from-accent-primary/20 via-accent-secondary/10 to-accent-primary/20 border-2 border-accent-secondary shadow-[0_10px_25px_rgba(168,85,247,0.25)]' :
+                                                index === 1 ? 'bg-gradient-to-r from-rank-2-from to-rank-2-to border-2 border-rank-2-border shadow-md' :
+                                                    index === 2 ? 'bg-gradient-to-r from-rank-3-from to-rank-3-to border-2 border-rank-3-border shadow-md' :
+                                                        'bg-surface/40 backdrop-blur-md border border-default hover:border-accent-primary/40 hover:bg-surface/60'
+                                        }`}>
+                                        {/* Dynamic rank-themed shine effect */}
+                                        {index < 3 && (
+                                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                        )}
+
+                                        <div className="relative flex items-center gap-3">
+                                            {/* Rank */}
+                                            <div className="flex items-center gap-1.5">
+                                                {rankIcon}
+                                                <span className={`font-mono font-black text-sm ${index === 0 ? 'text-rank-1-text' :
+                                                        index === 1 ? 'text-rank-2-text' :
+                                                            index === 2 ? 'text-rank-3-text' :
+                                                                isPersonalScore ? 'text-accent-secondary' :
+                                                                    'text-secondary'
+                                                    }`}>
+                                                    #{index + 1}
+                                                </span>
+                                            </div>
+
+                                            {/* Username */}
+                                            <span
+                                                className={`font-black text-sm whitespace-nowrap animate-shine animate-neon tracking-tight ${isPersonalScore ? 'text-primary' : 'text-primary'
+                                                    }`}
+                                                style={{
+                                                    '--neon-color': index === 0 ? 'var(--rank-1-border)' :
+                                                        index === 1 ? 'var(--rank-2-border)' :
+                                                            index === 2 ? 'var(--rank-3-border)' :
+                                                                isPersonalScore ? 'var(--accent-secondary)' : 'transparent'
+                                                } as React.CSSProperties}
+                                            >
+                                                {score.username}
+                                                {isPersonalScore && <span className="ml-1.5 text-accent-secondary animate-pulse">★</span>}
+                                            </span>
+
+                                            {/* Score */}
+                                            <span className={`font-mono font-black text-sm whitespace-nowrap px-2 py-0.5 rounded-lg bg-black/5 dark:bg-white/5 ${index === 0 ? 'text-rank-1-text' :
+                                                    index === 1 ? 'text-rank-2-text' :
+                                                        index === 2 ? 'text-rank-3-text' :
+                                                            isPersonalScore ? 'text-accent-info drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]' :
+                                                                'text-accent-info'
+                                                }`}>
+                                                {score.score}{score.attempts ? `/${score.attempts}` : ''}
+                                            </span>
+
+                                            {/* Admin Delete Button */}
+                                            {(isSuperAdmin || isAdmin) && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleReset(score.id, score.username);
+                                                    }}
+                                                    className="w-5 h-5 flex items-center justify-center bg-accent-danger/20 hover:bg-accent-danger text-accent-danger hover:text-white rounded-full transition-all duration-300 border border-accent-danger/30 hover:shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                                                    title={t('game.reset_score')}
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             </div>
         );
     }
@@ -316,7 +340,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
         return (
             <div className="space-y-2">
                 {scores.length === 0 ? (
-                    <div className="text-center py-2 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-center py-2 text-xs text-secondary opacity-60">
                         {t('game.no_scores_yet')}
                     </div>
                 ) : (
@@ -328,11 +352,11 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                     <FaMedal className="text-orange-400" />;
 
                             return (
-                                <div key={score.id} className={`relative flex items-center justify-between p-2 rounded-lg text-xs transition-all duration-300 ${isPersonalScore
-                                    ? 'bg-gradient-to-r from-purple-100/95 via-pink-100/90 to-purple-100/95 dark:from-purple-900/50 dark:via-pink-900/40 dark:to-purple-900/50 border-2 border-purple-400/70 dark:border-purple-400/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] animate-pulse'
-                                    : index === 0 ? 'bg-yellow-100/90 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
-                                        index === 1 ? 'bg-gray-100/90 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300' :
-                                            'bg-orange-100/90 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
+                                <div key={score.id} className={`relative flex items-center justify-between p-2 rounded-lg text-xs transition-all duration-300 ${index === 0 ? 'bg-gradient-to-r from-rank-1-from to-rank-1-to border border-rank-1-border' :
+                                    isPersonalScore ? 'bg-gradient-to-r from-accent-primary/10 via-accent-secondary/5 to-accent-primary/10 border-2 border-accent-secondary/50 shadow-md animate-pulse' :
+                                        index === 1 ? 'bg-gradient-to-r from-rank-2-from to-rank-2-to border border-rank-2-border' :
+                                            index === 2 ? 'bg-gradient-to-r from-rank-3-from to-rank-3-to border border-rank-3-border' :
+                                                'bg-surface border border-default'
                                     }`}>
                                     {/* Personal Score Glow Effect */}
                                     {isPersonalScore && (
@@ -342,15 +366,23 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                     <div className="relative flex items-center gap-2">
                                         <div className="flex items-center gap-1">
                                             {rankIcon}
-                                            <span className={`font-bold w-4 ${isPersonalScore ? 'text-purple-700 dark:text-purple-300' : ''}`}>#{index + 1}</span>
+                                            <span className={`font-bold w-4 ${isPersonalScore ? 'text-accent-secondary' : ''}`}>#{index + 1}</span>
                                         </div>
-                                        <span className={`font-medium truncate max-w-[80px] ${isPersonalScore ? 'text-purple-800 dark:text-purple-200 font-bold' : ''}`}>
+                                        <span
+                                            className={`font-bold truncate max-w-[80px] animate-shine animate-neon`}
+                                            style={{
+                                                '--neon-color': index === 0 ? 'var(--rank-1-border)' :
+                                                    index === 1 ? 'var(--rank-2-border)' :
+                                                        index === 2 ? 'var(--rank-3-border)' :
+                                                            isPersonalScore ? 'var(--accent-secondary)' : 'transparent'
+                                            } as React.CSSProperties}
+                                        >
                                             {score.username}
-                                            {isPersonalScore && <span className="ml-1 text-purple-500">★</span>}
+                                            {isPersonalScore && <span className="ml-1 text-accent-secondary">★</span>}
                                         </span>
                                     </div>
                                     <div className="relative flex items-center gap-1">
-                                        <span className={`font-mono font-bold ${isPersonalScore ? 'text-purple-800 dark:text-purple-200 drop-shadow-[0_0_4px_rgba(168,85,247,0.4)]' : ''}`}>
+                                        <span className={`font-mono font-bold ${isPersonalScore ? 'text-accent-secondary drop-shadow-[0_0_4px_rgba(168,85,247,0.4)]' : ''}`}>
                                             {score.score}{score.attempts ? `/${score.attempts}` : ''}
                                         </span>
                                         {/* Admin Delete Button */}
@@ -360,7 +392,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                                     e.stopPropagation();
                                                     handleReset(score.id, score.username);
                                                 }}
-                                                className="ml-2 w-5 h-5 flex items-center justify-center bg-red-100/90 dark:bg-red-500/20 hover:bg-red-200/90 dark:hover:bg-red-500/40 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 rounded-full transition-all duration-300 backdrop-blur-xl border border-red-300/50 dark:border-red-500/30 hover:border-red-400 dark:hover:border-red-400/50 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-110 shadow-md hover:shadow-red-500/20"
+                                                className="ml-2 w-5 h-5 flex items-center justify-center bg-accent-danger/10 hover:bg-accent-danger/20 text-accent-danger rounded-full transition-all duration-300 backdrop-blur-xl border border-accent-danger/20 hover:border-accent-danger/40 text-xs font-bold shadow-md"
                                                 title={t('game.reset_score')}
                                             >
                                                 ×
@@ -371,7 +403,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                             );
                         })}
                         {scores.length > 3 && (
-                            <div className="text-center text-xs text-gray-500 dark:text-gray-400 pt-1">
+                            <div className="text-center text-xs text-secondary opacity-60 pt-1">
                                 +{scores.length - 3} more
                             </div>
                         )}
@@ -382,7 +414,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
     }
 
     return (
-        <div className="bg-white/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl md:rounded-3xl p-4 md:p-6 mt-6 md:mt-8 max-w-sm md:max-w-md mx-auto shadow-lg">
+        <div className="bg-surface-translucent backdrop-blur-xl border border-default rounded-2xl md:rounded-3xl p-4 md:p-6 mt-6 md:mt-8 max-w-sm md:max-w-md mx-auto shadow-lg">
             <div className="flex items-center justify-between mb-3 md:mb-4">
                 <h3 className="text-center font-bold text-base md:text-lg bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent uppercase tracking-wider drop-shadow-sm flex items-center justify-center gap-2 flex-1">
                     <FaTrophy className="text-yellow-500" />
@@ -395,7 +427,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                         {/* Cleanup Duplicates Button */}
                         <button
                             onClick={handleCleanupDuplicates}
-                            className="px-2 py-1 bg-yellow-100/90 dark:bg-yellow-500/20 hover:bg-yellow-200/90 dark:hover:bg-yellow-500/40 text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200 rounded-lg transition-all duration-300 backdrop-blur-xl border border-yellow-300/50 dark:border-yellow-500/30 hover:border-yellow-400 dark:hover:border-yellow-400/50 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-105 shadow-md hover:shadow-yellow-500/20"
+                            className="px-2 py-1 bg-accent-warning/10 hover:bg-accent-warning/20 text-accent-warning rounded-lg transition-all duration-300 backdrop-blur-xl border border-accent-warning/20 hover:border-accent-warning/40 text-xs font-bold shadow-sm"
                             title={t('game.cleanup_duplicates')}
                         >
                             🧹
@@ -404,7 +436,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                         {scores.length > 0 && (
                             <button
                                 onClick={handleClearAllScores}
-                                className="px-2 py-1 bg-red-100/90 dark:bg-red-500/20 hover:bg-red-200/90 dark:hover:bg-red-500/40 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 rounded-lg transition-all duration-300 backdrop-blur-xl border border-red-300/50 dark:border-red-500/30 hover:border-red-400 dark:hover:border-red-400/50 text-xs font-bold opacity-80 hover:opacity-100 hover:scale-105 shadow-md hover:shadow-red-500/20"
+                                className="px-2 py-1 bg-accent-danger/10 hover:bg-accent-danger/20 text-accent-danger rounded-lg transition-all duration-300 backdrop-blur-xl border border-accent-danger/20 hover:border-accent-danger/40 text-xs font-bold shadow-sm"
                                 title={t('game.clear_all_scores')}
                             >
                                 🗑️
@@ -415,7 +447,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
             </div>
 
             {scores.length === 0 ? (
-                <div className="text-center py-3 md:py-4 opacity-60 text-gray-600 dark:text-gray-300 text-sm md:text-base">
+                <div className="text-center py-3 md:py-4 opacity-60 text-secondary text-sm md:text-base">
                     {t('game.no_scores_yet')}
                 </div>
             ) : (
@@ -427,11 +459,11 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                 index === 2 ? <FaMedal className="text-orange-500 drop-shadow-md" /> : null;
 
                         return (
-                            <div key={score.id} className={`relative flex items-center justify-between p-2 md:p-3 rounded-lg md:rounded-xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] ${isPersonalScore
-                                ? 'bg-gradient-to-r from-purple-100/95 via-pink-100/90 to-purple-100/95 dark:from-purple-900/50 dark:via-pink-900/40 dark:to-purple-900/50 border-2 border-purple-400/80 dark:border-purple-400/60 shadow-[0_0_20px_rgba(168,85,247,0.4)] animate-pulse'
-                                : index === 0 ? 'bg-gradient-to-r from-yellow-100/90 via-orange-100/80 to-yellow-100/90 dark:from-yellow-900/40 dark:via-orange-900/30 dark:to-yellow-900/40 border border-yellow-400/70 dark:border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]' :
-                                    index === 1 ? 'bg-gradient-to-r from-gray-100/90 via-slate-100/80 to-gray-100/90 dark:from-gray-800/40 dark:via-slate-800/30 dark:to-gray-800/40 border border-gray-400/70 dark:border-gray-500/50 shadow-[0_0_10px_rgba(156,163,175,0.2)]' :
-                                        'bg-gradient-to-r from-orange-100/90 via-amber-100/80 to-orange-100/90 dark:from-orange-900/40 dark:via-amber-900/30 dark:to-orange-900/40 border border-orange-500/70 dark:border-orange-600/50 shadow-[0_0_8px_rgba(234,88,12,0.2)]'
+                            <div key={score.id} className={`relative flex items-center justify-between p-2 md:p-3 rounded-lg md:rounded-xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] ${index === 0 ? 'bg-gradient-to-r from-rank-1-from to-rank-1-to border border-rank-1-border shadow-md' :
+                                isPersonalScore ? 'bg-gradient-to-r from-accent-primary/10 via-accent-secondary/5 to-accent-primary/10 border-2 border-accent-secondary/50 shadow-md animate-pulse' :
+                                    index === 1 ? 'bg-gradient-to-r from-rank-2-from to-rank-2-to border border-rank-2-border shadow-sm' :
+                                        index === 2 ? 'bg-gradient-to-r from-rank-3-from to-rank-3-to border border-rank-3-border shadow-sm' :
+                                            'bg-surface/50 border border-default'
                                 }`}>
                                 {/* Personal Score Glow Effect */}
                                 {isPersonalScore && (
@@ -441,27 +473,35 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
                                 <div className="relative flex items-center gap-2 md:gap-3">
                                     <div className="flex items-center gap-1 md:gap-2">
                                         {rankIcon}
-                                        <span className={`font-black w-4 md:w-6 text-center drop-shadow-sm ${isPersonalScore ? 'text-purple-700 dark:text-purple-300 text-lg md:text-2xl' :
-                                            index === 0 ? 'text-yellow-600 dark:text-yellow-300 text-base md:text-xl' :
-                                                index === 1 ? 'text-gray-600 dark:text-gray-200 text-sm md:text-lg' :
-                                                    'text-orange-600 dark:text-orange-300 text-xs md:text-base'
-                                            }`}>#{index + 1}</span>
+                                        <span className={`font-black w-4 md:w-6 text-center drop-shadow-sm ${index === 0 ? 'text-rank-1-text' :
+                                            index === 1 ? 'text-rank-2-text' :
+                                                index === 2 ? 'text-rank-3-text' :
+                                                    isPersonalScore ? 'text-accent-secondary' :
+                                                        'text-secondary'
+                                            } ${index < 3 ? 'text-sm md:text-xl' : 'text-xs md:text-base'}`}>#{index + 1}</span>
                                     </div>
-                                    <span className={`font-bold drop-shadow-sm text-sm md:text-base truncate max-w-[100px] md:max-w-none ${isPersonalScore ? 'text-purple-800 dark:text-purple-200' : 'text-gray-800 dark:text-white'
-                                        }`}>
+                                    <span
+                                        className={`font-bold drop-shadow-sm text-sm md:text-base truncate max-w-[100px] md:max-w-none animate-shine animate-neon`}
+                                        style={{
+                                            '--neon-color': index === 0 ? 'var(--rank-1-border)' :
+                                                index === 1 ? 'var(--rank-2-border)' :
+                                                    index === 2 ? 'var(--rank-3-border)' :
+                                                        isPersonalScore ? 'var(--accent-secondary)' : 'transparent'
+                                        } as React.CSSProperties}
+                                    >
                                         {score.username}
-                                        {isPersonalScore && <span className="ml-1 text-purple-500 animate-pulse">★</span>}
+                                        {isPersonalScore && <span className="ml-1 text-accent-secondary animate-pulse">★</span>}
                                     </span>
                                 </div>
                                 <div className="relative flex items-center gap-1 md:gap-2">
-                                    <span className={`font-mono font-bold drop-shadow-sm text-xs md:text-sm ${isPersonalScore ? 'text-purple-800 dark:text-purple-200 drop-shadow-[0_0_6px_rgba(168,85,247,0.4)]' : 'text-cyan-700 dark:text-cyan-300'
+                                    <span className={`font-mono font-bold drop-shadow-sm text-xs md:text-sm ${isPersonalScore ? 'text-accent-secondary drop-shadow-[0_0_6px_rgba(168,85,247,0.4)]' : 'text-accent-info'
                                         }`}>
                                         {score.score}{score.attempts ? `/${score.attempts}` : ''}
                                     </span>
                                     {(isSuperAdmin || isAdmin) && (
                                         <button
                                             onClick={() => handleReset(score.id, score.username)}
-                                            className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center bg-red-100/90 dark:bg-red-500/30 hover:bg-red-200/90 dark:hover:bg-red-500/50 text-red-600 dark:text-red-300 hover:text-red-800 dark:hover:text-white rounded-full transition-all duration-300 backdrop-blur-xl border border-red-300/70 dark:border-red-500/40 hover:border-red-400 dark:hover:border-red-400 text-xs md:text-sm min-h-[20px] min-w-[20px]"
+                                            className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center bg-accent-danger/10 hover:bg-accent-danger/20 text-accent-danger rounded-full transition-all duration-300 backdrop-blur-xl border border-accent-danger/20 hover:border-accent-danger/40 text-xs md:text-sm min-h-[20px] min-w-[20px]"
                                             title={t('game.reset_score')}
                                         >
                                             ×
