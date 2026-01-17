@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { LoadingSpinner } from './ui/LoadingSpinner';
 
 interface SplashScreenProps {
     isLoading: boolean;
@@ -31,9 +32,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative z-10 flex flex-col items-center max-w-2xl w-full"
             >
-                {/* Brand icon - Glassmorphism style */}
-                <div className="w-20 h-20 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 mb-10 flex items-center justify-center shadow-2xl shadow-purple-500/10 transition-transform hover:scale-105 duration-500">
-                    <span className="text-primary text-4xl font-black italic select-none">M</span>
+                {/* Brand element - Using global LoadingSpinner */}
+                <div className="mb-12">
+                    <LoadingSpinner size="lg" color="cyan" className="scale-125" />
                 </div>
 
                 {error ? (
@@ -88,26 +89,6 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                             {t('common.loading', 'Syncing Data')}
                         </h1>
 
-                        {/* Minimal loading indicator - Glassmorphism style */}
-                        <div className="flex space-x-3 mt-2">
-                            {[0, 1, 2].map((i) => (
-                                <motion.div
-                                    key={i}
-                                    className="w-4 h-4 bg-white/20 backdrop-blur-md rounded-full shadow-[inset_0_0_10px_rgba(255,255,255,0.2)]"
-                                    animate={{
-                                        opacity: [0.3, 1, 0.3],
-                                        scale: [0.8, 1.2, 0.8],
-                                        backgroundColor: ['rgba(255,255,255,0.1)', 'rgba(99,102,241,0.5)', 'rgba(255,255,255,0.1)']
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        delay: i * 0.2,
-                                        ease: "easeInOut"
-                                    }}
-                                />
-                            ))}
-                        </div>
                     </div>
                 )}
             </motion.div>

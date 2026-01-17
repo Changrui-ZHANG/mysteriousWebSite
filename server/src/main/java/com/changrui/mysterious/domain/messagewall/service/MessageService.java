@@ -2,6 +2,8 @@ package com.changrui.mysterious.domain.messagewall.service;
 
 import com.changrui.mysterious.domain.messagewall.model.ChatSetting;
 import com.changrui.mysterious.domain.messagewall.model.Message;
+import com.changrui.mysterious.domain.messagewall.model.MessageReaction;
+import com.changrui.mysterious.domain.messagewall.model.MessageReaction.ReactionUser;
 import com.changrui.mysterious.domain.messagewall.repository.ChatSettingRepository;
 import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -37,7 +40,7 @@ public class MessageService {
 
     public Message addMessage(Message message) {
         Message savedMessage = messageRepository.save(message);
-        
+
         // Record activity for profile statistics and update last active
         if (savedMessage.getUserId() != null && !savedMessage.getUserId().isEmpty()) {
             try {
@@ -45,10 +48,9 @@ public class MessageService {
                 profileIntegrationService.updateLastActiveFromMessage(savedMessage.getUserId());
             } catch (Exception e) {
                 // Log error but don't fail the message save
-                // Could add logging here if needed
             }
         }
-        
+
         return savedMessage;
     }
 
@@ -87,5 +89,96 @@ public class MessageService {
 
     public void clearAllMessages() {
         messageRepository.deleteAll();
+    }
+
+    /**
+     * Add a reaction to a message
+     */
+    @Transactional
+    public Message addReaction(String messageId, String userId, String username, String emoji) {
+        System.out.println("[MessageService.addReaction] Adding reaction " + emoji + " to message " + messageId);
+
+        Message message = messageRepository.findById(messageId).orElse(null);
+        if (message == null) {
+            System.out.println("[MessageService.addReaction] Message not found: " + messageId);
+            return null;
+        }
+
+        List<MessageReaction> reactions = message.getReactions();
+        if (reactions == null) {
+            reactions = new LinkedList<>();
+        }
+
+        // Find existing reaction with this emoji
+        MessageReaction existingReaction = reactions.stream()
+                .filter(r -> emoji.equals(r.getEmoji()))
+                .findFirst()
+                .orElse(null);
+
+        if (existingReaction != null) {
+            // Check if user already reacted
+            boolean userAlreadyReacted = existingReaction.getUsers().stream()
+                    .anyMatch(u -> userId.equals(u.getUserId()));
+
+            if (!userAlreadyReacted) {
+                // Add user to existing reaction
+                existingReaction.getUsers().add(new ReactionUser(userId, username, System.currentTimeMillis()));
+                existingReaction.setCount(existingReaction.getUsers().size());
+                System.out.println("[MessageService.addReaction] Added user to existing reaction, new count: "
+                        + existingReaction.getCount());
+            } else {
+                System.out.println("[MessageService.addReaction] User already reacted with this emoji");
+            }
+        } else {
+            // Create new reaction
+            List<ReactionUser> users = new LinkedList<>();
+            users.add(new ReactionUser(userId, username, System.currentTimeMillis()));
+            MessageReaction newReaction = new MessageReaction(emoji, 1, users);
+            reactions.add(newReaction);
+            System.out.println("[MessageService.addReaction] Created new reaction: " + emoji);
+        }
+
+        message.setReactions(reactions);
+
+        Message saved = messageRepository.save(message);
+        System.out.println("[MessageService.addReaction] Reactions saved. Count: " + saved.getReactions().size());
+
+        return saved;
+    }
+
+    /**
+     * Remove a reaction from a message
+     */
+    @Transactional
+    public Message removeReaction(String messageId, String userId, String emoji) {
+        Message message = messageRepository.findById(messageId).orElse(null);
+        if (message == null) {
+            return null;
+        }
+
+        List<MessageReaction> reactions = message.getReactions();
+        if (reactions == null || reactions.isEmpty()) {
+            return message;
+        }
+
+        // Find reaction with this emoji
+        MessageReaction existingReaction = reactions.stream()
+                .filter(r -> emoji.equals(r.getEmoji()))
+                .findFirst()
+                .orElse(null);
+
+        if (existingReaction != null) {
+            // Remove user from reaction
+            existingReaction.getUsers().removeIf(u -> userId.equals(u.getUserId()));
+            existingReaction.setCount(existingReaction.getUsers().size());
+
+            // Remove reaction if no users left
+            if (existingReaction.getCount() == 0) {
+                reactions.remove(existingReaction);
+            }
+        }
+
+        message.setReactions(reactions);
+        return messageRepository.save(message);
     }
 }

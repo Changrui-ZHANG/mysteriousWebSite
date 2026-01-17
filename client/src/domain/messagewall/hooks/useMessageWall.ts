@@ -46,6 +46,7 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         isLoading: messages.isLoading,
         handleSubmit: messages.handleSubmit,
         handleDelete: messages.handleDelete,
+        updateMessageReactions: messages.updateMessageReactions,
         
         // Reply functionality
         replyingTo: messages.replyingTo,

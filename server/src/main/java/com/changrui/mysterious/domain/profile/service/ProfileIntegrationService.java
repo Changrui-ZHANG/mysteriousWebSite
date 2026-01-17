@@ -32,10 +32,10 @@ public class ProfileIntegrationService {
 
         // Get unique user IDs from messages
         List<String> userIds = messages.stream()
-            .map(Message::getUserId)
-            .filter(userId -> userId != null && !userId.isEmpty())
-            .distinct()
-            .collect(Collectors.toList());
+                .map(Message::getUserId)
+                .filter(userId -> userId != null && !userId.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
 
         if (userIds.isEmpty()) {
             return messages;
@@ -43,13 +43,13 @@ public class ProfileIntegrationService {
 
         // Fetch profiles for these users
         Map<String, UserProfile> profileMap = profileRepository.findAllById(userIds)
-            .stream()
-            .collect(Collectors.toMap(UserProfile::getUserId, profile -> profile));
+                .stream()
+                .collect(Collectors.toMap(UserProfile::getUserId, profile -> profile));
 
         // Enrich messages with profile data
         return messages.stream()
-            .map(message -> enrichMessageWithProfile(message, profileMap.get(message.getUserId())))
-            .collect(Collectors.toList());
+                .map(message -> enrichMessageWithProfile(message, profileMap.get(message.getUserId())))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -62,19 +62,22 @@ public class ProfileIntegrationService {
 
         // Create a copy to avoid modifying the original
         Message enrichedMessage = new Message(
-            message.getId(),
-            message.getUserId(),
-            message.getName(),
-            message.getMessage(),
-            message.getTimestamp(),
-            message.isAnonymous(),
-            message.isVerified()
-        );
+                message.getId(),
+                message.getUserId(),
+                message.getName(),
+                message.getMessage(),
+                message.getTimestamp(),
+                message.isAnonymous(),
+                message.isVerified());
 
         // Copy quoted message info
         enrichedMessage.setQuotedMessageId(message.getQuotedMessageId());
         enrichedMessage.setQuotedName(message.getQuotedName());
         enrichedMessage.setQuotedMessage(message.getQuotedMessage());
+
+        // Copy reactions and channel info
+        enrichedMessage.setReactions(message.getReactions());
+        enrichedMessage.setChannelId(message.getChannelId());
 
         // Add profile information if available and profile is public
         if (profile != null && profile.isPublic()) {
@@ -95,8 +98,8 @@ public class ProfileIntegrationService {
         }
 
         return profileRepository.findByUserId(userId)
-            .filter(UserProfile::isPublic)
-            .orElse(null);
+                .filter(UserProfile::isPublic)
+                .orElse(null);
     }
 
     /**

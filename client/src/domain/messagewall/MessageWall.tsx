@@ -1,14 +1,16 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import UserManagement from '../user/UserManagement';
 import { ScrollProgress, LoginRequired } from '../../shared/components';
 import { ConnectionStatus } from '../../shared/components/ui/ConnectionStatus';
-import { MessageItem, MessageInput, MessageAdminPanel } from './components';
+import { MessageItem, MessageInput, MessageAdminPanel, ChannelTabs, TypingIndicator } from './components';
 import { useMessageWall } from './hooks/useMessageWall';
+import { useTypingIndicator } from './hooks/useTypingIndicator';
 import { getAdminCode } from '../../shared/constants/authStorage';
 import { useAuth } from '../../shared/contexts/AuthContext';
 import type { MessageWallProps } from './types';
+import type { Reaction } from './types/reaction.types';
 
 export function MessageWall({ }: MessageWallProps) {
     const { t } = useTranslation();
@@ -17,15 +19,23 @@ export function MessageWall({ }: MessageWallProps) {
     const [showUserManagement, setShowUserManagement] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+    // Hook pour les indicateurs de frappe
+    const { typingUsers } = useTypingIndicator();
+
     const {
         messages, replyingTo, setReplyingTo, translations, translating, showTranslated,
         isGlobalMute, onlineCount, showOnlineCountToAll, highlightedMessageId,
-        handleTranslate, handleSubmit, handleDelete,
+        handleTranslate, handleSubmit, handleDelete, updateMessageReactions,
         toggleMute, clearAllMessages, toggleOnlineCountVisibility, fetchOnlineCount,
         isOwnMessage, canDeleteMessage, scrollToMessage,
         // Nouveau : état de connexion pour éviter les boucles d'erreur
         connectionState, connectionError, isRetrying, canRetryConnection, retryConnection, clearConnectionError
     } = useMessageWall({ user, isAdmin });
+
+    // Callback pour mettre à jour les réactions localement
+    const handleReactionUpdate = useCallback((messageId: string, reactions: Reaction[]) => {
+        updateMessageReactions(messageId, reactions);
+    }, [updateMessageReactions]);
 
     const messageIcon = (
         <svg className="w-8 h-8 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,6 +84,9 @@ export function MessageWall({ }: MessageWallProps) {
                     style={{ scrollbarGutter: 'stable' }}
                 >
                     <div className="max-w-3xl mx-auto flex flex-col gap-4 py-6">
+                        {/* Channel Tabs */}
+                        <ChannelTabs />
+                        
                         <AnimatePresence mode="popLayout">
                             {(!Array.isArray(messages) || messages.length === 0) ? (
                                 <motion.div
@@ -99,10 +112,14 @@ export function MessageWall({ }: MessageWallProps) {
                                         onReply={setReplyingTo}
                                         onTranslate={handleTranslate}
                                         onScrollToMessage={scrollToMessage}
+                                        onReactionUpdate={handleReactionUpdate}
                                     />
                                 ))
                             )}
                         </AnimatePresence>
+                        
+                        {/* Typing Indicator */}
+                        <TypingIndicator typingUsers={typingUsers} />
                     </div>
                 </div>
 

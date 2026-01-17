@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="027-add-channels-and-reactions-to-messages" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="messages" columnName="channel_id"/></not>
+        </preConditions>
+        <comment>Ajout des champs channel_id et reactions aux messages</comment>
+        <addColumn tableName="messages">
+            <column name="channel_id" type="VARCHAR(50)" defaultValue="general">
+                <constraints nullable="true"/>
+            </column>
+            <column name="reactions" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

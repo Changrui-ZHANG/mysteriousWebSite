@@ -52,7 +52,21 @@ public class MessageWebSocketController {
     }
 
     /**
+     * Broadcast reaction update to all subscribers.
+     */
+    public void broadcastReactionUpdate(String messageId, Object reactions) {
+        messagingTemplate.convertAndSend("/topic/messages", 
+            new WebSocketEvent("REACTION_UPDATED", 
+                new ReactionUpdatePayload(messageId, reactions)));
+    }
+
+    /**
      * WebSocket event wrapper for type-safe messaging.
      */
     public record WebSocketEvent(String type, Object payload) {}
+
+    /**
+     * Payload for reaction updates.
+     */
+    public record ReactionUpdatePayload(String messageId, Object reactions) {}
 }

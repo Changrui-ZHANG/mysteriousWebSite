@@ -1,0 +1,151 @@
+/**
+ * MessageReactions Styles
+ * Design moderne et interactif pour les réactions
+ * Les réactions sont affichées en dehors de la bulle du message
+ */
+
+.message-reactions-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.375rem;
+  margin-left: 0.25rem;
+}
+
+.reactions-list {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.reaction-button-wrapper {
+  position: relative;
+}
+
+.reaction-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1875rem 0.375rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.75rem;
+}
+
+.reaction-button:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reaction-button:active {
+  transform: scale(0.95);
+}
+
+.reaction-button-active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.reaction-button-active:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.reaction-emoji {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.reaction-count {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.reaction-button-active .reaction-count {
+  color: white;
+}
+
+.reaction-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 100;
+  animation: tooltip-fade-in 0.2s ease-out;
+}
+
+.reaction-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .reaction-button {
+    background: rgba(45, 55, 72, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+  }
+
+  .reaction-button:hover {
+    background: rgba(45, 55, 72, 1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reaction-button {
+    padding: 0.125rem 0.3125rem;
+    font-size: 0.75rem;
+  }
+
+  .reaction-emoji {
+    font-size: 0.6875rem;
+  }
+
+  .reaction-count {
+    font-size: 0.625rem;
+  }
+
+  .reaction-tooltip {
+    font-size: 0.6875rem;
+    max-width: 150px;
+  }
+}

@@ -97,22 +97,12 @@ export function useConnectionState(
             return;
         }
 
-        try {
-            setReconnecting();
-            setRetryCount(prev => prev + 1);
-            
-            await onRetry();
-            
-            // Si pas d'erreur, considérer comme connecté
-            setConnected();
-        } catch (error) {
-            const errorMessage = error instanceof Error 
-                ? error.message 
-                : t('errors.connection.retry_failed', 'Retry failed');
-            
-            setDisconnected(errorMessage, retryCount < maxRetries - 1);
-        }
-    }, [onRetry, isRetrying, retryCount, maxRetries, setReconnecting, setConnected, setDisconnected, t]);
+        setReconnecting();
+        setRetryCount(prev => prev + 1);
+        
+        // onRetry doit gérer ses propres erreurs et appeler setConnected/setDisconnected
+        await onRetry();
+    }, [onRetry, isRetrying, retryCount, maxRetries, setReconnecting]);
 
     // Propriétés calculées
     const isConnected = connectionState === ConnectionState.CONNECTED;

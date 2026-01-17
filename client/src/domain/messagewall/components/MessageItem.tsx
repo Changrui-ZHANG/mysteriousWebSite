@@ -1,21 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { FaCheckCircle, FaLanguage, FaSpinner, FaReply, FaTrash, FaUserSecret } from 'react-icons/fa';
+import { FaCheckCircle, FaLanguage, FaSpinner, FaReply, FaTrash, FaUserSecret, FaSmile } from 'react-icons/fa';
 import { UserAvatar } from '../../../shared/components/UserAvatar';
-
-interface Message {
-    id: string;
-    userId: string;
-    name: string;
-    message: string;
-    timestamp: number;
-    isAnonymous: boolean;
-    isVerified: boolean;
-    quotedMessageId?: string;
-    quotedName?: string;
-    quotedMessage?: string;
-}
+import { MessageReactions } from './MessageReactions';
+import { useReactions } from '../hooks/useReactions';
+import { QUICK_REACTIONS } from '../types/reaction.types';
+import type { Message } from '../types';
+import type { Reaction } from '../types/reaction.types';
 
 interface MessageItemProps {
     msg: Message;
@@ -30,6 +22,7 @@ interface MessageItemProps {
     onReply: (msg: Message) => void;
     onTranslate: (id: string, text: string) => void;
     onScrollToMessage: (id: string) => void;
+    onReactionUpdate?: (messageId: string, reactions: Reaction[]) => void;
 }
 
 export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
@@ -44,9 +37,18 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
     onDelete,
     onReply,
     onTranslate,
-    onScrollToMessage
+    onScrollToMessage,
+    onReactionUpdate,
 }, ref) => {
     const { t } = useTranslation();
+    const [showReactionPicker, setShowReactionPicker] = useState(false);
+
+    // Hook pour gérer les réactions - une seule instance par message
+    const reactionHook = useReactions({
+        messageId: msg.id,
+        initialReactions: msg.reactions || [],
+        onReactionUpdate: onReactionUpdate ? (reactions) => onReactionUpdate(msg.id, reactions) : undefined
+    });
 
     const formatTimestamp = (timestamp: number) => {
         const now = Date.now();
@@ -144,6 +146,37 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
 
                     {/* Action Buttons - Inside Bubble on Hover */}
                     <div className={`absolute ${isOwn ? 'left-0 -translate-x-full pl-2' : 'right-0 translate-x-full pr-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all flex gap-1`}>
+                        {/* Bouton Réaction avec Picker */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowReactionPicker(!showReactionPicker)}
+                                className="w-7 h-7 bg-inset hover:bg-accent-primary/30 border border-default backdrop-blur-lg rounded-lg text-secondary hover:text-primary text-[10px] flex items-center justify-center transition-all"
+                                title="Réagir"
+                            >
+                                <FaSmile />
+                            </button>
+
+                            {/* Picker de réactions rapides */}
+                            {showReactionPicker && (
+                                <div className={`absolute ${isOwn ? 'right-full mr-2' : 'left-full ml-2'} top-0 flex gap-1 p-2 bg-surface-translucent backdrop-blur-lg rounded-lg border border-default shadow-lg z-50`}>
+                                    {QUICK_REACTIONS.map((emoji) => (
+                                        <button
+                                            key={emoji}
+                                            onClick={async () => {
+                                                console.log('[MessageItem] Emoji clicked', { emoji, messageId: msg.id });
+                                                await reactionHook.toggleReaction(emoji);
+                                                setShowReactionPicker(false);
+                                            }}
+                                            className="w-8 h-8 flex items-center justify-center text-lg hover:bg-accent-primary/20 rounded-lg transition-all hover:scale-110"
+                                            title={emoji}
+                                        >
+                                            {emoji}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         <button
                             onClick={() => onTranslate(msg.id, msg.message)}
                             className="w-7 h-7 bg-inset hover:bg-surface-alt border border-default backdrop-blur-lg rounded-lg text-secondary hover:text-primary text-[10px] flex items-center justify-center transition-all"
@@ -170,6 +203,13 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
                         )}
                     </div>
                 </div>
+
+                {/* Reactions - Outside the bubble */}
+                <MessageReactions
+                    messageId={msg.id}
+                    reactions={reactionHook.reactions}
+                    onReactionClick={(emoji) => reactionHook.toggleReaction(emoji)}
+                />
             </div>
         </motion.div>
     );

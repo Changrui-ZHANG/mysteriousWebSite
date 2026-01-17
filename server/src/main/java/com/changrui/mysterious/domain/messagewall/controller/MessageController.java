@@ -1,6 +1,7 @@
 package com.changrui.mysterious.domain.messagewall.controller;
 
 import com.changrui.mysterious.domain.messagewall.model.Message;
+import com.changrui.mysterious.domain.messagewall.model.MessageReaction;
 import com.changrui.mysterious.domain.messagewall.service.MessageService;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.domain.user.service.UserVerificationService;
@@ -35,9 +36,11 @@ public class MessageController {
 
     @GetMapping
     public ResponseEntity<List<Message>> getAllMessages() {
+        List<Message> messages = messageService.getAllMessages();
+
         return ResponseEntity.ok()
                 .header("X-System-Muted", String.valueOf(messageService.isMuted()))
-                .body(messageService.getAllMessages());
+                .body(messages);
     }
 
     @PostMapping
@@ -66,10 +69,10 @@ public class MessageController {
         }
 
         Message saved = messageService.addMessage(message);
-        
+
         // Broadcast to WebSocket subscribers
         webSocketController.broadcastNewMessage(saved);
-        
+
         return ResponseEntity.ok(ApiResponse.success(saved));
     }
 
@@ -81,7 +84,7 @@ public class MessageController {
 
         boolean newState = !messageService.isMuted();
         messageService.setMuted(newState);
-        
+
         // Broadcast mute status to all clients
         webSocketController.broadcastMuteStatus(newState);
 
@@ -104,7 +107,7 @@ public class MessageController {
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
-        
+
         // Broadcast deletion to all clients
         webSocketController.broadcastDelete(id);
 
@@ -118,10 +121,93 @@ public class MessageController {
         }
 
         messageService.clearAllMessages();
-        
+
         // Broadcast clear to all clients
         webSocketController.broadcastClearAll();
-        
+
         return ResponseEntity.ok(ApiResponse.successMessage("All messages cleared"));
+    }
+
+    /**
+     * Add a reaction to a message
+     */
+    @PostMapping("/reactions/add")
+    public ResponseEntity<ApiResponse<Message>> addReaction(@RequestBody ReactionRequest request) {
+        Message updated = messageService.addReaction(
+                request.getMessageId(),
+                request.getUserId(),
+                request.getUsername(),
+                request.getEmoji());
+
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Broadcast reaction update to all clients
+        webSocketController.broadcastReactionUpdate(updated.getId(), updated.getReactions());
+
+        return ResponseEntity.ok(ApiResponse.success(updated));
+    }
+
+    /**
+     * Remove a reaction from a message
+     */
+    @PostMapping("/reactions/remove")
+    public ResponseEntity<ApiResponse<Message>> removeReaction(@RequestBody ReactionRequest request) {
+        Message updated = messageService.removeReaction(
+                request.getMessageId(),
+                request.getUserId(),
+                request.getEmoji());
+
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Broadcast reaction update to all clients
+        webSocketController.broadcastReactionUpdate(updated.getId(), updated.getReactions());
+
+        return ResponseEntity.ok(ApiResponse.success(updated));
+    }
+
+    /**
+     * DTO for reaction requests
+     */
+    public static class ReactionRequest {
+        private String messageId;
+        private String userId;
+        private String username;
+        private String emoji;
+
+        public String getMessageId() {
+            return messageId;
+        }
+
+        public void setMessageId(String messageId) {
+            this.messageId = messageId;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getEmoji() {
+            return emoji;
+        }
+
+        public void setEmoji(String emoji) {
+            this.emoji = emoji;
+        }
     }
 }

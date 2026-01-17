@@ -1,7 +1,11 @@
 package com.changrui.mysterious.domain.messagewall.model;
 
+import com.changrui.mysterious.domain.messagewall.converter.ReactionsConverter;
+import com.changrui.mysterious.domain.messagewall.model.MessageReaction;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Entity representing a chat message.
@@ -44,7 +48,16 @@ public class Message {
     @Column(name = "quoted_message", length = 500)
     private String quotedMessage;
 
+    @Column(name = "channel_id")
+    private String channelId;
+
+    @Column(name = "reactions", columnDefinition = "TEXT")
+    @Convert(converter = ReactionsConverter.class)
+    @JsonProperty("reactions")
+    private List<MessageReaction> reactions;
+
     public Message() {
+        this.reactions = new LinkedList<>();
     }
 
     public Message(String id, String userId, String name, String message, long timestamp, boolean isAnonymous,
@@ -56,6 +69,7 @@ public class Message {
         this.timestamp = timestamp;
         this.isAnonymous = isAnonymous;
         this.isVerified = isVerified;
+        this.reactions = new LinkedList<>();
     }
 
     public String getId() {
@@ -136,5 +150,21 @@ public class Message {
 
     public void setQuotedMessage(String quotedMessage) {
         this.quotedMessage = quotedMessage;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public List<MessageReaction> getReactions() {
+        return reactions != null ? reactions : new LinkedList<>();
+    }
+
+    public void setReactions(List<MessageReaction> reactions) {
+        this.reactions = reactions;
     }
 }

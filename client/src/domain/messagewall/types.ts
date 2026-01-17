@@ -1,3 +1,5 @@
+import type { Reaction } from './types/reaction.types';
+
 export interface Message {
     id: string;
     userId: string;
@@ -9,6 +11,8 @@ export interface Message {
     quotedMessageId?: string;
     quotedName?: string;
     quotedMessage?: string;
+    channelId?: string; // Channel auquel appartient le message
+    reactions?: Reaction[];
 }
 
 export interface User {

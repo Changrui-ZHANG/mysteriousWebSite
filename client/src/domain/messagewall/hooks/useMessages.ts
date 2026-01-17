@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
 import { STORAGE_KEYS } from '../../../shared/constants/config';
-import { useConnectionState } from '../../../shared/hooks/useConnectionState';
+import { useConnectionState, ConnectionState } from '../../../shared/hooks/useConnectionState';
+import { useChannelStore } from '../stores/channelStore';
 import type { Message } from '../types';
 
 interface User { 
@@ -18,15 +19,22 @@ interface UseMessagesProps {
 /**
  * Hook pour gérer les messages avec gestion d'erreur sans boucle
  * Utilise useConnectionState pour éviter les retry automatiques
+ * Supporte le filtrage par channel
  */
 export function useMessages({ user, isAdmin }: UseMessagesProps) {
     const { t } = useTranslation();
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [allMessages, setAllMessages] = useState<Message[]>([]); // Tous les messages
+    const [messages, setMessages] = useState<Message[]>([]); // Messages filtrés par channel
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
     const [currentUserId, setCurrentUserId] = useState('');
     const [isGlobalMute, setIsGlobalMute] = useState(false);
     const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    // Récupérer le channel actif depuis le store
+    const activeChannelId = useChannelStore(state => state.activeChannelId);
+    const incrementMessageCount = useChannelStore(state => state.incrementMessageCount);
+    const updateLastMessageAt = useChannelStore(state => state.updateLastMessageAt);
 
     // Gestion de l'état de connexion pour éviter les boucles d'erreur
     const connectionState = useConnectionState(
@@ -47,9 +55,9 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         setCurrentUserId(userId);
     }, []);
 
-    // Fetch Messages avec gestion d'erreur sans boucle
+    // Fetch Messages avec gestion d'erreur sans boucle - charge TOUS les messages UNE SEULE FOIS
     const fetchMessages = useCallback(async () => {
-        if (isLoading || !connectionState.isConnected) return;
+        if (isLoading) return;
         
         try {
             setIsLoading(true);
@@ -60,7 +68,16 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
             if (response.ok) {
                 const data = await response.json();
                 if (Array.isArray(data)) {
-                    setMessages(data);
+                    // Debug: Log des messages reçus
+                    console.log('[useMessages] Messages received from backend:', data);
+                    data.forEach((msg, index) => {
+                        if (msg.reactions && msg.reactions.length > 0) {
+                            console.log(`[useMessages] Message ${index} has reactions:`, msg.reactions);
+                        }
+                    });
+                    
+                    // Stocker TOUS les messages
+                    setAllMessages(data);
                 }
                 
                 // Check mute status from header
@@ -93,11 +110,26 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         }, 100);
         
         return () => clearTimeout(timer);
-    }, []); // Pas de dépendances pour éviter les re-exécutions
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Submit message avec gestion d'erreur
+    // Filtrer les messages par channel actif (côté client, SANS refetch)
+    useEffect(() => {
+        if (activeChannelId && allMessages.length > 0) {
+            const filteredMessages = allMessages.filter((msg: Message) => {
+                const msgChannelId = msg.channelId || 'general';
+                return msgChannelId === activeChannelId;
+            });
+            setMessages(filteredMessages);
+        } else if (activeChannelId) {
+            // Aucun message pour ce channel
+            setMessages([]);
+        }
+    }, [activeChannelId, allMessages]);
+
+    // Submit message avec gestion d'erreur et support des channels
     const handleSubmit = useCallback(async (messageText: string, tempName: string) => {
-        if (!connectionState.isConnected) {
+        // Permettre l'envoi même en état RECONNECTING
+        if (connectionState.connectionState === ConnectionState.ERROR) {
             connectionState.setDisconnected(
                 t('errors.messages.not_connected', 'Not connected to server'), 
                 true
@@ -119,6 +151,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 timestamp: Date.now(),
                 isAnonymous: !senderName || senderName.trim() === '',
                 quotedMessageId: replyingTo?.id || null,
+                channelId: activeChannelId, // Ajouter le channel actif
             };
 
             const response = await fetch(API_ENDPOINTS.MESSAGES.ADD, {
@@ -131,6 +164,9 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
 
             if (response.ok) {
                 setReplyingTo(null);
+                // Mettre à jour les métadonnées du channel
+                incrementMessageCount(activeChannelId);
+                updateLastMessageAt(activeChannelId, new Date());
                 // Refresh messages après envoi réussi
                 setTimeout(() => fetchMessages(), 100);
             } else {
@@ -143,11 +179,12 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
             
             connectionState.setDisconnected(errorMessage, true);
         }
-    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages, connectionState]);
+    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages, connectionState, activeChannelId, incrementMessageCount, updateLastMessageAt]);
 
     // Delete message avec gestion d'erreur
     const handleDelete = useCallback(async (id: string) => {
-        if (!connectionState.isConnected) {
+        // Permettre la suppression même en état RECONNECTING
+        if (connectionState.connectionState === ConnectionState.ERROR) {
             connectionState.setDisconnected(
                 t('errors.messages.not_connected', 'Not connected to server'), 
                 true
@@ -198,27 +235,56 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         }
     }, []);
 
-    // WebSocket event handlers (basic version)
+    // Mettre à jour les réactions d'un message
+    const updateMessageReactions = useCallback((messageId: string, reactions: any[]) => {
+        setAllMessages(prev => prev.map(msg => 
+            msg.id === messageId 
+                ? { ...msg, reactions }
+                : msg
+        ));
+    }, []);
+
+    // WebSocket event handlers (basic version) avec support des channels et réactions
     const handleWebSocketMessage = useCallback((event: { type: string; payload: unknown }) => {
         try {
             switch (event.type) {
-                case 'NEW_MESSAGE':
-                    setMessages(prev => [...prev, event.payload as Message]);
+                case 'NEW_MESSAGE': {
+                    const newMessage = event.payload as Message;
+                    // Ajouter le message à TOUS les messages
+                    setAllMessages(prev => [...prev, newMessage]);
+                    
+                    // Mettre à jour les métadonnées du channel
+                    const msgChannelId = newMessage.channelId || 'general';
+                    incrementMessageCount(msgChannelId);
+                    updateLastMessageAt(msgChannelId, new Date());
                     break;
+                }
                 case 'DELETE_MESSAGE':
-                    setMessages(prev => prev.filter(m => m.id !== event.payload));
+                    setAllMessages(prev => prev.filter(m => m.id !== event.payload));
                     break;
                 case 'MUTE_STATUS':
                     setIsGlobalMute(event.payload as boolean);
                     break;
                 case 'CLEAR_ALL':
-                    setMessages([]);
+                    setAllMessages([]);
                     break;
+                case 'REACTION_ADDED':
+                case 'REACTION_REMOVED':
+                case 'REACTION_UPDATED': {
+                    // Mettre à jour les réactions d'un message
+                    const { messageId, reactions } = event.payload as { messageId: string; reactions: any[] };
+                    setAllMessages(prev => prev.map(msg => 
+                        msg.id === messageId 
+                            ? { ...msg, reactions }
+                            : msg
+                    ));
+                    break;
+                }
             }
         } catch (error) {
             console.error('WebSocket error:', error);
         }
-    }, []);
+    }, [incrementMessageCount, updateLastMessageAt]);
 
     return {
         // State
@@ -247,6 +313,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         isOwnMessage,
         canDeleteMessage,
         scrollToMessage,
+        updateMessageReactions,
 
         // WebSocket handler
         handleWebSocketMessage,
