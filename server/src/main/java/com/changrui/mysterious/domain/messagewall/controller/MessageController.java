@@ -1,5 +1,6 @@
 package com.changrui.mysterious.domain.messagewall.controller;
 
+import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
 import com.changrui.mysterious.domain.messagewall.model.Message;
 import com.changrui.mysterious.domain.messagewall.model.MessageReaction;
 import com.changrui.mysterious.domain.messagewall.service.MessageService;
@@ -35,8 +36,8 @@ public class MessageController {
     private MessageWebSocketController webSocketController;
 
     @GetMapping
-    public ResponseEntity<List<Message>> getAllMessages() {
-        List<Message> messages = messageService.getAllMessages();
+    public ResponseEntity<List<MessageResponse>> getAllMessages() {
+        List<MessageResponse> messages = messageService.getAllMessages();
 
         return ResponseEntity.ok()
                 .header("X-System-Muted", String.valueOf(messageService.isMuted()))
@@ -44,7 +45,7 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Message>> addMessage(
+    public ResponseEntity<ApiResponse<MessageResponse>> addMessage(
             @RequestBody Message message,
             @RequestParam(required = false) String adminCode) {
 
@@ -68,7 +69,7 @@ public class MessageController {
             }
         }
 
-        Message saved = messageService.addMessage(message);
+        MessageResponse saved = messageService.addMessage(message);
 
         // Broadcast to WebSocket subscribers
         webSocketController.broadcastNewMessage(saved);
@@ -132,8 +133,8 @@ public class MessageController {
      * Add a reaction to a message
      */
     @PostMapping("/reactions/add")
-    public ResponseEntity<ApiResponse<Message>> addReaction(@RequestBody ReactionRequest request) {
-        Message updated = messageService.addReaction(
+    public ResponseEntity<ApiResponse<MessageResponse>> addReaction(@RequestBody ReactionRequest request) {
+        MessageResponse updated = messageService.addReaction(
                 request.getMessageId(),
                 request.getUserId(),
                 request.getUsername(),
@@ -153,8 +154,8 @@ public class MessageController {
      * Remove a reaction from a message
      */
     @PostMapping("/reactions/remove")
-    public ResponseEntity<ApiResponse<Message>> removeReaction(@RequestBody ReactionRequest request) {
-        Message updated = messageService.removeReaction(
+    public ResponseEntity<ApiResponse<MessageResponse>> removeReaction(@RequestBody ReactionRequest request) {
+        MessageResponse updated = messageService.removeReaction(
                 request.getMessageId(),
                 request.getUserId(),
                 request.getEmoji());

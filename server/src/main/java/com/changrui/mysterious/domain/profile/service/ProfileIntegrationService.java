@@ -1,11 +1,14 @@
 package com.changrui.mysterious.domain.profile.service;
 
+import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
+import com.changrui.mysterious.domain.messagewall.mapper.MessageMapper;
 import com.changrui.mysterious.domain.messagewall.model.Message;
 import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,12 +25,15 @@ public class ProfileIntegrationService {
     @Autowired
     private ProfileService profileService;
 
+    @Autowired
+    private MessageMapper messageMapper;
+
     /**
-     * Enrich messages with profile information (avatar URLs)
+     * Enrich messages with profile information and convert to DTOs
      */
-    public List<Message> enrichMessagesWithProfiles(List<Message> messages) {
+    public List<MessageResponse> enrichMessagesWithProfiles(List<Message> messages) {
         if (messages == null || messages.isEmpty()) {
-            return messages;
+            return Collections.emptyList();
         }
 
         // Get unique user IDs from messages
@@ -37,56 +43,39 @@ public class ProfileIntegrationService {
                 .distinct()
                 .collect(Collectors.toList());
 
+        Map<String, UserProfile> profileMap;
         if (userIds.isEmpty()) {
-            return messages;
+            profileMap = Collections.emptyMap();
+        } else {
+            // Fetch profiles for these users
+            profileMap = profileRepository.findAllById(userIds)
+                    .stream()
+                    .collect(Collectors.toMap(UserProfile::getUserId, profile -> profile));
         }
 
-        // Fetch profiles for these users
-        Map<String, UserProfile> profileMap = profileRepository.findAllById(userIds)
-                .stream()
-                .collect(Collectors.toMap(UserProfile::getUserId, profile -> profile));
-
-        // Enrich messages with profile data
+        // Convert to DTO and enrich
         return messages.stream()
                 .map(message -> enrichMessageWithProfile(message, profileMap.get(message.getUserId())))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Enrich a single message with profile information
+     * Enrich a single message with profile information and convert to DTO
      */
-    public Message enrichMessageWithProfile(Message message, UserProfile profile) {
+    public MessageResponse enrichMessageWithProfile(Message message, UserProfile profile) {
         if (message == null) {
-            return message;
+            return null;
         }
 
-        // Create a copy to avoid modifying the original
-        Message enrichedMessage = new Message(
-                message.getId(),
-                message.getUserId(),
-                message.getName(),
-                message.getMessage(),
-                message.getTimestamp(),
-                message.isAnonymous(),
-                message.isVerified());
-
-        // Copy quoted message info
-        enrichedMessage.setQuotedMessageId(message.getQuotedMessageId());
-        enrichedMessage.setQuotedName(message.getQuotedName());
-        enrichedMessage.setQuotedMessage(message.getQuotedMessage());
-
-        // Copy reactions and channel info
-        enrichedMessage.setReactions(message.getReactions());
-        enrichedMessage.setChannelId(message.getChannelId());
+        // Use Mapper to create DTO - This copies all fields including reactions!
+        MessageResponse response = messageMapper.toDto(message);
 
         // Add profile information if available and profile is public
         if (profile != null && profile.isPublic()) {
-            // We could add avatar URL to the message model if needed
-            // For now, the frontend can fetch profile info separately
-            // This method serves as a placeholder for future enhancements
+            // Future: response.setAvatarUrl(profile.getAvatarUrl());
         }
 
-        return enrichedMessage;
+        return response;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.changrui.mysterious.domain.messagewall.service;
 
 import com.changrui.mysterious.domain.messagewall.model.ChatSetting;
+import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
 import com.changrui.mysterious.domain.messagewall.model.Message;
 import com.changrui.mysterious.domain.messagewall.model.MessageReaction;
 import com.changrui.mysterious.domain.messagewall.model.MessageReaction.ReactionUser;
@@ -33,12 +34,12 @@ public class MessageService {
     @Autowired
     private ProfileIntegrationService profileIntegrationService;
 
-    public List<Message> getAllMessages() {
+    public List<MessageResponse> getAllMessages() {
         List<Message> messages = messageRepository.findAllByOrderByTimestampAsc();
         return profileIntegrationService.enrichMessagesWithProfiles(messages);
     }
 
-    public Message addMessage(Message message) {
+    public MessageResponse addMessage(Message message) {
         Message savedMessage = messageRepository.save(message);
 
         // Record activity for profile statistics and update last active
@@ -51,7 +52,11 @@ public class MessageService {
             }
         }
 
-        return savedMessage;
+        // Use ProfileIntegrationService to enrich and convert to DTO
+        // We pass the saved message to get the enriched DTO
+        return profileIntegrationService.enrichMessageWithProfile(
+                savedMessage,
+                profileIntegrationService.getProfileForMessage(savedMessage.getUserId()));
     }
 
     public Message getMessageById(String id) {
@@ -95,7 +100,7 @@ public class MessageService {
      * Add a reaction to a message
      */
     @Transactional
-    public Message addReaction(String messageId, String userId, String username, String emoji) {
+    public MessageResponse addReaction(String messageId, String userId, String username, String emoji) {
         System.out.println("[MessageService.addReaction] Adding reaction " + emoji + " to message " + messageId);
 
         Message message = messageRepository.findById(messageId).orElse(null);
@@ -143,14 +148,16 @@ public class MessageService {
         Message saved = messageRepository.save(message);
         System.out.println("[MessageService.addReaction] Reactions saved. Count: " + saved.getReactions().size());
 
-        return saved;
+        return profileIntegrationService.enrichMessageWithProfile(
+                saved,
+                profileIntegrationService.getProfileForMessage(saved.getUserId()));
     }
 
     /**
      * Remove a reaction from a message
      */
     @Transactional
-    public Message removeReaction(String messageId, String userId, String emoji) {
+    public MessageResponse removeReaction(String messageId, String userId, String emoji) {
         Message message = messageRepository.findById(messageId).orElse(null);
         if (message == null) {
             return null;
@@ -158,7 +165,9 @@ public class MessageService {
 
         List<MessageReaction> reactions = message.getReactions();
         if (reactions == null || reactions.isEmpty()) {
-            return message;
+            return profileIntegrationService.enrichMessageWithProfile(
+                    message,
+                    profileIntegrationService.getProfileForMessage(message.getUserId()));
         }
 
         // Find reaction with this emoji
@@ -179,6 +188,10 @@ public class MessageService {
         }
 
         message.setReactions(reactions);
-        return messageRepository.save(message);
+        Message saved = messageRepository.save(message);
+
+        return profileIntegrationService.enrichMessageWithProfile(
+                saved,
+                profileIntegrationService.getProfileForMessage(saved.getUserId()));
     }
 }
