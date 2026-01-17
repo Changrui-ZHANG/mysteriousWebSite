@@ -29,7 +29,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     const {
         displayName,
         bio,
-        avatarUrl,
         joinDate,
         lastActive,
         activityStats,

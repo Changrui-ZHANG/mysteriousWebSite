@@ -4,7 +4,6 @@ import { profileKeys } from './queryKeys';
 import type { UserProfile } from '../types';
 import { logAvatarUpload } from '../utils/diagnosticLogger';
 import { useAuth } from '../../../shared/contexts/AuthContext';
-import { resolveAvatarUrl } from '../../../shared/utils/avatarUtils';
 
 /**
  * Avatar service instance

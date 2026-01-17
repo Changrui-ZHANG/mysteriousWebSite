@@ -1,7 +1,7 @@
 package com.changrui.mysterious.domain.messagewall.controller;
 
 import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
-import com.changrui.mysterious.domain.messagewall.service.MessageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -15,9 +15,6 @@ public class MessageWebSocketController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    private MessageService messageService;
 
     /**
      * Broadcast a new message to all subscribers.

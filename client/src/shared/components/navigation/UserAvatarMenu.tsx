@@ -8,7 +8,6 @@ import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AvatarButton } from './AvatarButton';
 import { UserDropdownMenu } from './UserDropdownMenu';
-import { resolveAvatarUrl } from '../../utils/avatarUtils';
 import type { UserAvatarMenuProps } from './types';
 
 export const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({

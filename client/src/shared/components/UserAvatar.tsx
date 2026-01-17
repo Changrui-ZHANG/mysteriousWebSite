@@ -10,6 +10,7 @@ interface UserAvatarProps {
     className?: string;
     onError?: () => void;
     showSkeleton?: boolean;
+    children?: React.ReactNode;
 }
 
 /**
@@ -23,7 +24,8 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     size = 'md',
     className = '',
     onError,
-    showSkeleton = false
+    showSkeleton = false,
+    children
 }) => {
     const { avatarUrl: hookAvatarUrl, isLoading } = useAvatar(userId);
     const [imgSrc, setImgSrc] = useState<string>(resolveAvatarUrl(src));
@@ -79,6 +81,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
             {(showSkeleton || (isLoading && !imgSrc)) && (
                 <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-white/10 to-white/5 animate-pulse" />
             )}
+            {children}
         </div>
     );
 };

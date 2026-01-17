@@ -8,13 +8,11 @@ import type { Reaction } from '../types/reaction.types';
 import './MessageReactions.css';
 
 interface MessageReactionsProps {
-  messageId: string;
   reactions: Reaction[]; // Réactions directement depuis les props
   onReactionClick?: (emoji: string) => void; // Callback pour gérer les clics
 }
 
 export const MessageReactions = ({
-  messageId,
   reactions = [],
   onReactionClick
 }: MessageReactionsProps) => {

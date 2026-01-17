@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { ErrorDisplay } from '../../../shared/components';
 import { RealTimeStatus } from './RealTimeStatus';
-import { useUpdateProfileMutation } from '../queries/profileQueries';
 import { useEditingActions, useHasUnsavedChanges } from '../stores/editingStore';
 import { useNotificationActions } from '../stores/notificationStore';
 import {

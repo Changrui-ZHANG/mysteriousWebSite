@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
-import { STORAGE_KEYS, TIMING } from '../constants/config';
+import { STORAGE_KEYS } from '../constants/config';
 
 export type Theme = 'light' | 'dark' | 'system' | 'paper';
 

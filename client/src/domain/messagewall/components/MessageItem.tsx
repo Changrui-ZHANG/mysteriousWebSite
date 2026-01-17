@@ -59,10 +59,6 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
         return new Date(timestamp).toLocaleDateString();
     };
 
-    const getInitials = (name: string, isAnon: boolean) => {
-        if (isAnon) return '?';
-        return name.charAt(0).toUpperCase();
-    };
 
     return (
         <motion.div
@@ -206,7 +202,6 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
 
                 {/* Reactions - Outside the bubble */}
                 <MessageReactions
-                    messageId={msg.id}
                     reactions={reactionHook.reactions}
                     onReactionClick={(emoji) => reactionHook.toggleReaction(emoji)}
                 />
