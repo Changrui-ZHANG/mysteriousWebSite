@@ -5,12 +5,12 @@ import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.exception.NotFoundException;
 import com.changrui.mysterious.shared.exception.BadRequestException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -1,0 +1,42 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.changrui:mysterious-backend >-------------------
+[INFO] Building mysterious-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ mysterious-backend ---
+[INFO] Deleting C:\MyPlatform\Codes\mysteriousWebSite\server\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mysterious-backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 13 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ mysterious-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 129 source files with javac [debug release 17] to target\classes
+[INFO] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ActivityService.java: C:\MyPlatform\Codes\mysteriousWebSite\server\src\main\java\com\changrui\mysterious\domain\profile\service\ActivityService.java uses unchecked or unsafe operations.
+[INFO] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ActivityService.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/PrivacyFilterMiddleware.java:[25,41] variable profileRepository not initialized in the default constructor
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/PrivacyFilterMiddleware.java:[26,32] variable adminService not initialized in the default constructor
+[INFO] 2 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.443 s
+[INFO] Finished at: 2026-01-18T20:33:13+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project mysterious-backend: Compilation failure: Compilation failure: 
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/PrivacyFilterMiddleware.java:[25,41] variable profileRepository not initialized in the default constructor
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/PrivacyFilterMiddleware.java:[26,32] variable adminService not initialized in the default constructor
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

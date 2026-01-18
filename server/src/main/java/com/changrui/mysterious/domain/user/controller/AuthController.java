@@ -7,10 +7,10 @@ import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import com.changrui.mysterious.shared.exception.ValidationException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Authentication controller for user registration and login.

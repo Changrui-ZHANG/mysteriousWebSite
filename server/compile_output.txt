@@ -1,0 +1,392 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.changrui:mysterious-backend >-------------------
+[INFO] Building mysterious-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ mysterious-backend ---
+[INFO] Deleting C:\MyPlatform\Codes\mysteriousWebSite\server\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mysterious-backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 13 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ mysterious-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 129 source files with javac [debug release 17] to target\classes
+[INFO] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ActivityService.java: C:\MyPlatform\Codes\mysteriousWebSite\server\src\main\java\com\changrui\mysterious\domain\profile\service\ActivityService.java uses unchecked or unsafe operations.
+[INFO] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ActivityService.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/PrivacyFilterMiddleware.java:[240,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.middleware.PrivacyFilterMiddleware
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[47,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[56,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[81,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[101,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[105,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[135,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[169,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[66,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[76,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[82,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[87,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[93,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[106,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[172,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[34,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[42,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[49,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[52,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[63,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[67,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[82,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[86,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[94,25] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[103,25] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[106,25] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[112,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[121,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[149,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[160,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[163,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[175,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[179,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[185,29] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[189,29] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[191,29] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[198,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[32,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[43,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[54,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[65,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[76,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[87,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[98,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[109,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/user/controller/AuthController.java:[54,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.user.controller.AuthController
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/ProfileAuthMiddleware.java:[185,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.middleware.ProfileAuthMiddleware
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/FileUploadMiddleware.java:[228,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.middleware.FileUploadMiddleware
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/FileUploadInterceptor.java:[91,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.middleware.FileUploadInterceptor
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/FileUploadInterceptor.java:[124,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.profile.middleware.FileUploadInterceptor
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[62,9] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[86,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[88,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[92,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[106,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[111,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[152,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[169,17] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[177,13] cannot find symbol
+  symbol:   variable log
+  location: class com.changrui.mysterious.domain.media.service.MediaService
+[INFO] 59 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.499 s
+[INFO] Finished at: 2026-01-18T19:23:42+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project mysterious-backend: Compilation failure: Compilation failure: 
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/PrivacyFilterMiddleware.java:[240,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.middleware.PrivacyFilterMiddleware
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[47,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[56,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[81,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[101,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[105,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[135,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/service/ProfileMigrationService.java:[169,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.service.ProfileMigrationService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[66,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[76,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[82,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[87,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[93,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[106,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreService.java:[172,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[34,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[42,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[49,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[52,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[63,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[67,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[82,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[86,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[94,25] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[103,25] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[106,25] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[112,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[121,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[149,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[160,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[163,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[175,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[179,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[185,29] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[189,29] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[191,29] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/game/service/ScoreMaintenanceService.java:[198,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.game.service.ScoreMaintenanceService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[32,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[43,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[54,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[65,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[76,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[87,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[98,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/shared/exception/GlobalExceptionHandler.java:[109,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.shared.exception.GlobalExceptionHandler
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/user/controller/AuthController.java:[54,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.user.controller.AuthController
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/ProfileAuthMiddleware.java:[185,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.middleware.ProfileAuthMiddleware
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/FileUploadMiddleware.java:[228,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.middleware.FileUploadMiddleware
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/FileUploadInterceptor.java:[91,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.middleware.FileUploadInterceptor
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/profile/middleware/FileUploadInterceptor.java:[124,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.profile.middleware.FileUploadInterceptor
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[62,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[86,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[88,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[92,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[106,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[111,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[152,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[169,17] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] /C:/MyPlatform/Codes/mysteriousWebSite/server/src/main/java/com/changrui/mysterious/domain/media/service/MediaService.java:[177,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.changrui.mysterious.domain.media.service.MediaService
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

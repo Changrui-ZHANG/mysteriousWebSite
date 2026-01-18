@@ -10,16 +10,13 @@ import com.changrui.mysterious.domain.profile.model.ActivityStats;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.domain.profile.repository.PrivacySettingsRepository;
 import com.changrui.mysterious.domain.profile.repository.ActivityStatsRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
-
 import jakarta.annotation.PostConstruct;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Service for migrating existing data to the profile system.

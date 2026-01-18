@@ -5,11 +5,9 @@ import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
 import com.changrui.mysterious.shared.exception.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import lombok.extern.slf4j.Slf4j;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * Middleware for profile authentication and authorization.

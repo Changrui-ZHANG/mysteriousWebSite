@@ -1,10 +1,11 @@
 package com.changrui.mysterious.domain.profile.model;
 
 import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 /**
  * Entity representing a user profile.
@@ -49,7 +50,6 @@ public class UserProfile {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // Constructors
     public UserProfile() {
         this.joinDate = LocalDateTime.now();
         this.lastActive = LocalDateTime.now();

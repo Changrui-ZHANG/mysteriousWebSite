@@ -1,7 +1,6 @@
 package com.changrui.mysterious.domain.game.model;
 
 import jakarta.persistence.*;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -42,10 +41,16 @@ public class Score {
     @Column(nullable = true)
     private Integer attempts;
 
-    // Custom constructors can be kept if needed for specific logic,
-    // otherwise @AllArgsConstructor covers the full case.
-    // Keeping this partial constructor for backward compatibility if used.
     public Score(String username, String userId, String gameType, int score, long timestamp) {
-        this(null, username, userId, gameType, score, timestamp, 0);
+        this(username, userId, gameType, score, timestamp, null);
+    }
+
+    public Score(String username, String userId, String gameType, int score, long timestamp, Integer attempts) {
+        this.username = username;
+        this.userId = userId;
+        this.gameType = gameType;
+        this.score = score;
+        this.timestamp = timestamp;
+        this.attempts = attempts;
     }
 }
