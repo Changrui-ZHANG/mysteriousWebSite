@@ -1,0 +1,181 @@
+/**
+ * ImageUploader Styles
+ * Styles pour le composant d'upload d'images
+ */
+
+.image-uploader {
+  @apply relative;
+}
+
+.image-uploader__drop-zone {
+  @apply relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer;
+  @apply border-default hover:border-strong;
+}
+
+.image-uploader__drop-zone--drag-over {
+  @apply border-accent-primary bg-accent-primary/5;
+}
+
+.image-uploader__drop-zone--disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.image-uploader__status-icon {
+  @apply text-4xl text-secondary;
+}
+
+.image-uploader__status-icon--error {
+  @apply text-accent-danger;
+}
+
+.image-uploader__status-icon--success {
+  @apply text-accent-success;
+}
+
+.image-uploader__status-text {
+  @apply font-medium text-primary;
+}
+
+.image-uploader__status-text--error {
+  @apply text-accent-danger;
+}
+
+.image-uploader__info-text {
+  @apply text-sm text-muted;
+}
+
+.image-uploader__progress-bar {
+  @apply w-full max-w-xs mx-auto;
+}
+
+.image-uploader__progress-track {
+  @apply bg-surface-alt rounded-full h-2 overflow-hidden;
+}
+
+.image-uploader__progress-fill {
+  @apply h-full bg-accent-primary transition-all duration-300;
+}
+
+.image-uploader__progress-text {
+  @apply text-xs text-muted mt-2;
+}
+
+.image-uploader__cancel-button {
+  @apply px-4 py-2 bg-surface-alt hover:bg-inset text-secondary hover:text-primary;
+  @apply rounded-lg transition-all text-sm;
+}
+
+.image-uploader__preview {
+  @apply relative rounded-2xl overflow-hidden bg-surface-alt;
+}
+
+.image-uploader__preview-image {
+  @apply w-full max-h-64 object-contain;
+}
+
+.image-uploader__preview-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/50 to-transparent;
+  @apply opacity-0 hover:opacity-100 transition-opacity;
+}
+
+.image-uploader__preview-info {
+  @apply absolute bottom-4 left-4 text-white text-sm;
+}
+
+.image-uploader__preview-close {
+  @apply absolute top-4 right-4 w-8 h-8 bg-black/50 hover:bg-black/70;
+  @apply text-white rounded-full flex items-center justify-center transition-all;
+}
+
+/* Mode compact */
+.image-uploader--compact {
+  @apply relative;
+}
+
+.image-uploader__compact-button {
+  @apply w-10 h-10 rounded-xl transition-all flex items-center justify-center text-sm;
+  @apply bg-inset hover:bg-surface-alt text-secondary hover:text-primary border border-default;
+}
+
+.image-uploader__compact-button--disabled {
+  @apply bg-inset text-muted cursor-not-allowed;
+}
+
+.image-uploader__compact-button--drag-over {
+  @apply bg-accent-primary/10 border-accent-primary;
+}
+
+.image-uploader__compact-progress {
+  @apply absolute -bottom-1 left-0 right-0 h-1 bg-surface-alt rounded-full overflow-hidden;
+}
+
+.image-uploader__compact-progress-fill {
+  @apply h-full bg-accent-primary;
+}
+
+/* Animations */
+@keyframes upload-pulse {
+  0%, 100% {
+    @apply opacity-100;
+  }
+  50% {
+    @apply opacity-70;
+  }
+}
+
+.image-uploader__uploading {
+  animation: upload-pulse 2s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .image-uploader__drop-zone {
+    @apply p-6;
+  }
+  
+  .image-uploader__status-icon {
+    @apply text-3xl;
+  }
+  
+  .image-uploader__preview-image {
+    @apply max-h-48;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .image-uploader__drop-zone {
+    @apply border-opacity-30;
+  }
+  
+  .image-uploader__drop-zone--drag-over {
+    @apply bg-accent-primary/10;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .image-uploader__drop-zone {
+    @apply border-2;
+  }
+  
+  .image-uploader__status-icon--error {
+    @apply text-red-600;
+  }
+  
+  .image-uploader__status-icon--success {
+    @apply text-green-600;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .image-uploader__progress-fill,
+  .image-uploader__compact-progress-fill {
+    @apply transition-none;
+  }
+  
+  .image-uploader__uploading {
+    animation: none;
+  }
+}

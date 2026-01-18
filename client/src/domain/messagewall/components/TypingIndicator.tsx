@@ -3,6 +3,7 @@
  * Affichage des utilisateurs en train d'écrire
  */
 
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TypingUser } from '../types/typing.types';
 import './TypingIndicator.css';
@@ -12,7 +13,7 @@ interface TypingIndicatorProps {
   maxDisplay?: number; // Nombre maximum d'utilisateurs à afficher (default: 3)
 }
 
-export const TypingIndicator = ({ typingUsers, maxDisplay = 3 }: TypingIndicatorProps) => {
+export const TypingIndicator = React.memo(({ typingUsers, maxDisplay = 3 }: TypingIndicatorProps) => {
   const { t } = useTranslation();
 
   if (typingUsers.length === 0) {
@@ -53,4 +54,4 @@ export const TypingIndicator = ({ typingUsers, maxDisplay = 3 }: TypingIndicator
       </div>
     </div>
   );
-};
+});

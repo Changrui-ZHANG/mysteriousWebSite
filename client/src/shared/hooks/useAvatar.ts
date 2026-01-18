@@ -16,23 +16,29 @@ interface UseAvatarResult {
 export function useAvatar(userId?: string): UseAvatarResult {
     const { user: authUser } = useAuth();
 
-    // Determine if we're looking for the current logged-in user
-    const isCurrentUser = !!authUser && (userId === authUser.userId || !userId);
+    // Stabilize the userId to prevent unnecessary re-renders
+    const stableUserId = useMemo(() => {
+        if (!userId && !authUser?.userId) return undefined;
+        return userId || authUser?.userId;
+    }, [userId, authUser?.userId]);
 
-    // Query profile for the most up-to-date data
-    // We only enable the query if we have a userId or if we are the current user
-    const actualId = userId || authUser?.userId;
-    const { data: profile, isLoading, isError } = useProfileQuery(actualId);
+    // Determine if we're looking for the current logged-in user
+    const isCurrentUser = !!authUser && (stableUserId === authUser.userId);
+
+    // Only enable the query when we have a valid, stable ID
+    const { data: profile, isLoading, isError } = useProfileQuery(stableUserId);
 
     const avatarUrl = useMemo(() => {
         // 1. Try profile data from query cache (most up-to-date)
         if (profile?.avatarUrl) {
-            return resolveAvatarUrl(profile.avatarUrl);
+            const resolved = resolveAvatarUrl(profile.avatarUrl);
+            if (resolved) return resolved;
         }
 
         // 2. Fallback to auth context for current user (fast data)
         if (isCurrentUser && authUser?.avatarUrl) {
-            return resolveAvatarUrl(authUser.avatarUrl);
+            const resolved = resolveAvatarUrl(authUser.avatarUrl);
+            if (resolved) return resolved;
         }
 
         // 3. Last resort: return empty string if no URL is available
@@ -41,7 +47,7 @@ export function useAvatar(userId?: string): UseAvatarResult {
 
     return {
         avatarUrl,
-        isLoading: isLoading && !profile, // Only truly loading if we have no data at all
-        isError
+        isLoading: stableUserId ? (isLoading && !profile) : false,
+        isError: stableUserId ? isError : false
     };
 }

@@ -24,7 +24,7 @@ const profileService = new ProfileService();
  */
 export function useProfileQuery(userId?: string, viewerId?: string) {
     return useQuery({
-        queryKey: profileKeys.detail(userId!, viewerId),
+        queryKey: userId ? profileKeys.detail(userId, viewerId) : ['profiles', 'disabled'],
         queryFn: () => profileService.getProfile(userId!, viewerId),
         enabled: !!userId, // Only enable when userId is available
         staleTime: 5 * 60 * 1000, // 5 minutes

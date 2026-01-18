@@ -30,13 +30,18 @@ export const resolveAvatarUrl = (url: string | undefined | null): string => {
         return '';
     }
 
-    // 3. If it's already a full URL (http/https), a data URI, or an absolute path (/), return as is
-    // The backend is responsible for providing the full correct path.
-    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('/')) {
+    // 3. If it's already a full URL (http/https) or a data URI, return as is
+    if (url.startsWith('http') || url.startsWith('data:')) {
         return url;
     }
 
-    // 4. Otherwise, it's an unrecognized format.
+    // 4. If it's an absolute path starting with /, ensure it's properly formatted for the proxy
+    // The Vite proxy will handle /api and /avatars paths correctly
+    if (url.startsWith('/')) {
+        return url;
+    }
+
+    // 5. Otherwise, it's an unrecognized format.
     // Frontend does not try to reconstruct paths.
     return '';
 };

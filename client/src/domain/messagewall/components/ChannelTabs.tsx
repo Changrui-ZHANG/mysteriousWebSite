@@ -3,7 +3,7 @@
  * Navigation entre les différents channels avec badges de non-lus
  */
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useChannels } from '../hooks/useChannels';
 import { Channel } from '../types/channel.types';
@@ -14,7 +14,7 @@ interface ChannelTabsProps {
   onCreateChannel?: () => void; // Admin only
 }
 
-export const ChannelTabs = ({ unreadCounts = {}, onCreateChannel }: ChannelTabsProps) => {
+export const ChannelTabs = React.memo(({ unreadCounts = {}, onCreateChannel }: ChannelTabsProps) => {
   const { channels, activeChannelId, setActiveChannel } = useChannels();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -63,7 +63,7 @@ export const ChannelTabs = ({ unreadCounts = {}, onCreateChannel }: ChannelTabsP
       </div>
     </div>
   );
-};
+});
 
 interface ChannelTabProps {
   channel: Channel;
@@ -72,7 +72,7 @@ interface ChannelTabProps {
   onClick: () => void;
 }
 
-const ChannelTab = ({ channel, isActive, unreadCount, onClick }: ChannelTabProps) => {
+const ChannelTab = React.memo(({ channel, isActive, unreadCount, onClick }: ChannelTabProps) => {
   return (
     <button
       onClick={onClick}
@@ -94,4 +94,4 @@ const ChannelTab = ({ channel, isActive, unreadCount, onClick }: ChannelTabProps
       )}
     </button>
   );
-};
+});

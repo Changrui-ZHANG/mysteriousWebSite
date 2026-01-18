@@ -50,8 +50,10 @@ public class Message {
 
     @Column(name = "reactions", columnDefinition = "TEXT")
     @Convert(converter = ReactionsConverter.class)
-
     private List<MessageReaction> reactions;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     public Message() {
         this.reactions = new LinkedList<>();
@@ -163,5 +165,13 @@ public class Message {
 
     public void setReactions(List<MessageReaction> reactions) {
         this.reactions = reactions;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -1,9 +1,10 @@
-import { useState, ReactNode } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperPlane, FaTimes, FaCog } from 'react-icons/fa';
 import { useAuth } from '../../../shared/contexts/AuthContext';
 import { UserAvatar } from '../../../shared/components/UserAvatar';
+import { ImageUploader } from './ImageUploader';
 
 interface Message {
     id: string;
@@ -22,14 +23,14 @@ interface MessageInputProps {
     isAdmin: boolean;
     isGlobalMute: boolean;
     replyingTo: Message | null;
-    onSubmit: (message: string, tempName: string) => Promise<void>;
+    onSubmit: (message: string, tempName: string, imageUrl?: string) => Promise<void>;
     onCancelReply: () => void;
     onOpenAdminPanel: () => void;
     showAdminPanel?: boolean;
     adminPanelContent?: ReactNode;
 }
 
-export function MessageInput({
+export const MessageInput = React.memo(function MessageInput({
     isAdmin,
     isGlobalMute,
     replyingTo,
@@ -45,18 +46,28 @@ export function MessageInput({
     const [showNameInput, setShowNameInput] = useState(false);
     const [tempName, setTempName] = useState('');
     const [loading, setLoading] = useState(false);
+    const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || loading) return;
+        if ((!newMessage.trim() && !uploadedImageUrl) || loading) return;
 
         setLoading(true);
         try {
-            await onSubmit(newMessage.trim(), tempName.trim());
+            await onSubmit(newMessage.trim(), tempName.trim(), uploadedImageUrl || undefined);
             setNewMessage('');
+            setUploadedImageUrl(null);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleImageUpload = (imageUrl: string) => {
+        setUploadedImageUrl(imageUrl);
+    };
+
+    const handleRemoveImage = () => {
+        setUploadedImageUrl(null);
     };
 
     const isMuted = isGlobalMute && !isAdmin;
@@ -173,10 +184,19 @@ export function MessageInput({
                             {/* Guest Login Prompt */}
                         </div>
 
+                        {/* Image Upload Button */}
+                        <ImageUploader
+                            onUpload={handleImageUpload}
+                            compact={true}
+                            disabled={isMuted}
+                            showPreview={false}
+                            className="shrink-0"
+                        />
+
                         {/* Send Button */}
                         <button
                             type="submit"
-                            disabled={!newMessage.trim() || loading || isMuted}
+                            disabled={(!newMessage.trim() && !uploadedImageUrl) || loading || isMuted}
                             className="w-11 h-11 flex items-center justify-center bg-gradient-to-br from-accent-primary to-accent-info hover:scale-105 active:scale-95 disabled:opacity-20 disabled:scale-100 rounded-xl text-inverse transition-all shadow-lg shadow-accent-primary/20"
                         >
                             <FaPaperPlane className="text-sm" />
@@ -193,8 +213,35 @@ export function MessageInput({
                             </button>
                         )}
                     </form>
+
+                    {/* Image Preview */}
+                    <AnimatePresence>
+                        {uploadedImageUrl && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="px-3 pb-3"
+                            >
+                                <div className="relative inline-block">
+                                    <img
+                                        src={uploadedImageUrl}
+                                        alt="Image à envoyer"
+                                        className="max-h-32 rounded-lg border border-default"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        className="absolute -top-2 -right-2 w-6 h-6 bg-accent-danger text-white rounded-full flex items-center justify-center text-xs hover:scale-110 transition-transform"
+                                    >
+                                        <FaTimes />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
         </div>
     );
-}
+});

@@ -13,6 +13,7 @@ export interface Message {
     quotedMessage?: string;
     channelId?: string; // Channel auquel appartient le message
     reactions?: Reaction[];
+    imageUrl?: string; // URL de l'image attachée
 }
 
 export interface User {

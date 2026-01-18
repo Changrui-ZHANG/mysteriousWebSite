@@ -126,8 +126,8 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         }
     }, [activeChannelId, allMessages]);
 
-    // Submit message avec gestion d'erreur et support des channels
-    const handleSubmit = useCallback(async (messageText: string, tempName: string) => {
+    // Submit message avec gestion d'erreur et support des channels et images
+    const handleSubmit = useCallback(async (messageText: string, tempName: string, imageUrl?: string) => {
         // Permettre l'envoi même en état RECONNECTING
         if (connectionState.connectionState === ConnectionState.ERROR) {
             connectionState.setDisconnected(
@@ -152,6 +152,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 isAnonymous: !senderName || senderName.trim() === '',
                 quotedMessageId: replyingTo?.id || null,
                 channelId: activeChannelId, // Ajouter le channel actif
+                imageUrl: imageUrl || null, // Ajouter l'URL de l'image
             };
 
             const response = await fetch(API_ENDPOINTS.MESSAGES.ADD, {

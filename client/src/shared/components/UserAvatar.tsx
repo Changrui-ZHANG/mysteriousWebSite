@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { resolveAvatarUrl } from '../utils/avatarUtils';
 import { useAvatar } from '../hooks/useAvatar';
 
@@ -17,7 +17,7 @@ interface UserAvatarProps {
  * UserAvatar - Unified component for displaying user avatars
  * Handles resolution, fallbacks, and consistent styling
  */
-export const UserAvatar: React.FC<UserAvatarProps> = ({
+const UserAvatarComponent: React.FC<UserAvatarProps> = ({
     userId,
     src,
     alt = 'User avatar',
@@ -27,22 +27,29 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     showSkeleton = false,
     children
 }) => {
+    // Only use the hook if we have a userId, otherwise use src directly
     const { avatarUrl: hookAvatarUrl, isLoading } = useAvatar(userId);
-    const [imgSrc, setImgSrc] = useState<string>(resolveAvatarUrl(src));
+    const [imgSrc, setImgSrc] = useState<string>('');
     const [hasError, setHasError] = useState(false);
 
-    // Initial and reactive resolution
-    useEffect(() => {
-        const resolved = userId ? hookAvatarUrl : resolveAvatarUrl(src);
+    // Memoize the resolved URL to prevent unnecessary updates
+    const resolvedUrl = React.useMemo(() => {
+        if (userId) {
+            return hookAvatarUrl;
+        } else {
+            return resolveAvatarUrl(src);
+        }
+    }, [userId, hookAvatarUrl, src]);
 
-        // Only update if the source actually changed to avoid unnecessary re-renders
-        if (resolved !== imgSrc) {
-            setImgSrc(resolved);
+    // Update image source when resolved URL changes
+    useEffect(() => {
+        if (resolvedUrl !== imgSrc) {
+            setImgSrc(resolvedUrl);
             setHasError(false);
         }
-    }, [userId, hookAvatarUrl, src, imgSrc]);
+    }, [resolvedUrl, imgSrc]);
 
-    const handleImgError = () => {
+    const handleImgError = useCallback(() => {
         // Stop if we already failed
         if (hasError) return;
 
@@ -50,7 +57,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
         // We don't have a hardcoded fallback anymore, so we just clear it or show initials/placeholder
         setImgSrc('');
         onError?.();
-    };
+    }, [hasError, onError]);
 
     // Size mapping
     const sizeClasses = typeof size === 'string' ? {
@@ -85,3 +92,6 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
         </div>
     );
 };
+
+// Memoize the component to prevent unnecessary re-renders
+export const UserAvatar = memo(UserAvatarComponent);

@@ -25,7 +25,7 @@ interface MessageItemProps {
     onReactionUpdate?: (messageId: string, reactions: Reaction[]) => void;
 }
 
-export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
+const MessageItemComponent = React.forwardRef<HTMLDivElement, MessageItemProps>(({
     msg,
     index,
     isOwn,
@@ -43,11 +43,16 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
     const { t } = useTranslation();
     const [showReactionPicker, setShowReactionPicker] = useState(false);
 
+    // Memoize the reaction update callback to prevent unnecessary re-renders
+    const memoizedReactionUpdate = React.useCallback((reactions: any[]) => {
+        onReactionUpdate?.(msg.id, reactions);
+    }, [onReactionUpdate, msg.id]);
+
     // Hook pour gérer les réactions - une seule instance par message
     const reactionHook = useReactions({
         messageId: msg.id,
         initialReactions: msg.reactions || [],
-        onReactionUpdate: onReactionUpdate ? (reactions) => onReactionUpdate(msg.id, reactions) : undefined
+        onReactionUpdate: memoizedReactionUpdate
     });
 
     const formatTimestamp = (timestamp: number) => {
@@ -140,6 +145,31 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
                         )}
                     </p>
 
+                    {/* Image Attachment */}
+                    {msg.imageUrl && (
+                        <div className="mt-3">
+                            <img
+                                src={msg.imageUrl}
+                                alt="Image partagée"
+                                className="max-w-full max-h-64 rounded-lg border border-default/30 cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => {
+                                    // Ouvrir l'image en plein écran
+                                    const lightbox = document.createElement('div');
+                                    lightbox.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 cursor-pointer';
+                                    lightbox.onclick = () => lightbox.remove();
+                                    
+                                    const img = document.createElement('img');
+                                    img.src = msg.imageUrl!;
+                                    img.className = 'max-w-[90vw] max-h-[90vh] object-contain';
+                                    
+                                    lightbox.appendChild(img);
+                                    document.body.appendChild(lightbox);
+                                }}
+                                loading="lazy"
+                            />
+                        </div>
+                    )}
+
                     {/* Action Buttons - Inside Bubble on Hover */}
                     <div className={`absolute ${isOwn ? 'left-0 -translate-x-full pl-2' : 'right-0 translate-x-full pr-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all flex gap-1`}>
                         {/* Bouton Réaction avec Picker */}
@@ -210,4 +240,5 @@ export const MessageItem = React.forwardRef<HTMLDivElement, MessageItemProps>(({
     );
 });
 
-MessageItem.displayName = 'MessageItem';
+// Memoize the component to prevent unnecessary re-renders
+export const MessageItem = React.memo(MessageItemComponent);

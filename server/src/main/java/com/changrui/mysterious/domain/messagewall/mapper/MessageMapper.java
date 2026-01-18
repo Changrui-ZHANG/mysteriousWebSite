@@ -35,6 +35,9 @@ public class MessageMapper {
         // By handling it explicitly here, we ensure it's never forgotten.
         response.setReactions(message.getReactions());
 
+        // Copy image URL
+        response.setImageUrl(message.getImageUrl());
+
         return response;
     }
 

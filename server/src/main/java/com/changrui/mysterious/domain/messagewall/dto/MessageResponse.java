@@ -20,6 +20,7 @@ public class MessageResponse {
     private String quotedMessage;
     private String channelId;
     private List<MessageReaction> reactions;
+    private String imageUrl;
 
     // Potential future fields for profile integration
     // private String avatarUrl;
@@ -121,5 +122,13 @@ public class MessageResponse {
 
     public void setReactions(List<MessageReaction> reactions) {
         this.reactions = reactions;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

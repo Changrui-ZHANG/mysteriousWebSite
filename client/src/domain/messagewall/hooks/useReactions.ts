@@ -3,7 +3,7 @@
  * Hook pour gérer les réactions aux messages avec synchronisation WebSocket
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useAuth } from '../../../shared/contexts/AuthContext';
 import type { Reaction, ReactionPayload } from '../types/reaction.types';
 
@@ -19,21 +19,27 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Memoize the initial reactions to prevent unnecessary updates
+  const memoizedInitialReactions = useMemo(() => initialReactions || [], [JSON.stringify(initialReactions)]);
+
   // Mettre à jour les réactions quand elles changent (via WebSocket ou chargement initial)
-  // Utiliser JSON.stringify pour comparer le contenu réel plutôt que les références
   useEffect(() => {
-    const newReactions = initialReactions || [];
-    console.log('[useReactions] Effect triggered', { messageId, initialReactions: newReactions, currentReactions: reactions });
+    console.log('[useReactions] Effect triggered', { messageId, initialReactions: memoizedInitialReactions, currentReactions: reactions });
 
     // Comparer par contenu pour éviter les updates inutiles
     const currentJson = JSON.stringify(reactions);
-    const newJson = JSON.stringify(newReactions);
+    const newJson = JSON.stringify(memoizedInitialReactions);
 
     if (currentJson !== newJson) {
-      console.log('[useReactions] Updating reactions from initialReactions', { messageId, newReactions });
-      setReactions(newReactions);
+      console.log('[useReactions] Updating reactions from initialReactions', { messageId, newReactions: memoizedInitialReactions });
+      setReactions(memoizedInitialReactions);
     }
-  }, [JSON.stringify(initialReactions), messageId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [memoizedInitialReactions, messageId]); // Use memoized version
+
+  // Memoize the onReactionUpdate callback to prevent unnecessary re-renders
+  const memoizedOnReactionUpdate = useCallback((updatedReactions: Reaction[]) => {
+    onReactionUpdate?.(updatedReactions);
+  }, [onReactionUpdate]);
 
   /**
    * Ajouter une réaction
@@ -112,8 +118,8 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
       setReactions(updatedReactions);
 
       // Notifier le parent pour la synchronisation WebSocket
-      if (onReactionUpdate) {
-        onReactionUpdate(updatedReactions);
+      if (memoizedOnReactionUpdate) {
+        memoizedOnReactionUpdate(updatedReactions);
       }
     } catch (err) {
       // En cas d'erreur réseau, on garde l'update optimiste
@@ -122,7 +128,7 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
     } finally {
       setIsLoading(false);
     }
-  }, [messageId, user, onReactionUpdate]);
+  }, [messageId, user, memoizedOnReactionUpdate]);
 
   /**
    * Retirer une réaction
@@ -183,8 +189,8 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
       setReactions(updatedReactions);
 
       // Notifier le parent pour la synchronisation WebSocket
-      if (onReactionUpdate) {
-        onReactionUpdate(updatedReactions);
+      if (memoizedOnReactionUpdate) {
+        memoizedOnReactionUpdate(updatedReactions);
       }
     } catch (err) {
       // En cas d'erreur réseau, on garde l'update optimiste
@@ -192,7 +198,7 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
     } finally {
       setIsLoading(false);
     }
-  }, [messageId, user, onReactionUpdate]);
+  }, [messageId, user, memoizedOnReactionUpdate]);
 
   /**
    * Toggle une réaction (ajouter si pas présente, retirer si présente)

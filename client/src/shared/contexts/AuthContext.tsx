@@ -109,11 +109,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const updateUserAvatar = (avatarUrl: string) => {
         if (user) {
-            // Resolve avatar URL to absolute path
-            const resolvedAvatarUrl = resolveAvatarUrl(avatarUrl);
-            const updatedUser = { ...user, avatarUrl: resolvedAvatarUrl };
-            setUser(updatedUser);
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+            // Only update if the avatar URL is different to prevent unnecessary re-renders
+            if (user.avatarUrl !== avatarUrl) {
+                const updatedUser = { ...user, avatarUrl };
+                setUser(updatedUser);
+                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+            }
         }
     };
 

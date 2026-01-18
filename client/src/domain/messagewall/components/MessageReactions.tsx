@@ -3,7 +3,7 @@
  * Affichage simple des réactions depuis les props (pas de hook)
  */
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { Reaction } from '../types/reaction.types';
 import './MessageReactions.css';
 
@@ -12,7 +12,7 @@ interface MessageReactionsProps {
   onReactionClick?: (emoji: string) => void; // Callback pour gérer les clics
 }
 
-export const MessageReactions = ({
+export const MessageReactions = React.memo(({
   reactions = [],
   onReactionClick
 }: MessageReactionsProps) => {
@@ -40,7 +40,7 @@ export const MessageReactions = ({
       </div>
     </div>
   );
-};
+});
 
 interface ReactionButtonProps {
   emoji: string;
@@ -49,7 +49,7 @@ interface ReactionButtonProps {
   onClick: () => void;
 }
 
-const ReactionButton = ({
+const ReactionButton = React.memo(({
   emoji,
   count,
   users,
@@ -85,4 +85,4 @@ const ReactionButton = ({
       )}
     </div>
   );
-};
+});

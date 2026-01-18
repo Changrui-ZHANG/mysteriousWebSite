@@ -124,5 +124,12 @@ export const API_ENDPOINTS = {
         PROFILE_VIEW: `${API_BASE}/activity/profile-view`,
         INIT_ACHIEVEMENTS: `${API_BASE}/activity/achievements/init`,
         UNLOCK_ACHIEVEMENT: `${API_BASE}/activity/achievements/unlock`
+    },
+
+    // Media
+    MEDIA: {
+        UPLOAD: `${API_BASE}/media/upload`,
+        DELETE: (filename: string) => `${API_BASE}/media/${filename}`,
+        GET: (filename: string) => `${API_BASE}/media/${filename}`
     }
 } as const;

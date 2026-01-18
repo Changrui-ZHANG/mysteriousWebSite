@@ -11,5 +11,6 @@
     <include file="db/changelog/changes/003-add-profile-tables.xml"/>
     <include file="db/changelog/changes/004-add-gender-to-profile.xml"/>
     <include file="db/changelog/changes/005-add-channels-and-reactions.xml"/>
+    <include file="db/changelog/changes/006-add-image-url-to-messages.xml"/>
 
 </databaseChangeLog>
