@@ -4,6 +4,9 @@ import com.changrui.mysterious.shared.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,6 +20,7 @@ import java.util.List;
  * Provides file validation, security checks, and malware scanning for uploaded
  * files.
  */
+@Slf4j
 @Component
 public class FileUploadMiddleware {
 
@@ -221,7 +225,7 @@ public class FileUploadMiddleware {
         // - Commercial antivirus solutions
 
         // For now, log that scanning would occur
-        System.out.println("[SECURITY] Malware scan placeholder for file: " + file.getOriginalFilename());
+        log.debug("Malware scan placeholder for file: {}", file.getOriginalFilename());
 
         // Simulate scan result (in production, this would be real)
         boolean scanResult = true; // Assume clean for placeholder

@@ -10,11 +10,12 @@ import com.changrui.mysterious.domain.profile.model.ActivityStats;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.domain.profile.repository.PrivacySettingsRepository;
 import com.changrui.mysterious.domain.profile.repository.ActivityStatsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 
 import jakarta.annotation.PostConstruct;
 import java.util.*;
@@ -24,25 +25,16 @@ import java.util.stream.Collectors;
  * Service for migrating existing data to the profile system.
  * Creates profiles for existing users based on their messages and game scores.
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ProfileMigrationService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProfileMigrationService.class);
-
-    @Autowired
-    private MessageRepository messageRepository;
-
-    @Autowired
-    private ScoreRepository scoreRepository;
-
-    @Autowired
-    private UserProfileRepository profileRepository;
-
-    @Autowired
-    private PrivacySettingsRepository privacyRepository;
-
-    @Autowired
-    private ActivityStatsRepository activityRepository;
+    private final MessageRepository messageRepository;
+    private final ScoreRepository scoreRepository;
+    private final UserProfileRepository profileRepository;
+    private final PrivacySettingsRepository privacyRepository;
+    private final ActivityStatsRepository activityRepository;
 
     /**
      * Run migration on startup
@@ -96,10 +88,10 @@ public class ProfileMigrationService {
             String displayName = entry.getValue();
 
             try {
-                boolean isNewProfile = migrateUser(userId, displayName, 
-                    userMessageCounts.getOrDefault(userId, 0),
-                    userGameCounts.getOrDefault(userId, 0));
-                
+                boolean isNewProfile = migrateUser(userId, displayName,
+                        userMessageCounts.getOrDefault(userId, 0),
+                        userGameCounts.getOrDefault(userId, 0));
+
                 if (isNewProfile) {
                     profilesCreated++;
                 } else {
@@ -119,7 +111,7 @@ public class ProfileMigrationService {
     private boolean migrateUser(String userId, String displayName, int messageCount, int gameCount) {
         // Check if profile already exists
         Optional<UserProfile> existingProfile = profileRepository.findByUserId(userId);
-        
+
         if (existingProfile.isPresent()) {
             // Update existing profile's activity stats
             updateActivityStats(userId, messageCount, gameCount);
@@ -149,7 +141,7 @@ public class ProfileMigrationService {
      */
     private void updateActivityStats(String userId, int messageCount, int gameCount) {
         Optional<ActivityStats> existingStats = activityRepository.findByUserId(userId);
-        
+
         if (existingStats.isPresent()) {
             ActivityStats stats = existingStats.get();
             // Only update if the migrated counts are higher (avoid overwriting newer data)

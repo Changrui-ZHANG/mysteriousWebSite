@@ -9,30 +9,27 @@ import com.changrui.mysterious.domain.messagewall.repository.ChatSettingReposito
 import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
 import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for managing chat messages.
  */
 @Service
+@RequiredArgsConstructor
 public class MessageService {
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+    private final ChatSettingRepository chatSettingRepository;
+    private final ActivityService activityService;
+    private final ProfileIntegrationService profileIntegrationService;
 
-    @Autowired
-    private ChatSettingRepository chatSettingRepository;
-
-    @Autowired
-    private ActivityService activityService;
-
-    @Autowired
-    private ProfileIntegrationService profileIntegrationService;
+    // ==================== Public API ====================
 
     public List<MessageResponse> getAllMessages() {
         List<Message> messages = messageRepository.findAllByOrderByTimestampAsc();
@@ -40,23 +37,9 @@ public class MessageService {
     }
 
     public MessageResponse addMessage(Message message) {
-        Message savedMessage = messageRepository.save(message);
-
-        // Record activity for profile statistics and update last active
-        if (savedMessage.getUserId() != null && !savedMessage.getUserId().isEmpty()) {
-            try {
-                activityService.recordMessageActivity(savedMessage.getUserId());
-                profileIntegrationService.updateLastActiveFromMessage(savedMessage.getUserId());
-            } catch (Exception e) {
-                // Log error but don't fail the message save
-            }
-        }
-
-        // Use ProfileIntegrationService to enrich and convert to DTO
-        // We pass the saved message to get the enriched DTO
-        return profileIntegrationService.enrichMessageWithProfile(
-                savedMessage,
-                profileIntegrationService.getProfileForMessage(savedMessage.getUserId()));
+        Message saved = messageRepository.save(message);
+        recordUserActivity(saved.getUserId());
+        return toResponse(saved);
     }
 
     public Message getMessageById(String id) {
@@ -97,64 +80,34 @@ public class MessageService {
     }
 
     /**
-     * Add a reaction to a message
+     * Add a reaction to a message.
+     * 
+     * @return Updated message as DTO, or null if message not found.
      */
     @Transactional
     public MessageResponse addReaction(String messageId, String userId, String username, String emoji) {
-        System.out.println("[MessageService.addReaction] Adding reaction " + emoji + " to message " + messageId);
-
         Message message = messageRepository.findById(messageId).orElse(null);
         if (message == null) {
-            System.out.println("[MessageService.addReaction] Message not found: " + messageId);
             return null;
         }
 
-        List<MessageReaction> reactions = message.getReactions();
-        if (reactions == null) {
-            reactions = new LinkedList<>();
-        }
+        List<MessageReaction> reactions = getOrCreateReactions(message);
+        Optional<MessageReaction> existing = findReactionByEmoji(reactions, emoji);
 
-        // Find existing reaction with this emoji
-        MessageReaction existingReaction = reactions.stream()
-                .filter(r -> emoji.equals(r.getEmoji()))
-                .findFirst()
-                .orElse(null);
-
-        if (existingReaction != null) {
-            // Check if user already reacted
-            boolean userAlreadyReacted = existingReaction.getUsers().stream()
-                    .anyMatch(u -> userId.equals(u.getUserId()));
-
-            if (!userAlreadyReacted) {
-                // Add user to existing reaction
-                existingReaction.getUsers().add(new ReactionUser(userId, username, System.currentTimeMillis()));
-                existingReaction.setCount(existingReaction.getUsers().size());
-                System.out.println("[MessageService.addReaction] Added user to existing reaction, new count: "
-                        + existingReaction.getCount());
-            } else {
-                System.out.println("[MessageService.addReaction] User already reacted with this emoji");
-            }
+        if (existing.isPresent()) {
+            addUserToReaction(existing.get(), userId, username);
         } else {
-            // Create new reaction
-            List<ReactionUser> users = new LinkedList<>();
-            users.add(new ReactionUser(userId, username, System.currentTimeMillis()));
-            MessageReaction newReaction = new MessageReaction(emoji, 1, users);
-            reactions.add(newReaction);
-            System.out.println("[MessageService.addReaction] Created new reaction: " + emoji);
+            reactions.add(createNewReaction(emoji, userId, username));
         }
 
         message.setReactions(reactions);
-
-        Message saved = messageRepository.save(message);
-        System.out.println("[MessageService.addReaction] Reactions saved. Count: " + saved.getReactions().size());
-
-        return profileIntegrationService.enrichMessageWithProfile(
-                saved,
-                profileIntegrationService.getProfileForMessage(saved.getUserId()));
+        return toResponse(messageRepository.save(message));
     }
 
     /**
-     * Remove a reaction from a message
+     * Remove a reaction from a message.
+     * 
+     * @return Updated message as DTO, or null if message not found.
      */
     @Transactional
     public MessageResponse removeReaction(String messageId, String userId, String emoji) {
@@ -165,33 +118,69 @@ public class MessageService {
 
         List<MessageReaction> reactions = message.getReactions();
         if (reactions == null || reactions.isEmpty()) {
-            return profileIntegrationService.enrichMessageWithProfile(
-                    message,
-                    profileIntegrationService.getProfileForMessage(message.getUserId()));
+            return toResponse(message);
         }
 
-        // Find reaction with this emoji
-        MessageReaction existingReaction = reactions.stream()
-                .filter(r -> emoji.equals(r.getEmoji()))
-                .findFirst()
-                .orElse(null);
-
-        if (existingReaction != null) {
-            // Remove user from reaction
-            existingReaction.getUsers().removeIf(u -> userId.equals(u.getUserId()));
-            existingReaction.setCount(existingReaction.getUsers().size());
-
-            // Remove reaction if no users left
-            if (existingReaction.getCount() == 0) {
-                reactions.remove(existingReaction);
+        findReactionByEmoji(reactions, emoji).ifPresent(reaction -> {
+            reaction.getUsers().removeIf(u -> userId.equals(u.getUserId()));
+            reaction.setCount(reaction.getUsers().size());
+            if (reaction.getCount() == 0) {
+                reactions.remove(reaction);
             }
-        }
+        });
 
         message.setReactions(reactions);
-        Message saved = messageRepository.save(message);
+        return toResponse(messageRepository.save(message));
+    }
 
+    // ==================== Private Helpers ====================
+
+    /**
+     * Convert a Message entity to a MessageResponse DTO with profile enrichment.
+     */
+    private MessageResponse toResponse(Message message) {
         return profileIntegrationService.enrichMessageWithProfile(
-                saved,
-                profileIntegrationService.getProfileForMessage(saved.getUserId()));
+                message,
+                profileIntegrationService.getProfileForMessage(message.getUserId()));
+    }
+
+    /**
+     * Record user activity for profile statistics.
+     */
+    private void recordUserActivity(String userId) {
+        if (userId == null || userId.isEmpty())
+            return;
+        try {
+            activityService.recordMessageActivity(userId);
+            profileIntegrationService.updateLastActiveFromMessage(userId);
+        } catch (Exception ignored) {
+            // Don't fail the message save if activity tracking fails
+        }
+    }
+
+    private List<MessageReaction> getOrCreateReactions(Message message) {
+        List<MessageReaction> reactions = message.getReactions();
+        return reactions != null ? reactions : new LinkedList<>();
+    }
+
+    private Optional<MessageReaction> findReactionByEmoji(List<MessageReaction> reactions, String emoji) {
+        return reactions.stream()
+                .filter(r -> emoji.equals(r.getEmoji()))
+                .findFirst();
+    }
+
+    private void addUserToReaction(MessageReaction reaction, String userId, String username) {
+        boolean alreadyReacted = reaction.getUsers().stream()
+                .anyMatch(u -> userId.equals(u.getUserId()));
+        if (!alreadyReacted) {
+            reaction.getUsers().add(new ReactionUser(userId, username, System.currentTimeMillis()));
+            reaction.setCount(reaction.getUsers().size());
+        }
+    }
+
+    private MessageReaction createNewReaction(String emoji, String userId, String username) {
+        List<ReactionUser> users = new LinkedList<>();
+        users.add(new ReactionUser(userId, username, System.currentTimeMillis()));
+        return new MessageReaction(emoji, 1, users);
     }
 }

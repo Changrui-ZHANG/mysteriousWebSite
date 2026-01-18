@@ -7,7 +7,5 @@ import jakarta.validation.constraints.Pattern;
  * DTO for updating suggestion status.
  */
 public record SuggestionUpdateDTO(
-        @NotBlank(message = "Status is required")
-        @Pattern(regexp = "^(pending|reviewed|implemented)$", message = "Status must be: pending, reviewed, or implemented")
-        String status
-) {}
+                @NotBlank(message = "Status is required") @Pattern(regexp = "^(pending|reviewed|implemented)$", message = "Status must be: pending, reviewed, or implemented") String status) {
+}

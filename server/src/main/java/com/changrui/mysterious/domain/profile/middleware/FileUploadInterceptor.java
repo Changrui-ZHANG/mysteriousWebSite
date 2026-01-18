@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.HandlerInterceptor;
+import lombok.extern.slf4j.Slf4j;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
@@ -14,35 +17,37 @@ import java.util.Map;
  * Interceptor for file upload security validation.
  * Automatically validates uploaded files before they reach the controller.
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class FileUploadInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private FileUploadMiddleware fileUploadMiddleware;
+    private final FileUploadMiddleware fileUploadMiddleware;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         // Only process multipart requests (file uploads)
         if (!(request instanceof MultipartHttpServletRequest)) {
             return true; // Continue with non-file requests
         }
 
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        
+
         // Validate all uploaded files
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-        
+
         for (Map.Entry<String, MultipartFile> entry : fileMap.entrySet()) {
             String fieldName = entry.getKey();
             MultipartFile file = entry.getValue();
-            
+
             if (file != null && !file.isEmpty()) {
                 // Determine file type based on endpoint and field name
                 String fileType = determineFileType(request.getRequestURI(), fieldName);
-                
+
                 // Validate the file
                 fileUploadMiddleware.validateUploadedFile(file, fileType);
-                
+
                 // Log security event
                 logFileUploadAttempt(request, file, true);
             }
@@ -59,12 +64,12 @@ public class FileUploadInterceptor implements HandlerInterceptor {
         if (requestURI.contains("/api/avatars") || fieldName.equals("avatar")) {
             return "avatar";
         }
-        
+
         // Profile image uploads
         if (requestURI.contains("/api/profiles") && fieldName.contains("image")) {
             return "image";
         }
-        
+
         // Default to image for now (can be extended for other file types)
         return "image";
     }
@@ -76,15 +81,15 @@ public class FileUploadInterceptor implements HandlerInterceptor {
         String clientIP = getClientIP(request);
         String userAgent = request.getHeader("User-Agent");
         String requesterId = request.getParameter("requesterId");
-        
+
         String logMessage = String.format(
-            "File Upload: %s | IP: %s | User: %s | File: %s (%d bytes) | Success: %s",
-            request.getRequestURI(), clientIP, requesterId, 
-            file.getOriginalFilename(), file.getSize(), success
-        );
-        
+                "File Upload: %s | IP: %s | User: %s | File: %s (%d bytes) | Success: %s",
+                request.getRequestURI(), clientIP, requesterId,
+                file.getOriginalFilename(), file.getSize(), success);
+
         // In production, this would go to a security audit log
-        System.out.println("[FILE UPLOAD AUDIT] " + logMessage);
+        log.debug("File Upload: {} | IP: {} | User: {} | File: {} ({} bytes) | Success: {}",
+                request.getRequestURI(), clientIP, requesterId, file.getOriginalFilename(), file.getSize(), success);
     }
 
     /**
@@ -95,29 +100,29 @@ public class FileUploadInterceptor implements HandlerInterceptor {
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
             return xForwardedFor.split(",")[0].trim();
         }
-        
+
         String xRealIP = request.getHeader("X-Real-IP");
         if (xRealIP != null && !xRealIP.isEmpty()) {
             return xRealIP;
         }
-        
+
         return request.getRemoteAddr();
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, 
-                              Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+            Object handler, Exception ex) throws Exception {
         // Log any exceptions that occurred during file processing
         if (ex != null && request instanceof MultipartHttpServletRequest) {
             String clientIP = getClientIP(request);
             String requesterId = request.getParameter("requesterId");
-            
+
             String errorLog = String.format(
-                "File Upload Error: %s | IP: %s | User: %s | Error: %s",
-                request.getRequestURI(), clientIP, requesterId, ex.getMessage()
-            );
-            
-            System.err.println("[FILE UPLOAD ERROR] " + errorLog);
+                    "File Upload Error: %s | IP: %s | User: %s | Error: %s",
+                    request.getRequestURI(), clientIP, requesterId, ex.getMessage());
+
+            log.warn("File Upload Error: {} | IP: {} | User: {} | Error: {}",
+                    request.getRequestURI(), clientIP, requesterId, ex.getMessage());
         }
     }
 }

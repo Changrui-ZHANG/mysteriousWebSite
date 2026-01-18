@@ -1,8 +1,7 @@
 package com.changrui.mysterious.shared.exception;
 
 import com.changrui.mysterious.shared.dto.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,10 +15,9 @@ import java.util.stream.Collectors;
  * Global exception handler for all REST controllers.
  * Provides consistent error responses across the application.
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handle Bean Validation errors

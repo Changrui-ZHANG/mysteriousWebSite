@@ -24,7 +24,6 @@ public class VocabularyService {
      */
     public void loadData() {
         cachedList = vocabularyRepository.findAll();
-        System.out.println("Loaded " + cachedList.size() + " vocabulary items from DB.");
     }
 
     private void ensureCache() {
@@ -38,7 +37,8 @@ public class VocabularyService {
      */
     public VocabularyItem getRandomItem() {
         ensureCache();
-        if (cachedList.isEmpty()) return null;
+        if (cachedList.isEmpty())
+            return null;
         int randomIndex = ThreadLocalRandom.current().nextInt(cachedList.size());
         return cachedList.get(randomIndex);
     }
@@ -48,7 +48,8 @@ public class VocabularyService {
      */
     public VocabularyItem getDailyItem() {
         ensureCache();
-        if (cachedList.isEmpty()) return null;
+        if (cachedList.isEmpty())
+            return null;
         long currentDayEpoch = System.currentTimeMillis() / (1000 * 60 * 60 * 24);
         int index = (int) (currentDayEpoch % cachedList.size());
         return cachedList.get(Math.abs(index));

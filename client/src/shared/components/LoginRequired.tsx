@@ -26,8 +26,8 @@ export function LoginRequired({
 
     // Sinon, afficher l'overlay de connexion
     return (
-        <div className="relative">
-            {/* Contenu en arrière-plan (flouté) */}
+        <>
+            {/* Contenu en arrière-plan (flouté) - utilise son propre positionnement */}
             <div className="blur-sm opacity-30 pointer-events-none select-none">
                 {children}
             </div>
@@ -139,6 +139,6 @@ export function LoginRequired({
                     </div>
                 </motion.div>
             </div>
-        </div>
+        </>
     );
 }

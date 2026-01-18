@@ -10,10 +10,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Authentication controller for user registration and login.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -49,7 +51,7 @@ public class AuthController {
             avatarUrl = pr.avatarUrl();
         } catch (Exception e) {
             // Log error but don't fail registration
-            System.err.println("Failed to create profile for user " + newUser.getId() + ": " + e.getMessage());
+            log.warn("Failed to create profile for user {}: {}", newUser.getId(), e.getMessage());
         }
 
         AuthResponseDTO response = new AuthResponseDTO(

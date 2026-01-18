@@ -49,7 +49,7 @@ export function MessageWall({ }: MessageWallProps) {
             description={t('messages.login_required_description')}
             icon={messageIcon}
         >
-            <div className="page-container fixed inset-0 overflow-hidden flex flex-col pt-20 overscroll-none relative">
+            <div className="fixed inset-0 overflow-hidden flex flex-col pt-20 overscroll-none bg-[var(--bg-page)] text-primary">
                 <ScrollProgress target={scrollContainerRef} />
 
                 {/* Connection Status - NOUVEAU pour éviter les boucles d'erreur */}
@@ -86,7 +86,7 @@ export function MessageWall({ }: MessageWallProps) {
                     <div className="max-w-3xl mx-auto flex flex-col gap-4 py-6">
                         {/* Channel Tabs */}
                         <ChannelTabs />
-                        
+
                         <AnimatePresence mode="popLayout">
                             {(!Array.isArray(messages) || messages.length === 0) ? (
                                 <motion.div
@@ -117,7 +117,7 @@ export function MessageWall({ }: MessageWallProps) {
                                 ))
                             )}
                         </AnimatePresence>
-                        
+
                         {/* Typing Indicator */}
                         <TypingIndicator typingUsers={typingUsers} />
                     </div>
@@ -139,8 +139,8 @@ export function MessageWall({ }: MessageWallProps) {
                             isGlobalMute={isGlobalMute || false}
                             onlineCount={onlineCount}
                             showOnlineCountToAll={showOnlineCountToAll}
-                            onToggleMute={toggleMute || (() => {})}
-                            onClearAll={clearAllMessages || (() => {})}
+                            onToggleMute={toggleMute || (() => { })}
+                            onClearAll={clearAllMessages || (() => { })}
                             onToggleOnlineVisibility={toggleOnlineCountVisibility}
                             onRefreshOnlineCount={fetchOnlineCount}
                             onOpenUserManagement={() => setShowUserManagement(true)}

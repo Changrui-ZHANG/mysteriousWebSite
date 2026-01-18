@@ -5,8 +5,10 @@ import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
@@ -15,14 +17,13 @@ import java.util.Optional;
  * Automatically enforces privacy rules and filters response data based on
  * requester permissions.
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class PrivacyFilterMiddleware {
 
-    @Autowired
-    private UserProfileRepository profileRepository;
-
-    @Autowired
-    private AdminService adminService;
+    private final UserProfileRepository profileRepository;
+    private final AdminService adminService;
 
     /**
      * Privacy levels for profile access
@@ -236,7 +237,8 @@ public class PrivacyFilterMiddleware {
                 operation, profileUserId, requesterId, privacyLevel, fieldsAccessed, success);
 
         // In production, this would go to a privacy audit log
-        System.out.println("[PRIVACY AUDIT] " + logMessage);
+        log.debug("Privacy Access: {} | Profile: {} | Requester: {} | Level: {} | Fields: {} | Success: {}",
+                operation, profileUserId, requesterId, privacyLevel, fieldsAccessed, success);
     }
 
     /**

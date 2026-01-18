@@ -2,6 +2,7 @@ package com.changrui.mysterious.domain.game.controller;
 
 import com.changrui.mysterious.domain.game.dto.ScoreSubmissionDTO;
 import com.changrui.mysterious.domain.game.model.Score;
+import com.changrui.mysterious.domain.game.service.ScoreMaintenanceService;
 import com.changrui.mysterious.domain.game.service.ScoreService;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
@@ -23,6 +24,9 @@ public class ScoreController {
 
     @Autowired
     private ScoreService scoreService;
+
+    @Autowired
+    private ScoreMaintenanceService maintenanceService;
 
     @Autowired
     private AdminService adminService;
@@ -65,7 +69,7 @@ public class ScoreController {
         if (!adminService.isSuperAdmin(adminCode)) {
             throw new UnauthorizedException("Super admin access required");
         }
-        int duplicatesRemoved = scoreService.cleanupDuplicateScores();
+        int duplicatesRemoved = maintenanceService.cleanupDuplicateScores();
         return ResponseEntity.ok(ApiResponse.success(
                 "Duplicate scores cleaned up successfully",
                 Map.of("duplicatesRemoved", duplicatesRemoved)));
@@ -77,7 +81,7 @@ public class ScoreController {
         if (!adminService.isSuperAdmin(adminCode)) {
             throw new UnauthorizedException("Super admin access required");
         }
-        Map<String, Object> report = scoreService.getDuplicateScoresReport();
+        Map<String, Object> report = maintenanceService.getDuplicateScoresReport();
         return ResponseEntity.ok(ApiResponse.success("Duplicates report generated", report));
     }
 
@@ -87,7 +91,7 @@ public class ScoreController {
         if (!adminService.isSuperAdmin(adminCode)) {
             throw new UnauthorizedException("Super admin access required");
         }
-        int duplicatesRemoved = scoreService.forceCleanupDuplicates();
+        int duplicatesRemoved = maintenanceService.forceCleanupDuplicates();
         return ResponseEntity.ok(ApiResponse.success(
                 "Duplicate scores force cleaned up successfully",
                 Map.of("duplicatesRemoved", duplicatesRemoved)));
@@ -101,7 +105,7 @@ public class ScoreController {
             throw new UnauthorizedException("Super admin access required");
         }
 
-        int deletedCount = scoreService.deleteAllScoresForGame(gameType);
+        int deletedCount = maintenanceService.deleteAllScoresForGame(gameType);
         return ResponseEntity.ok(ApiResponse.success(
                 "All scores deleted for game: " + gameType,
                 Map.of("gameType", gameType, "deletedCount", deletedCount)));

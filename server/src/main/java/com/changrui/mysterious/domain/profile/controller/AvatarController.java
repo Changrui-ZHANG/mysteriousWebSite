@@ -92,7 +92,6 @@ public class AvatarController {
             }
 
             Path filePath = Paths.get("uploads/avatars").resolve(filename);
-            System.out.println("[DEBUG] Retrieving avatar from: " + filePath.toAbsolutePath());
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists() && resource.isReadable()) {

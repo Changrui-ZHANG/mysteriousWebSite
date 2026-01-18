@@ -1,6 +1,7 @@
 package com.changrui.mysterious.domain.media.service;
 
 import com.changrui.mysterious.domain.media.model.MediaUploadResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,171 +19,179 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Service pour gérer l'upload et la gestion des médias
+ * Service to manage media uploads and file handling.
+ * Uses standard NIO and structured logging.
  */
+@Slf4j
 @Service
 public class MediaService {
-    
+
     @Value("${app.media.upload-dir:uploads/media}")
     private String uploadDir;
-    
-    @Value("${app.media.max-file-size:5242880}") // 5MB par défaut
+
+    @Value("${app.media.max-file-size:5242880}") // 5MB default
     private long maxFileSize;
-    
+
     @Value("${app.media.max-width:4096}")
     private int maxWidth;
-    
+
     @Value("${app.media.max-height:4096}")
     private int maxHeight;
-    
+
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(
-        "jpg", "jpeg", "png", "gif", "webp"
-    );
-    
+            "jpg", "jpeg", "png", "gif", "webp");
+
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList(
-        "image/jpeg", "image/png", "image/gif", "image/webp"
-    );
-    
+            "image/jpeg", "image/png", "image/gif", "image/webp");
+
     /**
-     * Upload un fichier image
+     * Upload an image file.
      */
     public MediaUploadResult uploadImage(MultipartFile file) throws IOException {
-        // Validation du fichier
         validateFile(file);
-        
-        // Créer le répertoire d'upload s'il n'existe pas
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-        
-        // Générer un nom de fichier unique
+
+        Path uploadPath = ensureUploadDirectory();
+
         String originalFilename = file.getOriginalFilename();
         String extension = getFileExtension(originalFilename);
         String uniqueFilename = UUID.randomUUID().toString() + "." + extension;
-        
-        // Chemin complet du fichier
         Path filePath = uploadPath.resolve(uniqueFilename);
-        
-        // Copier le fichier
+
+        // Save file
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        
-        // Obtenir les dimensions de l'image
-        Integer width = null;
-        Integer height = null;
-        try {
-            BufferedImage image = ImageIO.read(filePath.toFile());
-            if (image != null) {
-                width = image.getWidth();
-                height = image.getHeight();
-                
-                // Valider les dimensions
-                if (width > maxWidth || height > maxHeight) {
-                    // Supprimer le fichier uploadé
-                    Files.deleteIfExists(filePath);
-                    throw new IllegalArgumentException(
-                        String.format("Dimensions trop importantes. Maximum: %dx%dpx, Actuel: %dx%dpx", 
-                                    maxWidth, maxHeight, width, height)
-                    );
-                }
-            }
-        } catch (IOException e) {
-            // Si on ne peut pas lire l'image, on continue sans les dimensions
-            System.err.println("Impossible de lire les dimensions de l'image: " + e.getMessage());
-        }
-        
-        // Construire l'URL du fichier
+        log.info("File saved: {}", filePath);
+
+        // Validate dimensions
+        ImageDimensions dims = validateImageDimensions(filePath);
+
         String fileUrl = "/api/media/" + uniqueFilename;
-        
-        // Retourner le résultat
+
         return new MediaUploadResult(
-            fileUrl,
-            originalFilename,
-            file.getSize(),
-            file.getContentType(),
-            width,
-            height
-        );
+                fileUrl,
+                originalFilename != null ? originalFilename : uniqueFilename,
+                file.getSize(),
+                file.getContentType(),
+                dims.width,
+                dims.height);
     }
-    
+
     /**
-     * Supprime un fichier média
+     * Delete a media file.
      */
     public boolean deleteMedia(String filename) {
         try {
             Path filePath = Paths.get(uploadDir).resolve(filename);
-            return Files.deleteIfExists(filePath);
+            boolean deleted = Files.deleteIfExists(filePath);
+            if (deleted) {
+                log.info("Deleted media file: {}", filename);
+            } else {
+                log.warn("Media file not found for deletion: {}", filename);
+            }
+            return deleted;
         } catch (IOException e) {
-            System.err.println("Erreur lors de la suppression du fichier: " + e.getMessage());
+            log.error("Error deleting file {}: {}", filename, e.getMessage());
             return false;
         }
     }
-    
+
     /**
-     * Obtient un fichier média
+     * Get a media file safely.
      */
     public File getMediaFile(String filename) throws IOException {
-        Path filePath = Paths.get(uploadDir).resolve(filename);
-        
-        // Vérifier que le fichier existe et est dans le répertoire autorisé
-        if (!Files.exists(filePath) || !filePath.startsWith(Paths.get(uploadDir))) {
-            throw new IOException("Fichier non trouvé ou accès non autorisé");
+        Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path filePath = basePath.resolve(filename).normalize();
+
+        // Security check: ensure file is within upload directory
+        if (!filePath.startsWith(basePath)) {
+            log.warn("Access denied for file path: {}", filePath);
+            throw new IOException("Access denied");
         }
-        
+
+        if (!Files.exists(filePath)) {
+            log.warn("File not found: {}", filename);
+            throw new IOException("File not found");
+        }
+
         return filePath.toFile();
     }
-    
-    /**
-     * Valide un fichier uploadé
-     */
+
+    // --- Private Helpers ---
+
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Le fichier est vide");
+            throw new IllegalArgumentException("File is empty");
         }
-        
-        // Vérifier la taille
+
         if (file.getSize() > maxFileSize) {
             throw new IllegalArgumentException(
-                String.format("Fichier trop volumineux. Taille maximum: %d bytes, Actuel: %d bytes", 
-                            maxFileSize, file.getSize())
-            );
+                    String.format("File too large. Max: %d bytes, Actual: %d bytes", maxFileSize, file.getSize()));
         }
-        
-        // Vérifier le type MIME
+
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
             throw new IllegalArgumentException(
-                "Type de fichier non supporté. Types acceptés: " + String.join(", ", ALLOWED_MIME_TYPES)
-            );
+                    "Unsupported file type. Allowed: " + String.join(", ", ALLOWED_MIME_TYPES));
         }
-        
-        // Vérifier l'extension
+
         String filename = file.getOriginalFilename();
         if (filename == null || filename.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nom de fichier invalide");
+            throw new IllegalArgumentException("Invalid filename");
         }
-        
+
         String extension = getFileExtension(filename);
         if (!ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
             throw new IllegalArgumentException(
-                "Extension de fichier non supportée. Extensions acceptées: " + String.join(", ", ALLOWED_EXTENSIONS)
-            );
+                    "Unsupported extension. Allowed: " + String.join(", ", ALLOWED_EXTENSIONS));
         }
     }
-    
-    /**
-     * Obtient l'extension d'un fichier
-     */
+
+    private Path ensureUploadDirectory() throws IOException {
+        Path path = Paths.get(uploadDir);
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+            log.info("Created upload directory: {}", path);
+        }
+        return path;
+    }
+
+    private ImageDimensions validateImageDimensions(Path filePath) throws IOException {
+        try {
+            BufferedImage image = ImageIO.read(filePath.toFile());
+            if (image == null) {
+                return new ImageDimensions(null, null);
+            }
+
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+            if (width > maxWidth || height > maxHeight) {
+                Files.deleteIfExists(filePath);
+                log.warn("Image rejected due to dimensions: {}x{}. Max: {}x{}", width, height, maxWidth, maxHeight);
+                throw new IllegalArgumentException(
+                        String.format("Dimensions too large. Max: %dx%dpx, Actual: %dx%dpx",
+                                maxWidth, maxHeight, width, height));
+            }
+
+            return new ImageDimensions(width, height);
+        } catch (IOException e) {
+            log.warn("Failed to read image dimensions for {}: {}", filePath, e.getMessage());
+            // Don't fail the upload just because we can't read dimensions (e.g. some webp
+            // formats)
+            return new ImageDimensions(null, null);
+        }
+    }
+
     private String getFileExtension(String filename) {
         if (filename == null || filename.trim().isEmpty()) {
             return "";
         }
-        
         int lastDotIndex = filename.lastIndexOf('.');
         if (lastDotIndex == -1 || lastDotIndex == filename.length() - 1) {
             return "";
         }
-        
         return filename.substring(lastDotIndex + 1);
+    }
+
+    private record ImageDimensions(Integer width, Integer height) {
     }
 }

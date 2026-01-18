@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -22,12 +23,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Service for managing user avatars.
  * Currently handles avatar URLs. File upload functionality can be added later.
  */
+@Slf4j
 @Service
 public class AvatarService {
 
@@ -73,7 +74,6 @@ public class AvatarService {
 
             // Save processed image
             Path filePath = uploadPath.resolve(secureFilename);
-            System.out.println("[DEBUG] Saving avatar to: " + filePath.toAbsolutePath());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processedImage, "jpg", baos);
             Files.write(filePath, baos.toByteArray());

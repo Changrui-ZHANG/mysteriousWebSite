@@ -6,9 +6,9 @@ import { useConnectionState, ConnectionState } from '../../../shared/hooks/useCo
 import { useChannelStore } from '../stores/channelStore';
 import type { Message } from '../types';
 
-interface User { 
-    userId: string; 
-    username: string; 
+interface User {
+    userId: string;
+    username: string;
 }
 
 interface UseMessagesProps {
@@ -58,44 +58,35 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
     // Fetch Messages avec gestion d'erreur sans boucle - charge TOUS les messages UNE SEULE FOIS
     const fetchMessages = useCallback(async () => {
         if (isLoading) return;
-        
+
         try {
             setIsLoading(true);
             connectionState.setReconnecting();
-            
+
             const response = await fetch(API_ENDPOINTS.MESSAGES.LIST);
-            
+
             if (response.ok) {
                 const data = await response.json();
                 if (Array.isArray(data)) {
-                    // Debug: Log des messages reçus
-                    console.log('[useMessages] Messages received from backend:', data);
-                    data.forEach((msg, index) => {
-                        if (msg.reactions && msg.reactions.length > 0) {
-                            console.log(`[useMessages] Message ${index} has reactions:`, msg.reactions);
-                        }
-                    });
-                    
-                    // Stocker TOUS les messages
                     setAllMessages(data);
                 }
-                
+
                 // Check mute status from header
                 const muteHeader = response.headers.get('X-System-Muted');
                 if (muteHeader !== null) {
                     setIsGlobalMute(muteHeader === 'true');
                 }
-                
+
                 // Marquer comme connecté en cas de succès
                 connectionState.setConnected();
             } else {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            const errorMessage = error instanceof Error 
-                ? error.message 
+            const errorMessage = error instanceof Error
+                ? error.message
                 : t('errors.messages.fetch_failed', 'Failed to load messages');
-            
+
             // Marquer comme déconnecté SANS retry automatique
             connectionState.setDisconnected(errorMessage, true);
         } finally {
@@ -108,7 +99,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         const timer = setTimeout(() => {
             fetchMessages();
         }, 100);
-        
+
         return () => clearTimeout(timer);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -131,7 +122,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         // Permettre l'envoi même en état RECONNECTING
         if (connectionState.connectionState === ConnectionState.ERROR) {
             connectionState.setDisconnected(
-                t('errors.messages.not_connected', 'Not connected to server'), 
+                t('errors.messages.not_connected', 'Not connected to server'),
                 true
             );
             return;
@@ -174,10 +165,10 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            const errorMessage = error instanceof Error 
-                ? error.message 
+            const errorMessage = error instanceof Error
+                ? error.message
                 : t('errors.messages.send_failed', 'Failed to send message');
-            
+
             connectionState.setDisconnected(errorMessage, true);
         }
     }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages, connectionState, activeChannelId, incrementMessageCount, updateLastMessageAt]);
@@ -187,7 +178,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         // Permettre la suppression même en état RECONNECTING
         if (connectionState.connectionState === ConnectionState.ERROR) {
             connectionState.setDisconnected(
-                t('errors.messages.not_connected', 'Not connected to server'), 
+                t('errors.messages.not_connected', 'Not connected to server'),
                 true
             );
             return;
@@ -196,7 +187,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         try {
             const userIdToCheck = user ? user.userId : currentUserId;
             const url = `${API_ENDPOINTS.MESSAGES.DELETE(id)}?userId=${userIdToCheck}`;
-            
+
             const response = await fetch(url, {
                 method: 'DELETE',
             });
@@ -208,10 +199,10 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            const errorMessage = error instanceof Error 
-                ? error.message 
+            const errorMessage = error instanceof Error
+                ? error.message
                 : t('errors.messages.delete_failed', 'Failed to delete message');
-            
+
             connectionState.setDisconnected(errorMessage, true);
         }
     }, [user, currentUserId, connectionState, t]);
@@ -223,7 +214,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
     }, [user, currentUserId]);
 
     const canDeleteMessage = useCallback(
-        (message: Message) => isOwnMessage(message) || isAdmin, 
+        (message: Message) => isOwnMessage(message) || isAdmin,
         [isOwnMessage, isAdmin]
     );
 
@@ -238,8 +229,8 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
 
     // Mettre à jour les réactions d'un message
     const updateMessageReactions = useCallback((messageId: string, reactions: any[]) => {
-        setAllMessages(prev => prev.map(msg => 
-            msg.id === messageId 
+        setAllMessages(prev => prev.map(msg =>
+            msg.id === messageId
                 ? { ...msg, reactions }
                 : msg
         ));
@@ -253,7 +244,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                     const newMessage = event.payload as Message;
                     // Ajouter le message à TOUS les messages
                     setAllMessages(prev => [...prev, newMessage]);
-                    
+
                     // Mettre à jour les métadonnées du channel
                     const msgChannelId = newMessage.channelId || 'general';
                     incrementMessageCount(msgChannelId);
@@ -274,8 +265,8 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 case 'REACTION_UPDATED': {
                     // Mettre à jour les réactions d'un message
                     const { messageId, reactions } = event.payload as { messageId: string; reactions: any[] };
-                    setAllMessages(prev => prev.map(msg => 
-                        msg.id === messageId 
+                    setAllMessages(prev => prev.map(msg =>
+                        msg.id === messageId
                             ? { ...msg, reactions }
                             : msg
                     ));
