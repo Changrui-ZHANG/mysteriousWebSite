@@ -1,13 +1,17 @@
 package com.changrui.mysterious.domain.messagewall.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity representing a user suggestion.
  * Maps to the 'suggestions' table in the database.
  */
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "suggestions")
 public class Suggestion {
@@ -27,68 +31,16 @@ public class Suggestion {
 
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     @Column(nullable = false)
-    private String status;
-
-    public Suggestion() {
-        this.timestamp = LocalDateTime.now();
-        this.status = "pending";
-    }
+    private String status = "pending";
 
     public Suggestion(String userId, String username, String suggestion) {
-        this();
         this.userId = userId;
         this.username = username;
         this.suggestion = suggestion;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getSuggestion() {
-        return suggestion;
-    }
-
-    public void setSuggestion(String suggestion) {
-        this.suggestion = suggestion;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+        this.timestamp = LocalDateTime.now();
+        this.status = "pending";
     }
 }

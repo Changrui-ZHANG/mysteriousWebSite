@@ -1,8 +1,7 @@
 package com.changrui.mysterious.domain.game.service;
 
-import org.springframework.stereotype.Service;
-
 import java.util.*;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for generating brick breaker game maps.

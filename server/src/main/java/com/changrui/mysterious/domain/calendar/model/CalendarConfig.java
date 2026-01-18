@@ -5,12 +5,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity representing calendar configuration.
  * Singleton pattern - only one global configuration exists.
  * Maps to the 'calendar_config' table in the database.
  */
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "calendar_config")
 public class CalendarConfig {
@@ -21,34 +25,11 @@ public class CalendarConfig {
     @ElementCollection
     private List<String> activeZones = new ArrayList<>(Arrays.asList("Zone C"));
 
-    private LocalDateTime lastUpdated;
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
-    public CalendarConfig() {
-        this.lastUpdated = LocalDateTime.now();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<String> getActiveZones() {
-        return activeZones;
-    }
-
+    // Custom setter to update lastUpdated
     public void setActiveZones(List<String> activeZones) {
         this.activeZones = activeZones;
         this.lastUpdated = LocalDateTime.now();
-    }
-
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
     }
 }

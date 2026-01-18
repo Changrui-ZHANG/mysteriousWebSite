@@ -1,10 +1,11 @@
 package com.changrui.mysterious.domain.profile.middleware;
 
 import com.changrui.mysterious.domain.profile.dto.ProfileResponse;
-import com.changrui.mysterious.domain.profile.model.PrivacySettings;
 import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import java.lang.reflect.Method;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -13,9 +14,6 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-
-import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * Response body advice that automatically filters privacy-sensitive data from

@@ -3,13 +3,12 @@ package com.changrui.mysterious.domain.vocabulary.service;
 import com.changrui.mysterious.domain.vocabulary.model.UserVocabularyFavorite;
 import com.changrui.mysterious.domain.vocabulary.model.VocabularyItem;
 import com.changrui.mysterious.domain.vocabulary.repository.UserVocabularyFavoriteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing user vocabulary favorites.

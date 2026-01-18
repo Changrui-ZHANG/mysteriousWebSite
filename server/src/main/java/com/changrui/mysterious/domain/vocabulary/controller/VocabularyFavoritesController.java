@@ -3,12 +3,11 @@ package com.changrui.mysterious.domain.vocabulary.controller;
 import com.changrui.mysterious.domain.vocabulary.model.VocabularyItem;
 import com.changrui.mysterious.domain.vocabulary.service.VocabularyFavoriteService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Controller for managing user vocabulary favorites.

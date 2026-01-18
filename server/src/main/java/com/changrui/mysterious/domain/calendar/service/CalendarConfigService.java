@@ -3,10 +3,9 @@ package com.changrui.mysterious.domain.calendar.service;
 import com.changrui.mysterious.domain.calendar.model.CalendarConfig;
 import com.changrui.mysterious.domain.calendar.repository.CalendarConfigRepository;
 import com.changrui.mysterious.domain.user.service.AdminService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Service for managing calendar configuration.

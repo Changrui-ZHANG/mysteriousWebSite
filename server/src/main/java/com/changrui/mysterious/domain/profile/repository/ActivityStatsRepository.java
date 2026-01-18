@@ -1,10 +1,9 @@
 package com.changrui.mysterious.domain.profile.repository;
 
 import com.changrui.mysterious.domain.profile.model.ActivityStats;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 /**
  * Repository for ActivityStats entity operations.

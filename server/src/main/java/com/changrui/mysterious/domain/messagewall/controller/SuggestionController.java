@@ -6,11 +6,10 @@ import com.changrui.mysterious.domain.messagewall.model.SuggestionComment;
 import com.changrui.mysterious.domain.messagewall.service.SuggestionService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Controller for managing user suggestions.

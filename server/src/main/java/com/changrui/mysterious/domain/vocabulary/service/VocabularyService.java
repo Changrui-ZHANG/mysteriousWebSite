@@ -2,11 +2,10 @@ package com.changrui.mysterious.domain.vocabulary.service;
 
 import com.changrui.mysterious.domain.vocabulary.model.VocabularyItem;
 import com.changrui.mysterious.domain.vocabulary.repository.VocabularyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for managing vocabulary items.

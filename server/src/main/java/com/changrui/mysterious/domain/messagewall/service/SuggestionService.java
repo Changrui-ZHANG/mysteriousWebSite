@@ -8,11 +8,10 @@ import com.changrui.mysterious.domain.messagewall.model.SuggestionComment;
 import com.changrui.mysterious.domain.messagewall.repository.SuggestionCommentRepository;
 import com.changrui.mysterious.domain.messagewall.repository.SuggestionRepository;
 import com.changrui.mysterious.shared.exception.EntityNotFoundException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Service for managing suggestions and comments.

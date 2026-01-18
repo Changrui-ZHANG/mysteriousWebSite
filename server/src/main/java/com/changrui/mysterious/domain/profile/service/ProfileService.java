@@ -3,16 +3,15 @@ package com.changrui.mysterious.domain.profile.service;
 import com.changrui.mysterious.domain.profile.dto.*;
 import com.changrui.mysterious.domain.profile.model.*;
 import com.changrui.mysterious.domain.profile.repository.*;
-import com.changrui.mysterious.shared.exception.NotFoundException;
 import com.changrui.mysterious.shared.exception.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.changrui.mysterious.shared.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing user profiles.

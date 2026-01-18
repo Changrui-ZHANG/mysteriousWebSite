@@ -1,11 +1,17 @@
 package com.changrui.mysterious.domain.messagewall.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity for storing chat settings like mute state.
  * Uses a single row with a fixed key for simplicity.
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "chat_settings")
 public class ChatSetting {
@@ -17,28 +23,4 @@ public class ChatSetting {
 
     @Column(nullable = false)
     private String settingValue;
-
-    public ChatSetting() {
-    }
-
-    public ChatSetting(String settingKey, String settingValue) {
-        this.settingKey = settingKey;
-        this.settingValue = settingValue;
-    }
-
-    public String getSettingKey() {
-        return settingKey;
-    }
-
-    public void setSettingKey(String settingKey) {
-        this.settingKey = settingKey;
-    }
-
-    public String getSettingValue() {
-        return settingValue;
-    }
-
-    public void setSettingValue(String settingValue) {
-        this.settingValue = settingValue;
-    }
 }

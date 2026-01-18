@@ -1,5 +1,8 @@
 package com.changrui.mysterious.domain.profile.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.changrui.mysterious.domain.profile.dto.ProfileResponse;
 import com.changrui.mysterious.domain.profile.model.Achievement;
 import com.changrui.mysterious.domain.profile.model.ActivityStats;
@@ -7,10 +10,13 @@ import com.changrui.mysterious.domain.profile.model.PrivacySettings;
 import com.changrui.mysterious.domain.profile.model.UserAchievement;
 import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.AchievementRepository;
+import com.changrui.mysterious.domain.profile.repository.ActivityStatsRepository;
 import com.changrui.mysterious.domain.profile.repository.PrivacySettingsRepository;
 import com.changrui.mysterious.domain.profile.repository.UserAchievementRepository;
-import com.changrui.mysterious.domain.profile.repository.ActivityStatsRepository;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

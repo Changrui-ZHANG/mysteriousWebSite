@@ -1,7 +1,7 @@
 package com.changrui.mysterious.domain.messagewall.service;
 
-import com.changrui.mysterious.domain.messagewall.model.ChatSetting;
 import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
+import com.changrui.mysterious.domain.messagewall.model.ChatSetting;
 import com.changrui.mysterious.domain.messagewall.model.Message;
 import com.changrui.mysterious.domain.messagewall.model.MessageReaction;
 import com.changrui.mysterious.domain.messagewall.model.MessageReaction.ReactionUser;
@@ -9,13 +9,12 @@ import com.changrui.mysterious.domain.messagewall.repository.ChatSettingReposito
 import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
 import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing chat messages.

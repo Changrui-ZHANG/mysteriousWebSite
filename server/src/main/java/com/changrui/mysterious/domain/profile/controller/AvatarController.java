@@ -5,6 +5,9 @@ import com.changrui.mysterious.domain.profile.middleware.SecureFileUpload;
 import com.changrui.mysterious.domain.profile.middleware.ValidateFileUpload;
 import com.changrui.mysterious.domain.profile.service.AvatarService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -13,10 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Controller for avatar management.

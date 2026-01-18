@@ -2,12 +2,11 @@ package com.changrui.mysterious.domain.game.service;
 
 import com.changrui.mysterious.domain.game.model.Score;
 import com.changrui.mysterious.domain.game.repository.ScoreRepository;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 /**
  * Service for administrative maintenance of game scores.

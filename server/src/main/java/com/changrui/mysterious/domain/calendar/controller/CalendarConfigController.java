@@ -2,12 +2,11 @@ package com.changrui.mysterious.domain.calendar.controller;
 
 import com.changrui.mysterious.domain.calendar.model.CalendarConfig;
 import com.changrui.mysterious.domain.calendar.service.CalendarConfigService;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Controller for calendar configuration.

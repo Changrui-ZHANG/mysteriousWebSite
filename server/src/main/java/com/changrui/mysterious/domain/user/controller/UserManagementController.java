@@ -3,14 +3,13 @@ package com.changrui.mysterious.domain.user.controller;
 import com.changrui.mysterious.domain.user.model.AppUser;
 import com.changrui.mysterious.domain.user.repository.AppUserRepository;
 import com.changrui.mysterious.domain.user.service.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller for super admin user management operations.

@@ -2,19 +2,18 @@ package com.changrui.mysterious.domain.profile.controller;
 
 import com.changrui.mysterious.domain.profile.dto.*;
 import com.changrui.mysterious.domain.profile.middleware.FilterPrivateFields;
+import com.changrui.mysterious.domain.profile.middleware.PrivacyFilterMiddleware;
 import com.changrui.mysterious.domain.profile.middleware.RequirePrivacyLevel;
 import com.changrui.mysterious.domain.profile.middleware.RequireProfileOwnership;
-import com.changrui.mysterious.domain.profile.middleware.PrivacyFilterMiddleware;
-import com.changrui.mysterious.domain.profile.service.ProfileService;
 import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
+import com.changrui.mysterious.domain.profile.service.ProfileService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Controller for user profile operations.

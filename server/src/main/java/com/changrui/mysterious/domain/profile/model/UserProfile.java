@@ -1,11 +1,9 @@
 package com.changrui.mysterious.domain.profile.model;
 
-import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 /**
  * Entity representing a user profile.

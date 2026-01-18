@@ -1,22 +1,21 @@
 package com.changrui.mysterious.domain.profile.service;
 
-import com.changrui.mysterious.domain.messagewall.model.Message;
-import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
 import com.changrui.mysterious.domain.game.model.Score;
 import com.changrui.mysterious.domain.game.repository.ScoreRepository;
-import com.changrui.mysterious.domain.profile.model.UserProfile;
-import com.changrui.mysterious.domain.profile.model.PrivacySettings;
+import com.changrui.mysterious.domain.messagewall.model.Message;
+import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
 import com.changrui.mysterious.domain.profile.model.ActivityStats;
-import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
-import com.changrui.mysterious.domain.profile.repository.PrivacySettingsRepository;
+import com.changrui.mysterious.domain.profile.model.PrivacySettings;
+import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.ActivityStatsRepository;
+import com.changrui.mysterious.domain.profile.repository.PrivacySettingsRepository;
+import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
+import jakarta.annotation.PostConstruct;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.PostConstruct;
-import java.util.*;
 
 /**
  * Service for migrating existing data to the profile system.

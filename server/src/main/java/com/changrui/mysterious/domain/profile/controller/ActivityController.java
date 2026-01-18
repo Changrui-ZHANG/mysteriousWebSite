@@ -4,11 +4,10 @@ import com.changrui.mysterious.domain.profile.model.ActivityStats;
 import com.changrui.mysterious.domain.profile.model.UserAchievement;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Controller for user activity and achievements.

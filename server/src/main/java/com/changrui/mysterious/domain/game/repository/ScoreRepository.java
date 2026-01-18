@@ -1,10 +1,9 @@
 package com.changrui.mysterious.domain.game.repository;
 
 import com.changrui.mysterious.domain.game.model.Score;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository for Score entity operations.

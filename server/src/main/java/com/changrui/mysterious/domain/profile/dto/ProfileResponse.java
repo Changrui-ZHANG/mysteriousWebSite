@@ -3,8 +3,8 @@ package com.changrui.mysterious.domain.profile.dto;
 import com.changrui.mysterious.domain.profile.model.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTO for profile responses.

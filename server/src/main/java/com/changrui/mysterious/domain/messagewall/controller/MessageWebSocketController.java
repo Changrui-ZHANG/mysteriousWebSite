@@ -1,7 +1,6 @@
 package com.changrui.mysterious.domain.messagewall.controller;
 
 import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;

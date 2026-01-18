@@ -5,12 +5,11 @@ import com.changrui.mysterious.domain.game.model.Score;
 import com.changrui.mysterious.domain.game.repository.ScoreRepository;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
 import com.changrui.mysterious.shared.exception.EntityNotFoundException;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 /**
  * Service for managing game scores.

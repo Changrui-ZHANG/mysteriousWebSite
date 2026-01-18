@@ -46,14 +46,14 @@ public class AdminProfileController {
     public ResponseEntity<ApiResponse<Void>> checkUserAchievements(
             @PathVariable String userId,
             @RequestParam String adminCode) {
-        
+
         if (!adminService.isValidAdminCode(adminCode)) {
             throw new UnauthorizedException("Invalid admin code");
         }
 
         var stats = activityService.getActivityStats(userId);
         activityService.checkAndUnlockAchievements(userId, stats);
-        
+
         return ResponseEntity.ok(ApiResponse.successMessage("Achievements checked for user: " + userId));
     }
 

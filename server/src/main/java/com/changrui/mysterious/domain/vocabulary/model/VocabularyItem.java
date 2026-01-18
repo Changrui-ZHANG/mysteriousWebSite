@@ -1,11 +1,15 @@
 package com.changrui.mysterious.domain.vocabulary.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity representing a vocabulary item.
  * Maps to the 'vocabulary_items' table in the database.
  */
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "vocabulary_items")
 public class VocabularyItem {
@@ -30,64 +34,4 @@ public class VocabularyItem {
     private String example;
 
     private String level;
-
-    public VocabularyItem() {
-    }
-
-    // Getters and Setters
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
-
-    public String getMeaning() {
-        return meaning;
-    }
-
-    public void setMeaning(String meaning) {
-        this.meaning = meaning;
-    }
-
-    public String getMeaningEn() {
-        return meaningEn;
-    }
-
-    public void setMeaningEn(String meaningEn) {
-        this.meaningEn = meaningEn;
-    }
-
-    public String getMeaningZh() {
-        return meaningZh;
-    }
-
-    public void setMeaningZh(String meaningZh) {
-        this.meaningZh = meaningZh;
-    }
-
-    public String getExample() {
-        return example;
-    }
-
-    public void setExample(String example) {
-        this.example = example;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
 }

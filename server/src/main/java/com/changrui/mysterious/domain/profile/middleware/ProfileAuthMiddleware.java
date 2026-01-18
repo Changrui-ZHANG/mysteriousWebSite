@@ -2,8 +2,8 @@ package com.changrui.mysterious.domain.profile.middleware;
 
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.domain.user.service.AdminService;
-import com.changrui.mysterious.shared.exception.UnauthorizedException;
 import com.changrui.mysterious.shared.exception.NotFoundException;
+import com.changrui.mysterious.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

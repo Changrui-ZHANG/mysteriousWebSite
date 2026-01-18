@@ -2,11 +2,10 @@ package com.changrui.mysterious.domain.game.service;
 
 import com.changrui.mysterious.domain.game.model.GameStatus;
 import com.changrui.mysterious.domain.game.repository.GameStatusRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Service for managing game status (enabled/disabled).

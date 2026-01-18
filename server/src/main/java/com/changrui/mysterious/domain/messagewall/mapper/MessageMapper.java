@@ -2,10 +2,9 @@ package com.changrui.mysterious.domain.messagewall.mapper;
 
 import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
 import com.changrui.mysterious.domain.messagewall.model.Message;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper for converting Message entities to DTOs.

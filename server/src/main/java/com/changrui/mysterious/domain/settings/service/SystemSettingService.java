@@ -3,13 +3,12 @@ package com.changrui.mysterious.domain.settings.service;
 import com.changrui.mysterious.domain.settings.model.SystemSetting;
 import com.changrui.mysterious.domain.settings.repository.SystemSettingRepository;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for managing system settings.

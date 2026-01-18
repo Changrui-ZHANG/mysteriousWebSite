@@ -1,10 +1,9 @@
 package com.changrui.mysterious.domain.messagewall.repository;
 
 import com.changrui.mysterious.domain.messagewall.model.Suggestion;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository for Suggestion entity operations.
