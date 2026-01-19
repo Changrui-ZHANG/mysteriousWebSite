@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
-import { resolveAvatarUrl } from '../utils/avatarUtils';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useAvatar } from '../hooks/useAvatar';
+import { resolveAvatarUrl } from '../utils/avatarUtils';
 
 interface UserAvatarProps {
     userId?: string;
@@ -31,6 +31,7 @@ const UserAvatarComponent: React.FC<UserAvatarProps> = ({
     const { avatarUrl: hookAvatarUrl, isLoading } = useAvatar(userId);
     const [imgSrc, setImgSrc] = useState<string>('');
     const [hasError, setHasError] = useState(false);
+    const [failedUrl, setFailedUrl] = useState<string | null>(null);
 
     // Memoize the resolved URL to prevent unnecessary updates
     const resolvedUrl = React.useMemo(() => {
@@ -43,21 +44,20 @@ const UserAvatarComponent: React.FC<UserAvatarProps> = ({
 
     // Update image source when resolved URL changes
     useEffect(() => {
-        if (resolvedUrl !== imgSrc) {
+        if (resolvedUrl && resolvedUrl !== imgSrc && resolvedUrl !== failedUrl) {
             setImgSrc(resolvedUrl);
             setHasError(false);
         }
-    }, [resolvedUrl, imgSrc]);
+    }, [resolvedUrl, imgSrc, failedUrl]);
 
     const handleImgError = useCallback(() => {
-        // Stop if we already failed
-        if (hasError) return;
-
         setHasError(true);
-        // We don't have a hardcoded fallback anymore, so we just clear it or show initials/placeholder
-        setImgSrc('');
+        if (imgSrc) {
+            setFailedUrl(imgSrc); // Mark this URL as failed so we don't retry it
+        }
+        setImgSrc(''); // Fallback to placeholder/initials
         onError?.();
-    }, [hasError, onError]);
+    }, [imgSrc, onError]);
 
     // Size mapping
     const sizeClasses = typeof size === 'string' ? {

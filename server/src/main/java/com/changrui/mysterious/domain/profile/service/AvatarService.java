@@ -5,7 +5,9 @@ import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.exception.BadRequestException;
 import com.changrui.mysterious.shared.exception.NotFoundException;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +39,7 @@ public class AvatarService {
     @Autowired
     private FileUploadMiddleware fileUploadMiddleware;
 
-    @Value("${app.avatar.upload-dir:uploads/avatars}")
+    @Value("${app.avatar.upload-dir:../uploads/avatars}")
     private String uploadDir;
 
     @Value("${app.avatar.base-url:/api/avatars/files}")
@@ -68,8 +70,10 @@ public class AvatarService {
                     file.getOriginalFilename(), userId);
 
             // Ensure upload directory exists
-            Path uploadPath = Paths.get(uploadDir);
-            Files.createDirectories(uploadPath);
+            Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
 
             // Save processed image
             Path filePath = uploadPath.resolve(secureFilename);

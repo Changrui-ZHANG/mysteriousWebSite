@@ -8,22 +8,36 @@ import com.changrui.mysterious.shared.dto.ApiResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller for avatar management.
  * REST endpoints for avatar operations.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/avatars")
 public class AvatarController {
+
+    @Value("${app.avatar.upload-dir:uploads/avatars}")
+    private String uploadDir;
 
     @Autowired
     private AvatarService avatarService;
@@ -90,7 +104,11 @@ public class AvatarController {
                 return ResponseEntity.badRequest().build();
             }
 
-            Path filePath = Paths.get("uploads/avatars").resolve(filename);
+            // Use the configured upload directory
+            Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
+
+            log.debug("Serving avatar from path: {}", filePath.toAbsolutePath());
+
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists() && resource.isReadable()) {
@@ -106,9 +124,11 @@ public class AvatarController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                         .body(resource);
             } else {
+                log.warn("Avatar file not found or not readable: {}", filePath.toAbsolutePath());
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            log.error("Error serving avatar file: {}", e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

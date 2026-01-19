@@ -3,49 +3,43 @@ package com.changrui.mysterious.domain.messagewall.mapper;
 import com.changrui.mysterious.domain.messagewall.dto.MessageResponse;
 import com.changrui.mysterious.domain.messagewall.model.Message;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for converting Message entities to DTOs.
+ * Abstract class allows mixing automatic MapStruct generation with custom
+ * manual logic.
  */
-@Component
-public class MessageMapper {
+@Mapper(componentModel = "spring")
+public abstract class MessageMapper {
 
-    public MessageResponse toDto(Message message) {
-        if (message == null) {
-            return null;
+    /**
+     * Standard automatic mapping.
+     * We ignore avatarUrl here because it's not in the Message entity.
+     */
+    @Mapping(target = "avatarUrl", ignore = true)
+    public abstract MessageResponse toDto(Message message);
+
+    /**
+     * Automatic list mapping.
+     * MapStruct will use the toDto method above for each element.
+     */
+    public abstract List<MessageResponse> toDtoList(List<Message> messages);
+
+    /**
+     * Custom mapping method that enriches the DTO with an avatar URL.
+     * This demonstrates how to handle fields that don't exist in the source entity.
+     */
+    public MessageResponse toDtoWithAvatar(Message message, String avatarUrl) {
+        // 1. Let MapStruct handle the boring part (id, name, message, etc.)
+        MessageResponse dto = toDto(message);
+
+        // 2. Add your custom manual logic
+        if (dto != null) {
+            dto.setAvatarUrl(avatarUrl);
         }
 
-        MessageResponse response = new MessageResponse();
-        response.setId(message.getId());
-        response.setUserId(message.getUserId());
-        response.setName(message.getName());
-        response.setMessage(message.getMessage());
-        response.setTimestamp(message.getTimestamp());
-        response.setAnonymous(message.isAnonymous());
-        response.setVerified(message.isVerified());
-        response.setQuotedMessageId(message.getQuotedMessageId());
-        response.setQuotedName(message.getQuotedName());
-        response.setQuotedMessage(message.getQuotedMessage());
-        response.setChannelId(message.getChannelId());
-
-        // Copy reactions - this was the source of the previous bug!
-        // By handling it explicitly here, we ensure it's never forgotten.
-        response.setReactions(message.getReactions());
-
-        // Copy image URL
-        response.setImageUrl(message.getImageUrl());
-
-        return response;
-    }
-
-    public List<MessageResponse> toDtoList(List<Message> messages) {
-        if (messages == null) {
-            return List.of();
-        }
-        return messages.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        return dto;
     }
 }

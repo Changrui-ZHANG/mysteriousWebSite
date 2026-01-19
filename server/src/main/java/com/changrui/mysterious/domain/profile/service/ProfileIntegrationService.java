@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 /**
  * Service for integrating profile information with other domain features.
  */
+
 @Service
 public class ProfileIntegrationService {
 
@@ -66,15 +67,13 @@ public class ProfileIntegrationService {
             return null;
         }
 
-        // Use Mapper to create DTO - This copies all fields including reactions!
-        MessageResponse response = messageMapper.toDto(message);
-
-        // Add profile information if available and profile is public
+        // Use new Mapper capability
+        String avatarUrl = null;
         if (profile != null && profile.isPublic()) {
-            // Future: response.setAvatarUrl(profile.getAvatarUrl());
+            avatarUrl = profile.getResolvedAvatarUrl();
         }
 
-        return response;
+        return messageMapper.toDtoWithAvatar(message, avatarUrl);
     }
 
     /**
