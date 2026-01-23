@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useAuth } from '../../shared/contexts/AuthContext';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProfileWithStats, useUpdateProfileMutation, useUpdatePrivacyMutation } from './queries/profileQueries';
-import { ProfileCard } from './components/ProfileCard';
-import { ProfileForm } from './components/ProfileForm';
-import { AvatarUploadWithCropping } from './components/AvatarUploadWithCropping';
-import { PrivacySettings } from './components/PrivacySettings';
-import { NotificationCenter } from './components/NotificationCenter';
+import { useLocation } from 'react-router-dom';
 import { ErrorDisplay, LoginRequired } from '../../shared/components';
 import { GlassCard, LiquidBackground } from '../../shared/components/GlassCard';
+import { useAuth } from '../../shared/contexts/AuthContext';
+import { AvatarUploadWithCropping } from './components/AvatarUploadWithCropping';
+import { NotificationCenter } from './components/NotificationCenter';
+import { PrivacySettings } from './components/PrivacySettings';
+import { ProfileCard } from './components/ProfileCard';
+import { ProfileForm } from './components/ProfileForm';
+import { useProfileWithStats, useUpdatePrivacyMutation, useUpdateProfileMutation } from './queries/profileQueries';
 import { useHasUnsavedChanges } from './stores/editingStore';
-import { logError } from './utils/logger';
 import type { UpdateProfileRequest } from './types';
+import { logError } from './utils/logger';
 
 type TabType = 'overview' | 'edit' | 'privacy' | 'activity';
 

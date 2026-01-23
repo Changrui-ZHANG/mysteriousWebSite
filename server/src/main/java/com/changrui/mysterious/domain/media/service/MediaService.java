@@ -12,7 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import javax.imageio.ImageIO;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,9 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
  * Service to manage media uploads and file handling.
  * Uses standard NIO and structured logging.
  */
-@Slf4j
+
 @Service
 public class MediaService {
+
+    private static final Logger log = LoggerFactory.getLogger(MediaService.class);
 
     @Value("${app.media.upload-dir:uploads/media}")
     private String uploadDir;

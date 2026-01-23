@@ -4,11 +4,11 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FaChevronDown, FaCog, FaMoon, FaSun, FaUser } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUser, FaSun, FaMoon, FaCog, FaChevronDown } from 'react-icons/fa';
+import { UserAvatarMenu } from '../../components/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeManager } from '../../hooks/useThemeManager';
-import { UserAvatarMenu } from '../../components/navigation';
 
 interface DesktopMenuProps {
     onOpenLogin: () => void;
@@ -21,12 +21,14 @@ interface DesktopMenuProps {
     onAdminLogout?: () => void;
     onShowSiteControls: () => void;
     changeLanguage: (lng: string) => void;
+    onToggleMore: () => void;
+    isMoreOpen: boolean;
 }
 
 export function DesktopMenu({
     onOpenLogin, onLogout, isAdmin, isSuperAdmin,
     loginCode, setLoginCode, onAdminLogin, onAdminLogout, onShowSiteControls,
-    changeLanguage,
+    changeLanguage, onToggleMore, isMoreOpen
 }: DesktopMenuProps) {
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
@@ -50,53 +52,34 @@ export function DesktopMenu({
         { to: "/messages", label: t('nav.messages') }
     ];
 
-    const moreLinks = [
-        { to: "/profile", label: t('nav.profile') },
-        { to: "/notes", label: t('nav.notes') },
-        { to: "/suggestions", label: t('nav.suggestions') },
-        { to: "/calendar", label: t('nav.calendar') },
-        { to: "/learning", label: t('nav.learning') }
-    ];
+
 
     return (
-        <div className="hidden lg:flex items-center gap-4 font-heading text-sm max-w-full">
+        <div className="hidden lg:flex items-center gap-3 font-heading text-sm max-w-full">
             {/* Main Navigation Links */}
             <div className="flex items-center gap-1">
                 {mainLinks.map(link => (
                     <Link
                         key={link.to}
                         to={link.to}
-                        className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
+                        className={`px-3 py-0.5 text-xs rounded-full transition-all duration-300 hover:bg-white/5 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
                     >
                         {link.label}
                     </Link>
                 ))}
 
-                {/* "More" Trigger with Integrated Sub-bar */}
-                <div className="relative group/more h-full flex items-center">
-                    <button className={`px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${['/profile', '/notes', '/suggestions', '/calendar', '/learning'].includes(location.pathname) ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}>
-                        {t('nav.more')} <FaChevronDown className="text-[10px] transition-transform duration-300 group-hover/more:rotate-180" />
+                {/* "More" Trigger - Toggles Secondary Row */}
+                <div className="flex items-center">
+                    <button 
+                        onClick={onToggleMore}
+                        className={`px-3 py-0.5 text-xs rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${isMoreOpen ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}
+                    >
+                        {t('nav.more')} <FaChevronDown className={`text-[10px] transition-transform duration-300 ${isMoreOpen ? 'rotate-180' : ''}`} />
                     </button>
-
-                    {/* Invisible hover bridge */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[200%] h-4 bg-transparent z-40" />
-
-                    {/* Integrated Sub-bar - Horizontal row below the main nav */}
-                    <div className="absolute top-[calc(100%+14px)] left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border border-white/20 bg-elevated/95 backdrop-blur-3xl shadow-2xl flex items-center gap-1 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-[opacity,transform,visibility,background-color,border-color] duration-300 transform translate-y-2 group-hover/more:translate-y-0 z-dropdown after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2)] after:pointer-events-none whitespace-nowrap min-w-max">
-                        {moreLinks.map(link => (
-                            <Link
-                                key={link.to}
-                                to={link.to}
-                                className={`relative z-10 px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/10 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </div>
                 </div>
             </div>
 
-            <div className="w-px h-4 bg-white/10 shrink-0" />
+            <div className="w-px h-3 bg-white/10 shrink-0" />
 
             {/* Auth Section */}
             {user ? (
@@ -116,7 +99,7 @@ export function DesktopMenu({
                 </button>
             )}
 
-            <div className="w-px h-4 bg-white/10" />
+            <div className="w-px h-3 bg-white/10" />
 
             {/* Admin Section */}
             <div className="relative flex items-center">
@@ -149,7 +132,7 @@ export function DesktopMenu({
                 )}
             </div>
 
-            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+            <div className="w-[1px] h-[16px] bg-current opacity-20" />
 
             {/* Language Switcher - Compact Dropdown */}
             <div className="relative group/lang">
@@ -182,11 +165,11 @@ export function DesktopMenu({
                 </div>
             </div>
 
-            <div className="w-[1px] h-[20px] bg-current opacity-20" />
+            <div className="w-[1px] h-[16px] bg-current opacity-20" />
 
             {/* Theme Toggle */}
-            <button onClick={toggleTheme} className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/10 transition-all text-secondary hover:text-primary" title={resolvedTheme === 'dark' ? t('navbar.theme.light') : resolvedTheme === 'light' ? t('navbar.theme.paper') : t('navbar.theme.dark')}>
-                {resolvedTheme === 'dark' ? <FaSun className="w-4 h-4" /> : resolvedTheme === 'light' ? <FaMoon className="w-4 h-4" /> : <FaCog className="w-4 h-4" />}
+            <button onClick={toggleTheme} className="flex items-center justify-center w-6 h-6 rounded-full hover:bg-white/10 transition-all text-secondary hover:text-primary" title={resolvedTheme === 'dark' ? t('navbar.theme.light') : resolvedTheme === 'light' ? t('navbar.theme.paper') : t('navbar.theme.dark')}>
+                {resolvedTheme === 'dark' ? <FaSun className="w-3 h-3" /> : resolvedTheme === 'light' ? <FaMoon className="w-3 h-3" /> : <FaCog className="w-3 h-3" />}
             </button>
         </div>
     );

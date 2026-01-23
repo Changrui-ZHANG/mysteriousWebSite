@@ -27,7 +27,11 @@
     ],
     "exclude": [
         "src/domain/profile/utils/refactoring",
-        "src/domain/profile/scripts"
+        "src/domain/profile/scripts",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/**/__tests__",
+        "src/test"
     ],
     "references": [
         {

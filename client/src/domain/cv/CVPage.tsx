@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
-import { getCVData } from './data/cvData';
-import { ExperienceCard } from './components';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuroraCard } from '../../shared/components/ui/AuroraCard';
 import { SOCIAL_LINKS } from '../../shared/constants/urls';
+import { ExperienceCard } from './components';
+import { getCVData } from './data/cvData';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -215,11 +215,11 @@ export function CV({ }: CVProps) {
                         {t('cv.interactive_portfolio')}
                     </div>
 
-                    <h1 className={`text-8xl sm:text-[160px] font-black font-heading tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-title' : 'text-primary'}`}>
+                    <h1 className={`text-7xl md:text-9xl font-black font-heading tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-title' : 'text-primary'}`}>
                         {t('brand.author_name')}
                     </h1>
 
-                    <p className={`text-2xl sm:text-4xl font-medium tracking-tight ${isPaperTheme ? 'text-letterpress-subtle' : 'text-secondary'}`}>
+                    <p className={`text-xl sm:text-2xl font-medium tracking-tight ${isPaperTheme ? 'text-letterpress-subtle' : 'text-secondary'}`}>
                         {t('cv.role')}
                     </p>
 
@@ -230,11 +230,11 @@ export function CV({ }: CVProps) {
             </header>
 
             {/* 2. Experience Section (Interactive Slider) */}
-            <section ref={horizontalSectionRef} className="py-32 bg-transparent relative overflow-hidden flex flex-col z-10">
+            <section ref={horizontalSectionRef} className="py-20 bg-transparent relative overflow-hidden flex flex-col z-10">
                 <div className="px-6 sm:px-20 z-20 mb-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
                     <div className="space-y-4">
                         <h2 className={`text-sm font-mono tracking-[0.4em] uppercase font-bold ${isPaperTheme ? 'text-letterpress' : ''}`}>{t('cv.work_history')}</h2>
-                        <h3 className={`text-5xl sm:text-7xl font-black tracking-tighter ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.experience_gallery')}</h3>
+                        <h3 className={`text-4xl sm:text-5xl font-black tracking-tighter ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.experience_gallery')}</h3>
                     </div>
 
                     <div className="hidden md:block">
@@ -268,7 +268,7 @@ export function CV({ }: CVProps) {
                         className="flex gap-12 px-6 sm:px-20 items-stretch w-fit"
                     >
                         {experiences.map((exp, index) => (
-                            <div key={index} className="exp-card-wrapper shrink-0 w-[85vw] sm:w-[500px] transition-all duration-700 flex">
+                            <div key={index} className="exp-card-wrapper shrink-0 w-[85vw] sm:w-[450px] transition-all duration-700 flex">
                                 <ExperienceCard exp={exp} isPaperTheme={isPaperTheme} />
                             </div>
                         ))}
@@ -295,10 +295,10 @@ export function CV({ }: CVProps) {
             </section>
 
             {/* 3. Bento Layer (LiquidGlass Specifications) */}
-            <section className="py-40 px-6 max-w-7xl mx-auto space-y-32 relative z-10">
+            <section className="py-24 px-6 max-w-7xl mx-auto space-y-32 relative z-10">
                 <div className="space-y-8">
                     <h2 className={`text-sm font-mono tracking-[0.4em] uppercase font-bold ${isPaperTheme ? 'text-letterpress' : ''}`}>{t('cv.core_components')}</h2>
-                    <h3 className={`text-6xl sm:text-[100px] font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.specifications')}</h3>
+                    <h3 className={`text-4xl sm:text-6xl font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.specifications')}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[minmax(300px,auto)]">
@@ -387,7 +387,7 @@ export function CV({ }: CVProps) {
                     <div className="p-12 rounded-[60px] paper-card">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                             <div className="text-center md:text-left">
-                                <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4 text-letterpress-strong">{t('cv.initiate_connect')}</h3>
+                                <h3 className="text-3xl sm:text-5xl font-black tracking-tighter mb-4 text-letterpress-strong">{t('cv.initiate_connect')}</h3>
                                 <p className="text-2xl font-light text-letterpress">{t('cv.connect_description')}</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
@@ -411,7 +411,7 @@ export function CV({ }: CVProps) {
                     <AuroraCard variant="purple" className="p-12 rounded-[60px]">
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                             <div className="text-center md:text-left">
-                                <h3 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4 text-primary">{t('cv.initiate_connect')}</h3>
+                                <h3 className="text-3xl sm:text-5xl font-black tracking-tighter mb-4 text-primary">{t('cv.initiate_connect')}</h3>
                                 <p className="text-2xl font-light text-secondary">{t('cv.connect_description')}</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4 shrink-0">

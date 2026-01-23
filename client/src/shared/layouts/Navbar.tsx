@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useAuth } from '../contexts/AuthContext';
 import { AdminSiteControls } from '../../domain/user/AdminSiteControls';
-import { DesktopMenu, MobileMenu } from './navbar/index';
-import { useSettings } from '../contexts/SettingsContext';
 import { UserAvatar } from '../components/UserAvatar';
+import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { DesktopMenu, MobileMenu } from './navbar/index';
 
 interface NavbarProps {
 }
@@ -19,6 +19,7 @@ export function Navbar({ }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [loginCode, setLoginCode] = useState('');
     const [showSiteControls, setShowSiteControls] = useState(false);
+    const [isMoreOpen, setIsMoreOpen] = useState(false);
 
     // Lock background scroll when mobile menu is open
     useEffect(() => {
@@ -54,29 +55,41 @@ export function Navbar({ }: NavbarProps) {
         return titles[location.pathname] || t('navbar.title');
     };
 
+    const moreLinks = [
+        { to: "/profile", label: t('nav.profile') },
+        { to: "/notes", label: t('nav.notes') },
+        { to: "/suggestions", label: t('nav.suggestions') },
+        { to: "/calendar", label: t('nav.calendar') },
+        { to: "/learning", label: t('nav.learning') }
+    ];
+
     return (
         <>
-            <nav className="fixed top-5 left-1/2 -translate-x-1/2 z-navbar px-6 py-2 rounded-full border border-white/20 bg-surface-translucent/80 backdrop-blur-3xl shadow-2xl flex items-center gap-6 text-primary transition-[background-color,border-color,color,transform,box-shadow] duration-300 hover:bg-white/[0.08] hover:border-white/30 after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2)] after:pointer-events-none w-max max-w-[95vw]">
-                {/* Mobile Avatar - Left side */}
-                {user && (
-                    <Link
-                        to="/profile"
-                        className="lg:hidden w-10 h-10 rounded-full border-2 border-accent-primary/30 bg-surface overflow-hidden hover:border-accent-primary transition-all active:scale-95 shrink-0 relative"
-                        aria-label={t('nav.profile')}
-                    >
-                        <UserAvatar
-                            userId={user.userId}
-                            alt={user.username}
-                            size="md"
-                        />
+            <nav className="absolute top-0 left-0 right-0 z-navbar px-6 py-3 border-b border-white/10 bg-surface-translucent/80 backdrop-blur-3xl shadow-md flex flex-col text-primary transition-all duration-300 w-full">
+                <div className="w-full flex items-center justify-between">
+                {/* Left Side Group */}
+                <div className="flex items-center gap-4">
+                    {/* Mobile Avatar - Left side */}
+                    {user && (
+                        <Link
+                            to="/profile"
+                            className="lg:hidden w-8 h-8 rounded-full border-2 border-accent-primary/30 bg-surface overflow-hidden hover:border-accent-primary transition-all active:scale-95 shrink-0 relative"
+                            aria-label={t('nav.profile')}
+                        >
+                            <UserAvatar
+                                userId={user.userId}
+                                alt={user.username}
+                                size="md"
+                            />
+                        </Link>
+                    )}
+
+                    <Link to="/" className="text-lg md:text-xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity relative shrink-0">
+                        {getPageTitle()}
                     </Link>
-                )}
 
-                <Link to="/" className="text-lg md:text-xl font-bold font-heading tracking-tighter hover:opacity-80 transition-opacity relative shrink-0">
-                    {getPageTitle()}
-                </Link>
-
-                <div className="hidden lg:block w-[1px] h-6 bg-white/10 mx-2" />
+                    <div className="hidden lg:block w-[1px] h-5 bg-white/10 mx-2" />
+                </div>
 
                 {/* Mobile Menu Button - Visible on tablets too if space is tight */}
                 <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden z-modal w-8 h-8 flex flex-col justify-center gap-1.5 focus:outline-none relative">
@@ -85,18 +98,42 @@ export function Navbar({ }: NavbarProps) {
                     <motion.span animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -8 : 0 }} className={`w-full h-0.5 block transition-all ${isOpen ? 'bg-white' : 'bg-current font-bold'}`} />
                 </button>
 
-                <DesktopMenu
-                    onOpenLogin={openAuthModal}
-                    onLogout={logout}
-                    isAdmin={isAdmin}
-                    isSuperAdmin={isSuperAdmin}
-                    loginCode={loginCode}
-                    setLoginCode={setLoginCode}
-                    onAdminLogin={adminLogin}
-                    onAdminLogout={adminLogout}
-                    onShowSiteControls={() => setShowSiteControls(true)}
-                    changeLanguage={handleChangeLanguage}
-                />
+                    <DesktopMenu
+                        onOpenLogin={openAuthModal}
+                        onLogout={logout}
+                        isAdmin={isAdmin}
+                        isSuperAdmin={isSuperAdmin}
+                        loginCode={loginCode}
+                        setLoginCode={setLoginCode}
+                        onAdminLogin={adminLogin}
+                        onAdminLogout={adminLogout}
+                        onShowSiteControls={() => setShowSiteControls(true)}
+                        changeLanguage={handleChangeLanguage}
+                        onToggleMore={() => setIsMoreOpen(!isMoreOpen)}
+                        isMoreOpen={isMoreOpen}
+                    />
+                </div>
+
+                {/* Secondary Row - More Menu */}
+                <motion.div
+                    initial={false}
+                    animate={{ height: isMoreOpen ? 'auto' : 0, opacity: isMoreOpen ? 1 : 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="overflow-hidden w-full"
+                >
+                    <div className="pt-4 pb-1 pl-12 flex items-center gap-2 border-t border-white/5 mt-3">
+                        {moreLinks.map(link => (
+                            <Link
+                                key={link.to}
+                                to={link.to}
+                                className={`px-4 py-1.5 text-xs rounded-full transition-all duration-300 font-heading bg-white/5 hover:bg-white/10 ${location.pathname === link.to ? 'text-accent-primary font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
+                                onClick={() => setIsMoreOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+                </motion.div>
             </nav>
 
             <MobileMenu

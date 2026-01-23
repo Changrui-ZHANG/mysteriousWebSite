@@ -1,1093 +1,1092 @@
 {
-    "common": {
-        "close": "Fermer",
-        "cancel": "Annuler",
-        "delete": "Supprimer",
-        "go": "Go",
-        "back": "Retour",
-        "unknown_error": "Erreur inconnue",
-        "good_morning": "Excellente matinée",
-        "good_afternoon": "Bel après-midi",
-        "good_evening": "Douce soirée",
-        "guest": "Invité",
-        "loading": "Chargement...",
-        "dismiss": "Ignorer"
+  "common": {
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "go": "Go",
+    "back": "Retour",
+    "unknown_error": "Erreur inconnue",
+    "good_morning": "Excellente matinée",
+    "good_afternoon": "Bel après-midi",
+    "good_evening": "Douce soirée",
+    "guest": "Invité",
+    "loading": "Chargement...",
+    "dismiss": "Ignorer"
+  },
+  "connection": {
+    "reconnecting": "Reconnexion...",
+    "error": "Erreur de Connexion",
+    "unknown": "État de Connexion",
+    "retry": "Réessayer la Connexion",
+    "retry_count": "Tentative {{count}}",
+    "max_retries": "Nombre maximum de tentatives atteint. Vérifiez votre connexion.",
+    "retry_disabled": "Retry actuellement désactivé."
+  },
+  "brand": {
+    "author_name": "Changrui ZHANG",
+    "copyright": "© 2026 Changrui ZHANG. Tous droits réservés."
+  },
+  "nav": {
+    "home": "ACCUEIL",
+    "cv": "CV",
+    "game": "ARCADE",
+    "profile": "PROFIL",
+    "messages": "MESSAGES",
+    "suggestions": "SUGGESTIONS",
+    "calendar": "CALENDRIER",
+    "linguist": "LINGUISTE",
+    "notes": "NOTES",
+    "more": "PLUS",
+    "menu": "Menu"
+  },
+  "navbar": {
+    "title": "Bienvenue",
+    "cv_title": "Curriculum vitæ",
+    "arcade_title": "Jeux d'Arcade",
+    "notes_title": "Notes",
+    "messages_title": "Mur de Messages",
+    "suggestions_title": "Boîte à Idées",
+    "calendar_title": "Calendrier",
+    "linguist_title": "Le Linguiste",
+    "theme": {
+      "light": "Mode Clair",
+      "dark": "Mode Sombre",
+      "paper": "Thème Paper",
+      "modern": "Thème Moderne"
     },
-    "connection": {
-        "reconnecting": "Reconnexion...",
-        "error": "Erreur de Connexion",
-        "unknown": "État de Connexion",
-        "retry": "Réessayer la Connexion",
-        "retry_count": "Tentative {{count}}",
-        "max_retries": "Nombre maximum de tentatives atteint. Vérifiez votre connexion.",
-        "retry_disabled": "Retry actuellement désactivé."
+    "lang": {
+      "en": "English",
+      "fr": "Français",
+      "zh": "中文"
     },
-    "brand": {
-        "author_name": "Changrui ZHANG",
-        "copyright": "© 2026 Changrui ZHANG. Tous droits réservés."
+    "user_menu": {
+      "view_profile": "Voir le Profil",
+      "settings": "Paramètres",
+      "logout": "Déconnexion",
+      "signed_in_as": "Connecté en tant que"
+    }
+  },
+  "dashboard": {
+    "welcome_subtitle": "Concepteur d'expériences numériques & Explorateur de technologies. Bienvenue dans mon univers.",
+    "cv_desc": "Explorez mon parcours professionnel, mes compétences et mes expériences.",
+    "messages_desc": "Rejoignez la discussion de la communauté.",
+    "suggestions_desc": "Une idée ? Faites-m'en part.",
+    "game_desc": "Faites une pause et jouez.",
+    "calendar_desc": "Consultez les jours fériés et vacances scolaires."
+  },
+  "soul": {
+    "taglines": [
+      "Là où le code rencontre la créativité.",
+      "Créer des expériences numériques avec passion.",
+      "Construire le web de demain, aujourd'hui.",
+      "Chaque pixel a un but.",
+      "Animé par la curiosité, propulsé par le code."
+    ]
+  },
+  "admin": {
+    "manage_users": "Gérer les utilisateurs",
+    "user_list": "Liste des utilisateurs",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "edit_user": "Modifier",
+    "delete_user": "Supprimer",
+    "save_changes": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm_delete_user": "Supprimer cet utilisateur ?",
+    "show_password": "Afficher",
+    "hide_password": "Masquer",
+    "action": "Action",
+    "add_user": "Ajouter un utilisateur",
+    "add_new_user": "Ajouter un nouvel utilisateur",
+    "create": "Créer",
+    "site_settings": "Paramètres du site",
+    "enter_code_prompt": "Entrez le code Admin pour modifier :",
+    "changes_effect_warning": "Les changements affectent tous les utilisateurs immédiatement. Rafraîchissez pour voir les effets.",
+    "verify": "Vérifier",
+    "invalid_code": "Code invalide",
+    "loading": "Chargement des paramètres...",
+    "critical": "CRITIQUE",
+    "settings": {
+      "maintenance_mode": "Mode Maintenance Global",
+      "maintenance_message": "Message de Maintenance",
+      "activated_by": "Activé par",
+      "page_cv": "Page CV / À propos",
+      "page_game": "Page Jeux (Arcade)",
+      "page_messages": "Mur de Messages",
+      "page_suggestions": "Boîte à Idées",
+      "page_calendar": "Calendrier",
+      "page_learning": "Apprentissage",
+      "page_notes": "Notes"
     },
-    "nav": {
-        "home": "ACCUEIL",
-        "cv": "CV",
-        "game": "ARCADE",
-        "profile": "PROFIL",
-        "messages": "MESSAGES",
-        "suggestions": "SUGGESTIONS",
-        "calendar": "CALENDRIER",
-        "linguist": "LINGUISTE",
-        "notes": "NOTES",
-        "more": "PLUS"
+    "login_required": "Connexion personnelle requise",
+    "login_audit_explanation": "Pour des raisons de sécurité et d'audit, vous devez être connecté avec votre compte personnel pour modifier les paramètres du site.",
+    "admin": "Admin",
+    "super_admin": "Super Admin",
+    "refresh_count": "Actualiser le compteur",
+    "hide_count": "Masquer le compteur aux utilisateurs",
+    "show_count": "Afficher le compteur aux utilisateurs",
+    "mute": "Couper le chat",
+    "unmute": "Activer le chat",
+    "clear_all": "Tout effacer",
+    "confirm_clear": "Supprimer tous les messages ?",
+    "login_hint": "Utilisez le cadenas dans la barre de navigation pour vous connecter en tant qu'admin.",
+    "code_placeholder": "Code Admin",
+    "panel": "Panneau Admin",
+    "error_delete_user": "Erreur lors de la suppression de l'utilisateur",
+    "error_create_user": "Erreur lors de la création de l'utilisateur",
+    "error_update_user": "Erreur lors de la mise à jour de l'utilisateur"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "create_account": "Créer un compte",
+    "no_account": "Pas de compte ?",
+    "has_account": "Vous avez déjà un compte ?",
+    "success_register": "Inscription réussie ! Veuillez vous connecter.",
+    "failed": "Échec de l'authentification",
+    "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
+    "signed_in": "Connecté",
+    "login_required": "Connexion requise",
+    "login_required_description": "Vous devez être connecté pour accéder à cette fonctionnalité.",
+    "admin_code": "Code Admin",
+    "admin_panel": "Panneau Admin",
+    "quit_admin": "Quitter Admin",
+    "clear_all": "Tout effacer",
+    "mute": "Couper le chat",
+    "unmute": "Réactiver le chat",
+    "muted": "Le chat est suspendu par l'admin",
+    "super_admin_code": "Code Super Admin",
+    "super_admin_panel": "Panneau Super Admin",
+    "admin_access": "Accès Admin",
+    "signed_in_as": "Connecté en tant que"
+  },
+  "maintenance": {
+    "title": "Mise à jour en cours",
+    "description": "Nous améliorons votre expérience. Quelques instants de patience...",
+    "backend_unavailable": "Le serveur est temporairement indisponible. Veuillez réessayer plus tard.",
+    "disabled_by": "Désactivé par"
+  },
+  "notes": {
+    "login_required_title": "Connexion requise pour les notes",
+    "login_required": "Connectez-vous pour accéder à vos notes",
+    "login_hint": "Vos notes seront sauvegardées et synchronisées."
+  },
+  "calendar": {
+    "title": "Calendrier",
+    "zones_admin_label": "Zones (Admin):",
+    "zones": {
+      "zone_a": "Lyon/Bordeaux",
+      "zone_b": "Marseille/Lille",
+      "zone_c": "Paris/IDF",
+      "corse": "Corse",
+      "guadeloupe": "Guadeloupe",
+      "guyane": "Guyane",
+      "reunion": "La Réunion",
+      "martinique": "Martinique",
+      "mayotte": "Mayotte"
     },
-    "navbar": {
-        "title": "Bienvenue",
-        "cv_title": "Curriculum vitæ",
-        "arcade_title": "Jeux d'Arcade",
-        "notes_title": "Notes",
-        "messages_title": "Mur de Messages",
-        "suggestions_title": "Boîte à Idées",
-        "calendar_title": "Calendrier",
-        "linguist_title": "Le Linguiste",
-        "theme": {
-            "light": "Mode Clair",
-            "dark": "Mode Sombre",
-            "paper": "Thème Paper",
-            "modern": "Thème Moderne"
-        },
-        "lang": {
-            "en": "English",
-            "fr": "Français",
-            "zh": "中文"
-        },
-        "user_menu": {
-            "view_profile": "Voir le Profil",
-            "settings": "Paramètres",
-            "logout": "Déconnexion",
-            "signed_in_as": "Connecté en tant que"
-        }
-    },
-    "dashboard": {
-        "welcome_subtitle": "Concepteur d'expériences numériques & Explorateur de technologies. Bienvenue dans mon univers.",
-        "cv_desc": "Explorez mon parcours professionnel, mes compétences et mes expériences.",
-        "messages_desc": "Rejoignez la discussion de la communauté.",
-        "suggestions_desc": "Une idée ? Faites-m'en part.",
-        "game_desc": "Faites une pause et jouez.",
-        "calendar_desc": "Consultez les jours fériés et vacances scolaires."
-    },
-    "soul": {
-        "taglines": [
-            "Là où le code rencontre la créativité.",
-            "Créer des expériences numériques avec passion.",
-            "Construire le web de demain, aujourd'hui.",
-            "Chaque pixel a un but.",
-            "Animé par la curiosité, propulsé par le code."
-        ]
-    },
-    "admin": {
-        "manage_users": "Gérer les utilisateurs",
-        "user_list": "Liste des utilisateurs",
-        "username": "Nom d'utilisateur",
-        "password": "Mot de passe",
-        "edit_user": "Modifier",
-        "delete_user": "Supprimer",
-        "save_changes": "Enregistrer",
-        "cancel": "Annuler",
-        "confirm_delete_user": "Supprimer cet utilisateur ?",
-        "show_password": "Afficher",
-        "hide_password": "Masquer",
-        "action": "Action",
-        "add_user": "Ajouter un utilisateur",
-        "add_new_user": "Ajouter un nouvel utilisateur",
-        "create": "Créer",
-        "site_settings": "Paramètres du site",
-        "enter_code_prompt": "Entrez le code Admin pour modifier :",
-        "changes_effect_warning": "Les changements affectent tous les utilisateurs immédiatement. Rafraîchissez pour voir les effets.",
-        "verify": "Vérifier",
-        "invalid_code": "Code invalide",
-        "loading": "Chargement des paramètres...",
-        "critical": "CRITIQUE",
-        "settings": {
-            "maintenance_mode": "Mode Maintenance Global",
-            "maintenance_message": "Message de Maintenance",
-            "activated_by": "Activé par",
-            "page_cv": "Page CV / À propos",
-            "page_game": "Page Jeux (Arcade)",
-            "page_messages": "Mur de Messages",
-            "page_suggestions": "Boîte à Idées",
-            "page_calendar": "Calendrier",
-            "page_learning": "Apprentissage",
-            "page_notes": "Notes"
-        },
-        "login_required": "Connexion personnelle requise",
-        "login_audit_explanation": "Pour des raisons de sécurité et d'audit, vous devez être connecté avec votre compte personnel pour modifier les paramètres du site.",
-        "admin": "Admin",
-        "super_admin": "Super Admin",
-        "refresh_count": "Actualiser le compteur",
-        "hide_count": "Masquer le compteur aux utilisateurs",
-        "show_count": "Afficher le compteur aux utilisateurs",
-        "mute": "Couper le chat",
-        "unmute": "Activer le chat",
-        "clear_all": "Tout effacer",
-        "confirm_clear": "Supprimer tous les messages ?",
-        "login_hint": "Utilisez le cadenas dans la barre de navigation pour vous connecter en tant qu'admin.",
-        "code_placeholder": "Code Admin",
-        "panel": "Panneau Admin",
-        "error_delete_user": "Erreur lors de la suppression de l'utilisateur",
-        "error_create_user": "Erreur lors de la création de l'utilisateur",
-        "error_update_user": "Erreur lors de la mise à jour de l'utilisateur"
-    },
-    "auth": {
-        "login": "Se connecter",
-        "register": "S'inscrire",
-        "logout": "Déconnexion",
-        "username": "Nom d'utilisateur",
-        "password": "Mot de passe",
-        "create_account": "Créer un compte",
-        "no_account": "Pas de compte ?",
-        "has_account": "Vous avez déjà un compte ?",
-        "success_register": "Inscription réussie ! Veuillez vous connecter.",
-        "failed": "Échec de l'authentification",
-        "confirm_logout": "Voulez-vous vraiment vous déconnecter ?",
-        "signed_in": "Connecté",
-        "login_required": "Connexion requise",
-        "login_required_description": "Vous devez être connecté pour accéder à cette fonctionnalité.",
-        "admin_code": "Code Admin",
-        "admin_panel": "Panneau Admin",
-        "quit_admin": "Quitter Admin",
-        "clear_all": "Tout effacer",
-        "mute": "Couper le chat",
-        "unmute": "Réactiver le chat",
-        "muted": "Le chat est suspendu par l'admin",
-        "super_admin_code": "Code Super Admin",
-        "super_admin_panel": "Panneau Super Admin",
-        "admin_access": "Accès Admin",
-        "signed_in_as": "Connecté en tant que"
-    },
-    "maintenance": {
-        "title": "Mise à jour en cours",
-        "description": "Nous améliorons votre expérience. Quelques instants de patience...",
-        "backend_unavailable": "Le serveur est temporairement indisponible. Veuillez réessayer plus tard.",
-        "disabled_by": "Désactivé par"
-    },
-    "notes": {
-        "login_required_title": "Connexion requise pour les notes",
-        "login_required": "Connectez-vous pour accéder à vos notes",
-        "login_hint": "Vos notes seront sauvegardées et synchronisées."
-    },
-    "calendar": {
-        "title": "Calendrier",
-        "zones_admin_label": "Zones (Admin):",
-        "zones": {
-            "zone_a": "Lyon/Bordeaux",
-            "zone_b": "Marseille/Lille",
-            "zone_c": "Paris/IDF",
-            "corse": "Corse",
-            "guadeloupe": "Guadeloupe",
-            "guyane": "Guyane",
-            "reunion": "La Réunion",
-            "martinique": "Martinique",
-            "mayotte": "Mayotte"
-        },
-        "tooltip": {
-            "vacation": "Vacances ({{zone}})"
-        },
-        "errors": {
-            "config_update_failed": "Échec de la mise à jour de la configuration",
-            "failed_to_load": "Impossible de charger le calendrier"
-        }
-    },
-    "cv": {
-        "role": "Développeur Fullstack",
-        "interactive_portfolio": "Portfolio Interactif",
-        "work_history": "Parcours Professionnel",
-        "experience_gallery": "Galerie d'Expériences.",
-        "core_components": "Expertise",
-        "specifications": "Compétences & Formation.",
-        "full_stack_architecture": "Architecture Full Stack",
-        "masters_degree": "Master",
-        "bachelors_degree": "Licence",
-        "initiate_connect": "Contact.",
-        "connect_description": "Ensemble, bâtissons l'avenir.",
-        "direct_mail": "Email Direct",
-        "linkedin": "LinkedIn",
-        "system_status": "STATUT SYSTÈME: OPTIMAL",
-        "sections": {
-            "profile": "Profil",
-            "experience": "Expériences",
-            "skills": "Compétences",
-            "education": "Formation",
-            "soft_skills": "Savoir-être",
-            "languages": "Langues",
-            "interests": "Centres d'intérêt"
-        },
-        "profile_text": "Développeur back-end diplômé en Master Informatique (Sorbonne Université), expérimenté sur Spring Boot et ReactJS. Rigoureux, autonome et passionné par les défis techniques, je recherche un poste dans le développement back-end/fullstack. Je possède une carte de résident me permettant de travailler librement en France.",
-        "exp": {
-            "espace": {
-                "title": "Espace Web (Projet Personnel)",
-                "role": "Développeur Full Stack",
-                "desc": [
-                    "Développement d’une application web full-stack (Java/Spring Boot + React).",
-                    "Optimisation UX avec composants dynamiques (ReactBit + Tailwind).",
-                    "Conteneurisation complète (Docker)."
-                ],
-                "tech": [
-                    "Java EE",
-                    "Spring Boot",
-                    "ReactJs",
-                    "Vite",
-                    "TailwindCss",
-                    "Docker",
-                    "PostgreSQL",
-                    "Git",
-                    "Maven",
-                    "LLMs"
-                ]
-            },
-            "rakuten": {
-                "title": "Rakuten France",
-                "role": "Développeur Fullstack (Stage)",
-                "desc": [
-                    "Migrer et optimiser le composant de filtrage (250M exports/jour) : temps de configuration réduit de 2 min à <30 s.",
-                    "Développer en autonomie deux nouveaux supports d’import (XML + JSON) des fiches produits sur la plateforme, facilitant l’intégration de 250+ partenaires.",
-                    "Intégrer l’IA dans le traitement des données.",
-                    "Migrer de ReactJS 15+ vers 20+ et de JavaScript vers TypeScript.",
-                    "Développer en autonomie un outil de migration automatisée (3 semaines), garantissant l’intégrité de milliers de données clients et réduisant les erreurs manuelles.",
-                    "Développer en autonomie un programme de synchronisation des coupons de réduction, garantissant la fiabilité des promotions visibles par des millions d’utilisateurs.",
-                    "Réaliser des tests unitaires et automatisés pour garantir la fiabilité du code.",
-                    "Suivre les cahiers des charges et la roadmap produit afin de garantir la conformité des livrables et le respect des délais.",
-                    "Organiser des réunions de reporting et des meetings quotidiens en méthodologie Agile."
-                ],
-                "tech": [
-                    "Java EE",
-                    "Spring Boot",
-                    "ReactJS",
-                    "TypeScript",
-                    "Docker",
-                    "Jenkins",
-                    "Hibernate",
-                    "Elasticsearch",
-                    "MariaDB",
-                    "Liquibase",
-                    "Git",
-                    "CI/CD",
-                    "Jira"
-                ]
-            },
-            "sorbonne": {
-                "title": "Sorbonne Université (E-commerce)",
-                "role": "Développeur Fullstack",
-                "desc": [
-                    "Pilotage d’une application e-shop collaborative avec feature flags.",
-                    "Développement full-stack (backend, frontend, base de données).",
-                    "Mise en place d’une authentification complète + gestion des utilisateurs.",
-                    "Automatisation de la génération de variantes produits (Product Line)."
-                ],
-                "tech": [
-                    "Spring Boot",
-                    "REST API",
-                    "ReactJS",
-                    "JavaScript",
-                    "MySQL",
-                    "Hibernate",
-                    "Git",
-                    "Maven",
-                    "JUnit",
-                    "Flagsmith",
-                    "Microservices",
-                    "JWT",
-                    "Moobios Forge"
-                ]
-            },
-            "database": {
-                "title": "Université Paris Cité (Modélisation de base de données)",
-                "role": "Développeur Base de Données",
-                "desc": [
-                    "Concevoir une base de données pour simuler les navigations de bateaux antiques.",
-                    "Utiliser PostgreSQL pour la conception et la gestion des données, en intégrant des outils de modélisation collaboratifs.",
-                    "Technologies: PostgreSQL / BOUML / StarUML"
-                ],
-                "tech": [
-                    "PostgreSQL",
-                    "BOUML",
-                    "StarUML"
-                ]
-            },
-            "ouichefs": {
-                "title": "Projet Ouichefs (Noyau Linux)",
-                "role": "Développeur Système",
-                "desc": [
-                    "Développement d'un système de liens physiques amélioré pour le noyau Linux.",
-                    "Implémentation des UUIDs, des liens inter-partitions et de la migration de blocs."
-                ],
-                "tech": [
-                    "C",
-                    "Linux Kernel",
-                    "File Systems",
-                    "ioctl"
-                ]
-            }
-        },
-        "edu": {
-            "esgi": "Mastère informatique: Ingénierie du Web",
-            "master": "Master Informatique: Systèmes et Applications Répartis",
-            "licence": "Licence Informatique: Informatique Générale"
-        },
-        "soft_skills_list": [
-            "Autonomie",
-            "Rigueur",
-            "Bon relationnel",
-            "Esprit de synthèse",
-            "Capacité d’adaptation",
-            "Motivation",
-            "Curiosité",
-            "Esprit d’équipe"
-        ],
-        "languages_list": {
-            "zh": "Chinois (Maternel)",
-            "en": "Anglais (Professionnel)",
-            "fr": "Français (Bilingue)"
-        },
-        "interests_list": [
-            "Jeux vidéos",
-            "Sport"
-        ],
-        "last_updated": "Dernière mise à jour",
-        "update_date": "Janvier 2026",
-        "location": "Paris, France"
-    },
-    "game": {
-        "arcade_zone": "SALLE D'ARCADE",
-        "choose_your_challenge": "Choisissez un jeu pour commencer",
-        "select_game": "Sélectionner un jeu",
-        "login_for_scores": "Connectez-vous pour sauvegarder vos scores",
-        "brick_breaker": "Casse-Brique",
-        "match3": "Match 3",
-        "score": "SCORE",
-        "start_game": "COMMENCER",
-        "game_over": "GAME OVER",
-        "you_win": "GAGNÉ !",
-        "final_score": "Score Final",
-        "try_again": "RÉESSAYER",
-        "play_again": "REJOUER",
-        "reset": "RÉINITIALISER",
-        "loading": "Chargement...",
-        "brick_breaker_desc": "Utilisez la souris pour bouger la raquette.",
-        "match3_desc": "Échangez les tuiles pour en aligner 3 !",
-        "pokemon_quiz": "Quiz Pokémon",
-        "leaderboard": "Classement",
-        "personal_best": "Mon Record Perso",
-        "best": "Meilleur",
-        "no_scores_yet": "No scores recorded yet. Be the first!",
-        "login_warning": "<0>Connectez-vous</0> pour que votre score soit enregistré, sinon il sera perdu !",
-        "highscore_guest_alert": "Vous avez réalisé un score digne du classement ! Connectez-vous pour le sauvegarder.",
-        "moves": "Mouvements",
-        "new_maze": "Nouveau Labyrinthe",
-        "maze": "Labyrinthe",
-        "use_arrows": "Utilisez les flèches pour vous déplacer",
-        "use_mouse": "Glissez à la souris ou utilisez ZQSD/Flèches",
-        "time": "Temps",
-        "combo": "Combo",
-        "combo_multiplier": "Combo x{{multiplier}} !",
-        "mute": "Muet",
-        "unmute": "Son",
-        "flip_to_rules": "Voir Règles",
-        "flip_to_game": "Retour au Jeu",
-        "admin_code_prompt": "Code Admin :",
-        "toggle_failed": "Échec du changement de statut",
-        "brick_breaker_rules": "Détruisez toutes les briques en faisant rebondir la balle sur votre raquette. Si la balle tombe sous la raquette, c'est terminé !",
-        "brick_breaker_controls": "Déplacez votre souris (ou glissez sur mobile) pour contrôler la raquette.",
-        "brick_breaker_bonus": "Certaines briques rapportent plus de points. Visez les coins pour des rebonds spectaculaires !",
-        "brick_breaker_maps": {
-            "tunnel": {
-                "name": "Le Tunnel",
-                "desc": "Percez le mur fortifié pour atteindre le trésor"
-            },
-            "pyramid": {
-                "name": "La Pyramide",
-                "desc": "Détruisez la pyramide mystérieuse"
-            },
-            "chambers": {
-                "name": "Les Chambres",
-                "desc": "Naviguez dans le labyrinthe de chambres"
-            },
-            "mosaic": {
-                "name": "La Mosaïque Royale",
-                "desc": "Un tapis de briques aux couleurs impériales"
-            },
-            "fortress": {
-                "name": "La Forteresse",
-                "desc": "Un bloc massif défiant toute destruction"
-            },
-            "galactic": {
-                "name": "L'Empire Galactique",
-                "desc": "Une densité extrême pour les vrais maîtres"
-            },
-            "bastion": {
-                "name": "Le Bastion",
-                "desc": "Une ligne de défense avec des tours fortifiées"
-            },
-            "coliseum": {
-                "name": "Le Colisée",
-                "desc": "Des anneaux concentriques de briques et de murs"
-            },
-            "royal_maze": {
-                "name": "Le Labyrinthe Royal",
-                "desc": "Un réseau complexe de couloirs et de briques"
-            },
-            "dark_maze": {
-                "name": "Le Dédale Sombre",
-                "desc": "De longs couloirs horizontaux remplis de secrets"
-            },
-            "crypts": {
-                "name": "Les Cryptes Oubliées",
-                "desc": "Un réseau vertical de chambres closes"
-            },
-            "crystal": {
-                "name": "Le Labyrinthe de Cristal",
-                "desc": "Des chemins diagonaux ultra-étroits"
-            },
-            "mines": {
-                "name": "Les Mines d'Or",
-                "desc": "Des filons précieux protégés par la roche"
-            },
-            "temple": {
-                "name": "Le Temple Maudit",
-                "desc": "Une structure ancienne piégée par des murs"
-            },
-            "station": {
-                "name": "La Station Intergalactique",
-                "desc": "Un design technologique symétrique pour un défi ultime"
-            },
-            "infinite": {
-                "name": "Le Dédale Infini",
-                "desc": "Un labyrinthe généré par le serveur à chaque partie"
-            }
-        },
-        "brick_breaker_difficulty": {
-            "easy": "Facile",
-            "medium": "Moyen",
-            "hard": "Difficile",
-            "expert": "Expert",
-            "extreme": "Extrême"
-        },
-        "brick_breaker_choose_map": "Choisir Carte",
-        "brick_breaker_map_selection": "Sélection de Carte",
-        "brick_breaker_selected": "Sélectionnée",
-        "brick_breaker_maps_unlocked": "{{count}} / {{total}} cartes débloquées",
-        "brick_breaker_new_map_unlocked": "Nouvelle carte débloquée : {{name}} !",
-        "brick_breaker_next_level": "Niveau Suivant",
-        "brick_breaker_generating": "Génération...",
-        "brick_breaker_confirm_start": "Confirmer et Commencer",
-        "match3_rules_text": "Alignez au moins 3 blocs de la même couleur horizontalement ou verticalement pour les faire exploser et marquer des points.",
-        "match3_combos": "Créez des réactions en chaîne pour activer des multiplicateurs de score (x2, x3...). Plus vous enchaînez, plus le score explose !",
-        "match3_speed": "Attention au chrono ! Chaque seconde compte pour atteindre le sommet du classement.",
-        "pokemon_rules": "Testez vos connaissances Pokémon ! Identifiez la silhouette qui apparaît à l'écran parmi les propositions.",
-        "pokemon_quiz_desc": "Choisissez la bonne réponse parmi les 4 options. Soyez précis et rapide !",
-        "pokemon_score_desc": "Enchaînez les bonnes réponses pour prouver que vous êtes le meilleur dresseur.",
-        "maze_rules": "Trouvez la sortie du labyrinthe avant la fin du temps !",
-        "maze_collect": "Le brouillard de guerre limite votre vision. Mémorisez votre chemin et agissez vite.",
-        "maze_fog": "Brouillard",
-        "maze_tip": "Astuce : Le point de départ est marqué (S) et la sortie est marquée (R).",
-        "game_disabled": "Jeu Désactivé",
-        "zombie": "Zombie Defense",
-        "zombie_desc": "Défendez la base contre la horde de zombies !",
-        "mission_brief": "Briefing de Mission",
-        "zombie_rules_text": "Une horde de zombies approche ! Vous contrôlez la dernière tourelle de défense. Déplacez-vous latéralement pour viser. Le tir est automatique.",
-        "start_mission": "LANCER MISSION",
-        "retry": "RÉESSAYER",
-        "objective": "Objectif",
-        "survival": "Survivez le plus longtemps possible.",
-        "move": "Déplacer",
-        "game_disabled_desc": "Ce jeu est actuellement désactivé par l'administrateur.",
-        "next_shift": "Changement",
-        "zombie_hud": {
-            "system_status": "Status Système",
-            "wave": "Vague",
-            "kills": "Kills",
-            "record": "Record",
-            "tracking": "PISTAGE",
-            "fire_rate": "Cadence",
-            "damage": "Dégâts",
-            "crit_chance": "Crit%",
-            "cannons": "Canons",
-            "bonus": "Bonus",
-            "rebounds": "Rebonds",
-            "zombie_hp": "Z-HP",
-            "danger_critical": "!! DANGER CRITIQUE !!",
-            "danger_alert": "! ALERTE !",
-            "title_bg": "DÉFENSE ZOMBIE",
-            "protocol": "PROTOCOLE",
-            "protect_zone": "Protégez la zone. Collectez la Tech. Survivez.",
-            "initialize": "INITIALISER",
-            "system_failure": "ÉCHEC SYSTÈME",
-            "final_score": "Score Final",
-            "waves": "Vagues",
-            "eliminations": "Éliminations",
-            "restart": "Redémarrer",
-            "controls": "CONTROLES: SOURIS // CLAVIER",
-            "installed": "INSTALLÉ",
-            "capture_mouse": "CLIQUEZ POUR CAPTURER LA SOURIS",
-            "crit_hit": "CRITIQUE"
-        },
-        "zombie_upgrades": {
-            "dmg_50_name": "Surcharge I",
-            "dmg_50_desc": "Dégâts de base +50%",
-            "dmg_100_name": "Surcharge II",
-            "dmg_100_desc": "Double vos dégâts de base (x2)",
-            "crit_b_50_name": "Lames de Rasoir",
-            "crit_b_50_desc": "Bonus de Critique +50%",
-            "crit_b_150_name": "Exécuteur D'Élite",
-            "crit_b_150_desc": "Bonus de Critique +150%",
-            "fire_50_name": "Tempête de Plomb",
-            "fire_50_desc": "Cadence de tir doublée (-50% délai)",
-            "homing_shot_name": "Pistage Tactique",
-            "homing_shot_desc": "Les balles cherchent automatiquement les ennemis"
-        },
-        "zombie_modal": {
-            "title": "RÉCOMPENSE",
-            "title_highlight": "SUPRÊME",
-            "subtitle": "Choisissez un module d'amélioration d'élite",
-            "install": "Installer Module"
-        },
-        "zombie_notif": {
-            "elite_challenge": "DÉFI ÉLITE ACTIVÉ : +50% HP",
-            "perfect_streak": "SÉCURITÉ PARFAITE : STREAK {{streak}}",
-            "elite_complete": "DÉFI ÉLITE TERMINÉ",
-            "wave": "VAGUE {{wave}}",
-            "pickup_rate": "+++ CADENCE",
-            "pickup_tech_max": "TECH MAXIMALE",
-            "pickup_tech": "TECHNO AMÉLIORÉE",
-            "pickup_damage": "+10 DÉGÂTS",
-            "pickup_crit": "+10% CRIT",
-            "pickup_bounce": "+1 REBOND"
-        },
-        "fullscreen": "Plein écran",
-        "fullscreen_exit": "Quitter le plein écran",
-        "help_rules": "Aide / Règles",
-        "status_active": "ACTIF",
-        "status_off": "OFF",
-        "status_disabled": "DÉSACTIVÉ",
-        "action_disable": "DÉSACTIVER",
-        "action_enable": "ACTIVER",
-        "confirm_reset_score": "Êtes-vous sûr de vouloir réinitialiser le score de {{username}} à 0 ?",
-        "error_reset_score": "Échec de la réinitialisation du score",
-        "reset_score": "Réinitialiser le score",
-        "clear_all_scores": "Supprimer tous les scores",
-        "confirm_clear_all_scores": "⚠️ ATTENTION ⚠️\n\nÊtes-vous sûr de vouloir supprimer TOUS les scores du jeu {{gameType}} ?\n\nCette action est IRRÉVERSIBLE et supprimera définitivement tous les records de ce jeu.\n\nTapez 'SUPPRIMER' pour confirmer :",
-        "cleanup_duplicates": "Nettoyer les doublons",
-        "confirm_cleanup_duplicates": "Êtes-vous sûr de vouloir nettoyer tous les scores dupliqués ?\n\nCette action supprimera les doublons et ne gardera que le meilleur score de chaque utilisateur pour chaque jeu."
+    "tooltip": {
+      "vacation": "Vacances ({{zone}})"
     },
     "errors": {
-        "failed_to_load_messages": "Impossible de charger les messages",
-        "failed_to_send_message": "Impossible d'envoyer le message",
-        "failed_to_delete_message": "Impossible de supprimer le message",
-        "failed_to_toggle_mute": "Impossible de changer le mode muet",
-        "failed_to_clear_messages": "Impossible d'effacer les messages",
-        "unknown_error": "Erreur inconnue",
-        "connection": {
-            "failed": "Échec de connexion",
-            "retry_failed": "Échec de la reconnexion",
-            "not_connected": "Non connecté au serveur"
-        },
-        "messages": {
-            "fetch_failed": "Impossible de charger les messages",
-            "send_failed": "Impossible d'envoyer le message",
-            "delete_failed": "Impossible de supprimer le message",
-            "not_connected": "Non connecté au serveur"
-        },
-        "error_boundary": {
-            "title": "Oops! Quelque chose s'est mal passé",
-            "description": "Une erreur inattendue est survenue. Vous pouvez essayer de recharger la page.",
-            "retry": "Réessayer",
-            "reload_page": "Recharger la page",
-            "error_details": "Détails de l'erreur (développement)"
-        }
+      "config_update_failed": "Échec de la mise à jour de la configuration",
+      "failed_to_load": "Impossible de charger le calendrier"
+    }
+  },
+  "cv": {
+    "role": "Développeur Fullstack",
+    "interactive_portfolio": "Portfolio Interactif",
+    "work_history": "Parcours Professionnel",
+    "experience_gallery": "Galerie d'Expériences.",
+    "core_components": "Expertise",
+    "specifications": "Compétences & Formation.",
+    "full_stack_architecture": "Architecture Full Stack",
+    "masters_degree": "Master",
+    "bachelors_degree": "Licence",
+    "initiate_connect": "Contact.",
+    "connect_description": "Ensemble, bâtissons l'avenir.",
+    "direct_mail": "Email Direct",
+    "linkedin": "LinkedIn",
+    "system_status": "STATUT SYSTÈME: OPTIMAL",
+    "sections": {
+      "profile": "Profil",
+      "experience": "Expériences",
+      "skills": "Compétences",
+      "education": "Formation",
+      "soft_skills": "Savoir-être",
+      "languages": "Langues",
+      "interests": "Centres d'intérêt"
     },
-    "holidays": {
-        "jour_de_l_an": {
-            "title": "Jour de l'an",
-            "description": "Le premier jour de l'année du calendrier grégorien. C'est une journée de festivités marquée par des vœux de bonne année, des repas en famille et des feux d'artifice."
-        },
-        "paques": {
-            "title": "Lundi de Pâques",
-            "description": "Une fête chrétienne majeure célébrant la résurrection de Jésus. Elle est associée à la chasse aux œufs et aux symboles de renouveau printanier."
-        },
-        "fete_travail": {
-            "title": "Fête du Travail",
-            "description": "La Fête internationale des travailleurs. En France, il est de tradition d'offrir du muguet comme porte-bonheur."
-        },
-        "victoire_1945": {
-            "title": "Victoire 1945",
-            "description": "Commémoration de la capitulation de l'Allemagne nazie en 1945, marquant la fin de la Seconde Guerre mondiale en Europe."
-        },
-        "ascension": {
-            "title": "Ascension",
-            "description": "Fête chrétienne célébrant la montée de Jésus au ciel, quarante jours après Pâques. Elle marque la fin de sa présence terrestre."
-        },
-        "pentecote": {
-            "title": "Lundi de Pentecôte",
-            "description": "Célèbre la descente du Saint-Esprit sur les apôtres, cinquante jours après Pâques. C'est un jour de solidarité en France."
-        },
-        "fete_nationale": {
-            "title": "Fête Nationale",
-            "description": "Commémore la prise de la Bastille le 14 juillet 1789, symbole de la fin de la monarchie absolue et de l'unité nationale."
-        },
-        "assomption": {
-            "title": "Assomption",
-            "description": "Célèbre la montée de la Vierge Marie au ciel, corps et âme, au terme de sa vie terrestre. C'est une fête mariale majeure."
-        },
-        "toussaint": {
-            "title": "Toussaint",
-            "description": "Fête catholique en l'honneur de tous les saints. C'est aussi un moment traditionnel pour se recueillir sur les tombes des défunts."
-        },
-        "armistice_1918": {
-            "title": "Armistice 1918",
-            "description": "Commémoration de l'armistice signé en 1918, mettant fin aux combats de la Première Guerre mondiale."
-        },
-        "noel": {
-            "title": "Noël",
-            "description": "Célébration de la naissance de Jésus pour les chrétiens, et fête culturelle majeure marquée par le Père Noël, les cadeaux et les repas festifs."
-        },
-        "saint_etienne": {
-            "title": "Saint Étienne",
-            "description": "Fête spécifique à l'Alsace-Moselle, célébrant Saint Étienne, le premier martyr chrétien."
-        },
-        "vendredi_saint": {
-            "title": "Vendredi Saint",
-            "description": "Jour spécifique à l'Alsace-Moselle, commémorant la crucifixion et la mort de Jésus."
-        },
-        "default": {
-            "title": "Jour Férié",
-            "description": "Un jour férié officiel célébré en France."
-        }
+    "profile_text": "Développeur back-end diplômé en Master Informatique (Sorbonne Université), expérimenté sur Spring Boot et ReactJS. Rigoureux, autonome et passionné par les défis techniques, je recherche un poste dans le développement back-end/fullstack. Je possède une carte de résident me permettant de travailler librement en France.",
+    "exp": {
+      "espace": {
+        "title": "Espace Web (Projet Personnel)",
+        "role": "Développeur Full Stack",
+        "desc": [
+          "Développement d’une application web full-stack (Java/Spring Boot + React).",
+          "Optimisation UX avec composants dynamiques (ReactBit + Tailwind).",
+          "Conteneurisation complète (Docker)."
+        ],
+        "tech": [
+          "Java EE",
+          "Spring Boot",
+          "ReactJs",
+          "Vite",
+          "TailwindCss",
+          "Docker",
+          "PostgreSQL",
+          "Git",
+          "Maven",
+          "LLMs"
+        ]
+      },
+      "rakuten": {
+        "title": "Rakuten France",
+        "role": "Développeur Fullstack (Stage)",
+        "desc": [
+          "Migrer et optimiser le composant de filtrage (250M exports/jour) : temps de configuration réduit de 2 min à <30 s.",
+          "Développer en autonomie deux nouveaux supports d’import (XML + JSON) des fiches produits sur la plateforme, facilitant l’intégration de 250+ partenaires.",
+          "Intégrer l’IA dans le traitement des données.",
+          "Migrer de ReactJS 15+ vers 20+ et de JavaScript vers TypeScript.",
+          "Développer en autonomie un outil de migration automatisée (3 semaines), garantissant l’intégrité de milliers de données clients et réduisant les erreurs manuelles.",
+          "Développer en autonomie un programme de synchronisation des coupons de réduction, garantissant la fiabilité des promotions visibles par des millions d’utilisateurs.",
+          "Réaliser des tests unitaires et automatisés pour garantir la fiabilité du code.",
+          "Suivre les cahiers des charges et la roadmap produit afin de garantir la conformité des livrables et le respect des délais.",
+          "Organiser des réunions de reporting et des meetings quotidiens en méthodologie Agile."
+        ],
+        "tech": [
+          "Java EE",
+          "Spring Boot",
+          "ReactJS",
+          "TypeScript",
+          "Docker",
+          "Jenkins",
+          "Hibernate",
+          "Elasticsearch",
+          "MariaDB",
+          "Liquibase",
+          "Git",
+          "CI/CD",
+          "Jira"
+        ]
+      },
+      "sorbonne": {
+        "title": "Sorbonne Université (E-commerce)",
+        "role": "Développeur Fullstack",
+        "desc": [
+          "Pilotage d’une application e-shop collaborative avec feature flags.",
+          "Développement full-stack (backend, frontend, base de données).",
+          "Mise en place d’une authentification complète + gestion des utilisateurs.",
+          "Automatisation de la génération de variantes produits (Product Line)."
+        ],
+        "tech": [
+          "Spring Boot",
+          "REST API",
+          "ReactJS",
+          "JavaScript",
+          "MySQL",
+          "Hibernate",
+          "Git",
+          "Maven",
+          "JUnit",
+          "Flagsmith",
+          "Microservices",
+          "JWT",
+          "Moobios Forge"
+        ]
+      },
+      "database": {
+        "title": "Université Paris Cité (Modélisation de base de données)",
+        "role": "Développeur Base de Données",
+        "desc": [
+          "Concevoir une base de données pour simuler les navigations de bateaux antiques.",
+          "Utiliser PostgreSQL pour la conception et la gestion des données, en intégrant des outils de modélisation collaboratifs.",
+          "Technologies: PostgreSQL / BOUML / StarUML"
+        ],
+        "tech": ["PostgreSQL", "BOUML", "StarUML"]
+      },
+      "ouichefs": {
+        "title": "Projet Ouichefs (Noyau Linux)",
+        "role": "Développeur Système",
+        "desc": [
+          "Développement d'un système de liens physiques amélioré pour le noyau Linux.",
+          "Implémentation des UUIDs, des liens inter-partitions et de la migration de blocs."
+        ],
+        "tech": ["C", "Linux Kernel", "File Systems", "ioctl"]
+      }
     },
-    "learning": {
-        "title": "Le Linguiste",
-        "login_required_title": "Connexion requise pour le Linguiste",
-        "login_required": "Veuillez vous connecter pour accéder à cette page.",
-        "login_required_description": "Vous devez être connecté pour accéder au Linguiste et sauvegarder vos expressions favorites.",
-        "discover": "Découverte",
-        "review": "Révision",
-        "no_favorites": "Aucun favori pour le moment.",
-        "back_to_discover": "Retourner en mode Découverte",
-        "load_error": "Impossible de charger le contenu.",
-        "retry": "Réessayer",
-        "new_expression": "Nouvelle Expression",
-        "login_to_save": "Connectez-vous pour sauvegarder vos favoris !",
-        "add_favorite": "Ajouter aux favoris",
-        "remove_favorite": "Retirer des favoris"
+    "edu": {
+      "esgi": "Mastère informatique: Ingénierie du Web",
+      "master": "Master Informatique: Systèmes et Applications Répartis",
+      "licence": "Licence Informatique: Informatique Générale"
+    },
+    "soft_skills_list": [
+      "Autonomie",
+      "Rigueur",
+      "Bon relationnel",
+      "Esprit de synthèse",
+      "Capacité d’adaptation",
+      "Motivation",
+      "Curiosité",
+      "Esprit d’équipe"
+    ],
+    "languages_list": {
+      "zh": "Chinois (Maternel)",
+      "en": "Anglais (Professionnel)",
+      "fr": "Français (Bilingue)"
+    },
+    "interests_list": ["Jeux vidéos", "Sport"],
+    "last_updated": "Dernière mise à jour",
+    "update_date": "Janvier 2026",
+    "location": "Paris, France"
+  },
+  "game": {
+    "arcade_zone": "SALLE D'ARCADE",
+    "choose_your_challenge": "Choisissez un jeu pour commencer",
+    "select_game": "Sélectionner un jeu",
+    "login_for_scores": "Connectez-vous pour sauvegarder vos scores",
+    "brick_breaker": "Casse-Brique",
+    "match3": "Match 3",
+    "score": "SCORE",
+    "start_game": "COMMENCER",
+    "game_over": "GAME OVER",
+    "you_win": "GAGNÉ !",
+    "final_score": "Score Final",
+    "try_again": "RÉESSAYER",
+    "play_again": "REJOUER",
+    "reset": "RÉINITIALISER",
+    "loading": "Chargement...",
+    "brick_breaker_desc": "Utilisez la souris pour bouger la raquette.",
+    "match3_desc": "Échangez les tuiles pour en aligner 3 !",
+    "pokemon_quiz": "Quiz Pokémon",
+    "leaderboard": "Classement",
+    "personal_best": "Mon Record Perso",
+    "best": "Meilleur",
+    "no_scores_yet": "No scores recorded yet. Be the first!",
+    "login_warning": "<0>Connectez-vous</0> pour que votre score soit enregistré, sinon il sera perdu !",
+    "highscore_guest_alert": "Vous avez réalisé un score digne du classement ! Connectez-vous pour le sauvegarder.",
+    "moves": "Mouvements",
+    "new_maze": "Nouveau Labyrinthe",
+    "maze": "Labyrinthe",
+    "use_arrows": "Utilisez les flèches pour vous déplacer",
+    "use_mouse": "Glissez à la souris ou utilisez ZQSD/Flèches",
+    "time": "Temps",
+    "combo": "Combo",
+    "combo_multiplier": "Combo x{{multiplier}} !",
+    "mute": "Muet",
+    "unmute": "Son",
+    "flip_to_rules": "Voir Règles",
+    "flip_to_game": "Retour au Jeu",
+    "admin_code_prompt": "Code Admin :",
+    "toggle_failed": "Échec du changement de statut",
+    "brick_breaker_rules": "Détruisez toutes les briques en faisant rebondir la balle sur votre raquette. Si la balle tombe sous la raquette, c'est terminé !",
+    "brick_breaker_controls": "Déplacez votre souris (ou glissez sur mobile) pour contrôler la raquette.",
+    "brick_breaker_bonus": "Certaines briques rapportent plus de points. Visez les coins pour des rebonds spectaculaires !",
+    "brick_breaker_maps": {
+      "tunnel": {
+        "name": "Le Tunnel",
+        "desc": "Percez le mur fortifié pour atteindre le trésor"
+      },
+      "pyramid": {
+        "name": "La Pyramide",
+        "desc": "Détruisez la pyramide mystérieuse"
+      },
+      "chambers": {
+        "name": "Les Chambres",
+        "desc": "Naviguez dans le labyrinthe de chambres"
+      },
+      "mosaic": {
+        "name": "La Mosaïque Royale",
+        "desc": "Un tapis de briques aux couleurs impériales"
+      },
+      "fortress": {
+        "name": "La Forteresse",
+        "desc": "Un bloc massif défiant toute destruction"
+      },
+      "galactic": {
+        "name": "L'Empire Galactique",
+        "desc": "Une densité extrême pour les vrais maîtres"
+      },
+      "bastion": {
+        "name": "Le Bastion",
+        "desc": "Une ligne de défense avec des tours fortifiées"
+      },
+      "coliseum": {
+        "name": "Le Colisée",
+        "desc": "Des anneaux concentriques de briques et de murs"
+      },
+      "royal_maze": {
+        "name": "Le Labyrinthe Royal",
+        "desc": "Un réseau complexe de couloirs et de briques"
+      },
+      "dark_maze": {
+        "name": "Le Dédale Sombre",
+        "desc": "De longs couloirs horizontaux remplis de secrets"
+      },
+      "crypts": {
+        "name": "Les Cryptes Oubliées",
+        "desc": "Un réseau vertical de chambres closes"
+      },
+      "crystal": {
+        "name": "Le Labyrinthe de Cristal",
+        "desc": "Des chemins diagonaux ultra-étroits"
+      },
+      "mines": {
+        "name": "Les Mines d'Or",
+        "desc": "Des filons précieux protégés par la roche"
+      },
+      "temple": {
+        "name": "Le Temple Maudit",
+        "desc": "Une structure ancienne piégée par des murs"
+      },
+      "station": {
+        "name": "La Station Intergalactique",
+        "desc": "Un design technologique symétrique pour un défi ultime"
+      },
+      "infinite": {
+        "name": "Le Dédale Infini",
+        "desc": "Un labyrinthe généré par le serveur à chaque partie"
+      }
+    },
+    "brick_breaker_difficulty": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile",
+      "expert": "Expert",
+      "extreme": "Extrême"
+    },
+    "brick_breaker_choose_map": "Choisir Carte",
+    "brick_breaker_map_selection": "Sélection de Carte",
+    "brick_breaker_selected": "Sélectionnée",
+    "brick_breaker_maps_unlocked": "{{count}} / {{total}} cartes débloquées",
+    "brick_breaker_new_map_unlocked": "Nouvelle carte débloquée : {{name}} !",
+    "brick_breaker_next_level": "Niveau Suivant",
+    "brick_breaker_generating": "Génération...",
+    "brick_breaker_confirm_start": "Confirmer et Commencer",
+    "match3_rules_text": "Alignez au moins 3 blocs de la même couleur horizontalement ou verticalement pour les faire exploser et marquer des points.",
+    "match3_combos": "Créez des réactions en chaîne pour activer des multiplicateurs de score (x2, x3...). Plus vous enchaînez, plus le score explose !",
+    "match3_speed": "Attention au chrono ! Chaque seconde compte pour atteindre le sommet du classement.",
+    "pokemon_rules": "Testez vos connaissances Pokémon ! Identifiez la silhouette qui apparaît à l'écran parmi les propositions.",
+    "pokemon_quiz_desc": "Choisissez la bonne réponse parmi les 4 options. Soyez précis et rapide !",
+    "pokemon_score_desc": "Enchaînez les bonnes réponses pour prouver que vous êtes le meilleur dresseur.",
+    "maze_rules": "Trouvez la sortie du labyrinthe avant la fin du temps !",
+    "maze_collect": "Le brouillard de guerre limite votre vision. Mémorisez votre chemin et agissez vite.",
+    "maze_fog": "Brouillard",
+    "maze_tip": "Astuce : Le point de départ est marqué (S) et la sortie est marquée (R).",
+    "game_disabled": "Jeu Désactivé",
+    "zombie": "Zombie Defense",
+    "zombie_desc": "Défendez la base contre la horde de zombies !",
+    "mission_brief": "Briefing de Mission",
+    "zombie_rules_text": "Une horde de zombies approche ! Vous contrôlez la dernière tourelle de défense. Déplacez-vous latéralement pour viser. Le tir est automatique.",
+    "start_mission": "LANCER MISSION",
+    "retry": "RÉESSAYER",
+    "objective": "Objectif",
+    "survival": "Survivez le plus longtemps possible.",
+    "move": "Déplacer",
+    "game_disabled_desc": "Ce jeu est actuellement désactivé par l'administrateur.",
+    "next_shift": "Changement",
+    "zombie_hud": {
+      "system_status": "Status Système",
+      "wave": "Vague",
+      "kills": "Kills",
+      "record": "Record",
+      "tracking": "PISTAGE",
+      "fire_rate": "Cadence",
+      "damage": "Dégâts",
+      "crit_chance": "Crit%",
+      "cannons": "Canons",
+      "bonus": "Bonus",
+      "rebounds": "Rebonds",
+      "zombie_hp": "Z-HP",
+      "danger_critical": "!! DANGER CRITIQUE !!",
+      "danger_alert": "! ALERTE !",
+      "title_bg": "DÉFENSE ZOMBIE",
+      "protocol": "PROTOCOLE",
+      "protect_zone": "Protégez la zone. Collectez la Tech. Survivez.",
+      "initialize": "INITIALISER",
+      "system_failure": "ÉCHEC SYSTÈME",
+      "final_score": "Score Final",
+      "waves": "Vagues",
+      "eliminations": "Éliminations",
+      "restart": "Redémarrer",
+      "controls": "CONTROLES: SOURIS // CLAVIER",
+      "installed": "INSTALLÉ",
+      "capture_mouse": "CLIQUEZ POUR CAPTURER LA SOURIS",
+      "crit_hit": "CRITIQUE"
+    },
+    "zombie_upgrades": {
+      "dmg_50_name": "Surcharge I",
+      "dmg_50_desc": "Dégâts de base +50%",
+      "dmg_100_name": "Surcharge II",
+      "dmg_100_desc": "Double vos dégâts de base (x2)",
+      "crit_b_50_name": "Lames de Rasoir",
+      "crit_b_50_desc": "Bonus de Critique +50%",
+      "crit_b_150_name": "Exécuteur D'Élite",
+      "crit_b_150_desc": "Bonus de Critique +150%",
+      "fire_50_name": "Tempête de Plomb",
+      "fire_50_desc": "Cadence de tir doublée (-50% délai)",
+      "homing_shot_name": "Pistage Tactique",
+      "homing_shot_desc": "Les balles cherchent automatiquement les ennemis"
+    },
+    "zombie_modal": {
+      "title": "RÉCOMPENSE",
+      "title_highlight": "SUPRÊME",
+      "subtitle": "Choisissez un module d'amélioration d'élite",
+      "install": "Installer Module"
+    },
+    "zombie_notif": {
+      "elite_challenge": "DÉFI ÉLITE ACTIVÉ : +50% HP",
+      "perfect_streak": "SÉCURITÉ PARFAITE : STREAK {{streak}}",
+      "elite_complete": "DÉFI ÉLITE TERMINÉ",
+      "wave": "VAGUE {{wave}}",
+      "pickup_rate": "+++ CADENCE",
+      "pickup_tech_max": "TECH MAXIMALE",
+      "pickup_tech": "TECHNO AMÉLIORÉE",
+      "pickup_damage": "+10 DÉGÂTS",
+      "pickup_crit": "+10% CRIT",
+      "pickup_bounce": "+1 REBOND"
+    },
+    "fullscreen": "Plein écran",
+    "fullscreen_exit": "Quitter le plein écran",
+    "help_rules": "Aide / Règles",
+    "status_active": "ACTIF",
+    "status_off": "OFF",
+    "status_disabled": "DÉSACTIVÉ",
+    "action_disable": "DÉSACTIVER",
+    "action_enable": "ACTIVER",
+    "confirm_reset_score": "Êtes-vous sûr de vouloir réinitialiser le score de {{username}} à 0 ?",
+    "error_reset_score": "Échec de la réinitialisation du score",
+    "reset_score": "Réinitialiser le score",
+    "clear_all_scores": "Supprimer tous les scores",
+    "confirm_clear_all_scores": "⚠️ ATTENTION ⚠️\n\nÊtes-vous sûr de vouloir supprimer TOUS les scores du jeu {{gameType}} ?\n\nCette action est IRRÉVERSIBLE et supprimera définitivement tous les records de ce jeu.\n\nTapez 'SUPPRIMER' pour confirmer :",
+    "cleanup_duplicates": "Nettoyer les doublons",
+    "confirm_cleanup_duplicates": "Êtes-vous sûr de vouloir nettoyer tous les scores dupliqués ?\n\nCette action supprimera les doublons et ne gardera que le meilleur score de chaque utilisateur pour chaque jeu."
+  },
+  "errors": {
+    "failed_to_load_messages": "Impossible de charger les messages",
+    "failed_to_send_message": "Impossible d'envoyer le message",
+    "failed_to_delete_message": "Impossible de supprimer le message",
+    "failed_to_toggle_mute": "Impossible de changer le mode muet",
+    "failed_to_clear_messages": "Impossible d'effacer les messages",
+    "unknown_error": "Erreur inconnue",
+    "connection": {
+      "failed": "Échec de connexion",
+      "retry_failed": "Échec de la reconnexion",
+      "not_connected": "Non connecté au serveur"
     },
     "messages": {
-        "title": "Mur de Messages",
-        "subtitle": "Laissez votre empreinte",
-        "login_required_title": "Connexion requise pour les messages",
-        "login_required_description": "Vous devez être connecté pour accéder au mur de messages et participer aux discussions de la communauté.",
-        "name_placeholder": "Votre nom",
-        "message_placeholder": "Votre message...",
-        "translated": "Traduit",
-        "translation_limit": "Limite de traduction journalière atteinte",
-        "translation_error": "Échec de la traduction",
-        "submit": "PUBLIER",
-        "empty": "Aucun message pour le moment. Soyez le premier !",
-        "delete": "Supprimer",
-        "just_now": "À l'instant",
-        "anonymous": "Anonyme",
-        "post_anonymously": "Publier anonymement",
-        "you": "Vous",
-        "online": "en ligne",
-        "translate": "Traduire",
-        "reply": "Répondre",
-        "replying_to": "Réponse à",
-        "send": "Envoyer",
-        "set_name": "Définir le nom"
+      "fetch_failed": "Impossible de charger les messages",
+      "send_failed": "Impossible d'envoyer le message",
+      "delete_failed": "Impossible de supprimer le message",
+      "not_connected": "Non connecté au serveur"
     },
-    "pokemon": {
-        "guess_prompt": "Qui est ce Pokémon ?",
-        "score": "Score",
-        "loading": "Chargement des données génétiques...",
-        "guess": "DEVINER",
-        "next": "POKÉMON SUIVANT",
-        "correct": "✓ CORRECT !",
-        "wrong": "✗ Réessayez !",
-        "hint": "Indice",
-        "letters": "lettres",
-        "answer": "Réponse",
-        "tip": "Astuce : Plus vous répondez vite, plus vous prouvez votre maîtrise du Pokédex !"
-    },
-    "zombie": {
-        "rules": {
-            "title": "ZOMBIE SHOOTER - GUIDE",
-            "objective": "Objectif",
-            "objective_desc": "Survivez le plus longtemps possible contre des vagues infinies de zombies. Éliminez-les et collectez des power-ups pour améliorer vos armes.",
-            "controls": "Contrôles",
-            "pc": "PC",
-            "pc_desc": "Déplacez votre souris pour bouger. Tir automatique.",
-            "mobile": "Mobile",
-            "mobile_desc": "Utilisez les pads tactiles en bas de l'écran pour bouger.",
-            "powerups": "Power-Ups",
-            "scatter": "Scatter (Jaune)",
-            "scatter_desc": "+1 Canon supplémentaire",
-            "firerate": "Cadence (Bleu)",
-            "firerate_desc": "Réduit le délai entre les tirs",
-            "crit": "Critique (Jaune)",
-            "crit_desc": "+10% Chance de Critique (Bonus variable)",
-            "tech": "Tech (Rouge)",
-            "tech_desc": "Débloque des modes de tir avancés",
-            "damage": "Dégâts (Orange)",
-            "damage_desc": "+10 Dégâts par tir",
-            "bounce": "Rebond (Blanc)",
-            "bounce_desc": "+1 Rebond sur les murs",
-            "tech_upgrades": "Modes de Tir & Super Upgrades",
-            "tech1": "TECH 1: PERFORANT",
-            "tech1_desc": "Traverse les ennemis",
-            "tech2": "TECH 2: REBOND +",
-            "tech2_desc": "Augmente les rebonds max",
-            "tech3": "TECH 3: CHAÎNE",
-            "tech3_desc": "Saute vers la cible proche",
-            "tech4": "TECH 4: CRYO-CHOC",
-            "tech4_desc": "Ralentit les ennemis (25%)",
-            "tech5": "TECH 5: RÉSONANCE",
-            "tech5_desc": "Dégâts de zone (AoE) à l'impact",
-            "tech6": "TECH 6: SINGULARITÉ",
-            "tech6_desc": "Vortex sur coups critiques",
-            "homing": "PISTAGE TACTIQUE (Super)",
-            "homing_desc": "Les balles traquent automatiquement les cibles",
-            "rewards": "Systèmes de Récompenses",
-            "super_reward": "Super Récompense",
-            "super_reward_desc": "Toutes les 10 vagues, choisissez parmi 3 améliorations massives.",
-            "desperate_defense": "DÉFENSE DÉSESPÉRÉE : Ennemi tué en ZONE ROUGE = Power-Up garanti !",
-            "elite_challenge": "DÉFI ÉLITE : 5 vagues sans breach = HP zombies +50% (Score Bonus).",
-            "bestiary": "Bestiaire",
-            "walker": "Walker",
-            "walker_stats": "HP 1x | Vitesse 1x",
-            "runner": "Runner",
-            "runner_stats": "HP 0.5x | Vitesse 1.6x",
-            "tank": "Tank",
-            "tank_stats": "HP 4x | Knockback 50%",
-            "boss": "BOSS",
-            "boss_stats": "HP 10x | BUTIN GARANTI",
-            "tip": "Astuce: Les HP des zombies augmentent de 20% à chaque vague (exponentiel). Améliorez vos dégâts!"
-        }
-    },
-    "spacetraders": {
-        "join_fleet": "Amirauté Spatiale",
-        "rules_title": "Règles d'Engagement",
-        "rules_text": "Pilotez votre flotte à travers la galaxie. Enregistrez un indicatif unique pour commencer votre carrière de marchand ou de pirate.",
-        "rules_market": "Commercez des ressources, améliorez vos vaisseaux et dominez le marché intergalactique.",
-        "register_desc": "Entrez un indicatif pour enregistrer un nouvel agent.",
-        "callsign_placeholder": "ENTREZ L'INDICATIF",
-        "register_agent": "Enregistrer l'Agent",
-        "agent": "AGENT",
-        "credits": "CRÉDITS",
-        "headquarters": "QUARTIER GÉNÉRAL",
-        "logout": "Déconnexion",
-        "command_fleet": "Flotte de Commandement",
-        "symbol": "Symbole",
-        "location": "Localisation",
-        "no_ships": "Aucun vaisseau trouvé. Achetez des vaisseaux pour commencer le commerce.",
-        "uplinking": "Liaison au Réseau Neural...",
-        "error": "ERREUR",
-        "auto_logout": "Déconnexion automatique dans 3 secondes...",
-        "clear_restart": "Effacer le Token & Redémarrer",
-        "economy": "Économie",
-        "network": "Réseau",
-        "network_desc": "Les données sont synchronisées en temps réel avec l'API SpaceTraders v2.",
-        "tip": "Astuce : Votre indicatif est votre identité galactique unique. Gardez-le précieusement !"
-    },
-    "suggestions": {
-        "title": "Suggestions & Idées",
-        "subtitle": "Partagez vos idées pour améliorer ce site !",
-        "login_required_title": "Connexion requise pour les suggestions",
-        "login_required_description": "Vous devez être connecté pour accéder aux suggestions et partager vos idées avec la communauté.",
-        "submit_new": "Soumettre une Nouvelle Idée",
-        "placeholder": "Je voudrais voir plus de jeux d'arcade...",
-        "submit": "Soumettre l'Idée",
-        "login_to_view": "Veuillez vous connecter pour voir et soumettre des suggestions",
-        "submitting": "Envoi en cours...",
-        "login_required": "Veuillez vous connecter pour soumettre des suggestions",
-        "login_required_description": "Vous devez être connecté pour accéder aux suggestions et partager vos idées avec la communauté.",
-        "all_suggestions": "Toutes les Suggestions",
-        "your_suggestions": "Vos Suggestions",
-        "submit_failed": "Échec de l'envoi de la suggestion",
-        "no_suggestions": "Aucune suggestion pour le moment. Soyez le premier à partager une idée !",
-        "pending": "En attente",
-        "reviewed": "Revue",
-        "implemented": "Implémenté",
-        "status_pending": "En attente",
-        "status_reviewed": "Revue",
-        "status_implemented": "Implémenté",
-        "confirm_delete": "Supprimer cette suggestion ?",
-        "delete": "Supprimer",
-        "quote": "Citer",
-        "archive": "Archive",
-        "show_archive": "Afficher l'Archive",
-        "hide_archive": "Masquer l'Archive",
-        "hide_comments": "Masquer",
-        "comments": "Commentaires",
-        "add_comment": "Ajouter un commentaire",
-        "post": "Publier",
-        "post_comment": "Publier le commentaire",
-        "delete_comment": "Supprimer le commentaire",
-        "no_comments": "Pas de commentaires pour le moment.",
-        "replying_to": "Répondre à",
-        "reopen": "Rouvrir"
-    },
-    "features": {
-        "velocity": {
-            "title": "Rigueur",
-            "description": "Une attention méticuleuse aux détails, garantissant un code propre, performant et fiable."
-        },
-        "depth": {
-            "title": "Créativité",
-            "description": "Repousser les limites de l'interface utilisateur pour créer des expériences mémorables et intuitives."
-        },
-        "light": {
-            "title": "Ambition",
-            "description": "Une volonté constante d'apprendre et de maîtriser les technologies de demain."
-        }
-    },
-    "gallery": {
-        "scroll_left": "Défiler à gauche",
-        "scroll_right": "Défiler à droite",
-        "nebula": {
-            "title": "JAVA / SPRING",
-            "description": "Architecture Robuste"
-        },
-        "cyber": {
-            "title": "REACT / VITE",
-            "description": "Interfaces Dynamiques"
-        },
-        "deep": {
-            "title": "DOCKER / CI/CD",
-            "description": "Déploiement Continu"
-        },
-        "aurora": {
-            "title": "SQL / NOSQL",
-            "description": "Gestion de Données"
-        },
-        "horizon": {
-            "title": "LINUX / OS",
-            "description": "Maîtrise Système"
-        }
-    },
-    "gravity": {
-        "title": "Mon Labo",
-        "instruction": "ZONE D'EXPÉRIMENTATION -- MES COMPÉTENCES EN ACTION",
-        "keywords": [
-            "Java",
-            "Spring Boot",
-            "React",
-            "Docker",
-            "Linux",
-            "SQL",
-            "TypeScript",
-            "CI/CD",
-            "Créativité",
-            "Git",
-            "Redis",
-            "Jenkins",
-            "Agile",
-            "API",
-            "Cloud"
-        ]
-    },
-    "hero": {
-        "subtitle": "Façonner mon avenir, ligne par ligne.",
-        "explore": "Explorer"
-    },
-    "story": {
-        "title": "Ma Philosophie",
-        "description": "Je transforme des lignes de code en expériences visuelles et interactives, fusionnant logique rigoureuse et créativité sans limite pour donner vie aux idées."
-    },
-    "footer_section": {
-        "tagline": "Architecte de solutions numériques.",
-        "socials": "Réseaux",
-        "legal": "Légal",
-        "privacy": "Politique de Confidentialité",
-        "terms": "Conditions d'Utilisation",
-        "newsletter": "Newsletter",
-        "email_placeholder": "Email",
-        "join": "Me Contacter"
-    },
-    "legal_page": {
-        "updated": "Dernière mise à jour : Janvier 2026",
-        "terms": {
-            "title": "Conditions d'Utilisation",
-            "sections": {
-                "presentation": {
-                    "title": "1. Présentation du site",
-                    "content": "En vertu de l'article 6 de la loi n° 2004-575 et pour la confiance dans l'économie numérique, il est précisé aux utilisateurs l'identité des intervenants :",
-                    "details": "Propriétaire : Changrui ZHANG\nContact : Via le formulaire de contact ou LinkedIn.\nHébergement : Serveur personnel / Cloud privé."
-                },
-                "cgu": {
-                    "title": "2. Conditions générales d’utilisation",
-                    "content_1": "L’utilisation du site implique l’acceptation pleine et entière des conditions générales d’utilisation ci-après décrites.",
-                    "content_2": "Ce site est normalement accessible à tout moment aux utilisateurs. Une interruption pour maintenance technique peut être décidée par le propriétaire."
-                },
-                "services": {
-                    "title": "3. Description des services fournis",
-                    "content": "Le site a pour objet de fournir une information concernant l’ensemble des activités du propriétaire (Portfolio, CV, Projets). Le propriétaire s’efforce de fournir des informations aussi précises que possible."
-                },
-                "intellectual": {
-                    "title": "4. Propriété intellectuelle",
-                    "content_1": "Changrui ZHANG est propriétaire des droits de propriété intellectuelle ou détient les droits d’usage sur tous les éléments accessibles sur le site.",
-                    "content_2": "Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site est interdite, sauf autorisation écrite préalable."
-                },
-                "liability": {
-                    "title": "5. Limitations de responsabilité",
-                    "content": "Le propriétaire ne pourra être tenu responsable des dommages directs et indirects causés au matériel de l’utilisateur, lors de l’accès au site."
-                },
-                "data": {
-                    "title": "6. Gestion des données personnelles",
-                    "content_1": "Le site ne collecte des informations personnelles relatives à l'utilisateur que pour le besoin de certains services proposés par le site (ex: classement des jeux, messages).",
-                    "content_2": "Conformément à la loi relative à l’informatique, aux fichiers et aux libertés, tout utilisateur dispose d’un droit d’accès, de rectification et d’opposition aux données personnelles le concernant."
-                }
-            }
-        },
-        "privacy": {
-            "title": "Politique de Confidentialité",
-            "sections": {
-                "collection": {
-                    "title": "1. Collecte de l'information",
-                    "content_1": "Nous recueillons des informations lorsque vous vous inscrivez sur notre site, lorsque vous vous connectez à votre compte, participez à un jeu, et / ou lorsque vous vous déconnectez.",
-                    "content_2": "En outre, nous recevons et enregistrons automatiquement des informations à partir de votre ordinateur et navigateur, y compris votre adresse IP, vos logiciels et votre matériel."
-                },
-                "usage": {
-                    "title": "2. Utilisation des informations",
-                    "content": "Toute les informations que nous recueillons auprès de vous peuvent être utilisées pour :",
-                    "list": [
-                        "Personnaliser votre expérience et répondre à vos besoins individuels",
-                        "Fournir un contenu publicitaire personnalisé",
-                        "Améliorer notre site Web",
-                        "Améliorer le service client",
-                        "Vous contacter par e-mail",
-                        "Administrer un concours, une promotion, ou une enquête"
-                    ]
-                },
-                "ecommerce": {
-                    "title": "3. Confidentialité du commerce en ligne",
-                    "content": "Nous sommes les seuls propriétaires des informations recueillies sur ce site. Vos informations personnelles ne seront pas vendues, échangées, transférées, ou données à une autre société sans votre consentement."
-                },
-                "disclosure": {
-                    "title": "4. Divulgation à des tiers",
-                    "content": "Nous ne vendons, n’échangeons et ne transférons pas vos informations personnelles identifiables à des tiers. Cela ne comprend pas les tierce parties de confiance qui nous aident à exploiter notre site Web."
-                },
-                "security": {
-                    "title": "5. Protection des informations",
-                    "content": "Nous mettons en œuvre une variété de mesures de sécurité pour préserver la sécurité de vos informations personnelles. Nous utilisons un cryptage à la pointe de la technologie pour protéger les informations sensibles transmises en ligne."
-                },
-                "consent": {
-                    "title": "6. Consentement",
-                    "content": "En utilisant notre site, vous consentez à notre politique de confidentialité."
-                }
-            }
-        }
-    },
-    "preloader": {
-        "welcome": "BIENVENUE",
-        "loading": "CHARGEMENT"
-    },
-    "profile": {
-        "title": "Profil Utilisateur",
-        "tabs": {
-            "overview": "Aperçu",
-            "edit": "Modifier",
-            "privacy": "Confidentialité",
-            "activity": "Activité",
-            "achievements": "Succès"
-        },
-        "card": {
-            "bio": "Bio",
-            "stats": "Statistiques",
-            "achievements": "Succès",
-            "joined": "Rejoint le",
-            "messages": "Messages",
-            "games": "Jeux",
-            "days": "Jours",
-            "streak": "Série",
-            "longest_streak": "Meilleure Série",
-            "time_spent": "Temps passé",
-            "level": "Niveau"
-        },
-        "achievements": {
-            "empty": "Aucun succès débloqué pour le moment. Continuez à explorer !"
-        },
-        "form": {
-            "title": "Modifier le Profil",
-            "display_name": "Nom d'Affichage",
-            "bio": "Bio",
-            "bio_placeholder": "Parlez-nous de vous...",
-            "save": "Enregistrer",
-            "reset": "Réinitialiser",
-            "saving": "Enregistrement...",
-            "unsaved": "Non enregistré",
-            "success": "Profil mis à jour avec succès !",
-            "error_exists": "Ce nom d'affichage existe déjà",
-            "cancel_confirm": "Êtes-vous sûr de vouloir annuler vos modifications ?"
-        },
-        "avatar": {
-            "title": "Avatar",
-            "upload": "Charger un nouvel avatar",
-            "change": "Changer",
-            "error": "Échec du chargement de l'avatar",
-            "cropping": "Redimensionner votre avatar",
-            "crop_desc": "Sélectionnez la zone que vous souhaitez utiliser comme avatar",
-            "preview": "Aperçu",
-            "quality_check": "Vérification de la qualité",
-            "size": "Taille",
-            "drag": "Glisser pour déplacer",
-            "resize": "Redimensionner les coins",
-            "square": "Format carré",
-            "save": "Enregistrer l'avatar",
-            "select_crop": "Sélectionnez zone de recadrage",
-            "quality": {
-                "high": "Excellente qualité",
-                "medium": "Bonne qualité",
-                "low": "Peut paraître pixélisé"
-            },
-            "confirm": "Confirmer",
-            "cancel": "Annuler"
-        },
-        "privacy": {
-            "title": "Paramètres de Confidentialité",
-            "subtitle": "Contrôlez qui peut voir les informations et l'activité de votre profil.",
-            "notice_title": "Informations sur la Confidentialité",
-            "notice_text": "Votre avatar et votre nom d'affichage sont toujours visibles pour maintenir une expérience sociale. Les autres informations peuvent être contrôlées avec ces paramètres.",
-            "visibility_title": "Visibilité du Profil",
-            "visibility": {
-                "public": "Public",
-                "friends": "Amis",
-                "private": "Privé",
-                "public_desc": "Tout le monde peut voir votre profil",
-                "friends_desc": "Seuls vos amis peuvent voir votre profil",
-                "private_desc": "Vous seul pouvez voir votre profil"
-            },
-            "granular_title": "Ce que les autres peuvent voir",
-            "show_bio": "Bio",
-            "show_bio_desc": "Votre description personnelle",
-            "show_stats": "Statistiques d'activité",
-            "show_stats_desc": "Compteur de messages, jeux joués, séries",
-            "show_achievements": "Succès",
-            "show_achievements_desc": "Badges et accomplissements",
-            "show_last_active": "Dernière activité",
-            "show_last_active_desc": "Quand vous étiez en ligne pour la dernière fois",
-            "save": "Enregistrer",
-            "saving": "Enregistrement...",
-            "reset": "Réinitialiser",
-            "success": "Paramètres de confidentialité mis à jour avec succès !"
-        },
-        "errors": {
-            "failed_load": "Échec du chargement des données du profil",
-            "access_required": "Accès Profil Requis",
-            "login_required": "Veuillez vous connecter pour voir votre profil.",
-            "return_home": "Retour à l'Accueil",
-            "coming_soon": "Bientôt disponible",
-            "activity_soon": "L'historique détaillé de l'activité sera disponible ici bientôt."
-        },
-        "gender": {
-            "title": "Genre",
-            "male": "Homme",
-            "female": "Femme",
-            "not_specified": "Non renseigné"
-        }
+    "error_boundary": {
+      "title": "Oops! Quelque chose s'est mal passé",
+      "description": "Une erreur inattendue est survenue. Vous pouvez essayer de recharger la page.",
+      "retry": "Réessayer",
+      "reload_page": "Recharger la page",
+      "error_details": "Détails de l'erreur (développement)"
     }
+  },
+  "holidays": {
+    "jour_de_l_an": {
+      "title": "Jour de l'an",
+      "description": "Le premier jour de l'année du calendrier grégorien. C'est une journée de festivités marquée par des vœux de bonne année, des repas en famille et des feux d'artifice."
+    },
+    "paques": {
+      "title": "Lundi de Pâques",
+      "description": "Une fête chrétienne majeure célébrant la résurrection de Jésus. Elle est associée à la chasse aux œufs et aux symboles de renouveau printanier."
+    },
+    "fete_travail": {
+      "title": "Fête du Travail",
+      "description": "La Fête internationale des travailleurs. En France, il est de tradition d'offrir du muguet comme porte-bonheur."
+    },
+    "victoire_1945": {
+      "title": "Victoire 1945",
+      "description": "Commémoration de la capitulation de l'Allemagne nazie en 1945, marquant la fin de la Seconde Guerre mondiale en Europe."
+    },
+    "ascension": {
+      "title": "Ascension",
+      "description": "Fête chrétienne célébrant la montée de Jésus au ciel, quarante jours après Pâques. Elle marque la fin de sa présence terrestre."
+    },
+    "pentecote": {
+      "title": "Lundi de Pentecôte",
+      "description": "Célèbre la descente du Saint-Esprit sur les apôtres, cinquante jours après Pâques. C'est un jour de solidarité en France."
+    },
+    "fete_nationale": {
+      "title": "Fête Nationale",
+      "description": "Commémore la prise de la Bastille le 14 juillet 1789, symbole de la fin de la monarchie absolue et de l'unité nationale."
+    },
+    "assomption": {
+      "title": "Assomption",
+      "description": "Célèbre la montée de la Vierge Marie au ciel, corps et âme, au terme de sa vie terrestre. C'est une fête mariale majeure."
+    },
+    "toussaint": {
+      "title": "Toussaint",
+      "description": "Fête catholique en l'honneur de tous les saints. C'est aussi un moment traditionnel pour se recueillir sur les tombes des défunts."
+    },
+    "armistice_1918": {
+      "title": "Armistice 1918",
+      "description": "Commémoration de l'armistice signé en 1918, mettant fin aux combats de la Première Guerre mondiale."
+    },
+    "noel": {
+      "title": "Noël",
+      "description": "Célébration de la naissance de Jésus pour les chrétiens, et fête culturelle majeure marquée par le Père Noël, les cadeaux et les repas festifs."
+    },
+    "saint_etienne": {
+      "title": "Saint Étienne",
+      "description": "Fête spécifique à l'Alsace-Moselle, célébrant Saint Étienne, le premier martyr chrétien."
+    },
+    "vendredi_saint": {
+      "title": "Vendredi Saint",
+      "description": "Jour spécifique à l'Alsace-Moselle, commémorant la crucifixion et la mort de Jésus."
+    },
+    "default": {
+      "title": "Jour Férié",
+      "description": "Un jour férié officiel célébré en France."
+    }
+  },
+  "media": {
+    "add_image": "Image",
+    "validating": "Validation...",
+    "compressing": "Compression...",
+    "uploading": "Envoi en cours...",
+    "upload_success": "Envoi réussi",
+    "drag_drop_or_click": "Glissez une image ou cliquez pour sélectionner",
+    "supported_formats": "Formats supportés",
+    "max_size": "Taille maximale"
+  },
+  "learning": {
+    "title": "Le Linguiste",
+    "login_required_title": "Connexion requise pour le Linguiste",
+    "login_required": "Veuillez vous connecter pour accéder à cette page.",
+    "login_required_description": "Vous devez être connecté pour accéder au Linguiste et sauvegarder vos expressions favorites.",
+    "discover": "Découverte",
+    "review": "Révision",
+    "no_favorites": "Aucun favori pour le moment.",
+    "back_to_discover": "Retourner en mode Découverte",
+    "load_error": "Impossible de charger le contenu.",
+    "retry": "Réessayer",
+    "new_expression": "Nouvelle Expression",
+    "login_to_save": "Connectez-vous pour sauvegarder vos favoris !",
+    "add_favorite": "Ajouter aux favoris",
+    "remove_favorite": "Retirer des favoris"
+  },
+  "messages": {
+    "title": "Mur de Messages",
+    "subtitle": "Laissez votre empreinte",
+    "login_required_title": "Connexion requise pour les messages",
+    "login_required_description": "Vous devez être connecté pour accéder au mur de messages et participer aux discussions de la communauté.",
+    "name_placeholder": "Votre nom",
+    "message_placeholder": "Votre message...",
+    "translated": "Traduit",
+    "translation_limit": "Limite de traduction journalière atteinte",
+    "translation_error": "Échec de la traduction",
+    "submit": "PUBLIER",
+    "empty": "Aucun message pour le moment. Soyez le premier !",
+    "delete": "Supprimer",
+    "just_now": "À l'instant",
+    "anonymous": "Anonyme",
+    "post_anonymously": "Publier anonymement",
+    "you": "Vous",
+    "online": "en ligne",
+    "translate": "Traduire",
+    "reply": "Répondre",
+    "replying_to": "Réponse à",
+    "send": "Envoyer",
+    "set_name": "Définir le nom"
+  },
+  "pokemon": {
+    "guess_prompt": "Qui est ce Pokémon ?",
+    "score": "Score",
+    "loading": "Chargement des données génétiques...",
+    "guess": "DEVINER",
+    "next": "POKÉMON SUIVANT",
+    "correct": "✓ CORRECT !",
+    "wrong": "✗ Réessayez !",
+    "hint": "Indice",
+    "letters": "lettres",
+    "answer": "Réponse",
+    "tip": "Astuce : Plus vous répondez vite, plus vous prouvez votre maîtrise du Pokédex !"
+  },
+  "zombie": {
+    "rules": {
+      "title": "ZOMBIE SHOOTER - GUIDE",
+      "objective": "Objectif",
+      "objective_desc": "Survivez le plus longtemps possible contre des vagues infinies de zombies. Éliminez-les et collectez des power-ups pour améliorer vos armes.",
+      "controls": "Contrôles",
+      "pc": "PC",
+      "pc_desc": "Déplacez votre souris pour bouger. Tir automatique.",
+      "mobile": "Mobile",
+      "mobile_desc": "Utilisez les pads tactiles en bas de l'écran pour bouger.",
+      "powerups": "Power-Ups",
+      "scatter": "Scatter (Jaune)",
+      "scatter_desc": "+1 Canon supplémentaire",
+      "firerate": "Cadence (Bleu)",
+      "firerate_desc": "Réduit le délai entre les tirs",
+      "crit": "Critique (Jaune)",
+      "crit_desc": "+10% Chance de Critique (Bonus variable)",
+      "tech": "Tech (Rouge)",
+      "tech_desc": "Débloque des modes de tir avancés",
+      "damage": "Dégâts (Orange)",
+      "damage_desc": "+10 Dégâts par tir",
+      "bounce": "Rebond (Blanc)",
+      "bounce_desc": "+1 Rebond sur les murs",
+      "tech_upgrades": "Modes de Tir & Super Upgrades",
+      "tech1": "TECH 1: PERFORANT",
+      "tech1_desc": "Traverse les ennemis",
+      "tech2": "TECH 2: REBOND +",
+      "tech2_desc": "Augmente les rebonds max",
+      "tech3": "TECH 3: CHAÎNE",
+      "tech3_desc": "Saute vers la cible proche",
+      "tech4": "TECH 4: CRYO-CHOC",
+      "tech4_desc": "Ralentit les ennemis (25%)",
+      "tech5": "TECH 5: RÉSONANCE",
+      "tech5_desc": "Dégâts de zone (AoE) à l'impact",
+      "tech6": "TECH 6: SINGULARITÉ",
+      "tech6_desc": "Vortex sur coups critiques",
+      "homing": "PISTAGE TACTIQUE (Super)",
+      "homing_desc": "Les balles traquent automatiquement les cibles",
+      "rewards": "Systèmes de Récompenses",
+      "super_reward": "Super Récompense",
+      "super_reward_desc": "Toutes les 10 vagues, choisissez parmi 3 améliorations massives.",
+      "desperate_defense": "DÉFENSE DÉSESPÉRÉE : Ennemi tué en ZONE ROUGE = Power-Up garanti !",
+      "elite_challenge": "DÉFI ÉLITE : 5 vagues sans breach = HP zombies +50% (Score Bonus).",
+      "bestiary": "Bestiaire",
+      "walker": "Walker",
+      "walker_stats": "HP 1x | Vitesse 1x",
+      "runner": "Runner",
+      "runner_stats": "HP 0.5x | Vitesse 1.6x",
+      "tank": "Tank",
+      "tank_stats": "HP 4x | Knockback 50%",
+      "boss": "BOSS",
+      "boss_stats": "HP 10x | BUTIN GARANTI",
+      "tip": "Astuce: Les HP des zombies augmentent de 20% à chaque vague (exponentiel). Améliorez vos dégâts!"
+    }
+  },
+  "spacetraders": {
+    "join_fleet": "Amirauté Spatiale",
+    "rules_title": "Règles d'Engagement",
+    "rules_text": "Pilotez votre flotte à travers la galaxie. Enregistrez un indicatif unique pour commencer votre carrière de marchand ou de pirate.",
+    "rules_market": "Commercez des ressources, améliorez vos vaisseaux et dominez le marché intergalactique.",
+    "register_desc": "Entrez un indicatif pour enregistrer un nouvel agent.",
+    "callsign_placeholder": "ENTREZ L'INDICATIF",
+    "register_agent": "Enregistrer l'Agent",
+    "agent": "AGENT",
+    "credits": "CRÉDITS",
+    "headquarters": "QUARTIER GÉNÉRAL",
+    "logout": "Déconnexion",
+    "command_fleet": "Flotte de Commandement",
+    "symbol": "Symbole",
+    "location": "Localisation",
+    "no_ships": "Aucun vaisseau trouvé. Achetez des vaisseaux pour commencer le commerce.",
+    "uplinking": "Liaison au Réseau Neural...",
+    "error": "ERREUR",
+    "auto_logout": "Déconnexion automatique dans 3 secondes...",
+    "clear_restart": "Effacer le Token & Redémarrer",
+    "economy": "Économie",
+    "network": "Réseau",
+    "network_desc": "Les données sont synchronisées en temps réel avec l'API SpaceTraders v2.",
+    "tip": "Astuce : Votre indicatif est votre identité galactique unique. Gardez-le précieusement !"
+  },
+  "suggestions": {
+    "title": "Suggestions & Idées",
+    "subtitle": "Partagez vos idées pour améliorer ce site !",
+    "login_required_title": "Connexion requise pour les suggestions",
+    "login_required_description": "Vous devez être connecté pour accéder aux suggestions et partager vos idées avec la communauté.",
+    "submit_new": "Soumettre une Nouvelle Idée",
+    "placeholder": "Je voudrais voir plus de jeux d'arcade...",
+    "submit": "Soumettre l'Idée",
+    "login_to_view": "Veuillez vous connecter pour voir et soumettre des suggestions",
+    "submitting": "Envoi en cours...",
+    "login_required": "Veuillez vous connecter pour soumettre des suggestions",
+
+    "all_suggestions": "Toutes les Suggestions",
+    "your_suggestions": "Vos Suggestions",
+    "submit_failed": "Échec de l'envoi de la suggestion",
+    "no_suggestions": "Aucune suggestion pour le moment. Soyez le premier à partager une idée !",
+    "pending": "En attente",
+    "reviewed": "Revue",
+    "implemented": "Implémenté",
+    "status_pending": "En attente",
+    "status_reviewed": "Revue",
+    "status_implemented": "Implémenté",
+    "confirm_delete": "Supprimer cette suggestion ?",
+    "delete": "Supprimer",
+    "quote": "Citer",
+    "archive": "Archive",
+    "show_archive": "Afficher l'Archive",
+    "hide_archive": "Masquer l'Archive",
+    "hide_comments": "Masquer",
+    "comments": "Commentaires",
+    "add_comment": "Ajouter un commentaire",
+    "post": "Publier",
+    "post_comment": "Publier le commentaire",
+    "delete_comment": "Supprimer le commentaire",
+    "no_comments": "Pas de commentaires pour le moment.",
+    "replying_to": "Répondre à",
+    "reopen": "Rouvrir"
+  },
+  "features": {
+    "velocity": {
+      "title": "Rigueur",
+      "description": "Une attention méticuleuse aux détails, garantissant un code propre, performant et fiable."
+    },
+    "depth": {
+      "title": "Créativité",
+      "description": "Repousser les limites de l'interface utilisateur pour créer des expériences mémorables et intuitives."
+    },
+    "light": {
+      "title": "Ambition",
+      "description": "Une volonté constante d'apprendre et de maîtriser les technologies de demain."
+    }
+  },
+  "gallery": {
+    "scroll_left": "Défiler à gauche",
+    "scroll_right": "Défiler à droite",
+    "nebula": {
+      "title": "JAVA / SPRING",
+      "description": "Architecture Robuste"
+    },
+    "cyber": {
+      "title": "REACT / VITE",
+      "description": "Interfaces Dynamiques"
+    },
+    "deep": {
+      "title": "DOCKER / CI/CD",
+      "description": "Déploiement Continu"
+    },
+    "aurora": {
+      "title": "SQL / NOSQL",
+      "description": "Gestion de Données"
+    },
+    "horizon": {
+      "title": "LINUX / OS",
+      "description": "Maîtrise Système"
+    }
+  },
+  "gravity": {
+    "title": "Mon Labo",
+    "instruction": "ZONE D'EXPÉRIMENTATION -- MES COMPÉTENCES EN ACTION",
+    "keywords": [
+      "Java",
+      "Spring Boot",
+      "React",
+      "Docker",
+      "Linux",
+      "SQL",
+      "TypeScript",
+      "CI/CD",
+      "Créativité",
+      "Git",
+      "Redis",
+      "Jenkins",
+      "Agile",
+      "API",
+      "Cloud"
+    ]
+  },
+  "hero": {
+    "subtitle": "Façonner mon avenir, ligne par ligne.",
+    "explore": "Explorer"
+  },
+  "story": {
+    "title": "Ma Philosophie",
+    "description": "Je transforme des lignes de code en expériences visuelles et interactives, fusionnant logique rigoureuse et créativité sans limite pour donner vie aux idées."
+  },
+  "footer_section": {
+    "tagline": "Architecte de solutions numériques.",
+    "socials": "Réseaux",
+    "legal": "Légal",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation",
+    "newsletter": "Newsletter",
+    "email_placeholder": "Email",
+    "join": "Me Contacter"
+  },
+  "legal_page": {
+    "updated": "Dernière mise à jour : Janvier 2026",
+    "terms": {
+      "title": "Conditions d'Utilisation",
+      "sections": {
+        "presentation": {
+          "title": "1. Présentation du site",
+          "content": "En vertu de l'article 6 de la loi n° 2004-575 et pour la confiance dans l'économie numérique, il est précisé aux utilisateurs l'identité des intervenants :",
+          "details": "Propriétaire : Changrui ZHANG\nContact : Via le formulaire de contact ou LinkedIn.\nHébergement : Serveur personnel / Cloud privé."
+        },
+        "cgu": {
+          "title": "2. Conditions générales d’utilisation",
+          "content_1": "L’utilisation du site implique l’acceptation pleine et entière des conditions générales d’utilisation ci-après décrites.",
+          "content_2": "Ce site est normalement accessible à tout moment aux utilisateurs. Une interruption pour maintenance technique peut être décidée par le propriétaire."
+        },
+        "services": {
+          "title": "3. Description des services fournis",
+          "content": "Le site a pour objet de fournir une information concernant l’ensemble des activités du propriétaire (Portfolio, CV, Projets). Le propriétaire s’efforce de fournir des informations aussi précises que possible."
+        },
+        "intellectual": {
+          "title": "4. Propriété intellectuelle",
+          "content_1": "Changrui ZHANG est propriétaire des droits de propriété intellectuelle ou détient les droits d’usage sur tous les éléments accessibles sur le site.",
+          "content_2": "Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site est interdite, sauf autorisation écrite préalable."
+        },
+        "liability": {
+          "title": "5. Limitations de responsabilité",
+          "content": "Le propriétaire ne pourra être tenu responsable des dommages directs et indirects causés au matériel de l’utilisateur, lors de l’accès au site."
+        },
+        "data": {
+          "title": "6. Gestion des données personnelles",
+          "content_1": "Le site ne collecte des informations personnelles relatives à l'utilisateur que pour le besoin de certains services proposés par le site (ex: classement des jeux, messages).",
+          "content_2": "Conformément à la loi relative à l’informatique, aux fichiers et aux libertés, tout utilisateur dispose d’un droit d’accès, de rectification et d’opposition aux données personnelles le concernant."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "sections": {
+        "collection": {
+          "title": "1. Collecte de l'information",
+          "content_1": "Nous recueillons des informations lorsque vous vous inscrivez sur notre site, lorsque vous vous connectez à votre compte, participez à un jeu, et / ou lorsque vous vous déconnectez.",
+          "content_2": "En outre, nous recevons et enregistrons automatiquement des informations à partir de votre ordinateur et navigateur, y compris votre adresse IP, vos logiciels et votre matériel."
+        },
+        "usage": {
+          "title": "2. Utilisation des informations",
+          "content": "Toute les informations que nous recueillons auprès de vous peuvent être utilisées pour :",
+          "list": [
+            "Personnaliser votre expérience et répondre à vos besoins individuels",
+            "Fournir un contenu publicitaire personnalisé",
+            "Améliorer notre site Web",
+            "Améliorer le service client",
+            "Vous contacter par e-mail",
+            "Administrer un concours, une promotion, ou une enquête"
+          ]
+        },
+        "ecommerce": {
+          "title": "3. Confidentialité du commerce en ligne",
+          "content": "Nous sommes les seuls propriétaires des informations recueillies sur ce site. Vos informations personnelles ne seront pas vendues, échangées, transférées, ou données à une autre société sans votre consentement."
+        },
+        "disclosure": {
+          "title": "4. Divulgation à des tiers",
+          "content": "Nous ne vendons, n’échangeons et ne transférons pas vos informations personnelles identifiables à des tiers. Cela ne comprend pas les tierce parties de confiance qui nous aident à exploiter notre site Web."
+        },
+        "security": {
+          "title": "5. Protection des informations",
+          "content": "Nous mettons en œuvre une variété de mesures de sécurité pour préserver la sécurité de vos informations personnelles. Nous utilisons un cryptage à la pointe de la technologie pour protéger les informations sensibles transmises en ligne."
+        },
+        "consent": {
+          "title": "6. Consentement",
+          "content": "En utilisant notre site, vous consentez à notre politique de confidentialité."
+        }
+      }
+    }
+  },
+  "preloader": {
+    "welcome": "BIENVENUE",
+    "loading": "CHARGEMENT"
+  },
+  "profile": {
+    "title": "Profil Utilisateur",
+    "tabs": {
+      "overview": "Aperçu",
+      "edit": "Modifier",
+      "privacy": "Confidentialité",
+      "activity": "Activité",
+      "achievements": "Succès"
+    },
+    "card": {
+      "bio": "Bio",
+      "stats": "Statistiques",
+      "achievements": "Succès",
+      "joined": "Rejoint le",
+      "messages": "Messages",
+      "games": "Jeux",
+      "days": "Jours",
+      "streak": "Série",
+      "longest_streak": "Meilleure Série",
+      "time_spent": "Temps passé",
+      "level": "Niveau"
+    },
+    "achievements": {
+      "empty": "Aucun succès débloqué pour le moment. Continuez à explorer !"
+    },
+    "form": {
+      "title": "Modifier le Profil",
+      "display_name": "Nom d'Affichage",
+      "bio": "Bio",
+      "bio_placeholder": "Parlez-nous de vous...",
+      "save": "Enregistrer",
+      "reset": "Réinitialiser",
+      "saving": "Enregistrement...",
+      "unsaved": "Non enregistré",
+      "success": "Profil mis à jour avec succès !",
+      "error_exists": "Ce nom d'affichage existe déjà",
+      "cancel_confirm": "Êtes-vous sûr de vouloir annuler vos modifications ?"
+    },
+    "avatar": {
+      "title": "Avatar",
+      "upload": "Charger un nouvel avatar",
+      "change": "Changer",
+      "error": "Échec du chargement de l'avatar",
+      "cropping": "Redimensionner votre avatar",
+      "crop_desc": "Sélectionnez la zone que vous souhaitez utiliser comme avatar",
+      "preview": "Aperçu",
+      "quality_check": "Vérification de la qualité",
+      "size": "Taille",
+      "drag": "Glisser pour déplacer",
+      "resize": "Redimensionner les coins",
+      "square": "Format carré",
+      "save": "Enregistrer l'avatar",
+      "select_crop": "Sélectionnez zone de recadrage",
+      "quality": {
+        "high": "Excellente qualité",
+        "medium": "Bonne qualité",
+        "low": "Peut paraître pixélisé"
+      },
+      "confirm": "Confirmer",
+      "cancel": "Annuler"
+    },
+    "privacy": {
+      "title": "Paramètres de Confidentialité",
+      "subtitle": "Contrôlez qui peut voir les informations et l'activité de votre profil.",
+      "notice_title": "Informations sur la Confidentialité",
+      "notice_text": "Votre avatar et votre nom d'affichage sont toujours visibles pour maintenir une expérience sociale. Les autres informations peuvent être contrôlées avec ces paramètres.",
+      "visibility_title": "Visibilité du Profil",
+      "visibility": {
+        "public": "Public",
+        "friends": "Amis",
+        "private": "Privé",
+        "public_desc": "Tout le monde peut voir votre profil",
+        "friends_desc": "Seuls vos amis peuvent voir votre profil",
+        "private_desc": "Vous seul pouvez voir votre profil"
+      },
+      "granular_title": "Ce que les autres peuvent voir",
+      "show_bio": "Bio",
+      "show_bio_desc": "Votre description personnelle",
+      "show_stats": "Statistiques d'activité",
+      "show_stats_desc": "Compteur de messages, jeux joués, séries",
+      "show_achievements": "Succès",
+      "show_achievements_desc": "Badges et accomplissements",
+      "show_last_active": "Dernière activité",
+      "show_last_active_desc": "Quand vous étiez en ligne pour la dernière fois",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "reset": "Réinitialiser",
+      "success": "Paramètres de confidentialité mis à jour avec succès !"
+    },
+    "errors": {
+      "failed_load": "Échec du chargement des données du profil",
+      "access_required": "Accès Profil Requis",
+      "login_required": "Veuillez vous connecter pour voir votre profil.",
+      "return_home": "Retour à l'Accueil",
+      "coming_soon": "Bientôt disponible",
+      "activity_soon": "L'historique détaillé de l'activité sera disponible ici bientôt."
+    },
+    "gender": {
+      "title": "Genre",
+      "male": "Homme",
+      "female": "Femme",
+      "not_specified": "Non renseigné"
+    }
+  }
 }

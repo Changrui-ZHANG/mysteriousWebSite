@@ -97,5 +97,6 @@ export interface ProfileSearchResult {
 }
 
 // Re-export cropping types for convenience
-export * from './components/cropping/types';
+// Re-export cropping types explicitly
+export type { AvatarCropperProps, CropResult, CropperOptions } from './components/cropping/types';
 // Removed redundant/invalid re-exports to fix build errors

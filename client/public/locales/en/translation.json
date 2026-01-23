@@ -36,7 +36,8 @@
         "calendar": "CALENDAR",
         "learning": "LINGUIST",
         "notes": "NOTES",
-        "more": "MORE"
+        "more": "MORE",
+        "menu": "Menu"
     },
     "navbar": {
         "title": "Welcome",
@@ -353,8 +354,8 @@
         "availability": "Available immediately",
         "last_updated": "Last updated",
         "update_date": "January 2026",
-        "location": "Paris, France",
-        "availability": "Available immediately"
+        "location": "Paris, France"
+
     },
     "game": {
         "arcade_zone": "NEON ARCADE",
@@ -668,6 +669,16 @@
             "title": "Public Holiday",
             "description": "An official public holiday celebrated in France."
         }
+    },
+    "media": {
+        "add_image": "Image",
+        "validating": "Validating...",
+        "compressing": "Compressing...",
+        "uploading": "Uploading...",
+        "upload_success": "Upload successful",
+        "drag_drop_or_click": "Drag and drop an image or click to select",
+        "supported_formats": "Supported formats",
+        "max_size": "Max size"
     },
     "learning": {
         "title": "The Linguist",
