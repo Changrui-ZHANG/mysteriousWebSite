@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 interface BentoCardProps {
@@ -33,7 +33,7 @@ export function BentoCard({
                     transition: { duration: 0.5, ease: "easeOut" }
                 }
             }}
-            className={`group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-xl hover:bg-white/[0.08] hover:border-white/20 hover:shadow-2xl hover:shadow-accent-primary/10 transition-all duration-700 before:absolute before:inset-0 before:bg-gradient-to-tr before:from-transparent before:via-white/[0.02] before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-1000 after:absolute after:inset-0 after:rounded-3xl after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)] after:pointer-events-none ${className}`}
+            className={`group relative overflow-hidden rounded-3xl border border-subtle bg-surface-translucent backdrop-blur-2xl shadow-lg hover:bg-surface-alt/10 hover:border-subtle/80 hover:shadow-2xl hover:shadow-accent-primary/5 transition-all duration-700 after:absolute after:inset-0 after:rounded-3xl after:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)] after:pointer-events-none ${className}`}
         >
             <Link to={to} className="absolute inset-0 z-20 focus:outline-none focus:ring-2 focus:ring-accent-primary" aria-label={title}>
                 <span className="sr-only">{title}</span>
@@ -56,7 +56,7 @@ export function BentoCard({
             {/* Content Overlay */}
             <div className="relative z-10 flex flex-col h-full p-6 sm:p-8 pointer-events-none">
                 <div className="flex items-start justify-between mb-4">
-                    <div className="p-3 rounded-2xl bg-surface/80 backdrop-blur-sm border border-white/10 text-accent-primary group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <div className="p-3 rounded-2xl bg-surface-translucent backdrop-blur-md border border-subtle text-accent-primary group-hover:scale-110 transition-transform duration-300 shadow-md">
                         {icon}
                     </div>
                 </div>

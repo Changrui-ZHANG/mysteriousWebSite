@@ -67,7 +67,8 @@
     }
   },
   "dashboard": {
-    "welcome_subtitle": "Concepteur d'expériences numériques & Explorateur de technologies. Bienvenue dans mon univers.",
+    "welcome_subtitle": "Hi, Voyageur du numérique & Découvreur de technologies. Bienvenue dans mon univers.",
+    "system_status": "SYSTÈMES OPÉRATIONNELS",
     "cv_desc": "Explorez mon parcours professionnel, mes compétences et mes expériences.",
     "messages_desc": "Rejoignez la discussion de la communauté.",
     "suggestions_desc": "Une idée ? Faites-m'en part.",

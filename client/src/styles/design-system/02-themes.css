@@ -48,7 +48,7 @@
     /* Radius */
 
     /* Effects */
-    --bg-surface-translucent: rgba(255, 255, 255, 0.8);
+    --bg-surface-translucent: rgba(255, 255, 255, 0.1);
     --filter-blur-surface: 12px;
     --noise-opacity: 0;
     --grain-opacity: 0;
@@ -139,7 +139,7 @@
     --border-subtle: rgba(255, 255, 255, 0.05);
     --border-strong: rgba(255, 255, 255, 0.2);
 
-    --bg-surface-translucent: rgba(0, 0, 0, 0.6);
+    --bg-surface-translucent: rgba(0, 0, 0, 0.1);
     --filter-blur-surface: 16px;
 
     --value-invert: 1;

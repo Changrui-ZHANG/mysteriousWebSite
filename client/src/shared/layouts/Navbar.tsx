@@ -65,7 +65,7 @@ export function Navbar({ }: NavbarProps) {
 
     return (
         <>
-            <nav className="absolute top-0 left-0 right-0 z-navbar px-6 py-3 border-b border-white/10 bg-surface-translucent/80 backdrop-blur-3xl shadow-md flex flex-col text-primary transition-all duration-300 w-full">
+            <nav className="absolute top-0 left-0 right-0 z-navbar px-6 py-3 border-b border-subtle bg-surface-translucent backdrop-blur-2xl saturate-150 shadow-sm flex flex-col text-primary w-full">
                 <div className="w-full flex items-center justify-between">
                 {/* Left Side Group */}
                 <div className="flex items-center gap-4">
@@ -114,26 +114,29 @@ export function Navbar({ }: NavbarProps) {
                     />
                 </div>
 
-                {/* Secondary Row - More Menu */}
-                <motion.div
-                    initial={false}
-                    animate={{ height: isMoreOpen ? 'auto' : 0, opacity: isMoreOpen ? 1 : 0 }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    className="overflow-hidden w-full"
-                >
-                    <div className="pt-4 pb-1 pl-12 flex items-center gap-2 border-t border-white/5 mt-3">
-                        {moreLinks.map(link => (
-                            <Link
-                                key={link.to}
-                                to={link.to}
-                                className={`px-4 py-1.5 text-xs rounded-full transition-all duration-300 font-heading bg-white/5 hover:bg-white/10 ${location.pathname === link.to ? 'text-accent-primary font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
-                                onClick={() => setIsMoreOpen(false)}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
+                {/* Secondary Row - More Menu - No Animation */}
+                {isMoreOpen && (
+                    <div className="w-full overflow-hidden">
+                        <div className="pt-2 pb-1 flex items-center justify-end gap-2 border-t border-white/5 mt-2">
+                            {moreLinks.map(link => (
+                                <Link
+                                    key={link.to}
+                                    to={link.to}
+                                    className={`
+                                        relative px-4 py-1.5 text-xs font-medium rounded-full
+                                        ${location.pathname === link.to 
+                                            ? 'text-primary font-bold bg-white/20 dark:bg-white/10 border border-white/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-sm' 
+                                            : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 hover:shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/10'
+                                        }
+                                    `}
+                                    onClick={() => setIsMoreOpen(false)}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
-                </motion.div>
+                )}
             </nav>
 
             <MobileMenu

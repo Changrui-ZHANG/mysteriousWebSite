@@ -3,7 +3,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AuroraCard } from '../../shared/components/ui/AuroraCard';
 import { SOCIAL_LINKS } from '../../shared/constants/urls';
 import { ExperienceCard } from './components';
 import { getCVData } from './data/cvData';
@@ -230,11 +229,11 @@ export function CV({ }: CVProps) {
             </header>
 
             {/* 2. Experience Section (Interactive Slider) */}
-            <section ref={horizontalSectionRef} className="py-20 bg-transparent relative overflow-hidden flex flex-col z-10">
-                <div className="px-6 sm:px-20 z-20 mb-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-                    <div className="space-y-4">
+            <section ref={horizontalSectionRef} className="py-24 bg-transparent relative overflow-hidden flex flex-col z-10">
+                <div className="px-4 sm:px-6 lg:px-8 z-20 mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-8 max-w-7xl mx-auto w-full">
+                    <div className="space-y-8">
                         <h2 className={`text-sm font-mono tracking-[0.4em] uppercase font-bold ${isPaperTheme ? 'text-letterpress' : ''}`}>{t('cv.work_history')}</h2>
-                        <h3 className={`text-4xl sm:text-5xl font-black tracking-tighter ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.experience_gallery')}</h3>
+                        <h3 className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter leading-none ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.experience_gallery')}</h3>
                     </div>
 
                     <div className="hidden md:block">
@@ -243,23 +242,23 @@ export function CV({ }: CVProps) {
                 </div>
 
                 <div className="relative group/gallery">
-                    {/* Side Navigation Buttons (Desktop) */}
-                    <div className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 z-30 hidden md:block">
+                    {/* Side Navigation Buttons (All screens) */}
+                    <div className="absolute left-2 sm:left-4 md:left-10 top-1/2 -translate-y-1/2 z-30">
                         <button
                             onClick={prevExp}
                             disabled={currentExpIndex === 0}
-                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
+                            className={`p-3 sm:p-4 md:p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'bg-white/20 dark:bg-white/10 border border-black/30 dark:border-white/30 backdrop-blur-xl shadow-2xl hover:bg-white/30 text-primary'}`}
                         >
-                            <svg className={`w-8 h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            <svg className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         </button>
                     </div>
-                    <div className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-30 hidden md:block">
+                    <div className="absolute right-2 sm:right-4 md:right-10 top-1/2 -translate-y-1/2 z-30">
                         <button
                             onClick={nextExp}
                             disabled={currentExpIndex >= maxIndex}
-                            className={`p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex >= maxIndex ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-3xl shadow-2xl btn-secondary'}`}
+                            className={`p-3 sm:p-4 md:p-6 rounded-full transition-all hover:scale-110 active:scale-95 ${currentExpIndex >= maxIndex ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'bg-white/20 dark:bg-white/10 border border-black/30 dark:border-white/30 backdrop-blur-xl shadow-2xl hover:bg-white/30 text-primary'}`}
                         >
-                            <svg className={`w-8 h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            <svg className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
 
@@ -273,43 +272,25 @@ export function CV({ }: CVProps) {
                             </div>
                         ))}
                     </div>
-
-                    {/* Mobile Navigation Buttons */}
-                    <div className="flex justify-center gap-6 mt-12 md:hidden">
-                        <button
-                            onClick={prevExp}
-                            disabled={currentExpIndex === 0}
-                            className={`p-4 rounded-full transition-all ${currentExpIndex === 0 ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
-                        >
-                            <svg className={`w-6 h-6 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-                        <button
-                            onClick={nextExp}
-                            disabled={currentExpIndex >= maxIndex}
-                            className={`p-4 rounded-full transition-all ${currentExpIndex >= maxIndex ? 'opacity-20 cursor-not-allowed' : ''} ${isPaperTheme ? 'paper-border' : 'border backdrop-blur-xl shadow-lg btn-secondary'}`}
-                        >
-                            <svg className={`w-6 h-6 ${isPaperTheme ? 'paper-stroke' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
                 </div>
             </section>
 
             {/* 3. Bento Layer (LiquidGlass Specifications) */}
-            <section className="py-24 px-6 max-w-7xl mx-auto space-y-32 relative z-10">
+            <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 relative z-10">
                 <div className="space-y-8">
                     <h2 className={`text-sm font-mono tracking-[0.4em] uppercase font-bold ${isPaperTheme ? 'text-letterpress' : ''}`}>{t('cv.core_components')}</h2>
-                    <h3 className={`text-4xl sm:text-6xl font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.specifications')}</h3>
+                    <h3 className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter leading-none mb-4 ${isPaperTheme ? 'text-letterpress-strong' : ''}`}>{t('cv.specifications')}</h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[minmax(300px,auto)]">
+                <div className="grid grid-cols-4 md:grid-cols-12 gap-6 auto-rows-[minmax(300px,auto)]">
                     {isPaperTheme ? (
                         /* Paper Theme: Transparent cards with leather-style borders */
                         <>
-                            <div className="md:col-span-12 p-12 flex flex-col rounded-[50px] paper-card">
-                                <h3 className="text-sm font-mono tracking-[0.2em] uppercase mb-12 font-bold text-letterpress">{t('cv.full_stack_architecture')}</h3>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
+                            <div className="col-span-4 md:col-span-12 p-8 md:p-12 flex flex-col rounded-[50px] paper-card">
+                                <h3 className="text-sm font-mono tracking-[0.2em] uppercase mb-8 md:mb-12 font-bold text-letterpress">{t('cv.full_stack_architecture')}</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
                                     {Object.entries(skills).map(([category, items]) => (
-                                        <div key={category} className="space-y-6">
+                                        <div key={category} className="space-y-4">
                                             <h4 className="text-xs font-mono uppercase tracking-widest text-letterpress">{category}</h4>
                                             <div className="space-y-3">
                                                 {items.map((s, i) => (
@@ -325,7 +306,7 @@ export function CV({ }: CVProps) {
                             </div>
 
                             {education.map((edu, index) => (
-                                <div key={index} className="md:col-span-4 p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
+                                <div key={index} className="col-span-4 md:col-span-4 p-8 md:p-12 flex flex-col gap-4 relative overflow-hidden rounded-[50px] paper-card">
                                     <h4 className="text-sm font-mono tracking-[0.2em] uppercase font-bold text-letterpress">{edu.level}</h4>
                                     <div className="relative z-10">
                                         <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-letterpress-strong">{edu.school}</h5>
@@ -338,13 +319,13 @@ export function CV({ }: CVProps) {
                             ))}
                         </>
                     ) : (
-                        /* Modern Theme: AuroraCards */
+                        /* Modern Theme: Glassmorphism */
                         <>
-                            <AuroraCard variant="multi" className="md:col-span-12 p-12 rounded-[50px] flex flex-col">
-                                <h3 className="text-sm font-mono tracking-[0.2em] text-accent-primary uppercase mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-12">
+                            <div className="col-span-4 md:col-span-12 p-8 md:p-12 rounded-[50px] flex flex-col bg-surface-translucent backdrop-blur-2xl border border-subtle shadow-lg hover:shadow-2xl transition-all duration-700">
+                                <h3 className="text-sm font-mono tracking-[0.2em] text-accent-primary uppercase mb-8 md:mb-12 font-bold">{t('cv.full_stack_architecture')}</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
                                     {Object.entries(skills).map(([category, items]) => (
-                                        <div key={category} className="space-y-6">
+                                        <div key={category} className="space-y-4">
                                             <h4 className="text-xs font-mono uppercase tracking-widest text-muted">{category}</h4>
                                             <div className="space-y-3">
                                                 {items.map((s, i) => (
@@ -357,16 +338,14 @@ export function CV({ }: CVProps) {
                                         </div>
                                     ))}
                                 </div>
-                            </AuroraCard>
+                            </div>
 
                             {education.map((edu, index) => {
-                                const variants = ["purple", "cyan", "green"] as const;
                                 const textColors = ["text-accent-primary", "text-accent-info", "text-accent-success"];
-                                const variant = variants[index % variants.length];
                                 const textColor = textColors[index % textColors.length];
 
                                 return (
-                                    <AuroraCard key={index} variant={variant} className="md:col-span-4 p-12 rounded-[50px] flex flex-col gap-4">
+                                    <div key={index} className="col-span-4 md:col-span-4 p-8 md:p-12 rounded-[50px] flex flex-col gap-4 bg-surface-translucent backdrop-blur-2xl border border-subtle shadow-lg hover:shadow-2xl transition-all duration-700 relative overflow-hidden">
                                         <h4 className={`text-sm font-mono tracking-[0.2em] uppercase font-bold ${textColor}`}>{edu.level}</h4>
                                         <div className="relative z-10">
                                             <h5 className="text-2xl font-black leading-tight mb-2 uppercase text-primary">{edu.school}</h5>
@@ -375,7 +354,7 @@ export function CV({ }: CVProps) {
                                         <div className="absolute -right-2 -bottom-12 w-64 h-64 grayscale -rotate-12 pointer-events-none z-0 invert-[--value-invert] opacity-30">
                                             {edu.icon}
                                         </div>
-                                    </AuroraCard>
+                                    </div>
                                 );
                             })}
                         </>
@@ -408,18 +387,48 @@ export function CV({ }: CVProps) {
                     </div>
                 ) : (
                     /* Modern Theme Contact Card */
-                    <AuroraCard variant="purple" className="p-12 rounded-[60px]">
+                    <div className="p-8 md:p-12 rounded-[60px] bg-surface-translucent backdrop-blur-2xl border border-subtle shadow-lg hover:shadow-2xl transition-all duration-700">
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                             <div className="text-center md:text-left">
                                 <h3 className="text-3xl sm:text-5xl font-black tracking-tighter mb-4 text-primary">{t('cv.initiate_connect')}</h3>
                                 <p className="text-2xl font-light text-secondary">{t('cv.connect_description')}</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                                <a href="mailto:m.zhang.changrui@gmail.com" className="px-10 py-4 text-lg font-medium rounded-full bg-accent-primary text-text-inverse shadow-xl hover:bg-accent-secondary hover:scale-105 transition-all text-center">{t('cv.direct_mail')}</a>
-                                <a href={SOCIAL_LINKS.LINKEDIN} className="px-10 py-4 text-lg font-medium rounded-full border border-subtle bg-surface-alt/5 backdrop-blur-sm hover:bg-inset hover:scale-105 transition-all text-center text-primary">{t('cv.linkedin')}</a>
+                                <a 
+                                    href="mailto:m.zhang.changrui@gmail.com" 
+                                    className="px-10 py-4 text-lg font-bold rounded-full text-center
+                                        bg-white/20 dark:bg-white/10 
+                                        border border-white/30 
+                                        backdrop-blur-xl 
+                                        shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_8px_32px_rgba(0,0,0,0.1)] 
+                                        hover:bg-white/30 hover:border-white/40 
+                                        hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),0_12px_48px_rgba(0,0,0,0.15)] 
+                                        hover:scale-105 
+                                        active:scale-100
+                                        transition-all duration-500 ease-out
+                                        text-primary"
+                                >
+                                    {t('cv.direct_mail')}
+                                </a>
+                                <a 
+                                    href={SOCIAL_LINKS.LINKEDIN} 
+                                    className="px-10 py-4 text-lg font-medium rounded-full text-center
+                                        bg-white/10 dark:bg-white/5 
+                                        border border-white/20 
+                                        backdrop-blur-xl 
+                                        shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_4px_24px_rgba(0,0,0,0.08)] 
+                                        hover:bg-white/20 hover:border-white/30 
+                                        hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_32px_rgba(0,0,0,0.12)] 
+                                        hover:scale-105 
+                                        active:scale-100
+                                        transition-all duration-500 ease-out
+                                        text-primary"
+                                >
+                                    {t('cv.linkedin')}
+                                </a>
                             </div>
                         </div>
-                    </AuroraCard>
+                    </div>
                 )}
             </section>
 

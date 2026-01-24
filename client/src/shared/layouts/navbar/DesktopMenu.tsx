@@ -62,7 +62,13 @@ export function DesktopMenu({
                     <Link
                         key={link.to}
                         to={link.to}
-                        className={`px-3 py-0.5 text-xs rounded-full transition-all duration-300 hover:bg-white/5 whitespace-nowrap ${location.pathname === link.to ? 'text-accent-primary font-bold bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' : 'text-secondary hover:text-primary'}`}
+                        className={`
+                            relative px-4 py-1.5 text-xs font-medium rounded-full
+                            ${location.pathname === link.to 
+                                ? 'text-primary font-bold bg-white/20 dark:bg-white/10 border border-white/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-sm' 
+                                : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 hover:shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/10'
+                            }
+                        `}
                     >
                         {link.label}
                     </Link>
@@ -72,9 +78,15 @@ export function DesktopMenu({
                 <div className="flex items-center">
                     <button 
                         onClick={onToggleMore}
-                        className={`px-3 py-0.5 text-xs rounded-full transition-all duration-300 hover:bg-white/5 flex items-center gap-1 uppercase tracking-widest ${isMoreOpen ? 'text-accent-primary font-bold bg-white/10' : 'text-secondary hover:text-primary'}`}
+                        className={`
+                            px-4 py-1.5 text-xs font-medium rounded-full flex items-center gap-1 uppercase tracking-widest border
+                            ${isMoreOpen 
+                                ? 'text-primary font-bold bg-white/20 dark:bg-white/10 border border-white/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-sm' 
+                                : 'text-secondary border-transparent hover:text-primary hover:bg-surface-alt hover:border-subtle'
+                            }
+                        `}
                     >
-                        {t('nav.more')} <FaChevronDown className={`text-[10px] transition-transform duration-300 ${isMoreOpen ? 'rotate-180' : ''}`} />
+                        {t('nav.more')} <FaChevronDown className={`text-[10px] ${isMoreOpen ? 'rotate-180' : ''}`} />
                     </button>
                 </div>
             </div>

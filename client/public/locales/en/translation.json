@@ -67,7 +67,8 @@
         }
     },
     "dashboard": {
-        "welcome_subtitle": "Digital Experience Designer & Tech Explorer. Welcome to my universe.",
+        "welcome_subtitle": "Hi, Digital Traveler & Tech Explorer. Welcome to my universe.",
+        "system_status": "SYSTEM ONLINE",
         "cv_desc": "Explore my professional journey, skills, and experiences.",
         "messages_desc": "Join the community discussion.",
         "suggestions_desc": "Have an idea? Let me know.",
