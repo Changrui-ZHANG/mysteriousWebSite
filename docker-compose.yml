@@ -29,15 +29,18 @@ services:
   client:
     build: ./client
     ports:
-      - "3001:80"
+      - "80:80"
+      - "443:443"
     depends_on:
       - server
+    volumes:
+      - ./ssl/fullchain.pem:/etc/letsencrypt/live/changrui.freeboxos.fr/fullchain.pem:ro
+      - ./ssl/privkey.pem:/etc/letsencrypt/live/changrui.freeboxos.fr/privkey.pem:ro
     networks:
       - app-network
 
 volumes:
   postgres-data:
-
 networks:
   app-network:
     driver: bridge
