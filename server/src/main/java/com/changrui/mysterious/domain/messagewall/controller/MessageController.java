@@ -6,7 +6,11 @@ import com.changrui.mysterious.domain.messagewall.service.MessageService;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.domain.user.service.UserVerificationService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import com.changrui.mysterious.shared.exception.NotFoundException;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
+import com.changrui.mysterious.shared.security.CurrentUser;
+import jakarta.validation.Valid;
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +37,9 @@ public class MessageController {
     @Autowired
     private MessageWebSocketController webSocketController;
 
+    @Autowired
+    private CurrentUser currentUser;
+
     @GetMapping
     public ResponseEntity<List<MessageResponse>> getAllMessages() {
         List<MessageResponse> messages = messageService.getAllMessages();
@@ -44,8 +51,16 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<MessageResponse>> addMessage(
-            @RequestBody Message message,
+            @Valid @RequestBody Message message,
             @RequestParam(required = false) String adminCode) {
+
+        // The sender must be the token identity (guest or registered)
+        currentUser.requireSelf(message.getUserId());
+
+        // Server-owned fields: never trust client-supplied id/timestamp/reactions
+        message.setId(null);
+        message.setTimestamp(System.currentTimeMillis());
+        message.setReactions(new LinkedList<>());
 
         if (messageService.isMuted() && !adminService.isValidAdminCode(adminCode)) {
             throw new UnauthorizedException("Chat is muted by admin");
@@ -81,8 +96,7 @@ public class MessageController {
             throw new UnauthorizedException("Invalid admin code");
         }
 
-        boolean newState = !messageService.isMuted();
-        messageService.setMuted(newState);
+        boolean newState = messageService.toggleMuted();
 
         // Broadcast mute status to all clients
         webSocketController.broadcastMuteStatus(newState);
@@ -102,9 +116,9 @@ public class MessageController {
             return ResponseEntity.ok(ApiResponse.successMessage("Message deleted"));
         }
 
-        boolean deleted = messageService.deleteMessage(id, userId);
+        boolean deleted = messageService.deleteMessage(id, currentUser.requireSelf(userId));
         if (!deleted) {
-            return ResponseEntity.notFound().build();
+            throw new NotFoundException("Message not found or not owned by user");
         }
 
         // Broadcast deletion to all clients
@@ -132,6 +146,7 @@ public class MessageController {
      */
     @PostMapping("/reactions/add")
     public ResponseEntity<ApiResponse<MessageResponse>> addReaction(@RequestBody ReactionRequest request) {
+        currentUser.requireSelf(request.getUserId());
         MessageResponse updated = messageService.addReaction(
                 request.getMessageId(),
                 request.getUserId(),
@@ -139,7 +154,7 @@ public class MessageController {
                 request.getEmoji());
 
         if (updated == null) {
-            return ResponseEntity.notFound().build();
+            throw new NotFoundException("Message", request.getMessageId());
         }
 
         // Broadcast reaction update to all clients
@@ -153,13 +168,14 @@ public class MessageController {
      */
     @PostMapping("/reactions/remove")
     public ResponseEntity<ApiResponse<MessageResponse>> removeReaction(@RequestBody ReactionRequest request) {
+        currentUser.requireSelf(request.getUserId());
         MessageResponse updated = messageService.removeReaction(
                 request.getMessageId(),
                 request.getUserId(),
                 request.getEmoji());
 
         if (updated == null) {
-            return ResponseEntity.notFound().build();
+            throw new NotFoundException("Message", request.getMessageId());
         }
 
         // Broadcast reaction update to all clients

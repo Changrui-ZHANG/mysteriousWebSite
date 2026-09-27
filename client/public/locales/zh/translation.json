@@ -10,7 +10,17 @@
         "good_afternoon": "午后安康",
         "good_evening": "晚安",
         "guest": "访客",
-        "loading": "加载中..."
+        "loading": "加载中...",
+        "dismiss": "忽略"
+    },
+    "connection": {
+        "reconnecting": "正在重新连接...",
+        "error": "连接错误",
+        "unknown": "连接状态",
+        "retry": "重试连接",
+        "retry_count": "第 {{count}} 次尝试",
+        "max_retries": "已达到最大重试次数。请检查您的网络连接。",
+        "retry_disabled": "重试功能当前已禁用。"
     },
     "brand": {
         "author_name": "张常瑞",
@@ -24,9 +34,11 @@
         "messages": "留言",
         "suggestions": "建议",
         "calendar": "日历",
+        "learning": "语言学家",
         "linguist": "语言学家",
         "notes": "便签",
-        "more": "更多"
+        "more": "更多",
+        "menu": "菜单"
     },
     "navbar": {
         "title": "欢迎",
@@ -162,7 +174,10 @@
     "notes": {
         "login_required_title": "笔记功能需要登录",
         "login_required": "登录以访问您的笔记",
-        "login_hint": "您的笔记将被保存和同步。"
+        "login_hint": "您的笔记将被保存和同步。",
+        "save_failed": "保存笔记失败：{{error}}。请重试。",
+        "confirm_delete": "确定要删除这条笔记吗？",
+        "delete_failed": "删除笔记失败。请重试。"
     },
     "calendar": {
         "title": "日历",
@@ -366,6 +381,7 @@
         "match3_desc": "交换相邻方块以消除三个！",
         "pokemon_quiz": "宝可梦问答",
         "leaderboard": "排行榜",
+        "players": "玩家",
         "personal_best": "我的最高纪录",
         "best": "最佳",
         "no_scores_yet": "暂无记录，快来抢占第一名！",
@@ -574,6 +590,32 @@
         "cleanup_duplicates": "清理重复项",
         "confirm_cleanup_duplicates": "您确定要清理所有重复的分数吗？\n\n此操作将删除重复项，只保留每个用户在每个游戏中的最佳分数。"
     },
+    "errors": {
+        "failed_to_load_messages": "加载消息失败",
+        "failed_to_send_message": "发送消息失败",
+        "failed_to_delete_message": "删除消息失败",
+        "failed_to_toggle_mute": "切换禁言状态失败",
+        "failed_to_clear_messages": "清空消息失败",
+        "unknown_error": "未知错误",
+        "connection": {
+            "failed": "连接失败",
+            "retry_failed": "重试失败",
+            "not_connected": "未连接到服务器"
+        },
+        "messages": {
+            "fetch_failed": "加载消息失败",
+            "send_failed": "发送消息失败",
+            "delete_failed": "删除消息失败",
+            "not_connected": "未连接到服务器"
+        },
+        "error_boundary": {
+            "title": "哎呀！出了点问题",
+            "description": "发生了意外错误。您可以尝试重新加载页面。",
+            "retry": "重试",
+            "reload_page": "重新加载页面",
+            "error_details": "错误详情（开发模式）"
+        }
+    },
     "holidays": {
         "jour_de_l_an": {
             "title": "元旦",
@@ -631,6 +673,16 @@
             "title": "公共假日",
             "description": "法国庆祝的法定公共假日。"
         }
+    },
+    "media": {
+        "add_image": "图片",
+        "validating": "正在验证...",
+        "compressing": "正在压缩...",
+        "uploading": "正在上传...",
+        "upload_success": "上传成功",
+        "drag_drop_or_click": "拖放图片或点击选择",
+        "supported_formats": "支持的格式",
+        "max_size": "最大大小"
     },
     "learning": {
         "title": "语言学家",

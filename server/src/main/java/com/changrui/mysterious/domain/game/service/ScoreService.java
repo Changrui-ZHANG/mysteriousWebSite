@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Service for managing game scores.
@@ -57,8 +59,9 @@ public class ScoreService {
 
     /**
      * Submit a new score for a user.
-     * Ensures only one score per user per game type.
-     * Updates existing score if new score is better.
+     * Ensures only one score per user per game type (enforced by a unique constraint).
+     * Updates the existing row in place if the new score is better.
+     * A concurrent first submission may raise DataIntegrityViolationException; callers retry once.
      */
     @Transactional
     public ScoreSubmissionResult submitScore(ScoreSubmissionDTO dto) {
@@ -76,19 +79,26 @@ public class ScoreService {
                 return new ScoreSubmissionResult(false, "Score not high enough");
             }
 
-            // Delete all existing scores for this user and game type
-            scoreRepository.deleteAll(existingScores);
-            log.info("Deleted {} existing scores for user {} in game {}", existingScores.size(), dto.userId(),
-                    dto.gameType());
-
-            // Create new score
-            createNewScore(dto);
-            log.info("Created new score for user {} in game {}: {}", dto.userId(), dto.gameType(), dto.score());
+            // Remove any legacy duplicates, then update the kept row in place
+            existingScores.stream().filter(s -> s != bestScore).forEach(scoreRepository::delete);
+            bestScore.setUsername(dto.username());
+            bestScore.setScore(dto.score());
+            bestScore.setTimestamp(System.currentTimeMillis());
+            bestScore.setAttempts(dto.attempts());
+            recordActivityAfterCommit(scoreRepository.save(bestScore));
+            log.info("Updated score for user {} in game {}: {}", dto.userId(), dto.gameType(), dto.score());
             return new ScoreSubmissionResult(true, "Score updated successfully");
         }
 
-        // No existing score, create new one
-        createNewScore(dto);
+        // No existing score, create new one (flush so a concurrent-insert conflict surfaces here)
+        Score newScore = new Score(
+                dto.username(),
+                dto.userId(),
+                dto.gameType(),
+                dto.score(),
+                System.currentTimeMillis(),
+                dto.attempts());
+        recordActivityAfterCommit(scoreRepository.saveAndFlush(newScore));
         log.info("Score saved successfully for user {} in game {}: {}", dto.userId(), dto.gameType(), dto.score());
         return new ScoreSubmissionResult(true, "Score submitted successfully");
     }
@@ -152,24 +162,31 @@ public class ScoreService {
         return newScore > existingScore;
     }
 
-    private void createNewScore(ScoreSubmissionDTO dto) {
-        Score newScore = new Score(
-                dto.username(),
-                dto.userId(),
-                dto.gameType(),
-                dto.score(),
-                System.currentTimeMillis(),
-                dto.attempts());
-        Score savedScore = scoreRepository.save(newScore);
-
-        // Record activity for profile statistics
-        if (savedScore.getUserId() != null && !savedScore.getUserId().isEmpty()) {
+    /**
+     * Record profile activity only after the score transaction commits, in its own transaction,
+     * so activity failures can never roll back (or be rolled back with) the score.
+     */
+    private void recordActivityAfterCommit(Score savedScore) {
+        if (savedScore.getUserId() == null || savedScore.getUserId().isEmpty()) {
+            return;
+        }
+        Runnable task = () -> {
             try {
                 activityService.recordGameActivity(savedScore.getUserId(), savedScore.getGameType(),
                         savedScore.getScore());
             } catch (Exception e) {
                 log.warn("Failed to record game activity for user {}: {}", savedScore.getUserId(), e.getMessage());
             }
+        };
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    task.run();
+                }
+            });
+        } else {
+            task.run();
         }
     }
 

@@ -5,6 +5,7 @@ import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.exception.BadRequestException;
 import com.changrui.mysterious.shared.exception.NotFoundException;
+import com.changrui.mysterious.shared.exception.UnauthorizedException;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -55,7 +56,7 @@ public class AvatarService {
     public String uploadAvatar(String userId, MultipartFile file, String requesterId) {
         // Check ownership
         if (!userId.equals(requesterId)) {
-            throw new BadRequestException("Cannot upload avatar for another user");
+            throw new UnauthorizedException("Cannot upload avatar for another user");
         }
 
         // Validate file using middleware (additional validation beyond interceptor)
@@ -65,9 +66,9 @@ public class AvatarService {
             // Process and resize image
             BufferedImage processedImage = processAvatarImage(file);
 
-            // Generate secure filename using middleware
+            // Generate secure filename using middleware; always .jpg since we always encode JPEG
             String secureFilename = fileUploadMiddleware.generateSecureFilename(
-                    file.getOriginalFilename(), userId);
+                    file.getOriginalFilename(), userId).replaceAll("\\.[^.]*$", "") + ".jpg";
 
             // Ensure upload directory exists
             Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
@@ -84,13 +85,36 @@ public class AvatarService {
             // Generate URL
             String avatarUrl = baseUrl + "/" + secureFilename;
 
-            // Update profile with new avatar URL
+            // Update profile with new avatar URL, then remove the replaced uploaded file
+            String previousUrl = profileRepository.findByUserId(userId).map(UserProfile::getAvatarUrl).orElse(null);
             updateAvatarUrl(userId, avatarUrl, requesterId);
+            deleteUploadedAvatarFile(previousUrl, uploadPath);
 
             return avatarUrl;
 
         } catch (IOException e) {
             throw new BadRequestException("Failed to process avatar image: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Delete a previously uploaded avatar file. Default avatars (/avatars/...) and anything
+     * outside the avatar upload directory are never touched.
+     */
+    private void deleteUploadedAvatarFile(String avatarUrl, Path uploadPath) {
+        String prefix = baseUrl + "/";
+        if (avatarUrl == null || !avatarUrl.startsWith(prefix)) {
+            return;
+        }
+        Path base = uploadPath.normalize();
+        Path oldFile = base.resolve(avatarUrl.substring(prefix.length())).normalize();
+        if (!oldFile.startsWith(base) || oldFile.equals(base)) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(oldFile);
+        } catch (IOException e) {
+            log.warn("Failed to delete previous avatar {}: {}", oldFile, e.getMessage());
         }
     }
 
@@ -143,7 +167,7 @@ public class AvatarService {
     public void updateAvatarUrl(String userId, String avatarUrl, String requesterId) {
         // Check ownership
         if (!userId.equals(requesterId)) {
-            throw new BadRequestException("Cannot update another user's avatar");
+            throw new UnauthorizedException("Cannot update another user's avatar");
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)
@@ -160,7 +184,7 @@ public class AvatarService {
     public void deleteAvatar(String userId, String requesterId) {
         // Check ownership
         if (!userId.equals(requesterId)) {
-            throw new BadRequestException("Cannot delete another user's avatar");
+            throw new UnauthorizedException("Cannot delete another user's avatar");
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)

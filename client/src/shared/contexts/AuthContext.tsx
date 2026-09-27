@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { STORAGE_KEYS } from '../constants/authStorage';
 import { fetchJson, postJson } from '../api/httpClient';
+import { AUTH_EXPIRED_EVENT } from '../api/authToken';
 import i18n from '../../i18n';
 import { resolveAvatarUrl } from '../utils/avatarUtils';
 
@@ -8,6 +9,8 @@ interface User {
     userId: string;
     username: string;
     avatarUrl?: string;
+    /** Signed identity token returned by login */
+    token?: string;
 }
 
 interface AuthContextType {
@@ -64,21 +67,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     .catch(err => console.error('Failed to load language preference:', err));
             }
 
-            // Admin state
-            const storedAdmin = localStorage.getItem(STORAGE_KEYS.IS_ADMIN);
-            const storedSuperAdmin = localStorage.getItem(STORAGE_KEYS.IS_SUPER_ADMIN);
-            const storedCode = localStorage.getItem(STORAGE_KEYS.ADMIN_CODE);
-
-            setIsAdmin(storedAdmin === 'true' || storedSuperAdmin === 'true');
-            setIsSuperAdmin(storedSuperAdmin === 'true');
-            setAdminCode(storedCode || '');
-
         } catch (error) {
             console.error('Failed to parse stored auth state:', error);
             localStorage.removeItem(STORAGE_KEYS.USER);
-        } finally {
-            setIsLoading(false);
         }
+
+        // Admin state: never trust localStorage flags, re-verify the stored code server-side
+        const storedCode = localStorage.getItem(STORAGE_KEYS.ADMIN_CODE);
+        if (!storedCode) {
+            localStorage.removeItem(STORAGE_KEYS.IS_ADMIN);
+            localStorage.removeItem(STORAGE_KEYS.IS_SUPER_ADMIN);
+            setIsLoading(false);
+            return;
+        }
+        adminLogin(storedCode)
+            .then(ok => { if (!ok) adminLogout(); })
+            .finally(() => setIsLoading(false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Session invalidated by the server (401 on the user token): drop the user
+    useEffect(() => {
+        const onExpired = () => setUser(null);
+        window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
+        return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired);
     }, []);
 
     const login = (newUser: User) => {

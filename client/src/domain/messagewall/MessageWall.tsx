@@ -4,9 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import UserManagement from '../user/UserManagement';
 import { ScrollProgress, LoginRequired } from '../../shared/components';
 import { ConnectionStatus } from '../../shared/components/ui/ConnectionStatus';
-import { MessageItem, MessageInput, MessageAdminPanel, ChannelTabs, TypingIndicator } from './components';
+import { MessageItem, MessageInput, MessageAdminPanel, ChannelTabs } from './components';
 import { useMessageWall } from './hooks/useMessageWall';
-import { useTypingIndicator } from './hooks/useTypingIndicator';
 import { getAdminCode } from '../../shared/constants/authStorage';
 import { useAuth } from '../../shared/contexts/AuthContext';
 import type { MessageWallProps } from './types';
@@ -18,9 +17,6 @@ export function MessageWall({ }: MessageWallProps) {
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [showUserManagement, setShowUserManagement] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-    // Hook pour les indicateurs de frappe
-    const { typingUsers } = useTypingIndicator();
 
     const {
         messages, replyingTo, setReplyingTo, translations, translating, showTranslated,
@@ -117,9 +113,6 @@ export function MessageWall({ }: MessageWallProps) {
                                 ))
                             )}
                         </AnimatePresence>
-
-                        {/* Typing Indicator */}
-                        <TypingIndicator typingUsers={typingUsers} />
                     </div>
                 </div>
 

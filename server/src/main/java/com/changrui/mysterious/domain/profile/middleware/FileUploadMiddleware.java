@@ -1,12 +1,12 @@
 package com.changrui.mysterious.domain.profile.middleware;
 
 import com.changrui.mysterious.shared.exception.BadRequestException;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+import com.changrui.mysterious.shared.util.ImageUtils;
+import java.awt.Dimension;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -131,23 +131,24 @@ public class FileUploadMiddleware {
      * Validate image-specific properties.
      */
     private void validateImageFile(MultipartFile file) {
-        try {
-            // Verify it's actually an image by trying to read it
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
+        try (InputStream in = file.getInputStream()) {
+            // Read dimensions from the header only: decoding first would let a small file
+            // with huge declared dimensions exhaust memory
+            Dimension image = ImageUtils.readDimensions(in);
 
             if (image == null) {
                 throw new BadRequestException("File is not a valid image");
             }
 
             // Check image dimensions
-            if (image.getWidth() > maxImageDimension || image.getHeight() > maxImageDimension) {
+            if (image.width > maxImageDimension || image.height > maxImageDimension) {
                 throw new BadRequestException(
                         String.format("Image dimensions exceed maximum allowed size of %dx%d pixels",
                                 maxImageDimension, maxImageDimension));
             }
 
             // Check for minimum dimensions (avoid tiny images)
-            if (image.getWidth() < 32 || image.getHeight() < 32) {
+            if (image.width < 32 || image.height < 32) {
                 throw new BadRequestException("Image is too small (minimum 32x32 pixels)");
             }
 

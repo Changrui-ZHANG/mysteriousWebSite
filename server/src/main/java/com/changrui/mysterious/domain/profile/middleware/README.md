@@ -19,31 +19,6 @@ Intercepteur Spring qui applique automatiquement le middleware d'authentificatio
 - Applique les règles d'autorisation appropriées
 - Gère les exceptions d'authentification
 
-### Annotations
-
-#### @RequireProfileOwnership
-Marque les méthodes de contrôleur qui nécessitent la propriété du profil :
-```java
-@PutMapping("/{userId}")
-@RequireProfileOwnership(allowAdminOverride = true)
-public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(...)
-```
-
-#### @RequireAdmin
-Marque les méthodes de contrôleur qui nécessitent un accès administrateur :
-```java
-@DeleteMapping("/admin/{userId}")
-@RequireAdmin(superAdminOnly = true)
-public ResponseEntity<ApiResponse<Void>> adminDeleteProfile(...)
-```
-
-### AuthUtils
-Classe utilitaire pour les opérations d'authentification :
-- Extraction des IDs de requêteur
-- Extraction des codes d'administration
-- Validation des IDs utilisateur
-- Détection des endpoints publics
-
 ## Flux d'Authentification
 
 ### 1. Requête Entrante
@@ -71,18 +46,15 @@ Client Request → ProfileAuthInterceptor → ProfileAuthMiddleware → Controll
 - Peut être contourné par les administrateurs (si configuré)
 
 #### Accès Administrateur
-- Endpoints marqués avec `@RequireAdmin`
 - Nécessite un code d'administration valide dans l'en-tête `X-Admin-Code`
 - Peut nécessiter un accès super-administrateur
 
 ## Configuration
 
 ### En-têtes de Requête
-- `X-Requester-Id` : ID de l'utilisateur qui fait la requête
+- `Authorization: Bearer <token>` : identité signée (voir `shared/security/TokenService`), seule source
+  de l'ID requêteur. Les paramètres `requesterId` / en-têtes `X-Requester-Id` ne sont plus pris en compte.
 - `X-Admin-Code` : Code d'administration pour l'accès privilégié
-
-### Paramètres de Requête
-- `requesterId` : Alternative à l'en-tête X-Requester-Id
 
 ## Règles de Confidentialité
 
@@ -93,7 +65,7 @@ Client Request → ProfileAuthInterceptor → ProfileAuthMiddleware → Controll
 
 ### Profils Privés
 - Visibles uniquement par le propriétaire
-- Retourne une erreur 401 pour les autres utilisateurs
+- Retourne une erreur 403 pour les autres utilisateurs
 - Administrateurs peuvent contourner (selon configuration)
 
 ## Limitation du Taux (Future)

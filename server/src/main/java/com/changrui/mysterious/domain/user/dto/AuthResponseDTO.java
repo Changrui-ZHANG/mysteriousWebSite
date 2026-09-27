@@ -7,5 +7,6 @@ public record AuthResponseDTO(
                 String userId,
                 String username,
                 String avatarUrl,
-                String message) {
+                String message,
+                String token) {
 }

@@ -34,6 +34,7 @@
     "messages": "MESSAGES",
     "suggestions": "SUGGESTIONS",
     "calendar": "CALENDRIER",
+    "learning": "LINGUISTE",
     "linguist": "LINGUISTE",
     "notes": "NOTES",
     "more": "PLUS",
@@ -173,7 +174,10 @@
   "notes": {
     "login_required_title": "Connexion requise pour les notes",
     "login_required": "Connectez-vous pour accéder à vos notes",
-    "login_hint": "Vos notes seront sauvegardées et synchronisées."
+    "login_hint": "Vos notes seront sauvegardées et synchronisées.",
+    "save_failed": "Échec de l'enregistrement de la note : {{error}}. Veuillez réessayer.",
+    "confirm_delete": "Voulez-vous vraiment supprimer cette note ?",
+    "delete_failed": "Échec de la suppression de la note. Veuillez réessayer."
   },
   "calendar": {
     "title": "Calendrier",
@@ -340,6 +344,7 @@
       "fr": "Français (Bilingue)"
     },
     "interests_list": ["Jeux vidéos", "Sport"],
+    "availability": "Disponible immédiatement",
     "last_updated": "Dernière mise à jour",
     "update_date": "Janvier 2026",
     "location": "Paris, France"
@@ -364,6 +369,7 @@
     "match3_desc": "Échangez les tuiles pour en aligner 3 !",
     "pokemon_quiz": "Quiz Pokémon",
     "leaderboard": "Classement",
+    "players": "joueurs",
     "personal_best": "Mon Record Perso",
     "best": "Meilleur",
     "no_scores_yet": "No scores recorded yet. Be the first!",
@@ -375,6 +381,12 @@
     "use_arrows": "Utilisez les flèches pour vous déplacer",
     "use_mouse": "Glissez à la souris ou utilisez ZQSD/Flèches",
     "time": "Temps",
+    "rules": "Règles",
+    "controls": "Contrôles",
+    "bonus": "Bonus",
+    "combos": "Combos",
+    "speed": "Vitesse",
+    "quiz": "Quiz",
     "combo": "Combo",
     "combo_multiplier": "Combo x{{multiplier}} !",
     "mute": "Muet",

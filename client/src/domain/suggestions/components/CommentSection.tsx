@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteRight, FaTrash } from 'react-icons/fa';
 import { UserAvatar } from '../../../shared/components/UserAvatar';
 import { fetchJson, postJson } from '../../../shared/api/httpClient';
+import { getAdminCode } from '../../../shared/constants/authStorage';
 import type { SuggestionComment, SuggestionUser } from '../types';
 
 interface CommentSectionProps {
@@ -65,7 +66,10 @@ export function CommentSection({ suggestionId, commentCount = 0, user, isAdmin }
     const handleDeleteComment = async (commentId: string) => {
         if (!window.confirm(t('suggestions.delete_comment') + '?')) return;
         try {
-            await fetchJson(`/api/suggestions/comments/${commentId}`, { method: 'DELETE' });
+            // Backend allows owner (userId) or admin (adminCode)
+            const params = new URLSearchParams({ userId: user?.userId || '' });
+            if (isAdmin) params.set('adminCode', getAdminCode() || '');
+            await fetchJson(`/api/suggestions/comments/${commentId}?${params}`, { method: 'DELETE' });
             fetchComments();
         } catch (err) {
             console.error("Failed to delete comment", err);

@@ -11,6 +11,12 @@ export const useSound = (enabled: boolean = true) => {
         if (AudioContextClass) {
             audioContextRef.current = new AudioContextClass();
         }
+
+        // Release the audio hardware on unmount (browsers limit concurrent contexts)
+        return () => {
+            audioContextRef.current?.close().catch(() => { });
+            audioContextRef.current = null;
+        };
     }, []);
 
     const playSound = useCallback((type: SoundType, value?: number) => {

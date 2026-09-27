@@ -1,5 +1,6 @@
 import { fetchJson, postJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
+import { getAdminCode } from '../../../shared/constants/authStorage';
 import { AppError, ERROR_CODES } from '../../../shared/utils/errorHandling';
 import { transformBackendAchievements } from '../utils/ActivityStatsTransformer';
 import { requireUserId } from '../utils/validation';
@@ -106,7 +107,7 @@ export class AchievementService {
      */
     async initializeDefaultAchievements(): Promise<void> {
         try {
-            await postJson<void>(API_ENDPOINTS.ACTIVITY.INIT_ACHIEVEMENTS, {});
+            await postJson<void>(`${API_ENDPOINTS.ACTIVITY.INIT_ACHIEVEMENTS}?adminCode=${encodeURIComponent(getAdminCode() || '')}`, {});
         } catch (error) {
             throw new AppError(
                 'Failed to initialize achievements',

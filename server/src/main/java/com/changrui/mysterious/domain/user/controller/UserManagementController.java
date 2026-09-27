@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,6 +78,8 @@ public class UserManagementController {
                     "id", newUser.getId(),
                     "username", newUser.getUsername(),
                     "plainPassword", newUser.getPlainPassword()));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).body(Map.of("message", "Username already taken"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("message", "Error creating user: " + e.getMessage()));
         }
@@ -104,7 +107,11 @@ public class UserManagementController {
             user.setPlainPassword(newPass);
         }
 
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).body(Map.of("message", "Username already taken"));
+        }
         return ResponseEntity.ok(Map.of("message", "User updated successfully"));
     }
 

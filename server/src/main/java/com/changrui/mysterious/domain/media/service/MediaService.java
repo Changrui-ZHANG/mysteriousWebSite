@@ -1,9 +1,11 @@
 package com.changrui.mysterious.domain.media.service;
 
 import com.changrui.mysterious.domain.media.model.MediaUploadResult;
-import java.awt.image.BufferedImage;
+import com.changrui.mysterious.shared.util.ImageUtils;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +13,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,9 @@ public class MediaService {
     public MediaUploadResult uploadImage(MultipartFile file) throws IOException {
         validateFile(file);
 
+        // Validate dimensions from the header before writing anything to disk
+        ImageDimensions dims = validateImageDimensions(file);
+
         Path uploadPath = ensureUploadDirectory();
 
         String originalFilename = file.getOriginalFilename();
@@ -62,9 +66,6 @@ public class MediaService {
         // Save file
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         log.info("File saved: {}", filePath);
-
-        // Validate dimensions
-        ImageDimensions dims = validateImageDimensions(filePath);
 
         String fileUrl = "/api/media/" + uniqueFilename;
 
@@ -82,7 +83,14 @@ public class MediaService {
      */
     public boolean deleteMedia(String filename) {
         try {
-            Path filePath = Paths.get(uploadDir).resolve(filename);
+            Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Path filePath = basePath.resolve(filename).normalize();
+
+            // Security check: ensure file is within upload directory
+            if (!filePath.startsWith(basePath) || filePath.equals(basePath)) {
+                log.warn("Delete denied for file path: {}", filePath);
+                return false;
+            }
             boolean deleted = Files.deleteIfExists(filePath);
             if (deleted) {
                 log.info("Deleted media file: {}", filename);
@@ -156,31 +164,28 @@ public class MediaService {
         return path;
     }
 
-    private ImageDimensions validateImageDimensions(Path filePath) throws IOException {
-        try {
-            BufferedImage image = ImageIO.read(filePath.toFile());
-            if (image == null) {
-                return new ImageDimensions(null, null);
-            }
-
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            if (width > maxWidth || height > maxHeight) {
-                Files.deleteIfExists(filePath);
-                log.warn("Image rejected due to dimensions: {}x{}. Max: {}x{}", width, height, maxWidth, maxHeight);
-                throw new IllegalArgumentException(
-                        String.format("Dimensions too large. Max: %dx%dpx, Actual: %dx%dpx",
-                                maxWidth, maxHeight, width, height));
-            }
-
-            return new ImageDimensions(width, height);
+    private ImageDimensions validateImageDimensions(MultipartFile file) throws IOException {
+        Dimension dims;
+        try (InputStream in = file.getInputStream()) {
+            dims = ImageUtils.readDimensions(in);
         } catch (IOException e) {
-            log.warn("Failed to read image dimensions for {}: {}", filePath, e.getMessage());
-            // Don't fail the upload just because we can't read dimensions (e.g. some webp
-            // formats)
-            return new ImageDimensions(null, null);
+            log.warn("Failed to read image dimensions for {}: {}", file.getOriginalFilename(), e.getMessage());
+            throw new IllegalArgumentException("File is not a valid image");
         }
+
+        if (dims == null) {
+            throw new IllegalArgumentException("File is not a valid image");
+        }
+
+        if (dims.width > maxWidth || dims.height > maxHeight) {
+            log.warn("Image rejected due to dimensions: {}x{}. Max: {}x{}", dims.width, dims.height, maxWidth,
+                    maxHeight);
+            throw new IllegalArgumentException(
+                    String.format("Dimensions too large. Max: %dx%dpx, Actual: %dx%dpx",
+                            maxWidth, maxHeight, dims.width, dims.height));
+        }
+
+        return new ImageDimensions(dims.width, dims.height);
     }
 
     private String getFileExtension(String filename) {

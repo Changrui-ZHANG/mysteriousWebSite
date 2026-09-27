@@ -1,5 +1,6 @@
 package com.changrui.mysterious.domain.vocabulary.controller;
 
+import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.domain.vocabulary.model.VocabularyItem;
 import com.changrui.mysterious.domain.vocabulary.service.VocabularyService;
 import java.util.List;
@@ -17,6 +18,9 @@ public class VocabularyController {
 
     @Autowired
     private VocabularyService vocabularyService;
+
+    @Autowired
+    private AdminService adminService;
 
     @GetMapping("/random")
     public ResponseEntity<VocabularyItem> getRandom() {
@@ -42,7 +46,8 @@ public class VocabularyController {
     }
 
     @PostMapping("/reload")
-    public ResponseEntity<Map<String, String>> reload() {
+    public ResponseEntity<Map<String, String>> reload(@RequestParam(required = false) String adminCode) {
+        adminService.validateAdminCode(adminCode);
         vocabularyService.loadData();
         return ResponseEntity.ok(Map.of(
                 "message", "Data reloaded successfully",

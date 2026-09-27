@@ -39,10 +39,24 @@ export function useBrickBreakerEngine({
     const { isDarkMode } = useThemeManager();
     const animationFrameRef = useRef<number>(0);
 
+    // Values that must not restart the level when they change (mute toggle, theme toggle...)
+    const playSoundRef = useRef(playSound);
+    const isDarkModeRef = useRef(isDarkMode);
+    const setPointsRef = useRef(setPoints);
+    const setGameStateRef = useRef(setGameState);
+    useEffect(() => {
+        playSoundRef.current = playSound;
+        isDarkModeRef.current = isDarkMode;
+        setPointsRef.current = setPoints;
+        setGameStateRef.current = setGameState;
+    }, [playSound, isDarkMode, setPoints, setGameState]);
+
     useEffect(() => {
         const canvas = canvasRef.current;
         const container = containerRef.current;
         if (!canvas || !container) return;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        if (!ctx) return;
 
         const updateCanvasSize = () => {
             // Use client dimensions which are more reliable for canvas buffers
@@ -65,12 +79,9 @@ export function useBrickBreakerEngine({
         };
         window.addEventListener('resize', handleResize);
 
-        const ctx = canvas.getContext('2d', { alpha: false });
-        if (!ctx) return;
-
+        // Points are reset on start (useBrickBreaker), so final points stay visible on won/gameover
         if (gameState !== 'playing') {
             paddleWidthRef.current = PADDLE_CONFIG.DEFAULT_WIDTH;
-            setPoints(0);
             if (paddleWidthTimeoutRef.current !== null) { clearTimeout(paddleWidthTimeoutRef.current); paddleWidthTimeoutRef.current = null; }
         }
 
@@ -120,7 +131,9 @@ export function useBrickBreakerEngine({
         }
         generateMap(bricks, brickColumnCount, brickRowCount, selectedMap, randomMapData);
 
-        const colors = isDarkMode ? VISUAL_CONFIG.COLORS.DARK : VISUAL_CONFIG.COLORS.LIGHT;
+        let colors = isDarkModeRef.current ? VISUAL_CONFIG.COLORS.DARK : VISUAL_CONFIG.COLORS.LIGHT;
+        const playSound = (type: SoundType) => playSoundRef.current(type);
+        const setPoints: typeof setPointsRef.current = (value) => setPointsRef.current(value);
         let lastSoundTime = 0;
         const playSoundThrottled = (type: SoundType) => { const now = Date.now(); if (now - lastSoundTime > AUDIO_CONFIG.THROTTLE_MS) { playSound(type); lastSoundTime = now; } };
 
@@ -172,6 +185,7 @@ export function useBrickBreakerEngine({
         };
 
         const draw = () => {
+            colors = isDarkModeRef.current ? VISUAL_CONFIG.COLORS.DARK : VISUAL_CONFIG.COLORS.LIGHT;
             ctx.fillStyle = colors.BACKGROUND; ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawBricks(); drawPaddle();
             if (gameState !== 'playing') {
@@ -249,10 +263,10 @@ export function useBrickBreakerEngine({
             }
             ctx.fill(); activeBallCount = aliveBalls;
 
-            if (activeBallCount === 0) { setGameState('gameover'); playSound('gameover'); return; }
+            if (activeBallCount === 0) { setGameStateRef.current('gameover'); playSound('gameover'); return; }
             let activeBricks = 0;
             for (let c = 0; c < brickColumnCount; c++) for (let r = 0; r < brickRowCount; r++) if (bricks[c][r] === 1) activeBricks++;
-            if (activeBricks === 0) { setGameState('won'); playSound('win'); return; }
+            if (activeBricks === 0) { setGameStateRef.current('won'); playSound('win'); return; }
             animationFrameRef.current = requestAnimationFrame(draw);
         };
 
@@ -274,7 +288,8 @@ export function useBrickBreakerEngine({
             cancelAnimationFrame(animationFrameRef.current);
             document.removeEventListener('mousemove', handleMouseMove);
             canvas.removeEventListener('touchmove', handleTouchMove);
-            window.removeEventListener('resize', updateCanvasSize);
+            window.removeEventListener('resize', handleResize);
+            window.clearTimeout(resizeTimer);
         };
-    }, [gameState, isDarkMode, playSound, selectedMap, randomMapData, canvasRef, containerRef, paddleWidthRef, paddleWidthTimeoutRef, setGameState, setPoints]);
+    }, [gameState, selectedMap, randomMapData, canvasRef, containerRef, paddleWidthRef, paddleWidthTimeoutRef]);
 }

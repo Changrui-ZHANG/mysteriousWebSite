@@ -1,6 +1,8 @@
 package com.changrui.mysterious.domain.user.service;
 
+import com.changrui.mysterious.domain.user.model.AppUser;
 import com.changrui.mysterious.domain.user.repository.AppUserRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,13 @@ public class UserVerificationService {
      */
     public boolean userExists(String userId) {
         return userId != null && appUserRepository.existsById(userId);
+    }
+
+    /**
+     * Username of a registered user, if the id exists.
+     */
+    public Optional<String> findUsername(String userId) {
+        return userId == null ? Optional.empty() : appUserRepository.findById(userId).map(AppUser::getUsername);
     }
 
     /**

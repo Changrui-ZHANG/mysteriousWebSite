@@ -1,6 +1,7 @@
 package com.changrui.mysterious.domain.user.controller;
 
 import com.changrui.mysterious.domain.user.repository.AppUserRepository;
+import com.changrui.mysterious.shared.security.CurrentUser;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,12 @@ public class UserPreferencesController {
     @Autowired
     private AppUserRepository userRepository;
 
+    @Autowired
+    private CurrentUser currentUser;
+
     @GetMapping("/{userId}/language")
     public ResponseEntity<?> getLanguagePreference(@PathVariable String userId) {
-        return userRepository.findById(userId)
+        return userRepository.findById(currentUser.requireRegisteredSelf(userId))
                 .map(user -> {
                     Map<String, String> response = new HashMap<>();
                     response.put("language", user.getPreferredLanguage() != null ? user.getPreferredLanguage() : "fr");
@@ -42,7 +46,7 @@ public class UserPreferencesController {
             return ResponseEntity.badRequest().body("Invalid language code. Must be: fr, en, or zh");
         }
 
-        return userRepository.findById(userId)
+        return userRepository.findById(currentUser.requireRegisteredSelf(userId))
                 .map(user -> {
                     user.setPreferredLanguage(language);
                     userRepository.save(user);

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, ReactNode, Suspense } from 'react'
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence } from 'framer-motion'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -54,10 +54,12 @@ function AppContent() {
     const location = useLocation()
     const { i18n } = useTranslation()
 
-    const { login, isAdmin, isAuthModalOpen, closeAuthModal, adminLogin } = useAuth();
+    const { login, isAdmin, isAuthModalOpen, closeAuthModal, adminLogin, isLoading: authLoading } = useAuth();
 
     // Global Settings State - now managed by SettingsContext
-    const { isEnabled, settings, isLoading: settingsLoading, hasError, error, refreshSettings } = useSettings();
+    const { isEnabled, settings, isLoading: settingsLoadingRaw, hasError, error, refreshSettings } = useSettings();
+    // Keep the splash (and maintenance gate) until the stored admin session is verified
+    const settingsLoading = settingsLoadingRaw || authLoading;
 
     // Initial Load: i18n only
     useEffect(() => {
@@ -147,6 +149,7 @@ function AppContent() {
                                                     element={renderRoute(route)}
                                                 />
                                             ))}
+                                            <Route path="*" element={<Navigate to="/" replace />} />
                                         </Routes>
                                     </Suspense>
                                 </ErrorBoundary>

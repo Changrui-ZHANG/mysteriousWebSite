@@ -18,6 +18,7 @@ export function MazeControls({ onStartMoving, onStopMoving }: MazeControlsProps)
                 onPointerDown={(e) => { e.preventDefault(); onStartMoving(0, -1); }}
                 onPointerUp={onStopMoving}
                 onPointerLeave={onStopMoving}
+                onPointerCancel={onStopMoving}
             >
                 <FaArrowUp />
             </button>
@@ -28,6 +29,7 @@ export function MazeControls({ onStartMoving, onStopMoving }: MazeControlsProps)
                 onPointerDown={(e) => { e.preventDefault(); onStartMoving(-1, 0); }}
                 onPointerUp={onStopMoving}
                 onPointerLeave={onStopMoving}
+                onPointerCancel={onStopMoving}
             >
                 <FaArrowLeft />
             </button>
@@ -36,6 +38,7 @@ export function MazeControls({ onStartMoving, onStopMoving }: MazeControlsProps)
                 onPointerDown={(e) => { e.preventDefault(); onStartMoving(0, 1); }}
                 onPointerUp={onStopMoving}
                 onPointerLeave={onStopMoving}
+                onPointerCancel={onStopMoving}
             >
                 <FaArrowDown />
             </button>
@@ -44,6 +47,7 @@ export function MazeControls({ onStartMoving, onStopMoving }: MazeControlsProps)
                 onPointerDown={(e) => { e.preventDefault(); onStartMoving(1, 0); }}
                 onPointerUp={onStopMoving}
                 onPointerLeave={onStopMoving}
+                onPointerCancel={onStopMoving}
             >
                 <FaArrowRight />
             </button>

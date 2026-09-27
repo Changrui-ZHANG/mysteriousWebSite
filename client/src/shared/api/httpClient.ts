@@ -43,28 +43,6 @@ function unwrapApiResponse<T>(response: ApiResponse<T>): T {
 }
 
 /**
- * Get authentication headers for API requests
- */
-function getAuthHeaders(): Record<string, string> {
-    const headers: Record<string, string> = {};
-    
-    // Try to get user from localStorage
-    try {
-        const storedUser = localStorage.getItem('messageWall_user');
-        if (storedUser) {
-            const user = JSON.parse(storedUser);
-            if (user?.userId) {
-                headers['X-Requester-Id'] = user.userId;
-            }
-        }
-    } catch (error) {
-        console.warn('Failed to get user from localStorage for auth headers:', error);
-    }
-    
-    return headers;
-}
-
-/**
  * Generic fetch wrapper with error handling and ApiResponse unwrapping
  */
 export async function fetchJson<T>(
@@ -72,8 +50,7 @@ export async function fetchJson<T>(
     options?: RequestInit
 ): Promise<T> {
     try {
-        // Merge auth headers with existing headers
-        const authHeaders = getAuthHeaders();
+        // Authorization is added globally by the fetch wrapper (shared/api/authToken.ts)
         const existingHeaders = options?.headers || {};
         
         // Convert Headers object to plain object if needed
@@ -91,10 +68,7 @@ export async function fetchJson<T>(
             headersObj = { ...existingHeaders };
         }
         
-        const headers = {
-            ...authHeaders,
-            ...headersObj,
-        };
+        const headers = headersObj;
 
         const response = await fetch(url, {
             ...options,
@@ -149,12 +123,10 @@ export async function postJson<T>(
     url: string,
     data: unknown
 ): Promise<T> {
-    const authHeaders = getAuthHeaders();
     return fetchJson<T>(url, {
         method: 'POST',
         headers: { 
-            'Content-Type': 'application/json',
-            ...authHeaders
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     });
@@ -167,12 +139,10 @@ export async function putJson<T>(
     url: string,
     data: unknown
 ): Promise<T> {
-    const authHeaders = getAuthHeaders();
     return fetchJson<T>(url, {
         method: 'PUT',
         headers: { 
-            'Content-Type': 'application/json',
-            ...authHeaders
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     });
@@ -182,10 +152,8 @@ export async function putJson<T>(
  * DELETE request
  */
 export async function deleteJson<T>(url: string): Promise<T> {
-    const authHeaders = getAuthHeaders();
     return fetchJson<T>(url, {
-        method: 'DELETE',
-        headers: authHeaders
+        method: 'DELETE'
     });
 }
 

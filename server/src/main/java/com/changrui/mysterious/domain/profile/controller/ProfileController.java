@@ -2,12 +2,11 @@ package com.changrui.mysterious.domain.profile.controller;
 
 import com.changrui.mysterious.domain.profile.dto.*;
 import com.changrui.mysterious.domain.profile.middleware.FilterPrivateFields;
-import com.changrui.mysterious.domain.profile.middleware.PrivacyFilterMiddleware;
-import com.changrui.mysterious.domain.profile.middleware.RequirePrivacyLevel;
-import com.changrui.mysterious.domain.profile.middleware.RequireProfileOwnership;
 import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
 import com.changrui.mysterious.domain.profile.service.ProfileService;
+import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import com.changrui.mysterious.shared.security.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,6 +28,20 @@ public class ProfileController {
     @Autowired
     private ProfileIntegrationService profileIntegrationService;
 
+    @Autowired
+    private AdminService adminService;
+
+    @Autowired
+    private CurrentUser currentUser;
+
+    /**
+     * True only if the X-Admin-Code header carries a valid admin code
+     */
+    private boolean hasValidAdminCode(HttpServletRequest httpRequest) {
+        String adminCode = httpRequest.getHeader("X-Admin-Code");
+        return adminCode != null && adminService.isValidAdminCode(adminCode.trim());
+    }
+
     /**
      * Create a new user profile
      */
@@ -37,10 +50,9 @@ public class ProfileController {
             @Valid @RequestBody CreateProfileRequest request,
             HttpServletRequest httpRequest) {
 
-        // Extract requester ID from request (handled by middleware)
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
+        // A profile can only be created for the caller's own account (or by an admin)
+        if (!hasValidAdminCode(httpRequest)) {
+            currentUser.requireRegisteredSelf(request.userId());
         }
 
         ProfileResponse profile = profileService.createProfile(request);
@@ -52,20 +64,16 @@ public class ProfileController {
      * Public endpoint - no ownership required, but privacy rules apply
      */
     @GetMapping("/{userId}")
-    @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
     @FilterPrivateFields(fields = { "bio", "lastActive", "stats", "achievements" })
     public ResponseEntity<ApiResponse<ProfileResponse>> getProfile(
             @PathVariable String userId,
             HttpServletRequest httpRequest) {
 
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
-        }
+        // Requester identity comes from the verified token, never from client parameters
+        String requesterId = currentUser.currentUserId().orElse(null);
 
         // Check if admin access is being used
-        String adminCode = httpRequest.getHeader("X-Admin-Code");
-        boolean isAdminAccess = adminCode != null && !adminCode.trim().isEmpty();
+        boolean isAdminAccess = hasValidAdminCode(httpRequest);
 
         ProfileResponse profile = isAdminAccess ? profileService.getProfile(userId, requesterId, true)
                 : profileService.getProfile(userId, requesterId);
@@ -78,18 +86,16 @@ public class ProfileController {
      * Requires profile ownership
      */
     @PutMapping("/{userId}")
-    @RequireProfileOwnership(allowAdminOverride = true)
     public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
             @PathVariable String userId,
             @Valid @RequestBody UpdateProfileRequest request,
             HttpServletRequest httpRequest) {
 
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
-        }
+        // Requester identity comes from the verified token, never from client parameters
+        String requesterId = currentUser.currentUserId().orElse(null);
 
-        ProfileResponse profile = profileService.updateProfile(userId, request, requesterId);
+        ProfileResponse profile = profileService.updateProfile(userId, request, requesterId,
+                hasValidAdminCode(httpRequest));
         return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", profile));
     }
 
@@ -98,17 +104,14 @@ public class ProfileController {
      * Requires profile ownership
      */
     @DeleteMapping("/{userId}")
-    @RequireProfileOwnership(allowAdminOverride = true)
     public ResponseEntity<ApiResponse<Void>> deleteProfile(
             @PathVariable String userId,
             HttpServletRequest httpRequest) {
 
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
-        }
+        // Requester identity comes from the verified token, never from client parameters
+        String requesterId = currentUser.currentUserId().orElse(null);
 
-        profileService.deleteProfile(userId, requesterId);
+        profileService.deleteProfile(userId, requesterId, hasValidAdminCode(httpRequest));
         return ResponseEntity.ok(ApiResponse.successMessage("Profile deleted successfully"));
     }
 
@@ -117,16 +120,13 @@ public class ProfileController {
      * Public endpoint with rate limiting
      */
     @GetMapping("/search")
-    @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
     @FilterPrivateFields(fields = { "bio", "lastActive", "stats", "achievements" })
     public ResponseEntity<ApiResponse<List<ProfileResponse>>> searchProfiles(
             @RequestParam String q,
             HttpServletRequest httpRequest) {
 
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
-        }
+        // Requester identity comes from the verified token, never from client parameters
+        String requesterId = currentUser.currentUserId().orElse(null);
 
         List<ProfileResponse> profiles = profileService.searchProfiles(q, requesterId);
         return ResponseEntity.ok(ApiResponse.success(profiles));
@@ -137,15 +137,12 @@ public class ProfileController {
      * Public endpoint with rate limiting
      */
     @GetMapping("/directory")
-    @RequirePrivacyLevel(PrivacyFilterMiddleware.PrivacyLevel.PUBLIC)
     @FilterPrivateFields(fields = { "bio", "lastActive", "stats", "achievements" })
     public ResponseEntity<ApiResponse<List<ProfileResponse>>> getPublicProfiles(
             HttpServletRequest httpRequest) {
 
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
-        }
+        // Requester identity comes from the verified token, never from client parameters
+        String requesterId = currentUser.currentUserId().orElse(null);
 
         List<ProfileResponse> profiles = profileService.getPublicProfiles(requesterId);
         return ResponseEntity.ok(ApiResponse.success(profiles));
@@ -156,16 +153,13 @@ public class ProfileController {
      * Requires profile ownership
      */
     @PutMapping("/{userId}/privacy")
-    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> updatePrivacySettings(
             @PathVariable String userId,
             @Valid @RequestBody UpdatePrivacyRequest request,
             HttpServletRequest httpRequest) {
 
-        String requesterId = httpRequest.getParameter("requesterId");
-        if (requesterId == null) {
-            requesterId = httpRequest.getHeader("X-Requester-Id");
-        }
+        // Requester identity comes from the verified token, never from client parameters
+        String requesterId = currentUser.currentUserId().orElse(null);
 
         profileService.updatePrivacySettings(userId, request, requesterId);
         return ResponseEntity.ok(ApiResponse.successMessage("Privacy settings updated successfully"));
@@ -176,7 +170,6 @@ public class ProfileController {
      * Requires profile ownership
      */
     @PostMapping("/{userId}/activity")
-    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> updateLastActive(
             @PathVariable String userId) {
 

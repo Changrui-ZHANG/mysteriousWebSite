@@ -4,6 +4,8 @@ import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.exception.NotFoundException;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
+import com.changrui.mysterious.shared.security.CurrentUser;
+import com.changrui.mysterious.shared.security.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -96,21 +98,14 @@ public class ProfileAuthMiddleware {
     }
 
     /**
-     * Extract and validate requester ID from request parameters or headers.
+     * Requester ID from the verified identity token.
      * 
      * @param request The HTTP request
      * @return The validated requester ID, or null if not provided
      */
     public String extractRequesterId(HttpServletRequest request) {
-        // Try to get from request parameter first
-        String requesterId = request.getParameter("requesterId");
-
-        if (requesterId == null || requesterId.trim().isEmpty()) {
-            // Try to get from header as fallback
-            requesterId = request.getHeader("X-Requester-Id");
-        }
-
-        return (requesterId != null && !requesterId.trim().isEmpty()) ? requesterId.trim() : null;
+        // Only the identity verified from the Bearer token counts; requesterId params/headers are ignored
+        return CurrentUser.fromRequest(request).map(TokenService.Identity::userId).orElse(null);
     }
 
     /**

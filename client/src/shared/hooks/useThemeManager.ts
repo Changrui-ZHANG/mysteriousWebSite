@@ -1,18 +1,24 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef, useSyncExternalStore } from 'react';
 import { STORAGE_KEYS } from '../constants/config';
 
 export type Theme = 'light' | 'dark' | 'system' | 'paper';
+
+// Module-level store so every useThemeManager instance stays in sync
+let currentTheme: Theme = (typeof window !== 'undefined'
+    && localStorage.getItem(STORAGE_KEYS.THEME) as Theme | null) || 'dark';
+const listeners = new Set<() => void>();
+const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+    return () => { listeners.delete(listener); };
+};
+const getSnapshot = () => currentTheme;
 
 /**
  * Simplified theme manager hook
  * Reduces complexity while maintaining flicker-free theme switching
  */
 export function useThemeManager() {
-    const [theme, setThemeState] = useState<Theme>(() => {
-        if (typeof window === 'undefined') return 'dark';
-        const saved = localStorage.getItem(STORAGE_KEYS.THEME) as Theme | null;
-        return saved || 'dark';
-    });
+    const theme = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
     const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
 
@@ -59,8 +65,9 @@ export function useThemeManager() {
 
     // Change theme with persistence
     const setTheme = useCallback((newTheme: Theme) => {
-        setThemeState(newTheme);
+        currentTheme = newTheme;
         localStorage.setItem(STORAGE_KEYS.THEME, newTheme);
+        listeners.forEach(listener => listener());
     }, []);
 
     // Toggle between light and dark

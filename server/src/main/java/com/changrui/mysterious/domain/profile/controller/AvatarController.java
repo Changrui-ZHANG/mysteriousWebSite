@@ -1,10 +1,8 @@
 package com.changrui.mysterious.domain.profile.controller;
 
-import com.changrui.mysterious.domain.profile.middleware.RequireProfileOwnership;
-import com.changrui.mysterious.domain.profile.middleware.SecureFileUpload;
-import com.changrui.mysterious.domain.profile.middleware.ValidateFileUpload;
 import com.changrui.mysterious.domain.profile.service.AvatarService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import com.changrui.mysterious.shared.security.CurrentUser;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -42,18 +40,19 @@ public class AvatarController {
     @Autowired
     private AvatarService avatarService;
 
+    @Autowired
+    private CurrentUser currentUser;
+
     /**
      * Upload avatar file
      */
     @PostMapping("/{userId}")
-    @SecureFileUpload(operation = "avatar_upload", maxFiles = 1)
-    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<String>> uploadAvatar(
             @PathVariable String userId,
-            @RequestParam("avatar") @ValidateFileUpload(fileType = "avatar", maxSize = 5242880) MultipartFile file,
+            @RequestParam("avatar") MultipartFile file,
             @RequestParam String requesterId) {
 
-        String avatarUrl = avatarService.uploadAvatar(userId, file, requesterId);
+        String avatarUrl = avatarService.uploadAvatar(userId, file, currentUser.requireRegisteredSelf(requesterId));
         return ResponseEntity.ok(ApiResponse.success("Avatar uploaded successfully", avatarUrl));
     }
 
@@ -61,13 +60,12 @@ public class AvatarController {
      * Update user avatar URL
      */
     @PutMapping("/{userId}")
-    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> updateAvatarUrl(
             @PathVariable String userId,
             @RequestBody String avatarUrl,
             @RequestParam String requesterId) {
 
-        avatarService.updateAvatarUrl(userId, avatarUrl, requesterId);
+        avatarService.updateAvatarUrl(userId, avatarUrl, currentUser.requireRegisteredSelf(requesterId));
         return ResponseEntity.ok(ApiResponse.successMessage("Avatar updated successfully"));
     }
 
@@ -75,12 +73,11 @@ public class AvatarController {
      * Delete user avatar
      */
     @DeleteMapping("/{userId}")
-    @RequireProfileOwnership
     public ResponseEntity<ApiResponse<Void>> deleteAvatar(
             @PathVariable String userId,
             @RequestParam String requesterId) {
 
-        avatarService.deleteAvatar(userId, requesterId);
+        avatarService.deleteAvatar(userId, currentUser.requireRegisteredSelf(requesterId));
         return ResponseEntity.ok(ApiResponse.successMessage("Avatar deleted successfully"));
     }
 

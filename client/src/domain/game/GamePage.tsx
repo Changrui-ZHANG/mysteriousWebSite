@@ -68,17 +68,20 @@ export function Game(_props: GameProps) {
     useEffect(() => { resetGuestAlert(); }, [activeGame]);
 
     useEffect(() => {
+        let cancelled = false;
         const fetchPersonalBest = async () => {
             if (!user?.userId) { setPersonalBest(null); return; }
             try {
                 const data = await fetchJson<ScoreData>(API_ENDPOINTS.GAMES.USER_SCORE(user.userId, activeGame));
-                setPersonalBest({ score: data.score, attempts: data.attempts });
+                if (!cancelled) setPersonalBest({ score: data.score, attempts: data.attempts });
             } catch (error) {
+                if (cancelled) return;
                 console.error("Failed to fetch personal best", error);
                 setPersonalBest({ score: 0 });
             }
         };
         fetchPersonalBest();
+        return () => { cancelled = true; };
     }, [user, activeGame, refreshLeaderboard]);
 
     const submitScore = useCallback(async (score: number, attempts?: number) => {

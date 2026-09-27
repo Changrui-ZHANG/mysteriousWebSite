@@ -63,16 +63,11 @@ export const NotesPage: React.FC = () => {
             return;
         }
 
-        console.log('Fetching notes for user:', user.userId);
-        console.log('API endpoint:', API_ENDPOINTS.NOTES.LIST(user.userId));
-
         try {
             const response = await fetch(API_ENDPOINTS.NOTES.LIST(user.userId));
-            console.log('Fetch response status:', response.status);
 
             if (response.ok) {
                 const result: ApiResponse<Note[]> = await response.json();
-                console.log('Fetch result:', result);
 
                 if (result.success && result.data) {
                     setNotes(result.data);
@@ -109,13 +104,9 @@ export const NotesPage: React.FC = () => {
             color: selectedColor,
         };
 
-        console.log('Saving note with data:', noteData);
-        console.log('API endpoint:', editingId ? API_ENDPOINTS.NOTES.UPDATE(editingId, user.userId) : API_ENDPOINTS.NOTES.CREATE);
-
         try {
             if (editingId) {
                 const result = await putJson(API_ENDPOINTS.NOTES.UPDATE(editingId, user.userId), noteData);
-                console.log('Update result:', result);
                 // Mettre à jour la note dans la liste locale
                 setNotes(prevNotes =>
                     prevNotes.map(note =>
@@ -124,7 +115,6 @@ export const NotesPage: React.FC = () => {
                 );
             } else {
                 const result = await postJson(API_ENDPOINTS.NOTES.CREATE, noteData);
-                console.log('Create result:', result);
                 // Ajouter la nouvelle note au début de la liste locale
                 setNotes(prevNotes => [result as Note, ...prevNotes]);
             }
@@ -132,8 +122,8 @@ export const NotesPage: React.FC = () => {
         } catch (error) {
             console.error('Failed to save note:', error);
             // Add user-friendly error feedback
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            alert(`Failed to save note: ${errorMessage}. Please try again.`);
+            const errorMessage = error instanceof Error ? error.message : t('errors.unknown_error');
+            alert(t('notes.save_failed', { error: errorMessage }));
         }
     };
 
@@ -144,7 +134,7 @@ export const NotesPage: React.FC = () => {
         if (!user) return;
 
         // Add confirmation dialog
-        if (!confirm('Are you sure you want to delete this note?')) {
+        if (!confirm(t('notes.confirm_delete'))) {
             return;
         }
 
@@ -154,7 +144,7 @@ export const NotesPage: React.FC = () => {
             setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
         } catch (error) {
             console.error('Failed to delete note:', error);
-            alert('Failed to delete note. Please try again.');
+            alert(t('notes.delete_failed'));
         }
     };
 

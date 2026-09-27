@@ -1,11 +1,16 @@
 package com.changrui.mysterious.domain.messagewall.model;
 
 import com.changrui.mysterious.domain.messagewall.converter.ReactionsConverter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Entity representing a chat message.
@@ -21,12 +26,15 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @NotNull(message = "userId is required")
     @Column(name = "user_id", nullable = false)
     private String userId;
 
     @Column(nullable = false)
     private String name;
 
+    @NotNull(message = "Message is required")
+    @Size(max = 500, message = "Message must be at most 500 characters")
     @Column(nullable = false, length = 500)
     private String message;
 
@@ -34,9 +42,13 @@ public class Message {
     private long timestamp;
 
     @Column(name = "is_anonymous", nullable = false, columnDefinition = "boolean default false")
+    @Getter(onMethod_ = @JsonProperty("isAnonymous"))
+    @Setter(onMethod_ = @JsonProperty("isAnonymous"))
     private boolean isAnonymous;
 
     @Column(name = "is_verified", nullable = false, columnDefinition = "boolean default false")
+    @Getter(onMethod_ = @JsonProperty("isVerified"))
+    @Setter(onMethod_ = @JsonProperty("isVerified"))
     private boolean isVerified;
 
     @Column(name = "quoted_message_id")

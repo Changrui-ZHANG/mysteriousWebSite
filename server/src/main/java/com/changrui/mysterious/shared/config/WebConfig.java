@@ -3,7 +3,10 @@ package com.changrui.mysterious.shared.config;
 import com.changrui.mysterious.domain.profile.middleware.FileUploadInterceptor;
 import com.changrui.mysterious.domain.profile.middleware.PrivacyFilterInterceptor;
 import com.changrui.mysterious.domain.profile.middleware.ProfileAuthInterceptor;
+import com.changrui.mysterious.shared.security.TokenInterceptor;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,9 +31,15 @@ public class WebConfig implements WebMvcConfigurer {
         @Autowired
         private PrivacyFilterInterceptor privacyFilterInterceptor;
 
+        @Autowired
+        private TokenInterceptor tokenInterceptor;
+
         @Bean
-        public RestTemplate restTemplate() {
-                return new RestTemplate();
+        public RestTemplate restTemplate(RestTemplateBuilder builder) {
+                return builder
+                                .setConnectTimeout(Duration.ofSeconds(5))
+                                .setReadTimeout(Duration.ofSeconds(10))
+                                .build();
         }
 
         @Override
@@ -43,6 +52,11 @@ public class WebConfig implements WebMvcConfigurer {
 
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
+                // Resolve the caller identity from the Bearer token before any other interceptor
+                registry.addInterceptor(tokenInterceptor)
+                                .addPathPatterns("/api/**")
+                                .order(0);
+
                 // Add privacy filter interceptor first (highest priority)
                 registry.addInterceptor(privacyFilterInterceptor)
                                 .addPathPatterns("/api/profiles/**")

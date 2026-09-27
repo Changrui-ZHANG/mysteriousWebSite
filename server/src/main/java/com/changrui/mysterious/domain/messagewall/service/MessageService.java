@@ -9,6 +9,7 @@ import com.changrui.mysterious.domain.messagewall.repository.ChatSettingReposito
 import com.changrui.mysterious.domain.messagewall.repository.MessageRepository;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
 import com.changrui.mysterious.domain.profile.service.ProfileIntegrationService;
+import com.changrui.mysterious.shared.exception.BadRequestException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -45,14 +46,14 @@ public class MessageService {
         return messageRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Delete a message owned by the given user.
+     *
+     * @return true only if a row was actually deleted.
+     */
     @Transactional
     public boolean deleteMessage(String id, String userId) {
-        try {
-            messageRepository.deleteByIdAndUserId(id, userId);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return messageRepository.deleteByIdAndUserId(id, userId) > 0;
     }
 
     @Transactional
@@ -74,6 +75,16 @@ public class MessageService {
         chatSettingRepository.save(setting);
     }
 
+    /**
+     * Atomically flip the mute flag.
+     * ponytail: JVM-level lock, fine for a single backend instance; use a DB row lock if scaled out.
+     */
+    public synchronized boolean toggleMuted() {
+        boolean newState = !isMuted();
+        setMuted(newState);
+        return newState;
+    }
+
     public void clearAllMessages() {
         messageRepository.deleteAll();
     }
@@ -85,7 +96,8 @@ public class MessageService {
      */
     @Transactional
     public MessageResponse addReaction(String messageId, String userId, String username, String emoji) {
-        Message message = messageRepository.findById(messageId).orElse(null);
+        validateReactionInput(userId, emoji);
+        Message message = messageRepository.findByIdForUpdate(messageId).orElse(null);
         if (message == null) {
             return null;
         }
@@ -110,7 +122,8 @@ public class MessageService {
      */
     @Transactional
     public MessageResponse removeReaction(String messageId, String userId, String emoji) {
-        Message message = messageRepository.findById(messageId).orElse(null);
+        validateReactionInput(userId, emoji);
+        Message message = messageRepository.findByIdForUpdate(messageId).orElse(null);
         if (message == null) {
             return null;
         }
@@ -154,6 +167,15 @@ public class MessageService {
             profileIntegrationService.updateLastActiveFromMessage(userId);
         } catch (Exception ignored) {
             // Don't fail the message save if activity tracking fails
+        }
+    }
+
+    private void validateReactionInput(String userId, String emoji) {
+        if (emoji == null || emoji.isBlank()) {
+            throw new BadRequestException("emoji is required");
+        }
+        if (userId == null || userId.isBlank()) {
+            throw new BadRequestException("userId is required");
         }
     }
 

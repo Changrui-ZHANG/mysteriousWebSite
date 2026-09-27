@@ -24,14 +24,12 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
 
   // Mettre à jour les réactions quand elles changent (via WebSocket ou chargement initial)
   useEffect(() => {
-    console.log('[useReactions] Effect triggered', { messageId, initialReactions: memoizedInitialReactions, currentReactions: reactions });
 
     // Comparer par contenu pour éviter les updates inutiles
     const currentJson = JSON.stringify(reactions);
     const newJson = JSON.stringify(memoizedInitialReactions);
 
     if (currentJson !== newJson) {
-      console.log('[useReactions] Updating reactions from initialReactions', { messageId, newReactions: memoizedInitialReactions });
       setReactions(memoizedInitialReactions);
     }
   }, [memoizedInitialReactions, messageId]); // Use memoized version
@@ -45,15 +43,12 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
    * Ajouter une réaction
    */
   const addReaction = useCallback(async (emoji: string) => {
-    console.log('[useReactions] addReaction called', { emoji, user, messageId });
 
     if (!user) {
-      console.warn('[useReactions] No user, cannot add reaction');
       setError('Vous devez être connecté pour réagir');
       return;
     }
 
-    console.log('[useReactions] Adding reaction...', { emoji, userId: user.userId, username: user.username });
     setIsLoading(true);
     setError(null);
 
@@ -92,7 +87,6 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
         emoji,
       };
 
-      console.log('[useReactions] Sending request to backend', { payload, url: '/api/messages/reactions/add' });
 
       const response = await fetch('/api/messages/reactions/add', {
         method: 'POST',
@@ -102,19 +96,16 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
         body: JSON.stringify(payload),
       });
 
-      console.log('[useReactions] Response received', { ok: response.ok, status: response.status });
 
       if (!response.ok) {
         // Si l'API échoue, on garde quand même l'update optimiste
         // Pas d'erreur affichée à l'utilisateur
-        console.warn('[useReactions] Response not OK, keeping optimistic update', { status: response.status });
         return;
       }
 
       const result = await response.json();
       // Le backend retourne ApiResponse<Message>, donc result.data.reactions
       const updatedReactions = result.data?.reactions || [];
-      console.log('[useReactions] Reactions updated from backend', { updatedReactions });
       setReactions(updatedReactions);
 
       // Notifier le parent pour la synchronisation WebSocket
@@ -134,15 +125,12 @@ export const useReactions = ({ messageId, initialReactions = [], onReactionUpdat
    * Retirer une réaction
    */
   const removeReaction = useCallback(async (emoji: string) => {
-    console.log('[useReactions] removeReaction called', { emoji, user, messageId });
 
     if (!user) {
-      console.warn('[useReactions] No user, cannot remove reaction');
       setError('Vous devez être connecté pour retirer une réaction');
       return;
     }
 
-    console.log('[useReactions] Removing reaction...', { emoji, userId: user.userId });
     setIsLoading(true);
     setError(null);
 

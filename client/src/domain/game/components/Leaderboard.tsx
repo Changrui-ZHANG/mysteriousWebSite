@@ -15,6 +15,13 @@ interface Score {
     attempts?: number;
 }
 
+interface DuplicatesResult {
+    totalDuplicates?: number;
+    duplicateGroups?: number;
+    totalScores?: number;
+    duplicatesRemoved?: number;
+}
+
 interface LeaderboardProps {
     gameType: string;
     refreshTrigger: number;
@@ -30,36 +37,28 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
     const [scores, setScores] = useState<Score[]>([]);
     const [refresh, setRefresh] = useState(0);
 
-    const fetchTopScores = async () => {
-        try {
-            // Using fetchJson for auto-unwrapping ApiResponse
-            const data = await fetchJson<Score[]>(API_ENDPOINTS.GAMES.TOP_SCORES(gameType));
-            if (Array.isArray(data)) {
-                setScores(data);
-            } else {
-                console.error("Expected array of scores but got:", data);
-                setScores([]);
-            }
-        } catch (error) {
-            console.error("Failed to fetch top scores", error);
-            setScores([]);
-        }
-    };
-
     useEffect(() => {
-        fetchTopScores();
+        let cancelled = false;
+        // Using fetchJson for auto-unwrapping ApiResponse
+        fetchJson<Score[]>(API_ENDPOINTS.GAMES.TOP_SCORES(gameType))
+            .then(data => {
+                if (cancelled) return;
+                if (Array.isArray(data)) {
+                    setScores(data);
+                } else {
+                    console.error("Expected array of scores but got:", data);
+                    setScores([]);
+                }
+            })
+            .catch(error => {
+                if (cancelled) return;
+                console.error("Failed to fetch top scores", error);
+                setScores([]);
+            });
+        return () => { cancelled = true; };
     }, [gameType, refreshTrigger, refresh]);
 
     const handleReset = async (id: string, username: string) => {
-        console.log('=== DEBUG SUPPRESSION SCORE ===');
-        console.log('Score ID:', id);
-        console.log('Username:', username);
-        console.log('Admin code from context:', adminCode);
-        console.log('Is admin:', isAdmin, 'Is super admin:', isSuperAdmin);
-        console.log('LocalStorage admin code:', localStorage.getItem('admin_session_code'));
-        console.log('LocalStorage is admin:', localStorage.getItem('messageWall_isAdmin'));
-        console.log('LocalStorage is super admin:', localStorage.getItem('messageWall_isSuperAdmin'));
-
         if (!confirm(t('game.confirm_reset_score', { username }))) return;
 
         try {
@@ -70,11 +69,8 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
             }
 
             const deleteUrl = `${API_ENDPOINTS.GAMES.DELETE_SCORE(id)}?adminCode=${adminCode}`;
-            console.log('🔗 Delete URL:', deleteUrl);
-
             await deleteJson(deleteUrl);
             setRefresh(prev => prev + 1);
-            console.log('✅ Score deleted successfully');
         } catch (error) {
             console.error('❌ Failed to reset score', error);
             const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
@@ -83,11 +79,6 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
     };
 
     const handleClearAllScores = async () => {
-        console.log('=== DEBUG SUPPRESSION TOUS LES SCORES ===');
-        console.log('Game type:', gameType);
-        console.log('Admin code from context:', adminCode);
-        console.log('Is super admin:', isSuperAdmin);
-
         // Double confirmation pour éviter les suppressions accidentelles
         const firstConfirm = confirm(t('game.confirm_clear_all_scores', { gameType }));
         if (!firstConfirm) return;
@@ -106,10 +97,7 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
             }
 
             const deleteUrl = `${API_ENDPOINTS.GAMES.DELETE_ALL_GAME_SCORES(gameType)}?adminCode=${adminCode}`;
-            console.log('🔗 Delete all URL:', deleteUrl);
-
             const result = await deleteJson(deleteUrl);
-            console.log('✅ All scores deleted successfully:', result);
 
             setRefresh(prev => prev + 1);
             const deletedCount = (result as any)?.deletedCount || 'N/A';
@@ -122,10 +110,6 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
     };
 
     const handleCleanupDuplicates = async () => {
-        console.log('=== DEBUG NETTOYAGE DOUBLONS ===');
-        console.log('Admin code from context:', adminCode);
-        console.log('Is super admin:', isSuperAdmin);
-
         try {
             if (!adminCode) {
                 console.error('❌ No admin code available');
@@ -135,16 +119,12 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
 
             // D'abord, vérifier s'il y a des doublons
             const reportUrl = `${API_ENDPOINTS.GAMES.DUPLICATES_REPORT}?adminCode=${adminCode}`;
-            console.log('🔍 Report URL:', reportUrl);
+            // fetchJson throws on non-2xx and unwraps ApiResponse.data
+            const report = await fetchJson<DuplicatesResult>(reportUrl);
 
-            const reportResponse = await fetch(reportUrl);
-            const reportResult = await reportResponse.json();
-
-            console.log('📊 Duplicates report:', reportResult);
-
-            const totalDuplicates = reportResult.data?.totalDuplicates || 0;
-            const duplicateGroups = reportResult.data?.duplicateGroups || 0;
-            const totalScores = reportResult.data?.totalScores || 0;
+            const totalDuplicates = report?.totalDuplicates || 0;
+            const duplicateGroups = report?.duplicateGroups || 0;
+            const totalScores = report?.totalScores || 0;
 
             if (totalDuplicates === 0) {
                 alert(`ℹ️ Aucun doublon trouvé !\n\nTotal des scores: ${totalScores}\nTous les scores sont uniques.`);
@@ -158,27 +138,14 @@ export default function Leaderboard({ gameType, refreshTrigger, isAdmin = false,
 
             // Procéder au nettoyage
             const cleanupUrl = `${API_ENDPOINTS.GAMES.CLEANUP_DUPLICATES}?adminCode=${adminCode}`;
-            console.log('🔗 Cleanup URL:', cleanupUrl);
-
-            let response = await fetch(cleanupUrl, { method: 'POST' });
-            let result = await response.json();
-
-            console.log('✅ Duplicates cleaned up successfully:', result);
-
-            let duplicatesRemoved = result.data?.duplicatesRemoved || 0;
+            let result = await fetchJson<DuplicatesResult>(cleanupUrl, { method: 'POST' });
+            let duplicatesRemoved = result?.duplicatesRemoved || 0;
 
             // Si aucun doublon n'a été supprimé, essayer la méthode force
             if (duplicatesRemoved === 0 && totalDuplicates > 0) {
-                console.log('⚠️ Normal cleanup removed 0 duplicates, trying force cleanup...');
-
                 const forceCleanupUrl = `${API_ENDPOINTS.GAMES.FORCE_CLEANUP_DUPLICATES}?adminCode=${adminCode}`;
-                console.log('🔗 Force Cleanup URL:', forceCleanupUrl);
-
-                response = await fetch(forceCleanupUrl, { method: 'POST' });
-                result = await response.json();
-
-                console.log('✅ Force duplicates cleaned up successfully:', result);
-                duplicatesRemoved = result.data?.duplicatesRemoved || 0;
+                result = await fetchJson<DuplicatesResult>(forceCleanupUrl, { method: 'POST' });
+                duplicatesRemoved = result?.duplicatesRemoved || 0;
             }
 
             setRefresh(prev => prev + 1);

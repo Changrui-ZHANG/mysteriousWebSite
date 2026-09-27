@@ -44,7 +44,7 @@ export const useBGM = (url: string, enabled: boolean = true, volume: number = 0.
         } else {
             audioRef.current.pause();
         }
-    }, [enabled]);
+    }, [enabled, url]); // url: the audio element is re-created when the track changes
 
     // Resume play on interaction if it was blocked
     useEffect(() => {

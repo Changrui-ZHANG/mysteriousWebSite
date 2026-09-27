@@ -58,8 +58,10 @@ public class WebSocketPresenceService {
      * Toggle visibility of online count.
      */
     public boolean toggleShowOnlineCountToAll() {
-        boolean newValue = !showOnlineCountToAll.get();
-        showOnlineCountToAll.set(newValue);
+        boolean newValue;
+        do {
+            newValue = !showOnlineCountToAll.get();
+        } while (!showOnlineCountToAll.compareAndSet(!newValue, newValue));
         broadcastOnlineCount();
         return newValue;
     }

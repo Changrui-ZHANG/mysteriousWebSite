@@ -5,9 +5,12 @@ import com.changrui.mysterious.domain.profile.model.*;
 import com.changrui.mysterious.domain.profile.repository.*;
 import com.changrui.mysterious.shared.exception.BadRequestException;
 import com.changrui.mysterious.shared.exception.NotFoundException;
+import com.changrui.mysterious.shared.exception.UnauthorizedException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -145,9 +148,18 @@ public class ProfileService {
      */
     @Transactional
     public ProfileResponse updateProfile(String userId, UpdateProfileRequest request, String requesterId) {
+        return updateProfile(userId, request, requesterId, false);
+    }
+
+    /**
+     * Update user profile; admins (validated by the caller) may update any profile
+     */
+    @Transactional
+    public ProfileResponse updateProfile(String userId, UpdateProfileRequest request, String requesterId,
+            boolean isAdmin) {
         // Check ownership
-        if (!userId.equals(requesterId)) {
-            throw new BadRequestException("Cannot update another user's profile");
+        if (!isAdmin && !userId.equals(requesterId)) {
+            throw new UnauthorizedException("Cannot update another user's profile");
         }
 
         UserProfile profile = profileRepository.findByUserId(userId)
@@ -186,7 +198,7 @@ public class ProfileService {
     public void updatePrivacySettings(String userId, UpdatePrivacyRequest request, String requesterId) {
         // Check ownership
         if (!userId.equals(requesterId)) {
-            throw new BadRequestException("Cannot update another user's privacy settings");
+            throw new UnauthorizedException("Cannot update another user's privacy settings");
         }
 
         PrivacySettings privacy = privacyRepository.findByUserId(userId)
@@ -230,35 +242,48 @@ public class ProfileService {
             return List.of();
         }
 
-        List<UserProfile> profiles = profileRepository.searchByDisplayNameOrBio(query.trim());
-
-        return profiles.stream()
-                .map(profile -> {
-                    PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
-                    ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
-                    List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(profile.getUserId());
-                    boolean isOwner = profile.getUserId().equals(requesterId);
-
-                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
-                            : ProfileResponse.publicFrom(profile, privacy, stats, achievements);
-                })
-                .collect(Collectors.toList());
+        return toResponses(profileRepository.searchByDisplayNameOrBio(query.trim()), requesterId);
     }
 
     /**
      * Get public profiles directory
      */
     public List<ProfileResponse> getPublicProfiles(String requesterId) {
-        List<UserProfile> profiles = profileRepository.findPublicProfiles();
+        return toResponses(profileRepository.findPublicProfiles(), requesterId);
+    }
+
+    /**
+     * Build responses for a list of profiles with a fixed number of batched queries
+     */
+    private List<ProfileResponse> toResponses(List<UserProfile> profiles, String requesterId) {
+        if (profiles.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> userIds = profiles.stream().map(UserProfile::getUserId).toList();
+
+        Map<String, PrivacySettings> privacyByUser = privacyRepository.findByUserIdIn(userIds).stream()
+                .collect(Collectors.toMap(PrivacySettings::getUserId, Function.identity()));
+        Map<String, ActivityStats> statsByUser = activityRepository.findByUserIdIn(userIds).stream()
+                .collect(Collectors.toMap(ActivityStats::getUserId, Function.identity()));
+        Map<String, Achievement> achievementsById = achievementRepository.findAll().stream()
+                .collect(Collectors.toMap(Achievement::getId, Function.identity()));
+        Map<String, List<ProfileResponse.AchievementDto>> achievementsByUser = userAchievementRepository
+                .findByUserIdIn(userIds).stream()
+                .filter(ua -> achievementsById.containsKey(ua.getAchievementId()))
+                .collect(Collectors.groupingBy(UserAchievement::getUserId, Collectors.mapping(
+                        ua -> ProfileResponse.AchievementDto.from(achievementsById.get(ua.getAchievementId()),
+                                ua.getUnlockedAt()),
+                        Collectors.toList())));
 
         return profiles.stream()
                 .map(profile -> {
-                    PrivacySettings privacy = privacyRepository.findByUserId(profile.getUserId()).orElse(null);
-                    ActivityStats stats = activityRepository.findByUserId(profile.getUserId()).orElse(null);
-                    List<ProfileResponse.AchievementDto> achievements = getAchievementsForUser(profile.getUserId());
-                    boolean isOwner = profile.getUserId().equals(requesterId);
+                    String id = profile.getUserId();
+                    PrivacySettings privacy = privacyByUser.get(id);
+                    ActivityStats stats = statsByUser.get(id);
+                    List<ProfileResponse.AchievementDto> achievements = achievementsByUser.getOrDefault(id,
+                            new ArrayList<>());
 
-                    return isOwner ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
+                    return id.equals(requesterId) ? ProfileResponse.ownerFrom(profile, privacy, stats, achievements)
                             : ProfileResponse.publicFrom(profile, privacy, stats, achievements);
                 })
                 .collect(Collectors.toList());
@@ -269,16 +294,25 @@ public class ProfileService {
      */
     @Transactional
     public void deleteProfile(String userId, String requesterId) {
+        deleteProfile(userId, requesterId, false);
+    }
+
+    /**
+     * Delete user profile; admins (validated by the caller) may delete any profile
+     */
+    @Transactional
+    public void deleteProfile(String userId, String requesterId, boolean isAdmin) {
         // Check ownership
-        if (!userId.equals(requesterId)) {
-            throw new BadRequestException("Cannot delete another user's profile");
+        if (!isAdmin && !userId.equals(requesterId)) {
+            throw new UnauthorizedException("Cannot delete another user's profile");
         }
 
         if (!profileRepository.existsByUserId(userId)) {
             throw new NotFoundException("Profile not found for user: " + userId);
         }
 
-        // Delete related data
+        // Delete related data (achievements first: FK to user_profiles)
+        userAchievementRepository.deleteByUserId(userId);
         privacyRepository.findByUserId(userId).ifPresent(privacyRepository::delete);
         activityRepository.findByUserId(userId).ifPresent(activityRepository::delete);
 

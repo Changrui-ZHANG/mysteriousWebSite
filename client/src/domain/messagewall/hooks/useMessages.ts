@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
-import { STORAGE_KEYS } from '../../../shared/constants/config';
+import { ensureGuestSession } from '../../../shared/api/authToken';
+import { getAdminCode } from '../../../shared/constants/authStorage';
+import { ApiError, fetchJson, postJson } from '../../../shared/api/httpClient';
+import { useToastContext } from '../../../shared/contexts/ToastContext';
 import { useConnectionState, ConnectionState } from '../../../shared/hooks/useConnectionState';
 import { useChannelStore } from '../stores/channelStore';
 import type { Message } from '../types';
@@ -35,6 +38,7 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
     const activeChannelId = useChannelStore(state => state.activeChannelId);
     const incrementMessageCount = useChannelStore(state => state.incrementMessageCount);
     const updateLastMessageAt = useChannelStore(state => state.updateLastMessageAt);
+    const { error: showErrorToast } = useToastContext();
 
     // Gestion de l'état de connexion pour éviter les boucles d'erreur
     const connectionState = useConnectionState(
@@ -45,14 +49,20 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         3 // Maximum 3 tentatives
     );
 
-    // Initialize User ID
-    useEffect(() => {
-        let userId = localStorage.getItem(STORAGE_KEYS.USER_ID);
-        if (!userId) {
-            userId = `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-            localStorage.setItem(STORAGE_KEYS.USER_ID, userId);
+    // Only network failures mean "disconnected"; HTTP errors (muted chat, validation...) are shown as a toast
+    const reportError = useCallback((error: unknown, fallback: string) => {
+        if (error instanceof ApiError && error.status !== 0) {
+            showErrorToast(error.message ? `${fallback}: ${error.message}` : fallback);
+        } else {
+            connectionState.setDisconnected(fallback, true);
         }
-        setCurrentUserId(userId);
+    }, [connectionState, showErrorToast]);
+
+    const adminQuery = () => (isAdmin ? `adminCode=${encodeURIComponent(getAdminCode() || '')}` : '');
+
+    // Initialize guest User ID (issued/confirmed by the server together with the guest token)
+    useEffect(() => {
+        ensureGuestSession().then(setCurrentUserId);
     }, []);
 
     // Fetch Messages avec gestion d'erreur sans boucle - charge TOUS les messages UNE SEULE FOIS
@@ -146,32 +156,19 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
                 imageUrl: imageUrl || null, // Ajouter l'URL de l'image
             };
 
-            const response = await fetch(API_ENDPOINTS.MESSAGES.ADD, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messagePayload),
-            });
+            const query = adminQuery();
+            await postJson(`${API_ENDPOINTS.MESSAGES.ADD}${query ? `?${query}` : ''}`, messagePayload);
 
-            if (response.ok) {
-                setReplyingTo(null);
-                // Mettre à jour les métadonnées du channel
-                incrementMessageCount(activeChannelId);
-                updateLastMessageAt(activeChannelId, new Date());
-                // Refresh messages après envoi réussi
-                setTimeout(() => fetchMessages(), 100);
-            } else {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+            setReplyingTo(null);
+            // Mettre à jour les métadonnées du channel
+            incrementMessageCount(activeChannelId);
+            updateLastMessageAt(activeChannelId, new Date());
+            // Refresh messages après envoi réussi
+            setTimeout(() => fetchMessages(), 100);
         } catch (error) {
-            const errorMessage = error instanceof Error
-                ? error.message
-                : t('errors.messages.send_failed', 'Failed to send message');
-
-            connectionState.setDisconnected(errorMessage, true);
+            reportError(error, t('errors.messages.send_failed', 'Failed to send message'));
         }
-    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages, connectionState, activeChannelId, incrementMessageCount, updateLastMessageAt]);
+    }, [user, currentUserId, isAdmin, t, replyingTo, fetchMessages, connectionState, activeChannelId, incrementMessageCount, updateLastMessageAt, reportError]);
 
     // Delete message avec gestion d'erreur
     const handleDelete = useCallback(async (id: string) => {
@@ -186,26 +183,39 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
 
         try {
             const userIdToCheck = user ? user.userId : currentUserId;
-            const url = `${API_ENDPOINTS.MESSAGES.DELETE(id)}?userId=${userIdToCheck}`;
+            const query = adminQuery();
+            const url = `${API_ENDPOINTS.MESSAGES.DELETE(id)}?userId=${encodeURIComponent(userIdToCheck)}${query ? `&${query}` : ''}`;
 
-            const response = await fetch(url, {
-                method: 'DELETE',
-            });
+            await fetchJson(url, { method: 'DELETE' });
 
-            if (response.ok) {
-                // Remove from local state
-                setMessages(prev => prev.filter(m => m.id !== id));
-            } else {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+            // Remove from local state
+            setAllMessages(prev => prev.filter(m => m.id !== id));
+            setMessages(prev => prev.filter(m => m.id !== id));
         } catch (error) {
-            const errorMessage = error instanceof Error
-                ? error.message
-                : t('errors.messages.delete_failed', 'Failed to delete message');
-
-            connectionState.setDisconnected(errorMessage, true);
+            reportError(error, t('errors.messages.delete_failed', 'Failed to delete message'));
         }
-    }, [user, currentUserId, connectionState, t]);
+    }, [user, currentUserId, isAdmin, connectionState, t, reportError]);
+
+    // Admin actions (état mis à jour aussi via WebSocket MUTE_STATUS / CLEAR_ALL)
+    const toggleMute = useCallback(async () => {
+        try {
+            const muted = await postJson<boolean>(`${API_ENDPOINTS.MESSAGES.TOGGLE_MUTE}?${adminQuery()}`, {});
+            if (typeof muted === 'boolean') setIsGlobalMute(muted);
+        } catch (error) {
+            reportError(error, t('errors.failed_to_toggle_mute', 'Failed to toggle mute'));
+        }
+    }, [isAdmin, t, reportError]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const clearAllMessages = useCallback(async () => {
+        if (!window.confirm(t('admin.confirm_clear'))) return;
+        try {
+            await postJson(`${API_ENDPOINTS.MESSAGES.CLEAR}?${adminQuery()}`, {});
+            setAllMessages([]);
+            setMessages([]);
+        } catch (error) {
+            reportError(error, t('errors.failed_to_clear_messages', 'Failed to clear messages'));
+        }
+    }, [isAdmin, t, reportError]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Helpers
     const isOwnMessage = useCallback((message: Message) => {
@@ -310,8 +320,8 @@ export function useMessages({ user, isAdmin }: UseMessagesProps) {
         // WebSocket handler
         handleWebSocketMessage,
 
-        // Admin actions (basic stubs)
-        toggleMute: async () => console.log('Toggle mute not implemented'),
-        clearAllMessages: async () => console.log('Clear all not implemented'),
+        // Admin actions
+        toggleMute,
+        clearAllMessages,
     };
 }

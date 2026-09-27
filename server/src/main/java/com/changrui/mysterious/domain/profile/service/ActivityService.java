@@ -6,10 +6,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -30,11 +33,13 @@ public class ActivityService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Record message activity for user
+     * Record message activity for user.
+     * Runs in its own transaction so a failure here never rolls back the caller's work.
+     * The stats row is locked (SELECT ... FOR UPDATE) to avoid lost counter updates.
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void recordMessageActivity(String userId) {
-        ActivityStats stats = activityRepository.findByUserId(userId)
+        ActivityStats stats = activityRepository.findByUserIdForUpdate(userId)
             .orElse(new ActivityStats(userId));
         
         stats.incrementMessages();
@@ -45,11 +50,13 @@ public class ActivityService {
     }
 
     /**
-     * Record game activity for user
+     * Record game activity for user.
+     * Runs in its own transaction so a failure here never rolls back the caller's work
+     * (e.g. a submitted score). The stats row is locked to avoid lost counter updates.
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void recordGameActivity(String userId, String gameType, int score) {
-        ActivityStats stats = activityRepository.findByUserId(userId)
+        ActivityStats stats = activityRepository.findByUserIdForUpdate(userId)
             .orElse(new ActivityStats(userId));
         
         stats.incrementGamesPlayed();
@@ -84,10 +91,14 @@ public class ActivityService {
     @Transactional
     public void checkAndUnlockAchievements(String userId, ActivityStats stats) {
         List<Achievement> allAchievements = achievementRepository.findAll();
+        Set<String> unlocked = new HashSet<>();
+        for (UserAchievement ua : userAchievementRepository.findByUserId(userId)) {
+            unlocked.add(ua.getAchievementId());
+        }
         
         for (Achievement achievement : allAchievements) {
             // Skip if user already has this achievement
-            if (userAchievementRepository.existsByUserIdAndAchievementId(userId, achievement.getId())) {
+            if (unlocked.contains(achievement.getId())) {
                 continue;
             }
             

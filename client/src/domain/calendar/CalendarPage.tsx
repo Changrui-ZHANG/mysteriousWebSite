@@ -56,10 +56,13 @@ export function CalendarPage({ }: CalendarPageProps) {
     };
 
     useEffect(() => {
+        // Ignore responses for a previous year if the user switched meanwhile
+        let cancelled = false;
         const fetchData = async () => {
             setLoading(true);
             try {
                 const feriesData = await fetchJson<Record<string, string>>(API_ENDPOINTS.EXTERNAL.PUBLIC_HOLIDAYS(year));
+                if (cancelled) return;
                 setHolidays(Object.entries(feriesData).map(([date, name]) => ({ date, nom_jour_ferie: name })));
 
                 const year1 = `${year - 1}-${year}`;
@@ -69,6 +72,7 @@ export function CalendarPage({ }: CalendarPageProps) {
                     fetchJson<SchoolHolidayApiResponse>(API_ENDPOINTS.EXTERNAL.SCHOOL_HOLIDAYS(year2))
                 ]);
 
+                if (cancelled) return;
                 const records = [...(schoolData1.records || []), ...(schoolData2.records || [])];
                 setSchoolHolidays(records
                     .filter((r) => r.fields.population !== 'Enseignants')
@@ -82,10 +86,11 @@ export function CalendarPage({ }: CalendarPageProps) {
             } catch (error) {
                 console.error("Failed to fetch calendar data", error);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
         fetchData();
+        return () => { cancelled = true; };
     }, [year]);
 
     const getHoliday = (day: number, month: number) => {

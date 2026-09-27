@@ -6,6 +6,7 @@ import com.changrui.mysterious.domain.note.service.NoteService;
 import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
+import com.changrui.mysterious.shared.security.CurrentUser;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class NoteController {
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private CurrentUser currentUser;
+
     /**
      * Get notes for a user, or all notes if super-admin.
      */
@@ -39,7 +43,7 @@ public class NoteController {
         }
 
         // Regular user sees only their notes
-        return ResponseEntity.ok(ApiResponse.success(noteService.getNotesByUserId(userId)));
+        return ResponseEntity.ok(ApiResponse.success(noteService.getNotesByUserId(currentUser.requireRegisteredSelf(userId))));
     }
 
     /**
@@ -63,6 +67,7 @@ public class NoteController {
     public ResponseEntity<ApiResponse<Note>> createNote(
             @Valid @RequestBody NoteDTO dto) {
 
+        currentUser.requireRegisteredSelf(dto.userId());
         Note created = noteService.createNote(dto);
         return ResponseEntity.ok(ApiResponse.success("Note created", created));
     }
@@ -81,7 +86,7 @@ public class NoteController {
         if (adminService.isSuperAdmin(adminCode)) {
             updated = noteService.updateNoteAsAdmin(id, dto);
         } else {
-            updated = noteService.updateNote(id, userId, dto);
+            updated = noteService.updateNote(id, currentUser.requireRegisteredSelf(userId), dto);
         }
 
         return ResponseEntity.ok(ApiResponse.success("Note updated", updated));
@@ -99,7 +104,7 @@ public class NoteController {
         if (adminService.isSuperAdmin(adminCode)) {
             noteService.deleteNoteAsAdmin(id);
         } else {
-            noteService.deleteNote(id, userId);
+            noteService.deleteNote(id, currentUser.requireRegisteredSelf(userId));
         }
 
         return ResponseEntity.ok(ApiResponse.successMessage("Note deleted"));

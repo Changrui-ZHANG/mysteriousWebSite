@@ -2,7 +2,6 @@
 export { Game } from './GamePage';
 
 // Components
-export { GravityPlayground } from './components/GravityPlayground';
 export { ScoreDisplay } from './components/ScoreDisplay';
 export { GameHUD } from './components/GameHUD';
 export { default as Leaderboard } from './components/Leaderboard';

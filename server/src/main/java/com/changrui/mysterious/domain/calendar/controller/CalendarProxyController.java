@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Proxy controller for external calendar APIs to avoid CORS issues.
@@ -41,11 +42,17 @@ public class CalendarProxyController {
      */
     @GetMapping("/school-holidays/{schoolYear}")
     public ResponseEntity<String> getSchoolHolidays(@PathVariable String schoolYear) {
-        String url = String.format(
-                "https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=2000&refine.annee_scolaire=%s",
-                schoolYear);
+        var uri = UriComponentsBuilder
+                .fromHttpUrl("https://data.education.gouv.fr/api/records/1.0/search/")
+                .queryParam("dataset", "fr-en-calendrier-scolaire")
+                .queryParam("q", "")
+                .queryParam("rows", 2000)
+                .queryParam("refine.annee_scolaire", schoolYear)
+                .build()
+                .encode()
+                .toUri();
         try {
-            String response = restTemplate.getForObject(url, String.class);
+            String response = restTemplate.getForObject(uri, String.class);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500)

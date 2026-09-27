@@ -1,5 +1,7 @@
 package com.changrui.mysterious.domain.profile.middleware;
 
+import com.changrui.mysterious.shared.security.CurrentUser;
+import com.changrui.mysterious.shared.security.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,18 +134,11 @@ public class PrivacyFilterInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * Extract requester ID from request parameters or headers.
+     * Requester ID from the verified identity token.
      */
     private String extractRequesterId(HttpServletRequest request) {
-        // Try request parameter first
-        String requesterId = request.getParameter("requesterId");
-
-        if (requesterId == null || requesterId.trim().isEmpty()) {
-            // Try header as fallback
-            requesterId = request.getHeader("X-Requester-Id");
-        }
-
-        return (requesterId != null && !requesterId.trim().isEmpty()) ? requesterId.trim() : null;
+        // Only the identity verified from the Bearer token counts; requesterId params/headers are ignored
+        return CurrentUser.fromRequest(request).map(TokenService.Identity::userId).orElse(null);
     }
 
     /**

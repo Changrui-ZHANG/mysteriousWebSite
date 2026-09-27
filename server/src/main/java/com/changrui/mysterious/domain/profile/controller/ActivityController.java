@@ -3,7 +3,9 @@ package com.changrui.mysterious.domain.profile.controller;
 import com.changrui.mysterious.domain.profile.model.ActivityStats;
 import com.changrui.mysterious.domain.profile.model.UserAchievement;
 import com.changrui.mysterious.domain.profile.service.ActivityService;
+import com.changrui.mysterious.domain.user.service.AdminService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import com.changrui.mysterious.shared.security.CurrentUser;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +22,18 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
 
+    @Autowired
+    private AdminService adminService;
+
+    @Autowired
+    private CurrentUser currentUser;
+
     /**
      * Record message activity
      */
     @PostMapping("/message")
     public ResponseEntity<ApiResponse<Void>> recordMessageActivity(@RequestParam String userId) {
-        activityService.recordMessageActivity(userId);
+        activityService.recordMessageActivity(currentUser.requireRegisteredSelf(userId));
         return ResponseEntity.ok(ApiResponse.successMessage("Message activity recorded"));
     }
 
@@ -38,7 +46,7 @@ public class ActivityController {
             @RequestParam String gameType,
             @RequestParam int score) {
         
-        activityService.recordGameActivity(userId, gameType, score);
+        activityService.recordGameActivity(currentUser.requireRegisteredSelf(userId), gameType, score);
         return ResponseEntity.ok(ApiResponse.successMessage("Game activity recorded"));
     }
 
@@ -64,7 +72,9 @@ public class ActivityController {
      * Initialize default achievements (admin endpoint)
      */
     @PostMapping("/achievements/init")
-    public ResponseEntity<ApiResponse<Void>> initializeAchievements() {
+    public ResponseEntity<ApiResponse<Void>> initializeAchievements(
+            @RequestParam(required = false) String adminCode) {
+        adminService.validateAdminCode(adminCode);
         activityService.initializeDefaultAchievements();
         return ResponseEntity.ok(ApiResponse.successMessage("Default achievements initialized"));
     }

@@ -5,12 +5,15 @@ import com.changrui.mysterious.domain.game.model.Score;
 import com.changrui.mysterious.domain.game.service.ScoreMaintenanceService;
 import com.changrui.mysterious.domain.game.service.ScoreService;
 import com.changrui.mysterious.domain.user.service.AdminService;
+import com.changrui.mysterious.domain.user.service.UserVerificationService;
 import com.changrui.mysterious.shared.dto.ApiResponse;
 import com.changrui.mysterious.shared.exception.UnauthorizedException;
+import com.changrui.mysterious.shared.security.CurrentUser;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +33,12 @@ public class ScoreController {
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private UserVerificationService userVerificationService;
+
+    @Autowired
+    private CurrentUser currentUser;
+
     @GetMapping("/top/{gameType}")
     public ResponseEntity<ApiResponse<List<Score>>> getTopScores(@PathVariable String gameType) {
         return ResponseEntity.ok(ApiResponse.success(scoreService.getTopScores(gameType)));
@@ -44,8 +53,20 @@ public class ScoreController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<Map<String, Object>>> submitScore(
-            @Valid @RequestBody ScoreSubmissionDTO dto) {
-        var result = scoreService.submitScore(dto);
+            @Valid @RequestBody ScoreSubmissionDTO body) {
+        // Scores belong to the token's registered user; the displayed username comes from the account
+        String userId = currentUser.requireRegisteredSelf(body.userId());
+        String username = userVerificationService.findUsername(userId)
+                .orElseThrow(() -> new UnauthorizedException("A registered account is required"));
+        ScoreSubmissionDTO dto = new ScoreSubmissionDTO(body.gameType(), body.score(), userId, username, body.attempts());
+
+        ScoreService.ScoreSubmissionResult result;
+        try {
+            result = scoreService.submitScore(dto);
+        } catch (DataIntegrityViolationException e) {
+            // A concurrent submission inserted the first row; retry takes the update path
+            result = scoreService.submitScore(dto);
+        }
         return ResponseEntity.ok(ApiResponse.success(
                 result.message(),
                 Map.of("message", result.message(), "newHighScore", result.newHighScore())));

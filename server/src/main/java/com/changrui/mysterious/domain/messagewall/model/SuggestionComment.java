@@ -38,6 +38,7 @@ public class SuggestionComment {
 
     private String quotedCommentId;
     private String quotedUsername;
+    @Column(length = 1000)
     private String quotedContent;
 
     public SuggestionComment(String suggestionId, String userId, String username, String content) {

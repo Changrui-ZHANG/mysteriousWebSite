@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "scores", indexes = {
         @Index(name = "idx_user_game", columnList = "user_id, game_type"),
         @Index(name = "idx_game_score", columnList = "game_type, score")
-})
+}, uniqueConstraints = @UniqueConstraint(name = "uq_scores_user_game", columnNames = { "user_id", "game_type" }))
 public class Score {
 
     @Id

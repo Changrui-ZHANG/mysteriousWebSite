@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { fetchJson } from '../api/httpClient';
 import { API_ENDPOINTS } from '../constants/endpoints';
 
@@ -17,17 +17,24 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [settings, setSettings] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    // Once settings loaded successfully, later refreshes are silent (no splash / unmount)
+    const hasLoadedRef = useRef(false);
 
     const refreshSettings = useCallback(async () => {
+        const silent = hasLoadedRef.current;
         try {
-            setIsLoading(true);
+            if (!silent) setIsLoading(true);
             setError(null);
             const data = await fetchJson<Record<string, string>>(API_ENDPOINTS.SETTINGS.PUBLIC);
             setSettings(data);
+            hasLoadedRef.current = true;
         } catch (err) {
             console.error("Failed to load settings", err);
-            setError(err instanceof Error ? err.message : "Impossible de se connecter au serveur");
-            setSettings({});
+            // Keep previous settings on a failed silent refresh
+            if (!silent) {
+                setError(err instanceof Error ? err.message : "Impossible de se connecter au serveur");
+                setSettings({});
+            }
         } finally {
             setIsLoading(false);
         }

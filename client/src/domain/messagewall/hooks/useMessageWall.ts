@@ -30,10 +30,8 @@ export function useMessageWall({ user, isAdmin }: UseMessageWallProps) {
         onMessage: messages.handleWebSocketMessage,
         onPresenceUpdate: presence.handlePresenceUpdate,
         onConnect: () => {
-            console.log('WebSocket connected');
             presence.fetchOnlineCount();
-        },
-        onDisconnect: () => console.log('WebSocket disconnected')
+        }
     }), [messages.handleWebSocketMessage, presence.handlePresenceUpdate, presence.fetchOnlineCount]);
 
     // Connect to WebSocket

@@ -8,7 +8,10 @@ import com.changrui.mysterious.domain.messagewall.model.SuggestionComment;
 import com.changrui.mysterious.domain.messagewall.repository.SuggestionCommentRepository;
 import com.changrui.mysterious.domain.messagewall.repository.SuggestionRepository;
 import com.changrui.mysterious.shared.exception.EntityNotFoundException;
+import com.changrui.mysterious.shared.exception.UnauthorizedException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,17 +32,29 @@ public class SuggestionService {
      * Get all suggestions with comment counts.
      */
     public List<SuggestionResponseDTO> getAllSuggestions() {
-        return suggestionRepository.findAllByOrderByTimestampDesc().stream()
-                .map(s -> SuggestionResponseDTO.from(s, commentRepository.countBySuggestionId(s.getId())))
-                .toList();
+        return withCommentCounts(suggestionRepository.findAllByOrderByTimestampDesc());
     }
 
     /**
      * Get suggestions for a specific user.
      */
     public List<SuggestionResponseDTO> getUserSuggestions(String userId) {
-        return suggestionRepository.findByUserIdOrderByTimestampDesc(userId).stream()
-                .map(s -> SuggestionResponseDTO.from(s, commentRepository.countBySuggestionId(s.getId())))
+        return withCommentCounts(suggestionRepository.findByUserIdOrderByTimestampDesc(userId));
+    }
+
+    /**
+     * Attach comment counts using a single GROUP BY query.
+     */
+    private List<SuggestionResponseDTO> withCommentCounts(List<Suggestion> suggestions) {
+        if (suggestions.isEmpty()) {
+            return List.of();
+        }
+        Map<String, Long> counts = commentRepository
+                .countBySuggestionIds(suggestions.stream().map(Suggestion::getId).toList())
+                .stream()
+                .collect(Collectors.toMap(row -> (String) row[0], row -> (Long) row[1]));
+        return suggestions.stream()
+                .map(s -> SuggestionResponseDTO.from(s, counts.getOrDefault(s.getId(), 0L)))
                 .toList();
     }
 
@@ -64,14 +79,16 @@ public class SuggestionService {
     }
 
     /**
-     * Delete a suggestion.
+     * Delete a suggestion. Allowed for admins or the suggestion's owner.
      */
     @Transactional
-    public void deleteSuggestion(String id) {
-        if (!suggestionRepository.existsById(id)) {
-            throw new EntityNotFoundException("Suggestion", id);
+    public void deleteSuggestion(String id, String requesterId, boolean isAdmin) {
+        Suggestion suggestion = suggestionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Suggestion", id));
+        if (!isAdmin && (requesterId == null || !requesterId.equals(suggestion.getUserId()))) {
+            throw new UnauthorizedException("You can only delete your own suggestions");
         }
-        suggestionRepository.deleteById(id);
+        suggestionRepository.delete(suggestion);
     }
 
     /**
@@ -108,13 +125,15 @@ public class SuggestionService {
     }
 
     /**
-     * Delete a comment.
+     * Delete a comment. Allowed for admins or the comment's owner.
      */
     @Transactional
-    public void deleteComment(String commentId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new EntityNotFoundException("Comment", commentId);
+    public void deleteComment(String commentId, String requesterId, boolean isAdmin) {
+        SuggestionComment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment", commentId));
+        if (!isAdmin && (requesterId == null || !requesterId.equals(comment.getUserId()))) {
+            throw new UnauthorizedException("You can only delete your own comments");
         }
-        commentRepository.deleteById(commentId);
+        commentRepository.delete(comment);
     }
 }

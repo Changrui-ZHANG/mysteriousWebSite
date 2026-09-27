@@ -21,6 +21,7 @@ import {
   getMimeTypeFromExtension
 } from '../utils/imageCompression';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
+import { authHeaders } from '../../../shared/api/authToken';
 
 interface UseMediaUploadOptions {
   onSuccess?: (result: MediaUploadResult) => void;
@@ -104,6 +105,7 @@ export function useMediaUpload(options: UseMediaUploadOptions = {}) {
 
       // Configurer et envoyer la requête
       xhr.open('POST', API_ENDPOINTS.MEDIA.UPLOAD);
+      Object.entries(authHeaders()).forEach(([name, value]) => xhr.setRequestHeader(name, value));
       xhr.timeout = 30000; // 30 secondes
       xhr.send(formData);
     });

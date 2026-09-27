@@ -8,6 +8,8 @@ import { Particle, PowerUp, Projectile, Zombie, FloatingText } from './types';
 import { Player } from './components/Player';
 import { useGameInput } from './hooks/useGameInput';
 
+const WAVE_DURATION = 10; // seconds (was 600 frames at 60fps)
+
 interface GameSceneProps {
     gameState: string;
     setGameState: (s: 'intro' | 'playing' | 'gameover') => void;
@@ -24,6 +26,8 @@ interface GameSceneProps {
     setWave: (n: number) => void;
     weaponBounce: number;
     isHoming: boolean;
+    weaponDamage: number;
+    weaponDelay: number;
     setWeaponBounce: (n: number) => void;
     setKills: (updater: (prev: number) => number) => void;
     setZombieHp: (n: number) => void;
@@ -49,6 +53,8 @@ export function GameScene({
     setWave,
     weaponBounce,
     isHoming,
+    weaponDamage,
+    weaponDelay,
     setWeaponBounce,
     setKills,
     setZombieHp,
@@ -76,6 +82,9 @@ export function GameScene({
     const floatingTexts = useRef<FloatingText[]>([]);
     const lastSuperWave = useRef(0);
     const frameCount = useRef(0);
+    const gameTime = useRef(0); // Seconds of unpaused play
+    const nextSpawnAt = useRef(10 / 60);
+    const nextWaveAt = useRef(WAVE_DURATION);
     const lastShotTime = useRef(0);
     const difficultyLevel = useRef(1);
     const scoreRef = useRef(1);
@@ -121,6 +130,13 @@ export function GameScene({
     const healthBarBgMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#000000', transparent: true, opacity: 0.5 }), []);
     const healthBarFillMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#10b981' }), []);
 
+    useEffect(() => () => {
+        [projectileGeometry, projectileMaterial, zombieGeometry, particleGeometry, particleMaterial,
+            powerUpGeometry, powerUpMaterial, healthBarGeometry, healthBarBgMaterial, healthBarFillMaterial]
+            .forEach(resource => resource.dispose());
+    }, [projectileGeometry, projectileMaterial, zombieGeometry, particleGeometry, particleMaterial,
+        powerUpGeometry, powerUpMaterial, healthBarGeometry, healthBarBgMaterial, healthBarFillMaterial]);
+
     // Controls (Modularized Hook)
     const { keys, lastInputSource, isPointerDown, mouseDeltaX } = useGameInput();
 
@@ -132,6 +148,15 @@ export function GameScene({
         weaponStats.current.isHoming = isHoming;
     }, [isHoming]);
 
+    // HUD state is the source of truth (super rewards modify it); keep the ref in sync
+    useEffect(() => {
+        weaponStats.current.damage = weaponDamage;
+    }, [weaponDamage]);
+
+    useEffect(() => {
+        weaponStats.current.delay = weaponDelay;
+    }, [weaponDelay]);
+
     // Virtual Buttons Hookup
     useEffect(() => {
         if (onMobileButtons && keys.current) {
@@ -139,12 +164,10 @@ export function GameScene({
                 moveLeft: (on: boolean) => { 
                     keys.current['KeyA'] = on; 
                     lastInputSource.current = 'keyboard';
-                    console.log('Mobile Left:', on); // Debug log
                 },
                 moveRight: (on: boolean) => { 
                     keys.current['KeyD'] = on; 
                     lastInputSource.current = 'keyboard';
-                    console.log('Mobile Right:', on); // Debug log
                 }
             };
             onMobileButtons(handlers);
@@ -170,22 +193,27 @@ export function GameScene({
         return () => gl.domElement.removeEventListener('mousedown', handleLock);
     }, [gameState, isPaused, gl]);
 
-    useFrame((state) => {
+    useFrame((state, rawDelta) => {
         state.camera.lookAt(0, 0, -5);
 
         if (gameState !== 'playing' || isPaused) return;
 
         frameCount.current++;
+        // Frame-rate independence: per-frame constants were tuned for 60fps, so dt = 1 at 60fps.
+        // Clamp to avoid huge jumps after a stall/tab switch.
+        const delta = Math.min(rawDelta, 0.1);
+        const dt = delta * 60;
+        gameTime.current += delta;
 
         // --- LOGIC UPDATE ---
 
         // 1. Move Player (Keyboard)
         if (lastInputSource.current === 'keyboard') {
             if (keys.current['ArrowLeft'] || keys.current['KeyA']) {
-                playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, playerPos.current.x - PLAYER_SPEED);
+                playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, playerPos.current.x - PLAYER_SPEED * dt);
             }
             if (keys.current['ArrowRight'] || keys.current['KeyD']) {
-                playerPos.current.x = Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x + PLAYER_SPEED);
+                playerPos.current.x = Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x + PLAYER_SPEED * dt);
             }
         }
 
@@ -209,13 +237,13 @@ export function GameScene({
         } else if (lastInputSource.current === 'touch') {
             // MOBILE TOUCH: Check if virtual buttons are NOT active before doing analog
             if (keys.current['KeyA'] || keys.current['KeyD']) {
-                if (keys.current['KeyA']) playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, playerPos.current.x - PLAYER_SPEED);
-                if (keys.current['KeyD']) playerPos.current.x = Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x + PLAYER_SPEED);
+                if (keys.current['KeyA']) playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, playerPos.current.x - PLAYER_SPEED * dt);
+                if (keys.current['KeyD']) playerPos.current.x = Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x + PLAYER_SPEED * dt);
             } else if (isPointerDown.current) {
                 // Analog Zone Control Fallback
                 if (Math.abs(state.pointer.x) > TOUCH_DEADZONE) {
                     const speedFactor = Math.min(1, Math.abs(state.pointer.x) * TOUCH_SENSITIVITY);
-                    const moveAmount = PLAYER_SPEED * speedFactor * Math.sign(state.pointer.x);
+                    const moveAmount = PLAYER_SPEED * dt * speedFactor * Math.sign(state.pointer.x);
                     playerPos.current.x += moveAmount;
                     playerPos.current.x = Math.max(-FIELD_WIDTH / 2 + 1, Math.min(FIELD_WIDTH / 2 - 1, playerPos.current.x));
                 }
@@ -261,7 +289,8 @@ export function GameScene({
 
         // 3. Spawning Zombies
         const spawnRate = Math.max(30, 60 - difficultyLevel.current * 2);
-        if (frameCount.current === 10 || frameCount.current % Math.floor(spawnRate) === 0) {
+        if (gameTime.current >= nextSpawnAt.current) {
+            nextSpawnAt.current = gameTime.current + Math.floor(spawnRate) / 60;
             if (zombies.current.length < 100) {
                 const spawnX = (Math.random() - 0.5) * FIELD_WIDTH;
                 // HP scales with wave: Base 100 * (1.2 ^ (Wave-1))
@@ -309,7 +338,8 @@ export function GameScene({
             }
         }
 
-        if (frameCount.current % 600 === 0) {
+        if (gameTime.current >= nextWaveAt.current) {
+            nextWaveAt.current += WAVE_DURATION;
             // Check for Perfect Wave
             if (!wasBreached.current) {
                 perfectStreak.current++;
@@ -354,13 +384,13 @@ export function GameScene({
             const p = projectiles.current[i];
 
             // Decrement TTL
-            p.life--;
+            p.life -= dt;
             if (p.life <= 0) {
                 projectiles.current.splice(i, 1);
                 continue;
             }
 
-            p.position.add(p.velocity);
+            p.position.addScaledVector(p.velocity, dt);
 
             // Homing Logic
             if (weaponStats.current.isHoming && zombies.current.length > 0) {
@@ -380,7 +410,7 @@ export function GameScene({
                 if (nearestZ) {
                     const targetDir = (nearestZ as Zombie).position.clone().sub(p.position).normalize();
                     // Smoothly interpolate current velocity towards target direction
-                    p.velocity.lerp(targetDir.multiplyScalar(PROJECTILE_SPEED), 0.1);
+                    p.velocity.lerp(targetDir.multiplyScalar(PROJECTILE_SPEED), 1 - Math.pow(0.9, dt));
                 }
             }
 
@@ -422,7 +452,7 @@ export function GameScene({
             // zombies move straight forward on the Z axis
 
             // --- WALL COLLISION ---
-            let moveAmount = currentSpeed;
+            let moveAmount = currentSpeed * dt;
             if (wallHp.current > 0) {
                 // Check if hitting wall
                 if (z.position.z + moveAmount >= WALL_Z - 0.5 && z.position.z < WALL_Z + 1) {
@@ -660,18 +690,18 @@ export function GameScene({
         // 6. Update Particles
         for (let i = particles.current.length - 1; i >= 0; i--) {
             const p = particles.current[i];
-            p.position.add(p.velocity);
-            p.life--;
+            p.position.addScaledVector(p.velocity, dt);
+            p.life -= dt;
             if (p.life <= 0) particles.current.splice(i, 1);
         }
 
         // 7. Update PowerUps
         for (let i = powerUps.current.length - 1; i >= 0; i--) {
             const p = powerUps.current[i];
-            p.position.z += 0.1;
+            p.position.z += 0.1 * dt;
             const dist = p.position.distanceTo(playerPos.current);
             if (dist < 5) {
-                p.position.lerp(playerPos.current, 0.1);
+                p.position.lerp(playerPos.current, 1 - Math.pow(0.9, dt));
             }
 
             if (dist < 1.5) {
@@ -719,8 +749,8 @@ export function GameScene({
             powerUps.current.forEach((p, i) => {
                 dummy.position.copy(p.position);
                 dummy.scale.set(1, 1, 1);
-                dummy.rotation.x += 0.02;
-                dummy.rotation.y += 0.05;
+                dummy.rotation.x += 0.02 * dt;
+                dummy.rotation.y += 0.05 * dt;
                 dummy.updateMatrix();
                 mesh.setMatrixAt(i, dummy.matrix);
                 mesh.setColorAt(i, new THREE.Color(p.color));
@@ -751,7 +781,7 @@ export function GameScene({
             zombies.current.forEach((z) => {
                 dummy.position.copy(z.position);
                 dummy.rotation.set(0, 0, 0);
-                dummy.rotation.z = Math.sin(frameCount.current * 0.2 + z.id * 10) * 0.1;
+                dummy.rotation.z = Math.sin(gameTime.current * 12 + z.id * 10) * 0.1;
                 dummy.scale.setScalar(z.size || 1);
                 dummy.updateMatrix();
 
@@ -844,8 +874,8 @@ export function GameScene({
         // Update Floating Texts
         for (let i = floatingTexts.current.length - 1; i >= 0; i--) {
             const ft = floatingTexts.current[i];
-            ft.position.y += 0.02; // Float up
-            ft.life--;
+            ft.position.y += 0.02 * dt; // Float up
+            ft.life -= dt;
             if (ft.life <= 0) floatingTexts.current.splice(i, 1);
         }
     });

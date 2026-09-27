@@ -47,18 +47,21 @@ export async function getPokemonByName(name: string): Promise<Pokemon> {
 export async function getRandomPokemonNames(excludeId: number, count: number = 3): Promise<string[]> {
     const names: string[] = [];
     const usedIds = new Set([excludeId]);
+    // Bounded: failed fetches consume ids, so never spin once the pool (or our patience) is exhausted
+    const maxAttempts = count * 5;
 
-    while (names.length < count) {
-        const randomId = Math.floor(Math.random() * 151) + 1;
-        if (!usedIds.has(randomId)) {
-            usedIds.add(randomId);
-            try {
-                const pokemon = await getPokemonById(randomId);
-                names.push(pokemon.name);
-            } catch {
-                // Skip if fetch fails, try another
-            }
+    for (let attempt = 0; attempt < maxAttempts && names.length < count && usedIds.size < 151; attempt++) {
+        let randomId = Math.floor(Math.random() * 151) + 1;
+        while (usedIds.has(randomId)) randomId = (randomId % 151) + 1;
+        usedIds.add(randomId);
+        try {
+            const pokemon = await getPokemonById(randomId);
+            names.push(pokemon.name);
+        } catch {
+            // Skip if fetch fails, try another
         }
     }
+
+    if (names.length < count) throw new Error('Failed to fetch enough Pokemon names');
     return names;
 }

@@ -5,6 +5,7 @@ import { FaLightbulb, FaCheck, FaPaperPlane } from 'react-icons/fa';
 import { fetchJson, postJson } from '../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../shared/constants/endpoints';
 import { useAuth } from '../../shared/contexts/AuthContext';
+import { getAdminCode } from '../../shared/constants/authStorage';
 import { LoginRequired } from '../../shared/components';
 import { SuggestionCard } from './components/SuggestionCard';
 import type { Suggestion } from './types';
@@ -69,7 +70,7 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
 
     const updateStatus = async (id: string, status: string) => {
         try {
-            await fetch(`/api/suggestions/${id}/status`, {
+            await fetchJson(`/api/suggestions/${id}/status?adminCode=${encodeURIComponent(getAdminCode() || '')}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status }),
@@ -84,7 +85,10 @@ export function SuggestionsPage({ }: SuggestionsPageProps) {
         if (!window.confirm(t('suggestions.confirm_delete'))) return;
 
         try {
-            await fetchJson(API_ENDPOINTS.SUGGESTIONS.DELETE(id), { method: 'DELETE' });
+            // Backend allows owner (userId) or admin (adminCode)
+            const params = new URLSearchParams({ userId: user?.userId || '' });
+            if (isAdmin) params.set('adminCode', getAdminCode() || '');
+            await fetchJson(`${API_ENDPOINTS.SUGGESTIONS.DELETE(id)}?${params}`, { method: 'DELETE' });
             fetchSuggestions();
         } catch (err) {
             console.error('Failed to delete suggestion:', err);

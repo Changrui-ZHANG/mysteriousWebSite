@@ -22,7 +22,7 @@ export default function Match3({ onSubmitScore, personalBest, isAuthenticated, o
     const { isMuted } = useMute();
     const { playSound } = useSound(!isMuted);
 
-    const { board, score, selectedCandies, comboMultiplier, handleClick, createBoard } = useMatch3({
+    const { board, score, selectedCandies, comboMultiplier, handleClick, resetGame } = useMatch3({
         onSubmitScore, isAuthenticated, onGameStart, playSound,
     });
 
@@ -37,7 +37,7 @@ export default function Match3({ onSubmitScore, personalBest, isAuthenticated, o
             bgmUrl={AUDIO_CONFIG.BGM_URL}
             bgGradient="bg-gradient-to-b from-pink-900/50 to-slate-900/80"
             gameStatus={true}
-            onReset={() => { createBoard(); playSound('click'); }}
+            onReset={resetGame}
             hud={{
                 score,
                 personalBest,

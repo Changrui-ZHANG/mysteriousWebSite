@@ -10,12 +10,14 @@ import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.ActivityStatsRepository;
 import com.changrui.mysterious.domain.profile.repository.PrivacySettingsRepository;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
-import jakarta.annotation.PostConstruct;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Service for migrating existing data to the profile system.
@@ -31,14 +33,20 @@ public class ProfileMigrationService {
     private final UserProfileRepository profileRepository;
     private final PrivacySettingsRepository privacyRepository;
     private final ActivityStatsRepository activityRepository;
+    private final TransactionTemplate transactionTemplate;
 
     /**
-     * Run migration on startup
+     * Run migration once on startup, inside a real transaction.
+     * ponytail: "already migrated" = at least one profile exists; admins can still use forceMigration.
      */
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         try {
-            migrateExistingUsers();
+            if (profileRepository.count() > 0) {
+                log.info("Profiles already present, skipping startup profile migration");
+                return;
+            }
+            transactionTemplate.executeWithoutResult(status -> migrateExistingUsers());
         } catch (Exception e) {
             log.error("Error during profile migration: ", e);
         }

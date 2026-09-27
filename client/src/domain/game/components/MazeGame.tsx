@@ -49,6 +49,10 @@ export default function MazeGame({ onSubmitScore, personalBest, isAuthenticated,
         playSound,
     });
 
+    // Mirror of holdingDirection so keydown can decide outside a state updater (StrictMode double-invokes updaters)
+    const holdingRef = useRef(holdingDirection);
+    useEffect(() => { holdingRef.current = holdingDirection; }, [holdingDirection]);
+
     // Keyboard controls
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -64,11 +68,11 @@ export default function MazeGame({ onSubmitScore, personalBest, isAuthenticated,
             else if (['arrowright', 'd'].includes(key)) dx = 1;
 
             if (dx !== 0 || dy !== 0) {
-                setHoldingDirection(prev => {
-                    if (prev?.dx === dx && prev?.dy === dy) return prev;
-                    handleManualMove(dx, dy);
-                    return { dx, dy };
-                });
+                const prev = holdingRef.current;
+                if (prev?.dx === dx && prev?.dy === dy) return;
+                holdingRef.current = { dx, dy };
+                handleManualMove(dx, dy);
+                setHoldingDirection({ dx, dy });
             }
         };
 

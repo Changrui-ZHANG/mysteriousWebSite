@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="028-dedupe-scores-and-add-unique-user-game" author="changrui">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="scores"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM pg_constraint WHERE conname = 'uq_scores_user_game'</sqlCheck>
+        </preConditions>
+        <comment>Supprime les scores en double (garde le meilleur par user_id + game_type ; maze : plus petit score non nul) puis ajoute une contrainte UNIQUE</comment>
+        <sql><![CDATA[
+            DELETE FROM scores WHERE id IN (
+                SELECT id FROM (
+                    SELECT id, ROW_NUMBER() OVER (
+                        PARTITION BY user_id, game_type
+                        ORDER BY
+                            CASE
+                                WHEN game_type = 'maze' THEN (CASE WHEN score = 0 THEN 2147483647 ELSE score END)::BIGINT
+                                ELSE -score::BIGINT
+                            END ASC,
+                            "timestamp" DESC,
+                            id ASC
+                    ) AS rn
+                    FROM scores
+                ) ranked
+                WHERE ranked.rn > 1
+            )
+        ]]></sql>
+        <addUniqueConstraint tableName="scores"
+                             columnNames="user_id, game_type"
+                             constraintName="uq_scores_user_game"/>
+    </changeSet>
+
+</databaseChangeLog>

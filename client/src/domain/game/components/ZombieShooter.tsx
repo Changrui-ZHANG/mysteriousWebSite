@@ -40,6 +40,7 @@ export default function ZombieShooter({ onSubmitScore, personalBest, onGameStart
                             <GameScene key={gameId} gameState={gameState} setGameState={setGameState} setScore={setScore}
                                 setWeaponCount={setWeaponCount} setWeaponDelay={setWeaponDelay} setWeaponTech={setWeaponTech}
                                 setWeaponDamage={setWeaponDamage} weaponBounce={weaponBounce} isHoming={isHoming}
+                                weaponDamage={weaponDamage} weaponDelay={weaponDelay}
                                 setWeaponBounce={setWeaponBounce} setCritChance={setCritChance} setDangerLevel={setDangerLevel}
                                 setWave={setWave} setKills={setKills} setZombieHp={setZombieHp} playSound={playSound}
                                 onGameOver={handleGameOver} isPaused={isFlipped || isPickingUpgrade}

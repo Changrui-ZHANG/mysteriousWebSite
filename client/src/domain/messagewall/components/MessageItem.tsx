@@ -189,7 +189,6 @@ const MessageItemComponent = React.forwardRef<HTMLDivElement, MessageItemProps>(
                                         <button
                                             key={emoji}
                                             onClick={async () => {
-                                                console.log('[MessageItem] Emoji clicked', { emoji, messageId: msg.id });
                                                 await reactionHook.toggleReaction(emoji);
                                                 setShowReactionPicker(false);
                                             }}

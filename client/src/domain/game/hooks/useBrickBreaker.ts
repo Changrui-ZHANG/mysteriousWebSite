@@ -96,20 +96,29 @@ export function useBrickBreaker({ onSubmitScore, playSound }: UseBrickBreakerPro
         playSound('click');
     }, [playSound]);
 
-    // Submit score and unlock next map on game end
-    useEffect(() => {
-        if (gameState === 'gameover' || gameState === 'won') {
-            onSubmitScore(score);
+    // Submit score and unlock next map once per game end (latest values read via refs)
+    const onSubmitScoreRef = useRef(onSubmitScore);
+    useEffect(() => { onSubmitScoreRef.current = onSubmitScore; }, [onSubmitScore]);
+    const unlockedMapsRef = useRef(unlockedMaps);
+    useEffect(() => { unlockedMapsRef.current = unlockedMaps; }, [unlockedMaps]);
+    const submittedRef = useRef(false);
 
-            if (gameState === 'won' && selectedMap + 1 < LEVEL_CONFIG.LEVEL_COUNT) {
-                if (!unlockedMaps.includes(selectedMap + 1)) {
-                    const newUnlocked = [...unlockedMaps, selectedMap + 1].sort((a, b) => a - b);
-                    setUnlockedMaps(newUnlocked);
-                    localStorage.setItem('brickbreaker_unlocked_maps', JSON.stringify(newUnlocked));
-                }
-            }
+    useEffect(() => {
+        if (gameState !== 'gameover' && gameState !== 'won') {
+            submittedRef.current = false;
+            return;
         }
-    }, [gameState, score, onSubmitScore, selectedMap, unlockedMaps]);
+        if (submittedRef.current) return;
+        submittedRef.current = true;
+
+        let unlocked = unlockedMapsRef.current;
+        if (gameState === 'won' && selectedMap + 1 < LEVEL_CONFIG.LEVEL_COUNT && !unlocked.includes(selectedMap + 1)) {
+            unlocked = [...unlocked, selectedMap + 1].sort((a, b) => a - b);
+            setUnlockedMaps(unlocked);
+            localStorage.setItem('brickbreaker_unlocked_maps', JSON.stringify(unlocked));
+        }
+        onSubmitScoreRef.current(unlocked.length);
+    }, [gameState, selectedMap]);
 
     // Cleanup paddle width timeout
     useEffect(() => {

@@ -4,6 +4,8 @@ import com.changrui.mysterious.domain.profile.dto.ProfileResponse;
 import com.changrui.mysterious.domain.profile.model.UserProfile;
 import com.changrui.mysterious.domain.profile.repository.UserProfileRepository;
 import com.changrui.mysterious.shared.dto.ApiResponse;
+import com.changrui.mysterious.shared.security.CurrentUser;
+import com.changrui.mysterious.shared.security.TokenService;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
@@ -49,7 +52,7 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
         }
 
         // Extract privacy context from request attributes (set by interceptor)
-        String requesterId = extractFromRequest(request, "requesterId");
+        String requesterId = extractRequesterId(request);
         String adminCode = extractAdminCode(request);
 
         // Apply privacy filtering based on response type
@@ -199,27 +202,15 @@ public class PrivacyResponseFilter implements ResponseBodyAdvice<Object> {
     }
 
     /**
-     * Extract value from request attributes or headers.
+     * Requester ID from the verified identity token (set by TokenInterceptor).
      */
-    private String extractFromRequest(ServerHttpRequest request, String key) {
-        // Try to get from URI query parameters
-        String value = request.getURI().getQuery();
-        if (value != null && value.contains(key + "=")) {
-            String[] params = value.split("&");
-            for (String param : params) {
-                if (param.startsWith(key + "=")) {
-                    return param.substring(key.length() + 1);
-                }
-            }
+    private String extractRequesterId(ServerHttpRequest request) {
+        if (request instanceof ServletServerHttpRequest servletRequest) {
+            return CurrentUser.fromRequest(servletRequest.getServletRequest())
+                    .map(TokenService.Identity::userId)
+                    .orElse(null);
         }
-
-        // Try to get from headers
-        List<String> headerValues = request.getHeaders()
-                .get("X-" + key.substring(0, 1).toUpperCase() + key.substring(1));
-        if (headerValues != null && !headerValues.isEmpty()) {
-            return headerValues.get(0);
-        }
-
         return null;
     }
+
 }

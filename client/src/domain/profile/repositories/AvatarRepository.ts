@@ -1,5 +1,6 @@
 import { fetchJson, deleteJson } from '../../../shared/api/httpClient';
 import { API_ENDPOINTS } from '../../../shared/constants/endpoints';
+import { authHeaders } from '../../../shared/api/authToken';
 
 /**
  * Repository for avatar file operations
@@ -82,6 +83,7 @@ export class AvatarRepository {
 
             const url = `${API_ENDPOINTS.AVATARS.UPLOAD(userId)}?requesterId=${encodeURIComponent(requesterId)}`;
             xhr.open('POST', url);
+            Object.entries(authHeaders()).forEach(([name, value]) => xhr.setRequestHeader(name, value));
             xhr.withCredentials = true; // Include cookies for authentication
             xhr.send(formData);
         });

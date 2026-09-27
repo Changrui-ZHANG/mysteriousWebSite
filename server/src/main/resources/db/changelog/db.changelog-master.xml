@@ -12,5 +12,7 @@
     <include file="db/changelog/changes/004-add-gender-to-profile.xml"/>
     <include file="db/changelog/changes/005-add-channels-and-reactions.xml"/>
     <include file="db/changelog/changes/006-add-image-url-to-messages.xml"/>
+    <include file="db/changelog/changes/007-unique-score-per-user-game.xml"/>
+    <include file="db/changelog/changes/008-widen-comment-quoted-content.xml"/>
 
 </databaseChangeLog>

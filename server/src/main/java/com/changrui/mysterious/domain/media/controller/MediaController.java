@@ -2,6 +2,7 @@ package com.changrui.mysterious.domain.media.controller;
 
 import com.changrui.mysterious.domain.media.model.MediaUploadResult;
 import com.changrui.mysterious.domain.media.service.MediaService;
+import com.changrui.mysterious.domain.user.service.AdminService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +28,9 @@ public class MediaController {
     
     @Autowired
     private MediaService mediaService;
+
+    @Autowired
+    private AdminService adminService;
     
     /**
      * Upload un fichier image
@@ -93,7 +97,15 @@ public class MediaController {
      * Supprime un fichier média
      */
     @DeleteMapping("/{filename}")
-    public ResponseEntity<?> deleteMedia(@PathVariable String filename) {
+    public ResponseEntity<?> deleteMedia(@PathVariable String filename,
+            @RequestParam(required = false) String adminCode) {
+        // No ownership model for media: deletion is admin-only
+        if (!adminService.isValidAdminCode(adminCode)) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "FORBIDDEN");
+            error.put("message", "Admin code required");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
         try {
             boolean deleted = mediaService.deleteMedia(filename);
             
@@ -105,7 +117,7 @@ public class MediaController {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "FILE_NOT_FOUND");
                 error.put("message", "Fichier non trouvé");
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
