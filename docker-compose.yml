@@ -31,14 +31,10 @@ services:
   client:
     build: ./client
     restart: always
-    ports:
-      - "80:80"
-      - "443:443"
+    expose:
+      - "80"
     depends_on:
       - server
-    volumes:
-      - ./ssl/fullchain.pem:/etc/letsencrypt/live/changrui.freeboxos.fr/fullchain.pem:ro
-      - ./ssl/privkey.pem:/etc/letsencrypt/live/changrui.freeboxos.fr/privkey.pem:ro
     networks:
       - app-network
 
