@@ -6,8 +6,8 @@ services:
       POSTGRES_DB: messagewall
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
@@ -16,8 +16,8 @@ services:
   server:
     build: ./server
     restart: always
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/messagewall
